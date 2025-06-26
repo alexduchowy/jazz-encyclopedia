@@ -4,27 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controlled Freedom: An Interactive History of Post-Bop</title>
+    
+    <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS Styling -->
     <style>
+        /* Base body styling */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #1e293b; /* slate-800 */
             color: #d1d5db; /* slate-300 */
         }
+        /* Heading font styling */
         h1, h2, h3, h4, h5 {
             font-family: 'Lora', serif;
             font-weight: 600;
         }
+        /* Navigation link transition effects */
         .nav-link {
             transition: color 0.2s;
         }
         .nav-link:hover, .nav-link.active {
             color: #38bdf8; /* sky-400 */
         }
+        /* Timeline year marker styling */
         .year-marker {
             transition: background-color 0.2s, color 0.2s;
         }
@@ -32,32 +39,21 @@
             background-color: #0ea5e9; /* sky-500 */
             color: #0f172a;
         }
+        /* Style matrix table transitions */
         .matrix-table th, .matrix-table td {
             transition: background-color 0.2s;
         }
         .matrix-table .highlight {
             background-color: #334155; /* slate-700 */
         }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-            max-height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 400px;
-            }
-        }
+        /* Modal transition styles */
         .modal {
             transition: opacity 0.25s ease;
         }
         .modal-content {
             transition: transform 0.25s ease;
         }
+        /* Loading spinner animation */
         .loader {
             border: 4px solid #475569; /* slate-600 */
             border-top: 4px solid #38bdf8; /* sky-400 */
@@ -71,6 +67,7 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* Horizontal draggable timeline container */
         #horizontal-timeline-container {
             width: 100%;
             overflow-x: auto;
@@ -79,26 +76,27 @@
             border-top: 1px solid #334155;
             border-bottom: 1px solid #334155;
             background: #1e293b;
-            /* Hide scrollbar for a cleaner look */
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         #horizontal-timeline-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari and Opera */
+            display: none;
         }
         #horizontal-timeline-container:active {
             cursor: grabbing;
         }
+        /* Wrapper for all timeline content */
         #timeline-wrapper {
             display: inline-flex;
             align-items: flex-start;
             padding: 2rem 1rem;
         }
+        /* Styling for each year's section in the timeline */
         .timeline-year-section {
             display: flex;
             flex-shrink: 0;
             flex-direction: column;
-            align-items: flex-start; /* Changed from center to flex-start */
+            align-items: flex-start;
             border-left: 2px dashed #475569;
             padding: 0 2rem;
         }
@@ -111,14 +109,16 @@
             color: #475569;
             margin-bottom: 1.5rem;
             width: 100%;
-            text-align: left; /* Explicitly align text to the left */
+            text-align: left;
         }
+        /* Grid for album cards within a year */
         .timeline-album-list {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 1.5rem;
         }
+        /* Individual album card styling */
         .timeline-album-card {
             width: 200px;
             flex-shrink: 0;
@@ -136,9 +136,9 @@
             border-color: #38bdf8;
         }
         .timeline-album-card img {
-             width: 100%;
-             height: 200px;
-             object-fit: cover;
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
         }
         .timeline-album-card-info {
             padding: 0.75rem;
@@ -149,6 +149,7 @@
         .timeline-album-card-info p {
             color: #94a3b8; /* slate-400 */
         }
+        /* Artist card styling */
         .artist-card {
             background-color: #334155;
             border-radius: 0.5rem;
@@ -163,10 +164,48 @@
             box-shadow: 0 10px 15px rgba(0,0,0,0.3);
             border-color: #38bdf8;
         }
+        /* Artist Slider Styles */
+        #artists-slider-container {
+            width: 100%;
+            overflow-x: auto;
+            cursor: grab;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            scroll-behavior: smooth; /* For button scrolling */
+        }
+        #artists-slider-container::-webkit-scrollbar {
+            display: none;
+        }
+        #artists-slider-container:active {
+            cursor: grabbing;
+        }
+        #artists-slider-wrapper {
+            display: flex;
+        }
+        .artist-page {
+            width: 100%;
+            flex-shrink: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .artist-page {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (min-width: 1024px) { /* lg breakpoint */
+            .artist-page {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-800 text-slate-300">
 
+    <!-- Sticky Header Navigation -->
     <header class="bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 shadow-md shadow-black/20">
         <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -178,7 +217,7 @@
                     <a href="#artists" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-400">Artists</a>
                     <a href="#legacy" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-400">Legacy</a>
                 </div>
-                 <div class="sm:hidden">
+                <div class="sm:hidden">
                     <select id="mobile-nav" class="block w-full rounded-md border-slate-600 bg-slate-700 text-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm">
                         <option value="#overview">Overview</option>
                         <option value="#timeline">Timeline</option>
@@ -192,10 +231,12 @@
     </header>
 
     <main>
+        <!-- Hero Banner Section -->
         <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
-            <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover">
+            <img src="https://placehold.co/1200x400/1e293b/38bdf8?text=Post-Bop+Musicians" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover">
         </section>
 
+        <!-- Overview Section -->
         <section id="overview" class="py-16 sm:py-20">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
                 <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">Post-Bop Encyclopedia</h2>
@@ -207,16 +248,14 @@
             </div>
         </section>
 
+        <!-- Interactive Timeline Section -->
         <section id="timeline" class="py-16 sm:py-20 bg-slate-900">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">Timeline Explorer</h2>
                 <p class="text-center text-lg text-slate-400 mb-12 max-w-3xl mx-auto">Click a year to navigate the timeline, then click an album cover to see the full analysis.</p>
-                
                 <div class="flex items-center justify-center gap-4 mb-12">
-                     <div id="timeline-nav" class="flex flex-wrap justify-center gap-2">
-                     </div>
+                    <div id="timeline-nav" class="flex flex-wrap justify-center gap-2"></div>
                 </div>
-                
                 <div class="relative group">
                     <div id="horizontal-timeline-container">
                         <div id="timeline-wrapper"></div>
@@ -228,10 +267,10 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                     </button>
                 </div>
-
             </div>
         </section>
 
+        <!-- Genre Comparison Matrix Section -->
         <section id="matrix" class="py-16 sm:py-20 bg-slate-800">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">The Genres</h2>
@@ -247,27 +286,49 @@
                                 <th class="p-4 border-b-2 border-slate-600 font-bold text-lg text-center">Free Jazz</th>
                             </tr>
                         </thead>
-                        <tbody>
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
+        <!-- Key Artists Slider Section -->
         <section id="artists" class="py-16 sm:py-20 bg-slate-900">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">The Artists</h2>
-                <p class="text-center text-lg text-slate-400 mb-12 max-w-3xl mx-auto">Explore the profiles of the musicians who defined the post-bop era. Click on an artist to view their details and album appearances.</p>
-                <div id="artists-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                    <!-- Artist cards will be injected here -->
+                <p class="text-center text-lg text-slate-400 mb-12 max-w-3xl mx-auto">Explore the profiles of the musicians who defined the post-bop era. Use the arrows or filter by instrument to navigate.</p>
+                
+                <!-- Instrument Filter Dropdown -->
+                <div class="flex justify-center mb-8">
+                    <div class="w-full max-w-xs">
+                        <label for="instrument-filter" class="block text-sm font-medium text-slate-400 mb-2 text-center">Filter by Instrument:</label>
+                        <select id="instrument-filter" class="block w-full rounded-md border-slate-600 bg-slate-700 text-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm">
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div id="artists-slider-container">
+                        <div id="artists-slider-wrapper">
+                            <!-- Artist pages will be injected here by JavaScript -->
+                        </div>
+                    </div>
+                    <button id="artist-scroll-left-btn" class="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-slate-800/50 hover:bg-sky-500 text-slate-300 hover:text-slate-900 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="artist-scroll-right-btn" class="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-slate-800/50 hover:bg-sky-500 text-slate-300 hover:text-slate-900 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
                 </div>
             </div>
         </section>
         
+        <!-- Legacy Section -->
         <section id="legacy" class="py-16 sm:py-20 bg-slate-800">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
                 <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">Legacy and Dissolution</h2>
-                 <p class="text-center text-lg text-slate-400 mb-12">How a golden age splintered into new forms, leaving an indelible mark on the future of music.</p>
+                <p class="text-center text-lg text-slate-400 mb-12">How a golden age splintered into new forms, leaving an indelible mark on the future of music.</p>
                 <div class="space-y-6 text-lg leading-relaxed text-slate-300">
                     <p>The golden age of acoustic innovation from 1958 to 1967 was a period of intense, shared creativity. However, by its end, the cohesive center of post-bop began to dissolve. The death of John Coltrane in 1967 removed a spiritual and musical lodestar. Simultaneously, Miles Davis began incorporating electric instruments and rock-influenced rhythms, paving the way for jazz-rock fusion with albums like *In a Silent Way* and *Bitches Brew*. This seismic shift created a new mainstream that would dominate the 1970s.</p>
                     <p>Yet, the legacy of post-bop is profound. Its harmonic, rhythmic, and compositional innovations became a permanent part of the modern jazz vocabulary. In the 1980s, the "Young Lions" movement, led by trumpeter Wynton Marsalis, sparked a "post-bop revival" that looked directly back to the acoustic, small-group aesthetic of the 1960s. This cemented the 1958-1967 period as a classic era, and its language remains the primary foundation for much of the acoustic jazz being played today.</p>
@@ -276,6 +337,7 @@
         </section>
     </main>
 
+    <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-8">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p>An interactive exploration based on the "Chronological Encyclopedia of Post-Bop (1958-1967)".</p>
@@ -283,10 +345,11 @@
         </div>
     </footer>
 
+    <!-- Album Detail Modal -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div id="modal-content" class="modal-content bg-slate-800 border border-slate-600 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
             <div class="flex justify-between items-start p-4 border-b border-slate-600 flex-shrink-0">
-                 <div>
+                <div>
                     <h3 id="modal-title" class="text-2xl font-bold text-sky-400"></h3>
                     <p id="modal-artist" class="text-md text-slate-400"></p>
                 </div>
@@ -297,28 +360,28 @@
                     <div id="modal-album-art-container" class="w-full md:w-1/3 flex-shrink-0">
                          <img id="modal-album-art" src="" class="w-full h-auto rounded-md shadow-lg" alt="">
                     </div>
-                    <div id="modal-album-details" class="w-full md:w-2/3">
-                    </div>
+                    <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
-                <div id="modal-analysis-section">
-                </div>
+                <div id="modal-analysis-section"></div>
             </div>
         </div>
     </div>
 
+    <!-- Artist Detail Modal -->
     <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div class="modal-content bg-slate-800 border border-slate-600 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
              <div class="flex justify-between items-start p-4 border-b border-slate-600 flex-shrink-0">
-                 <h3 id="artist-modal-title" class="text-2xl font-bold text-sky-400"></h3>
+                <h3 id="artist-modal-title" class="text-2xl font-bold text-sky-400"></h3>
                 <button id="close-artist-modal" class="text-2xl font-bold p-2 leading-none text-slate-500 hover:text-white">&times;</button>
             </div>
             <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
     </div>
 
-
+    <!-- Main Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Using the full, original dataset to ensure all artists are processed.
             const rawTrackData = [
                 { year: 1958, artist: "Thelonious Monk Quartet", title: "Misterioso", album: "Misterioso", cover: "images/misterioso.jpg", recordingDate: "August 7, 1958", location: "Five Spot Café, New York City, NY", label: "Riverside", lineup: "Thelonious Monk (piano), Johnny Griffin (tenor saxophone), Ahmed Abdul-Malik (bass), Roy Haynes (drums)", composer: "Thelonious Monk", analysis: "Captured during a legendary residency at the Five Spot Café, this recording showcases Thelonious Monk's pivotal role in the adventurous evolution of hard bop. 'Misterioso' is a 12-bar blues, but in Monk's hands, the familiar structure becomes a vehicle for profound innovation. His angular, dissonant piano work and idiosyncratic use of silence challenge bop conventions from the inside out. Supported by the fiery tenor saxophone of Johnny Griffin, Monk demonstrates how a master improviser could deconstruct traditional forms in a live setting, turning a standard into a complex, unpredictable, and thoroughly modern statement." },
                 { year: 1958, artist: "Sun Ra and His Arkestra", title: "Saturn", album: "Jazz in Silhouette", cover: "images/jazz-in-silhouette.jpg", recordingDate: "c. late 1958", location: "El Saturn Studios, Chicago, IL", label: "El Saturn Records", lineup: "Sun Ra (piano), Hobart Dotson (trumpet), Marshall Allen (alto saxophone), James Spaulding (alto saxophone), John Gilmore (tenor saxophone), Pat Patrick (baritone saxophone), Charles Davis (baritone saxophone), Julian Priester (trombone), Victor Sproles (bass), William Bugs Cochran (drums)", composer: "Sun Ra", analysis: "With 'Saturn,' Sun Ra officially plants the flag for a new cosmic consciousness in jazz. While the piece is rooted in the swing and bop traditions of an orchestra, its theme, propelled by an insistent and otherworldly rhythm, signals a definitive break. This track is a key early document of Afrofuturism and a foundational text for what would become spiritual jazz. By blending familiar big band precision with visionary concepts, 'Saturn' acts as a bridge from the known world to the outer realms the Arkestra would explore, prefiguring the avant-garde and free jazz movements of the coming decade." },
@@ -428,7 +491,7 @@
         });
 
         function initializeAppUI(rawTrackData, styleMatrixData) {
-            // --- DATA PROCESSING ---
+            
             const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
             
             function parseDate(dateString) {
@@ -439,23 +502,13 @@
                 }
                 const parts = dateString.replace(/,/g, '').split(' ');
                 if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
-                if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 15);
-                if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 0, 1);
-                if (!isNaN(new Date(dateString))) return new Date(dateString);
                 return null;
             }
 
             const albums = rawTrackData.reduce((acc, track) => {
                 let album = acc.find(a => a.albumTitle === track.album && a.artist === track.artist);
                 if (!album) {
-                    album = {
-                        year: track.year,
-                        artist: track.artist,
-                        albumTitle: track.album,
-                        cover: track.cover,
-                        pivotalTracks: [],
-                        genres: []
-                    };
+                    album = { year: track.year, artist: track.artist, albumTitle: track.album, cover: track.cover, pivotalTracks: [], genres: [] };
                     acc.push(album);
                 }
                 album.pivotalTracks.push(track);
@@ -463,65 +516,48 @@
                 return acc;
             }, []);
 
-            // Augment album data with genres
             albums.forEach(album => {
                 const allAnalyses = album.pivotalTracks.map(t => t.analysis.toLowerCase()).join(' ');
                 const genres = new Set();
                 if (allAnalyses.includes('modal jazz')) genres.add('Modal Jazz');
                 if (allAnalyses.includes('hard bop')) genres.add('Hard Bop');
                 if (allAnalyses.includes('free jazz')) genres.add('Free Jazz');
-                if (allAnalyses.includes('avant-garde')) genres.add('Avant-Garde');
-                if (allAnalyses.includes('spiritual jazz')) genres.add('Spiritual Jazz');
-                if (allAnalyses.includes('soul jazz')) genres.add('Soul Jazz');
-                if (genres.size === 0) genres.add('Post-Bop'); // Default genre
-                album.genres = Array.from(genres);
+                album.genres = Array.from(genres).length > 0 ? Array.from(genres) : ['Post-Bop'];
                 album.firstRecordingDate = album.pivotalTracks[0].recordingDate;
             });
             
             albums.sort((a,b) => parseDate(a.firstRecordingDate) - parseDate(b.firstRecordingDate));
             const years = [...new Set(albums.map(album => album.year))].sort();
-
             const groupedByYear = years.reduce((acc, year) => {
                 acc[year] = albums.filter(d => d.year === year);
                 return acc;
             }, {});
 
-            // --- TIMELINE RENDERING ---
             const timelineNav = document.getElementById('timeline-nav');
             const timelineContainer = document.getElementById('horizontal-timeline-container');
             const timelineWrapper = document.getElementById('timeline-wrapper');
             const scrollLeftBtn = document.getElementById('scroll-left-btn');
             const scrollRightBtn = document.getElementById('scroll-right-btn');
-            timelineWrapper.innerHTML = '';
             
+            timelineWrapper.innerHTML = '';
             years.forEach(year => {
                 const yearSection = document.createElement('div');
                 yearSection.className = 'timeline-year-section';
                 yearSection.id = `year-${year}`;
-
                 const yearHeader = document.createElement('div');
                 yearHeader.className = 'timeline-year-header';
                 yearHeader.textContent = year;
                 yearSection.appendChild(yearHeader);
-
                 const albumList = document.createElement('div');
                 albumList.className = 'timeline-album-list';
-                
                 groupedByYear[year].forEach(album => {
                     const card = document.createElement('div');
                     card.className = 'timeline-album-card';
                     card.dataset.albumTitle = album.albumTitle;
                     card.dataset.artist = album.artist;
-                    card.innerHTML = `
-                        <img src="${album.cover}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/334155/94a3b8?text=No+Image';">
-                        <div class="timeline-album-card-info">
-                            <h5 class="font-bold truncate text-sm">${album.albumTitle}</h5>
-                            <p class="text-xs truncate">${album.artist}</p>
-                        </div>
-                    `;
+                    card.innerHTML = `<img src="${album.cover}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/334155/94a3b8?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate text-sm">${album.albumTitle}</h5><p class="text-xs truncate">${album.artist}</p></div>`;
                     albumList.appendChild(card);
                 });
-                
                 yearSection.appendChild(albumList);
                 timelineWrapper.appendChild(yearSection);
             });
@@ -536,33 +572,20 @@
                     yearButton.classList.add('active');
                     const yearSection = document.getElementById(`year-${year}`);
                     if(yearSection) {
-                        timelineContainer.scrollTo({
-                            left: yearSection.offsetLeft - 32,
-                            behavior: 'smooth'
-                        });
+                        timelineContainer.scrollTo({ left: yearSection.offsetLeft - 32, behavior: 'smooth' });
                     }
                 });
                 timelineNav.appendChild(yearButton);
             });
 
-            if (timelineNav.firstElementChild) {
-                timelineNav.firstElementChild.classList.add('active');
-            }
+            if (timelineNav.firstElementChild) timelineNav.firstElementChild.classList.add('active');
             
-            // --- TIMELINE SCROLLING LOGIC ---
-            const scrollAmount = 400; // Amount to scroll with arrows
-            scrollLeftBtn.addEventListener('click', () => {
-                timelineContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-            });
-            scrollRightBtn.addEventListener('click', () => {
-                timelineContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-            });
+            const scrollAmount = 400;
+            scrollLeftBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
+            scrollRightBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
 
-
-            // --- MODAL LOGIC (Album) ---
             const albumModal = document.getElementById('album-modal');
             const albumModalContent = albumModal.querySelector('.modal-content');
-
             timelineWrapper.addEventListener('click', e => {
                 const card = e.target.closest('.timeline-album-card');
                 if (card) {
@@ -573,57 +596,22 @@
             });
 
             function openAlbumModal(album) {
-                // Set text content
                 albumModal.querySelector('#modal-title').textContent = album.albumTitle;
                 albumModal.querySelector('#modal-artist').textContent = album.artist;
-
-                // Set image source
                 const modalImg = albumModal.querySelector('#modal-album-art');
                 modalImg.src = album.cover;
                 modalImg.alt = `Cover for ${album.albumTitle}`;
                 modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/334155/94a3b8?text=No+Image'; };
-
-                // Populate details section
                 const firstTrack = album.pivotalTracks[0];
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
-                detailsContainer.innerHTML = `
-                    <h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Album Details</h4>
-                    <ul class="text-sm space-y-1.5">
-                        <li><strong class="font-semibold text-slate-300 w-32 inline-block flex-shrink-0">Genres:</strong> ${album.genres.join(', ')}</li>
-                        <li><strong class="font-semibold text-slate-300 w-32 inline-block flex-shrink-0">Recording Date:</strong> ${firstTrack.recordingDate}</li>
-                        <li><strong class="font-semibold text-slate-300 w-32 inline-block flex-shrink-0">Location:</strong> ${firstTrack.location}</li>
-                        <li><strong class="font-semibold text-slate-300 w-32 inline-block flex-shrink-0">Label:</strong> ${firstTrack.label}</li>
-                        <li><strong class="font-semibold text-slate-300 w-32 inline-block flex-shrink-0">Line-Up:</strong> ${firstTrack.lineup}</li>
-                        <li><strong class="font-semibold text-slate-300 w-32 inline-block flex-shrink-0">Composer:</strong> ${firstTrack.composer}</li>
-                    </ul>
-                `;
-                
-                // Populate analysis section
+                detailsContainer.innerHTML = `<h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Album Details</h4><ul class="text-sm space-y-1.5"><li><strong class="font-semibold text-slate-300 w-32 inline-block">Genres:</strong> ${album.genres.join(', ')}</li><li><strong class="font-semibold text-slate-300 w-32 inline-block">Recording Date:</strong> ${firstTrack.recordingDate}</li><li><strong class="font-semibold text-slate-300 w-32 inline-block">Label:</strong> ${firstTrack.label}</li><li><strong class="font-semibold text-slate-300 w-32 inline-block">Line-Up:</strong> ${firstTrack.lineup}</li></ul>`;
                 const analysisContainer = albumModal.querySelector('#modal-analysis-section');
-                const pivotalTracksHtml = album.pivotalTracks.map(track => `
-                    <div class="mb-6 pb-4 border-b border-slate-700 last:border-b-0 last:pb-0 last:mb-0">
-                        <h5 class="font-bold text-lg text-slate-200">${track.title}</h5>
-                        <p class="text-sm mt-2">${track.analysis}</p>
-                    </div>`).join('');
-                
-                analysisContainer.innerHTML = `
-                    <div>
-                        <h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Pivotal Tracks Analysis</h4>
-                        ${pivotalTracksHtml}
-                    </div>
-                    <div class="border-t border-slate-700 mt-6 pt-4">
-                         <button id="ai-analysis-btn" class="w-full sm:w-auto bg-sky-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-500 transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed">✨ Get AI Album Analysis</button>
-                         <div id="ai-result-container" class="mt-4 p-4 bg-slate-700 rounded-lg border border-slate-600 min-h-[50px]"></div>
-                    </div>
-                `;
-                
-                // Add event listener for AI button
+                const pivotalTracksHtml = album.pivotalTracks.map(track => `<div class="mb-6 pb-4 border-b border-slate-700 last:border-b-0"><h5 class="font-bold text-lg text-slate-200">${track.title}</h5><p class="text-sm mt-2">${track.analysis}</p></div>`).join('');
+                analysisContainer.innerHTML = `<div><h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Pivotal Tracks Analysis</h4>${pivotalTracksHtml}</div><div class="border-t border-slate-700 mt-6 pt-4"><button id="ai-analysis-btn" class="w-full sm:w-auto bg-sky-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-500 transition-colors disabled:bg-slate-600">✨ Get AI Album Analysis</button><div id="ai-result-container" class="mt-4 p-4 bg-slate-700 rounded-lg border border-slate-600 min-h-[50px]"></div></div>`;
                 const aiButton = analysisContainer.querySelector('#ai-analysis-btn');
                 const aiResultContainer = analysisContainer.querySelector('#ai-result-container');
                 aiResultContainer.innerHTML = '';
                 aiButton.addEventListener('click', () => getAiAnalysis(album, aiButton, aiResultContainer));
-                
-                // Show modal
                 albumModal.classList.remove('opacity-0', 'pointer-events-none');
                 albumModalContent.classList.remove('scale-95');
             }
@@ -632,122 +620,201 @@
                 albumModal.classList.add('opacity-0', 'pointer-events-none');
                 albumModalContent.classList.add('scale-95');
             }
-
             albumModal.querySelector('#close-modal').addEventListener('click', closeAlbumModal);
             albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') closeAlbumModal(); });
-            document.addEventListener('keydown', e => { if (e.key === "Escape") closeAlbumModal(); });
 
-            // --- ARTISTS SECTION LOGIC ---
-            const artistsGrid = document.getElementById('artists-grid');
-            const artistsData = processArtists(albums);
+            // --- ARTISTS SECTION LOGIC WITH FILTER ---
+            const artistsSliderContainer = document.getElementById('artists-slider-container');
+            const artistsData = processArtists(rawTrackData);
+            const instrumentFilter = document.getElementById('instrument-filter');
+            populateInstrumentFilter(artistsData, instrumentFilter);
+            renderArtistSlider(artistsData); // Initial render
 
-            artistsData.forEach(artist => {
-                const card = document.createElement('div');
-                card.className = 'artist-card';
-                card.dataset.artistName = artist.name;
-                card.innerHTML = `
-                    <img src="${artist.photo}" alt="Photo of ${artist.name}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x240/334155/94a3b8?text=${artist.name.replace(/\s/g, '+')}';">
-                    <div class="p-4">
-                        <h4 class="font-bold text-lg text-slate-200">${artist.name}</h4>
-                    </div>
-                `;
-                card.addEventListener('click', () => openArtistModal(artist));
-                artistsGrid.appendChild(card);
+            instrumentFilter.addEventListener('change', (e) => {
+                const selectedInstrument = e.target.value;
+                const filteredArtists = selectedInstrument === 'all'
+                    ? artistsData
+                    : artistsData.filter(artist => artist.instruments.has(selectedInstrument));
+                renderArtistSlider(filteredArtists);
             });
             
-            function processArtists(albums) {
+            /**
+             * Processes the raw track data to extract a unique list of artists and their instruments.
+             * This rewritten function is robust and handles all lineup string variations.
+             * @param {Array} tracks - The raw array of track objects.
+             * @returns {Array} A sorted array of unique artist objects.
+             */
+            function processArtists(tracks) {
                 const artistsMap = new Map();
-                albums.forEach(album => {
-                    album.pivotalTracks.forEach(track => {
-                        const lineup = track.lineup.split(', ');
-                        lineup.forEach(member => {
-                            const match = member.match(/(.+?)\s\((.+)\)/);
-                            if (match) {
-                                const [_, name, instrument] = match;
-                                if (!artistsMap.has(name)) {
-                                    artistsMap.set(name, { name: name, instruments: new Set(), albums: new Set(), photo: `images/${name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')}.jpg` });
-                                }
-                                artistsMap.get(name).instruments.add(instrument);
-                                artistsMap.get(name).albums.add(album.albumTitle);
+
+                tracks.forEach(track => {
+                    // Split the lineup string by the comma that appears OUTSIDE parentheses
+                    const lineupParts = track.lineup.split(/,(?![^()]*\))/);
+                    
+                    lineupParts.forEach(part => {
+                        const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                        if (match) {
+                            const name = match[1].trim();
+                            const instrumentsString = match[2];
+
+                            if (!artistsMap.has(name)) {
+                                artistsMap.set(name, { 
+                                    name: name, 
+                                    instruments: new Set(), 
+                                    albums: new Set(), 
+                                    photo: `https://placehold.co/200x240/334155/94a3b8?text=${name.replace(/\s/g, '+')}` 
+                                });
                             }
-                        });
+                            
+                            const artistEntry = artistsMap.get(name);
+                            
+                            instrumentsString.split(',').forEach(inst => {
+                                const trimmedInst = inst.trim();
+                                if (trimmedInst && trimmedInst !== 'arranger' && !trimmedInst.includes('vocals')) {
+                                    artistEntry.instruments.add(trimmedInst);
+                                }
+                            });
+
+                            artistEntry.albums.add(track.album);
+                        }
                     });
                 });
-                return Array.from(artistsMap.values()).sort((a,b) => a.name.localeCompare(b.name));
+
+                return Array.from(artistsMap.values()).sort((a, b) => a.name.localeCompare(b.name));
             }
-            
+
+
+            function populateInstrumentFilter(artists, filterElement) {
+                const allInstruments = new Set();
+                artists.forEach(artist => {
+                    artist.instruments.forEach(instrument => allInstruments.add(instrument));
+                });
+                const sortedInstruments = Array.from(allInstruments).sort();
+
+                filterElement.innerHTML = '<option value="all">All Instruments</option>';
+                sortedInstruments.forEach(instrument => {
+                    const option = document.createElement('option');
+                    option.value = instrument;
+                    option.textContent = instrument.charAt(0).toUpperCase() + instrument.slice(1);
+                    filterElement.appendChild(option);
+                });
+            }
+
+            function renderArtistSlider(artistsToRender) {
+                const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
+                const artistScrollLeftBtn = document.getElementById('artist-scroll-left-btn');
+                const artistScrollRightBtn = document.getElementById('artist-scroll-right-btn');
+                
+                artistsSliderWrapper.innerHTML = ''; 
+                artistsSliderContainer.scrollLeft = 0;
+
+                if (artistsToRender.length === 0) {
+                    artistsSliderWrapper.innerHTML = `<div class="w-full text-center p-8 text-slate-400">No artists found for this instrument.</div>`;
+                    artistScrollLeftBtn.style.display = 'none';
+                    artistScrollRightBtn.style.display = 'none';
+                    return;
+                }
+                
+                artistScrollLeftBtn.style.display = 'block';
+                artistScrollRightBtn.style.display = 'block';
+
+                const batchSize = 6;
+                const numPages = Math.ceil(artistsToRender.length / batchSize);
+
+                for (let i = 0; i < artistsToRender.length; i += batchSize) {
+                    const batch = artistsToRender.slice(i, i + batchSize);
+                    const page = document.createElement('div');
+                    page.className = 'artist-page';
+                    
+                    batch.forEach(artist => {
+                        const card = document.createElement('div');
+                        card.className = 'artist-card';
+                        card.dataset.artistName = artist.name;
+                        card.innerHTML = `<img src="${artist.photo}" alt="Photo of ${artist.name}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x240/334155/94a3b8?text=${artist.name.replace(/\s/g, '+')}';"><div class="p-4"><h4 class="font-bold text-lg text-slate-200">${artist.name}</h4></div>`;
+                        card.addEventListener('click', () => openArtistModal(artist));
+                        page.appendChild(card);
+                    });
+                    
+                    artistsSliderWrapper.appendChild(page);
+                }
+
+                let currentArtistPage = 0;
+                function updateArtistSliderButtons() {
+                    artistScrollLeftBtn.disabled = currentArtistPage === 0;
+                    artistScrollRightBtn.disabled = currentArtistPage >= numPages - 1;
+                }
+
+                artistScrollLeftBtn.onclick = () => {
+                    if (currentArtistPage > 0) {
+                        currentArtistPage--;
+                        artistsSliderContainer.scrollLeft -= artistsSliderContainer.clientWidth;
+                    }
+                };
+    
+                artistScrollRightBtn.onclick = () => {
+                    if (currentArtistPage < numPages - 1) {
+                        currentArtistPage++;
+                        artistsSliderContainer.scrollLeft += artistsSliderContainer.clientWidth;
+                    }
+                };
+                
+                artistsSliderContainer.onscroll = () => {
+                    const newPage = Math.round(artistsSliderContainer.scrollLeft / artistsSliderContainer.clientWidth);
+                    if (newPage !== currentArtistPage) {
+                        currentArtistPage = newPage;
+                        updateArtistSliderButtons();
+                    }
+                };
+                
+                updateArtistSliderButtons();
+            }
+
             const artistModal = document.getElementById('artist-modal');
             const artistModalContent = artistModal.querySelector('.modal-content');
-
+            
             function openArtistModal(artist) {
                 artistModal.querySelector('#artist-modal-title').textContent = artist.name;
                 const body = artistModal.querySelector('#artist-modal-body');
-                body.innerHTML = `
-                    <div class="flex flex-col md:flex-row gap-6">
-                         <div class="w-full md:w-1/3 flex-shrink-0">
-                            <img src="${artist.photo}" class="w-full h-auto rounded-md shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/200x240/334155/94a3b8?text=${artist.name.replace(/\s/g, '+')}';">
-                        </div>
-                        <div class="w-full md:w-2/3">
-                            <h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Details</h4>
-                            <p class="mb-4"><strong class="font-semibold text-slate-300">Instruments:</strong> ${Array.from(artist.instruments).join(', ')}</p>
-                            <h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Album Appearances</h4>
-                            <ul class="list-disc list-inside text-sm space-y-1">
-                                ${Array.from(artist.albums).map(title => `<li>${title}</li>`).join('')}
-                            </ul>
-                        </div>
-                    </div>
-                `;
-
+                body.innerHTML = `<div class="flex flex-col md:flex-row gap-6"><div class="w-full md:w-1/3 flex-shrink-0"><img src="${artist.photo}" class="w-full h-auto rounded-md shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/200x240/334155/94a3b8?text=${artist.name.replace(/\s/g, '+')}';"></div><div class="w-full md:w-2/3"><h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Details</h4><p class="mb-4"><strong class="font-semibold text-slate-300">Instruments:</strong> ${Array.from(artist.instruments).join(', ')}</p><h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Album Appearances</h4><ul class="list-disc list-inside text-sm space-y-1">${Array.from(artist.albums).map(title => `<li>${title}</li>`).join('')}</ul></div></div>`;
                 artistModal.classList.remove('opacity-0', 'pointer-events-none');
                 artistModalContent.classList.remove('scale-95');
             }
 
             function closeArtistModal() {
-                 artistModal.classList.add('opacity-0', 'pointer-events-none');
+                artistModal.classList.add('opacity-0', 'pointer-events-none');
                 artistModalContent.classList.add('scale-95');
             }
             
             artistModal.querySelector('#close-artist-modal').addEventListener('click', closeArtistModal);
             artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') closeArtistModal(); });
-            document.addEventListener('keydown', e => { if (e.key === "Escape") closeArtistModal(); });
+            document.addEventListener('keydown', e => { if (e.key === "Escape") { closeAlbumModal(); closeArtistModal(); } });
 
-
-            // --- AI ANALYSIS (GEMINI API) ---
             async function getAiAnalysis(album, buttonElement, resultContainer) {
                 buttonElement.disabled = true;
                 resultContainer.innerHTML = '<div class="flex justify-center items-center p-4"><div class="loader"></div></div>';
                 let existingInfo = album.pivotalTracks.map(t => `Analysis for track '${t.title}': ${t.analysis}`).join('; ');
-                const prompt = `You are a world-renowned musicologist and jazz critic. Provide a fresh, holistic analysis of the classic post-bop album "${album.albumTitle}" by ${album.artist}, recorded in ${album.year}. Synthesize the following track analyses into a cohesive overview of the album's significance: ${existingInfo}. Go beyond just summarizing. Discuss the album's overall mood, its place in the artist's discography, and its impact on the post-bop movement. Speculate on the emotional atmosphere in the studio or imagine how a modern listener might experience these sounds for the first time. Use vivid, descriptive language. Frame your analysis under the heading 'A Modern Listener's Perspective'.`;
+                const prompt = `You are a musicologist. Provide a fresh analysis of the album "${album.albumTitle}" by ${album.artist} (${album.year}). Synthesize the following track analyses into a cohesive overview: ${existingInfo}. Discuss the album's overall mood and impact. Frame it under the heading 'A Modern Listener's Perspective'.`;
                 try {
                     let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
                     const payload = { contents: chatHistory };
-                    const apiKey = ""; // API key is handled by the environment
+                    const apiKey = "";
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                    if (!response.ok) throw new Error(`API request failed`);
                     const result = await response.json();
                     if (result.candidates && result.candidates[0] && result.candidates[0].content.parts[0].text) {
                         resultContainer.innerHTML = result.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
-                    } else { throw new Error('Invalid response structure from API.'); }
+                    } else { throw new Error('Invalid response structure.'); }
                 } catch (error) {
                     console.error("Gemini API Error:", error);
-                    resultContainer.innerHTML = `<p class="text-red-400">Sorry, the analysis could not be generated at this time. Please try again later.</p>`;
+                    resultContainer.innerHTML = `<p class="text-red-400">Sorry, the analysis could not be generated.</p>`;
                 } finally {
                     buttonElement.disabled = false;
                 }
             }
 
-            // --- STYLE MATRIX ---
             const matrixTableBody = document.querySelector('#style-matrix-table tbody');
-            matrixTableBody.innerHTML = styleMatrixData.map(row => `
-                <tr data-feature="${row.feature}">
-                    <td class="p-4 border-b border-slate-700 font-semibold">${row.feature}</td>
-                    <td class="p-4 border-b border-slate-700" data-style="Hard Bop">${row.hardBop}</td>
-                    <td class="p-4 border-b border-slate-700" data-style="Modal Jazz">${row.modalJazz}</td>
-                    <td class="p-4 border-b border-slate-700 bg-sky-900/20" data-style="Post-Bop">${row.postBop}</td>
-                    <td class="p-4 border-b border-slate-700" data-style="Free Jazz">${row.freeJazz}</td>
-                </tr>
-            `).join('');
+            matrixTableBody.innerHTML = styleMatrixData.map(row => `<tr data-feature="${row.feature}"><td class="p-4 border-b border-slate-700 font-semibold">${row.feature}</td><td class="p-4 border-b border-slate-700" data-style="Hard Bop">${row.hardBop}</td><td class="p-4 border-b border-slate-700" data-style="Modal Jazz">${row.modalJazz}</td><td class="p-4 border-b border-slate-700 bg-sky-900/20" data-style="Post-Bop">${row.postBop}</td><td class="p-4 border-b border-slate-700" data-style="Free Jazz">${row.freeJazz}</td></tr>`).join('');
 
             document.querySelectorAll('#style-matrix-table th, #style-matrix-table td').forEach(cell => {
                 cell.addEventListener('mouseenter', () => {
@@ -756,38 +823,34 @@
                     document.querySelectorAll(`[data-style='${style}']`).forEach(c => c.classList.add('highlight'));
                     document.querySelectorAll(`[data-feature='${feature}'] td, [data-feature='${feature}'] th`).forEach(c => c.classList.add('highlight'));
                 });
-                cell.addEventListener('mouseleave', () => document.querySelectorAll('#style-matrix-table th, #style-matrix-table td').forEach(c => c.classList.remove('highlight')));
+                cell.addEventListener('mouseleave', () => document.querySelectorAll('#style-matrix-table .highlight').forEach(c => c.classList.remove('highlight')));
             });
             
-            // --- MOBILE NAVIGATION ---
             document.getElementById('mobile-nav').addEventListener('change', e => window.location.hash = e.target.value);
             
-            // --- HORIZONTAL DRAG-TO-SCROLL ---
-            let isDown = false;
-            let startX;
-            let scrollLeft;
+            function setupDraggable(container) {
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+                container.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    container.style.cursor = 'grabbing';
+                    startX = e.pageX - container.offsetLeft;
+                    scrollLeft = container.scrollLeft;
+                });
+                container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
+                container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
+                container.addEventListener('mousemove', (e) => {
+                    if(!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - container.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    container.scrollLeft = scrollLeft - walk;
+                });
+            }
 
-            timelineContainer.addEventListener('mousedown', (e) => {
-              isDown = true;
-              timelineContainer.style.cursor = 'grabbing';
-              startX = e.pageX - timelineContainer.offsetLeft;
-              scrollLeft = timelineContainer.scrollLeft;
-            });
-            timelineContainer.addEventListener('mouseleave', () => {
-              isDown = false;
-              timelineContainer.style.cursor = 'grab';
-            });
-            timelineContainer.addEventListener('mouseup', () => {
-              isDown = false;
-              timelineContainer.style.cursor = 'grab';
-            });
-            timelineContainer.addEventListener('mousemove', (e) => {
-              if(!isDown) return;
-              e.preventDefault();
-              const x = e.pageX - timelineContainer.offsetLeft;
-              const walk = (x - startX) * 2; //scroll-fast
-              timelineContainer.scrollLeft = scrollLeft - walk;
-            });
+            setupDraggable(timelineContainer);
+            setupDraggable(artistsSliderContainer);
         }
     </script>
 </body>
