@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controlled Freedom: An Interactive History of Post-Bop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Harmony -->
+    <!-- Application Structure Plan: The SPA is designed as a non-linear exploration hub, departing from the report's linear structure for better usability. A fixed top navigation allows users to jump between five thematic sections: 1) An 'Overview' to introduce the core concept of Post-Bop. 2) An interactive 'Timeline Explorer' which serves as the main content hub, allowing users to select a year and view detailed, modal-based album analyses. 3) A 'Style Matrix' that interactively visualizes the report's comparative table of jazz styles. 4) An 'Architects' section with a data visualization to compare the contributions of key figures. 5) A concluding 'Legacy' section. This structure facilitates user-driven discovery, allowing them to follow their interests (e.g., a specific artist or year) across different contexts without linear constraint, making the dense scholarly material more digestible and engaging. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Chronological album reviews -> Goal: Explore Change -> Viz: Interactive Timeline (HTML/JS) with modal pop-ups for deep dives. Interaction: Click a card to open a modal. Added a Gemini API call to generate new analysis for each album. Justification: Organizes the core content intuitively by year, while modals prevent overwhelming the user with text. The AI feature adds a dynamic layer of content.
+        - Report Info: Comparative table of jazz styles -> Goal: Compare -> Viz: Interactive HTML Table. Interaction: Row/column highlighting on hover/click. Justification: Makes direct comparison of musical traits across genres effortless and visually clear.
+        - Report Info: Analysis of key figures (Davis, Coltrane, Mingus) -> Goal: Show Relationships -> Viz: Polar Area Chart (Chart.js/Canvas). Interaction: Tooltips on hover. Justification: Visually synthesizes the qualitative analysis of each architect's contribution into a memorable, comparative format.
+        - Report Info: All other textual content -> Goal: Inform -> Viz: Structured text blocks. Justification: Presents narrative and explanatory content in a clean, readable format. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #292524; /* stone-800 */
+        }
+        h1, h2, h3 {
+            font-family: 'Lora', serif;
+            font-weight: 600;
+        }
+        .nav-link {
+            transition: color 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #f59e0b; /* amber-500 */
+        }
+        .year-marker {
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .year-marker.active {
+            background-color: #0c4a6e; /* sky-800 */
+            color: white;
+        }
+        .matrix-table th, .matrix-table td {
+            transition: background-color 0.2s;
+        }
+        .matrix-table .highlight {
+            background-color: #fef3c7; /* amber-100 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #0c4a6e; /* Sky-800 */
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <h1 class="text-xl md:text-2xl font-bold text-sky-800 tracking-tight">Controlled Freedom</h1>
+                <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
+                    <a href="#overview" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Overview</a>
+                    <a href="#timeline" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Timeline</a>
+                    <a href="#matrix" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Style Matrix</a>
+                    <a href="#architects" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Architects</a>
+                    <a href="#legacy" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Legacy</a>
+                </div>
+                 <div class="sm:hidden">
+                    <select id="mobile-nav" class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm">
+                        <option value="#overview">Overview</option>
+                        <option value="#timeline">Timeline</option>
+                        <option value="#matrix">Style Matrix</option>
+                        <option value="#architects">Architects</option>
+                        <option value="#legacy">Legacy</option>
+                    </select>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="overview" class="py-16 sm:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+                <h2 class="text-4xl font-bold text-center mb-4 text-sky-900">The Birth of Post-Bop</h2>
+                <p class="text-center text-lg text-stone-600 mb-12">An exploration into the innovative era of "controlled freedom" that redefined jazz between 1958 and 1967.</p>
+                <div class="space-y-6 text-lg leading-relaxed text-stone-700">
+                    <p>The term "post-bop" is a retrospective label for a musical methodology that flourished in the late 1950s and 1960s. It wasn't a genre with rigid rules, but a shared philosophy of <strong class="text-sky-800">"controlled freedom."</strong> Musicians of this era sought a middle ground between the structured harmony of hard bop and the radical abandon of free jazz. They aimed to expand the expressive possibilities of jazz by incorporating harmonic ambiguity and rhythmic complexity without completely discarding form and melody.</p>
+                    <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="timeline" class="py-16 sm:py-20 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-bold text-center mb-4 text-sky-900">Timeline Explorer</h2>
+                <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto">Travel through the golden age of post-bop. Select a year to discover the landmark albums that defined the sound of the era. Click on any album to reveal a detailed analysis of its creation, impact, and musical innovations.</p>
+                <div id="timeline-nav" class="flex flex-wrap justify-center gap-2 mb-12">
+                </div>
+                <div id="album-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                </div>
+            </div>
+        </section>
+
+        <section id="matrix" class="py-16 sm:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-bold text-center mb-4 text-sky-900">The Style Matrix</h2>
+                <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto">Understand what makes post-bop unique by comparing it to its stylistic neighbors. Hover over a style (column) or a musical feature (row) to highlight and compare the distinct approaches to harmony, rhythm, and form.</p>
+                <div class="overflow-x-auto">
+                    <table id="style-matrix-table" class="matrix-table w-full min-w-[800px] border-collapse text-left">
+                        <thead>
+                            <tr>
+                                <th class="p-4 border-b-2 border-stone-300 font-bold text-lg">Feature</th>
+                                <th class="p-4 border-b-2 border-stone-300 font-bold text-lg text-center">Hard Bop</th>
+                                <th class="p-4 border-b-2 border-stone-300 font-bold text-lg text-center">Modal Jazz</th>
+                                <th class="p-4 border-b-2 border-stone-300 font-bold text-lg text-center bg-sky-100">Post-Bop</th>
+                                <th class="p-4 border-b-2 border-stone-300 font-bold text-lg text-center">Free Jazz</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="architects" class="py-16 sm:py-20 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-bold text-center mb-4 text-sky-900">The Architects of Sound</h2>
+                <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto">The post-bop sound was forged by visionary bandleaders and nurtured by a uniquely supportive record label. This chart visualizes the relative contributions of these key architects across several dimensions of innovation, from compositional complexity to cultural impact.</p>
+                <div class="chart-container">
+                    <canvas id="architectsChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <section id="legacy" class="py-16 sm:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+                <h2 class="text-4xl font-bold text-center mb-4 text-sky-900">Legacy and Dissolution</h2>
+                 <p class="text-center text-lg text-stone-600 mb-12">How a golden age splintered into new forms, leaving an indelible mark on the future of music.</p>
+                <div class="space-y-6 text-lg leading-relaxed text-stone-700">
+                    <p>The golden age of acoustic innovation from 1958 to 1967 was a period of intense, shared creativity. However, by its end, the cohesive center of post-bop began to dissolve. The death of John Coltrane in 1967 removed a spiritual and musical lodestar. Simultaneously, Miles Davis began incorporating electric instruments and rock-influenced rhythms, paving the way for jazz-rock fusion with albums like *In a Silent Way* and *Bitches Brew*. This seismic shift created a new mainstream that would dominate the 1970s.</p>
+                    <p>Yet, the legacy of post-bop is profound. Its harmonic, rhythmic, and compositional innovations became a permanent part of the modern jazz vocabulary. In the 1980s, the "Young Lions" movement, led by trumpeter Wynton Marsalis, sparked a "post-bop revival" that looked directly back to the acoustic, small-group aesthetic of the 1960s. This cemented the 1958-1967 period as a classic era, and its language remains the primary foundation for much of the acoustic jazz being played today.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-stone-800 text-stone-300 py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>An interactive exploration based on the "Chronological Encyclopedia of Post-Bop (1958-1967)".</p>
+            <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
+        </div>
+    </footer>
+
+    <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-content" class="modal-content bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div id="modal-header" class="flex justify-between items-center p-4 border-b border-stone-200">
+                <div>
+                    <h3 id="modal-title" class="text-2xl font-bold"></h3>
+                    <p id="modal-artist" class="text-md text-stone-600"></p>
+                </div>
+                <button id="close-modal" class="text-lg font-bold p-2 leading-none">&times;</button>
+            </div>
+            <div id="modal-body" class="p-6 overflow-y-auto">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const albumData = [
+            // 1958
+            {
+                year: 1958,
+                artist: "Thelonious Monk Quartet",
+                title: "Misterioso",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/91/Thelonious_Monk_-_Misterioso.jpg",
+                pivotalTracks: [{ name: "Misterioso", analysis: "Captured during a legendary residency at the Five Spot Café, this recording showcases Thelonious Monk's pivotal role in the adventurous evolution of hard bop. 'Misterioso' is a 12-bar blues, but in Monk's hands, the familiar structure becomes a vehicle for profound innovation. His angular, dissonant piano work and idiosyncratic use of silence challenge bop conventions from the inside out. Supported by the fiery tenor saxophone of Johnny Griffin, Monk demonstrates how a master improviser could deconstruct traditional forms in a live setting, turning a standard into a complex, unpredictable, and thoroughly modern statement." }]
+            },
+            {
+                year: 1958,
+                artist: "Sun Ra and His Arkestra",
+                title: "Jazz in Silhouette",
+                cover: "https://upload.wikimedia.org/wikipedia/en/b/b8/Sun_Ra_-_Jazz_in_Silhouette.jpg",
+                 pivotalTracks: [{ name: "Saturn", analysis: "With 'Saturn,' Sun Ra officially plants the flag for a new cosmic consciousness in jazz. While the piece is rooted in the swing and bop traditions of an orchestra, its theme, propelled by an insistent and otherworldly rhythm, signals a definitive break. This track is a key early document of Afrofuturism and a foundational text for what would become spiritual jazz. By blending familiar big band precision with visionary concepts, 'Saturn' acts as a bridge from the known world to the outer realms the Arkestra would explore, prefiguring the avant-garde and free jazz movements of the coming decade." }]
+            },
+            // 1959
+            {
+                year: 1959,
+                artist: "Charles Mingus",
+                title: "Blues & Roots",
+                cover: "https://upload.wikimedia.org/wikipedia/en/2/21/Charles_Mingus_-_Blues_%26_Roots.jpg",
+                pivotalTracks: [{ name: "Moanin'", analysis: "This track is a visceral manifesto for Mingus's vision of jazz as a deeply rooted art form. In a direct response to critics who found his music overly complex, Mingus created a work of stunning, elemental power. 'Moanin' is built on a simple, earthy baritone saxophone riff that becomes a platform for layered, blues-drenched horns and shouting exhortations. This is a key example of the adventurous evolution of hard bop, as Mingus injects the genre with the raw fervor of a sanctified church service, creating a sound that is simultaneously sophisticated in its arrangement and profoundly primal in its emotional impact." }]
+            },
+            {
+                year: 1959,
+                artist: "Charles Mingus",
+                title: "Mingus Ah Um",
+                cover: "https://upload.wikimedia.org/wikipedia/en/e/e9/Mingus_Ah_Um.jpg",
+                pivotalTracks: [{ name: "Better Git It in Your Soul", analysis: "An explosive opening to one of jazz's most celebrated albums, 'Better Git It in Your Soul' is pure, unadulterated Mingus. Propelled by a hand-clapping, gospel-infused 6/8 time signature, the track erupts with joyous chaos that blurs the line between tight composition and ecstatic collective improvisation. It perfectly encapsulates the increasingly complex and adventurous evolution of hard bop, pushing the music's emotional and structural boundaries. The shouts, hollers, and fiery solos create a work that feels both sacred and wildly secular, prefiguring the spiritual jazz movement while remaining fiercely unique." }]
+            },
+            {
+                year: 1959,
+                artist: "Ornette Coleman",
+                title: "The Shape of Jazz to Come",
+                cover: "https://upload.wikimedia.org/wikipedia/en/7/7b/The_Shape_of_Jazz_to_Come.jpg",
+                 pivotalTracks: [{ name: "Lonely Woman", analysis: "With 'Lonely Woman,' Ornette Coleman officially announced the arrival of the avant-garde as a powerful new language for jazz. The track was revolutionary in its structure: Coleman's achingly lyrical saxophone and Don Cherry's trumpet float a haunting melody completely independent of the frantic, propulsive rhythm set by bassist Charlie Haden and drummer Billy Higgins. By untethering melody from harmony and rhythm, Coleman established that profound feeling could be conveyed without adhering to traditional chord changes. It is a foundational moment for free jazz, demonstrating a new path for improvisation based on pure melodic and emotional logic." }]
+            },
+            {
+                year: 1959,
+                artist: "Ornette Coleman Quartet",
+                title: "Change of the Century",
+                cover: "https://upload.wikimedia.org/wikipedia/en/a/a2/Change_of_the_Century.jpg",
+                 pivotalTracks: [{ name: "Ramblin'", analysis: "If 'Lonely Woman' showcased the sorrowful, atmospheric potential of free jazz, 'Ramblin'' revealed its bluesy, swaggering heart. The track is built around a jaunty, down-home theme that feels distantly related to country and blues traditions. Coleman and Don Cherry then proceed to deconstruct this theme in their improvisations, engaging in a spirited, conversational interplay that follows its own internal logic. 'Ramblin'' was pivotal in demonstrating that the avant-garde wasn't merely abstract noise; it could be playful, thematic, and deeply connected to American folk forms, even as it liberated them from their harmonic constraints." }]
+            },
+            // 1960
+            {
+                year: 1960,
+                artist: "Eric Dolphy Quintet",
+                title: "Outward Bound",
+                cover: "https://upload.wikimedia.org/wikipedia/en/d/dc/Eric_Dolphy_-_Outward_Bound.jpg",
+                pivotalTracks: [{name: "G.W.", analysis: "On his debut as a leader, Eric Dolphy immediately establishes himself as a pivotal voice, creating a style that is both 'inside' and 'outside' the tradition. 'G.W.' (named for composer Gerald Wilson) is rooted in a sophisticated hard bop structure, yet Dolphy's solos on alto sax and bass clarinet are filled with startlingly wide melodic leaps and harmonic risks that stretch the form to its breaking point. This track is a key document of the adventurous evolution of hard bop, acting as a bridge between its established conventions and the freer explorations that Dolphy himself would help champion."}]
+            },
+            {
+                year: 1960,
+                artist: "Ornette Coleman",
+                title: "This Is Our Music",
+                cover: "https://upload.wikimedia.org/wikipedia/en/f/f6/This_Is_Our_Music.jpg",
+                pivotalTracks: [{name: "Beauty Is a Rare Thing", analysis: "With a title that doubles as a mission statement, this track showcases the rapid maturation of Ornette Coleman's free jazz concept. Moving beyond the blues-based tunes of 1959, 'Beauty Is a Rare Thing' delves into pure abstract sound painting. The quartet engages in collective improvisation without a fixed tempo or harmonic center, with trumpeter Don Cherry and Coleman weaving melodies that seem to float in space. This piece is a benchmark for the growing avant-garde, demonstrating a move away from liberating standard forms toward the creation of entirely new ones based on texture, mood, and spontaneous interaction."}]
+            },
+            {
+                year: 1960,
+                artist: "Eric Dolphy",
+                title: "Out There",
+                cover: "https://upload.wikimedia.org/wikipedia/en/b/b5/Eric_Dolphy_Out_There.jpg",
+                pivotalTracks: [{name: "Out There", analysis: "The revolutionary sound of this track is announced by its instrumentation: bass clarinet, cello (played by Ron Carter), bass, and drums. By removing the piano, Dolphy opens up immense harmonic space, creating a stark, cerebral, and wholly unique sonic landscape. The cello provides a brooding, chamber-music texture that distinguishes the work from anything else in the jazz canon. 'Out There' is a landmark of the burgeoning avant-garde, positioning Dolphy as a fearless innovator who was charting a 'third stream' path between jazz and classical modernism."}]
+            },
+            {
+                year: 1960,
+                artist: "Max Roach",
+                title: "We Insist! Max Roach's Freedom Now Suite",
+                cover: "https://upload.wikimedia.org/wikipedia/en/0/01/We_Insist%21.jpg",
+                pivotalTracks: [{name: "Driva' man", analysis: "This piece marks a crucial moment where post-bop becomes an explicit vehicle for protest. 'Driva' man' is a raw and harrowing depiction of slavery, built on an unrelenting 5/4 time signature that evokes the rhythm of a work song. Featuring the searing, blues-drenched vocals of Abbey Lincoln and a blistering, cathartic tenor saxophone solo from veteran Coleman Hawkins, the track directly connects the historical suffering of Black Americans to the contemporary Civil Rights struggle. It is a foundational work of political jazz, demonstrating how the era's adventurous spirit could be channeled into a powerful social statement."}]
+            },
+            {
+                year: 1960,
+                artist: "George Russell Sextet",
+                title: "Stratusphunk",
+                cover: "https://upload.wikimedia.org/wikipedia/en/8/87/George_Russell_-_Stratusphunk.jpg",
+                pivotalTracks: [{name: "Stratusphunk", analysis: "As one of the primary theorists behind modal jazz, George Russell proves its soulful potential with 'Stratusphunk.' The track is built on a simple, infectious, and bluesy vamp that allows the soloists to explore melodies based on scales rather than complex chord changes. This performance was pivotal in demonstrating that modal jazz wasn't limited to ethereal soundscapes; it could be funky, accessible, and serve as the foundation for an incredibly adventurous and forward-thinking strain of hard bop. It codified a new approach to improvisation that was both intellectually rigorous and deeply grooving."}]
+            },
+            {
+                year: 1960,
+                artist: "Charles Mingus",
+                title: "Charles Mingus Presents Charles Mingus",
+                cover: "https://upload.wikimedia.org/wikipedia/en/3/3d/Charles_Mingus_Presents_Charles_Mingus.jpg",
+                pivotalTracks: [{name: "Original Faubus Fables", analysis: "After Columbia Records censored the lyrics on a previous version, Mingus unleashed his full fury on this recording. A landmark of jazz as protest, the piece is a scathing, satirical attack on the segregationist Arkansas Governor Orval Faubus, with Mingus and drummer Dannie Richmond shouting the scornful lyrics. The music veers from a deceptively child-like theme to outbursts of chaotic, free-form improvisation, perfectly capturing the rage and absurdity of the political moment. It is a definitive statement from the jazz avant-garde, inextricably linking musical freedom with the fight for social justice."}]
+            },
+            {
+                year: 1960,
+                artist: "John Coltrane",
+                title: "My Favorite Things",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/9b/My_Favorite_Things.jpg",
+                pivotalTracks: [{name: "My Favorite Things", analysis: "This 14-minute transformation of a popular show tune into a hypnotic, trance-inducing exploration is one of the most important recordings of the decade. By stripping the song's harmony down to a simple modal vamp, Coltrane opens the door for relentless melodic and rhythmic invention. His choice of the soprano saxophone, then a rarity, gave the performance a piercing, snake-charmer quality that was mesmerizing. The track became a massive commercial and artistic success, introducing modal jazz to a wide audience and marking a crucial signpost on Coltrane's path toward the overtly spiritual jazz that would define his legacy."}]
+            },
+            {
+                year: 1960,
+                artist: "The Gil Evans Orchestra",
+                title: "Out of the Cool",
+                cover: "https://upload.wikimedia.org/wikipedia/en/4/4b/Out_of_the_Cool.jpg",
+                pivotalTracks: [{name: "La Nevada", analysis: "Renowned for his lush arrangements, Gil Evans masterfully applies his orchestral genius to a modal framework. 'La Nevada' is a long-form piece built on a simple, floating Latin-tinged vamp, which Evans uses as a canvas for his signature palette of instrumental colors and textures. He creates waves of sound that ebb and flow, providing a deep, open field for his soloists to explore freely. The piece is a landmark in demonstrating how the principles of modal jazz could be expanded to a large ensemble, pushing the boundaries of the jazz orchestra far beyond traditional hard bop."}]
+            },
+            // 1961
+            {
+                year: 1961,
+                artist: "Oliver Nelson",
+                title: "The Blues and the Abstract Truth",
+                cover: "https://upload.wikimedia.org/wikipedia/en/e/e4/The_Blues_and_the_Abstract_Truth.jpg",
+                pivotalTracks: [{name: "Stolen Moments", analysis: "A pinnacle of sophisticated, arranged post-bop, 'Stolen Moments' is a masterpiece of mood and structure. Built on a slow, 16-bar minor blues form, composer Oliver Nelson creates a cinematic canvas for an all-star lineup. The solos from trumpeter Freddie Hubbard and altoist Eric Dolphy are legendary, but it is the track's elegant architecture and cool, abstract atmosphere that make it pivotal. It represents the ultimate refinement of the blues within a modern, slightly modal context, proving that formal composition and improvisational freedom could result in work of timeless beauty."}]
+            },
+            {
+                year: 1961,
+                artist: "Booker Little",
+                title: "Out Front",
+                cover: "https://upload.wikimedia.org/wikipedia/en/6/69/Booker_Little_-_Out_Front.jpg",
+                pivotalTracks: [{name: "Opening Statement", analysis: "Trumpeter Booker Little demonstrates a brilliant and tragically short-lived vision for the future of jazz with this piece. 'Opening Statement' is a key document from a composer finding a unique path between the lyricism of hard bop and the harmonic freedom of the avant-garde. The track is marked by dissonant yet beautifully resolved harmonies and daring melodic lines that challenge conventional song form. It represents a more composed, structured approach to the new freedoms, a vital 'third way' in the evolution of hard bop that was lost with Little's death just months after this recording."}]
+            },
+            {
+                year: 1961,
+                artist: "Hank Mobley",
+                title: "Workout",
+                cover: "https://upload.wikimedia.org/wikipedia/en/e/e1/Hank_Mobley_-_Workout.jpg",
+                pivotalTracks: [{name: "Workout", analysis: "This track is a quintessential example of the highest level of hard bop, a style being perfected even as it was being challenged by other movements. Tenor saxophonist Hank Mobley, backed by a flawless rhythm section, navigates the fast-moving 'rhythm changes' structure with incredible agility and melodic invention. 'Workout' is not about deconstruction but about mastery. It showcases the intricate, high-wire act of creating complex, logical, and soulful improvisations within a traditional framework, representing the powerful, blues-based language that remained the bedrock of the New York jazz scene."}]
+            },
+            {
+                year: 1961,
+                artist: "John Coltrane",
+                title: "Olé Coltrane",
+                cover: "https://upload.wikimedia.org/wikipedia/en/4/41/Ol%C3%A9_Coltrane.jpg",
+                pivotalTracks: [{name: "Olé", analysis: "Drawing inspiration from the Spanish folk song 'El Vito,' Coltrane creates a hypnotic, extended modal piece that serves as a crucial bridge to his more spiritual works. The track is built on a simple, driving vamp, over which Coltrane on soprano sax and Eric Dolphy on flute deliver searching, trance-like improvisations. The distinct Spanish flavor and rhythmic intensity signal Coltrane's growing interest in world music forms as vehicles for spiritual exploration. 'Olé' is a key early indicator of the transcendent, mantra-like approach that would soon define his music."}]
+            },
+            {
+                year: 1961,
+                artist: "John Coltrane",
+                title: "Africa/Brass",
+                cover: "https://upload.wikimedia.org/wikipedia/en/d/dd/Africa_Brass.jpg",
+                pivotalTracks: [{name: "Africa", analysis: "Coltrane's first recording with a large orchestra is a monumental work of spiritual jazz. With powerful, innovative arrangements co-credited to Eric Dolphy, 'Africa' is built not on complex chords but on a deep, resonant drone from two basses, creating an earthy, foundational hum. Over this modal bedrock, the orchestra builds massive waves of sound and texture, providing a turbulent sea for Coltrane's declarative tenor saxophone solo. The piece is a conscious effort to connect jazz to its ancestral origins, a bold step into avant-garde orchestration and a definitive statement of the music's spiritual potential."}]
+            },
+            {
+                year: 1961,
+                artist: "Bill Evans Trio",
+                title: "Waltz for Debby",
+                cover: "https://upload.wikimedia.org/wikipedia/en/f/f7/Waltz_for_Debby.jpg",
+                pivotalTracks: [{name: "Waltz for Debby (Take 2) - Live", analysis: "Recorded just ten days before the death of bassist Scott LaFaro, this performance captures the revolutionary interplay of the Bill Evans Trio at its zenith. The piece redefines the piano trio by breaking down the hierarchical roles of soloist and accompanist. LaFaro's bass engages in melodic counterpoint and conversation with Evans's piano, while Paul Motian's drumming provides subtle texture and commentary. This established a new, deeply sensitive, and interactive paradigm for small group jazz, a complex evolution of the bop tradition that influenced generations of musicians."}]
+            },
+            {
+                year: 1961,
+                artist: "Freddie Hubbard",
+                title: "Ready for Freddie",
+                cover: "https://upload.wikimedia.org/wikipedia/en/e/ec/Ready_for_Freddie.jpg",
+                pivotalTracks: [{name: "Arietis", analysis: "A collaboration between the leading young voices of a new generation, 'Arietis' showcases the spreading influence of modal concepts within hard bop. The piece, composed by tenor saxophonist Wayne Shorter, features long stretches where the soloists improvise with immense freedom over a pedal point rather than a set of chord changes. This adventurous approach, executed with fiery precision by trumpeter Freddie Hubbard and the rest of the sextet, demonstrates how the top-tier players were integrating modal and free concepts into a powerful, forward-looking evolution of the hard bop style."}]
+            },
+            {
+                year: 1961,
+                artist: "Art Blakey & The Jazz Messengers",
+                title: "Mosaic",
+                cover: "https://upload.wikimedia.org/wikipedia/en/5/52/Art_Blakey_-_Mosaic.jpg",
+                pivotalTracks: [{name: "Mosaic", analysis: "With the arrival of Wayne Shorter, Freddie Hubbard, and pianist Cedar Walton, Art Blakey's legendary Jazz Messengers entered a new, more adventurous phase. Walton's composition 'Mosaic' exemplifies this shift. Its complex, shifting structure and harmonically sophisticated melody provided a challenging new landscape for the high-energy improvisation that was the band's trademark. The track proves that the hard bop format was not a static entity, but a living language capable of evolving in complexity and ambition, serving as a vital platform for the next wave of innovators."}]
+            },
+            {
+                year: 1961,
+                artist: "John Coltrane Quartet",
+                title: "The Complete 1961 Village Vanguard Recordings",
+                cover: "https://upload.wikimedia.org/wikipedia/en/7/75/Coltrane_Live_at_the_Village_Vanguard.jpg",
+                pivotalTracks: [{name: "Impressions - Live", analysis: "This is the sound of modal jazz being pushed to its absolute limit. Captured live at the Village Vanguard with his 'classic quartet,' Coltrane takes the simple modal form of 'So What' and transforms it into a vortex of energy. Propelled by the polyrhythmic fury of drummer Elvin Jones, Coltrane unleashes a tenor saxophone solo of breathtaking intensity and endurance. This performance is a definitive statement of his quest for transcendence, where the modal structure serves as a runway for a flight of pure, cathartic, and spiritually charged expression that borders on the avant-garde."}]
+            },
+            // 1962
+            {
+                year: 1962,
+                artist: "Sonny Rollins",
+                title: "The Bridge",
+                cover: "https://upload.wikimedia.org/wikipedia/en/d/d7/Sonny_Rollins_-_The_Bridge.jpg",
+                pivotalTracks: [{name: "The Bridge", analysis: "After a two-year sabbatical spent practicing on the Williamsburg Bridge, Sonny Rollins returned not with a radical new style, but with a powerfully refined and focused voice. The title track showcases this evolution. Playing alongside guitarist Jim Hall, who provides a cooler, more spacious harmonic context than a piano, Rollins improvises with astounding thematic coherence. This performance represents an adventurous evolution of hard bop driven by introspection, demonstrating how a master could reinvent his approach to improvisation by altering his instrumental environment and digging deeper into musical structure."}]
+            },
+            {
+                year: 1962,
+                artist: "Max Roach",
+                title: "It's Time",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/91/It%27s_Time_%28Max_Roach_album%29.jpg",
+                pivotalTracks: [{name: "Lonesome Lover", analysis: "Building on the political statements of his Freedom Now Suite, Max Roach expands his musical and spiritual vision by incorporating a full choir. 'Lonesome Lover,' featuring the vocals of Abbey Lincoln, seamlessly merges the adventurous energy of a post-bop quintet with the soaring power of a gospel choir. This ambitious fusion was a significant step in the development of spiritual jazz, pushing the boundaries of the music's texture and scale to create a work of immense emotional and social resonance."}]
+            },
+            {
+                year: 1962,
+                artist: "Jackie McLean",
+                title: "Let Freedom Ring",
+                cover: "https://upload.wikimedia.org/wikipedia/en/b/b3/Let_Freedom_Ring_%28album%29.jpg",
+                pivotalTracks: [{name: "Melody for Melonae", analysis: "With this album, alto saxophonist Jackie McLean steps decisively from the world of advanced hard bop into the new territory of the avant-garde. 'Melody for Melonae' is a pivotal track that captures this transition. While grounded in McLean's signature blues-inflected cry, his solos push deliberately against standard harmony, embracing a raw, fiery freedom inspired by Ornette Coleman. It is the sound of a seasoned master breaking his own rules, marking a crucial link between the intricate structures of hard bop and the burgeoning free jazz movement."}]
+            },
+            {
+                year: 1962,
+                artist: "Herbie Hancock",
+                title: "Takin' Off",
+                cover: "https://upload.wikimedia.org/wikipedia/en/a/a5/Herbie_Hancock_-_Takin%27_Off.jpg",
+                pivotalTracks: [{name: "Watermelon Man", analysis: "On his debut album, a 22-year-old Herbie Hancock created an instant standard that became a cornerstone of soul jazz. The genius of 'Watermelon Man' lies in its perfect synthesis of an earthy, R&B-derived groove with the sophisticated harmonic language of post-bop. Its catchy, 16-bar blues form was both accessible and a launchpad for brilliant, concise solos from Hancock and trumpeter Freddie Hubbard. The track was pivotal in defining a commercially successful and musically rich evolution of the hard bop tradition."}]
+            },
+            {
+                year: 1962,
+                artist: "Dexter Gordon",
+                title: "Go!",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/93/Dexter_Gordon_-_Go.jpg",
+                pivotalTracks: [{name: "Cheese Cake", analysis: "This track is a masterclass in the enduring power of the hard bop tradition. Marking a triumphant return to prominence for tenor giant Dexter Gordon, 'Cheese Cake' is not about challenging the form but perfecting it. Gordon's huge, commanding tone, relaxed swing, and supreme storytelling confidence are on full display. In a year of increasing freedom and abstraction, this performance is a vital touchstone, representing the pinnacle of mainstream post-bop, executed with an authority and elegance that influenced countless players."}]
+            },
+            {
+                year: 1962,
+                artist: "Duke Ellington",
+                title: "Money Jungle",
+                cover: "https://upload.wikimedia.org/wikipedia/en/a/a2/Money_Jungle.jpg",
+                pivotalTracks: [{name: "Money Jungle", analysis: "This volatile summit meeting places jazz's most revered composer alongside two of its most fiery modernists, bassist Charles Mingus and drummer Max Roach. The title track is a raw, percussive, and brilliantly contentious deconstruction of the blues. Ellington's stabbing, modernist piano spars with the turbulent, almost free-form rhythm section, creating a sound of thrilling tension. It's a singular moment in the avant-garde, demonstrating Ellington's timeless modernity and his willingness to engage with the chaotic, revolutionary energy of the post-bop era."}]
+            },
+            {
+                year: 1962,
+                artist: "Duke Ellington & John Coltrane",
+                title: "Duke Ellington & John Coltrane",
+                cover: "https://upload.wikimedia.org/wikipedia/en/1/18/Duke_Ellington_%26_John_Coltrane.jpg",
+                pivotalTracks: [{name: "In A Sentimental Mood", analysis: "A historic summit of a completely different nature, this performance is a masterclass in reverence and restraint. John Coltrane, the era's most restless seeker, shelves his 'sheets of sound' to deliver a tender, lyrical, and breathtakingly beautiful reading of Ellington's classic ballad. The interplay between Coltrane's warm tenor and Ellington's sparse, elegant piano accompaniment creates a moment of pure grace. This was a pivotal meeting of the tradition and the revolution, showcasing a shared spiritual depth and proving that Coltrane's quest could also be found in stillness."}]
+            },
+            {
+                year: 1962,
+                artist: "Freddie Hubbard",
+                title: "Hub-Tones",
+                cover: "https://upload.wikimedia.org/wikipedia/en/b/b8/Freddie_Hubbard_-_Hub-Tones.jpg",
+                pivotalTracks: [{name: "Hub-Tones", analysis: "The title track from this classic album showcases trumpeter Freddie Hubbard leading a new generation of players into more abstract territory. The composition is built on a series of suspended, ambiguous harmonies, creating a distinctly modal feel that liberates the soloists from conventional chord changes. Featuring brilliant flute work from James Spaulding, 'Hub-Tones' is a prime example of the adventurous evolution of hard bop, as players absorbed the harmonic lessons of modal jazz to create music that was both intellectually challenging and brilliantly cohesive."}]
+            },
+            {
+                year: 1962,
+                artist: "Thelonious Monk",
+                title: "Monk's Dream",
+                cover: "https://upload.wikimedia.org/wikipedia/en/6/67/Monk%27s_Dream.jpg",
+                pivotalTracks: [{name: "Monk's Dream - Take 8", analysis: "This recording, from Monk's high-profile debut on Columbia Records, presents a perfectly polished and definitive version of one of his signature compositions. With his stable working quartet featuring saxophonist Charlie Rouse, Monk delivers the tune with a confident swing that made his eccentric musical language more accessible than ever before. This track doesn't represent a new direction but rather the confident codification of a revolutionary style. It is the sound of one of post-bop's key architects perfecting his unique language for a worldwide audience."}]
+            },
+            // 1963
+            {
+                year: 1963,
+                artist: "Kenny Burrell",
+                title: "Midnight Blue",
+                cover: "https://upload.wikimedia.org/wikipedia/en/6/68/Kenny_Burrell_-_Midnight_Blue.jpg",
+                pivotalTracks: [{name: "Midnight Blue", analysis: "In an era of increasing complexity, this title track is a pivotal statement on the enduring power of simplicity. Guitarist Kenny Burrell strips jazz down to its essence: a slow, elemental, and deeply felt blues. Forsaking a piano for the raw interplay between his guitar and Stanley Turrentine's soulful tenor saxophone, Burrell creates the definitive late-night blues statement. It's a masterclass in mood and groove that serves as a vital reminder of the foundation upon which all of post-bop's adventurous evolutions were built."}]
+            },
+            {
+                year: 1963,
+                artist: "Charles Mingus",
+                title: "The Black Saint and the Sinner Lady",
+                cover: "https://upload.wikimedia.org/wikipedia/en/a/a9/The_Black_Saint_and_the_Sinner_Lady.jpg",
+                pivotalTracks: [{name: "Track A - Solo Dancer", analysis: "This is the opening movement of Charles Mingus's magnum opus, a seamless, six-part ballet that stands as a landmark of long-form jazz composition. 'Solo Dancer' blends Spanish modes, blues hollers, and the orchestral color of Duke Ellington into a work of immense psychological and spiritual depth. The piece's shifting tempos and passionate, avant-garde-tinged solos announced a new level of compositional ambition, pushing far beyond the limits of hard bop into the realm of profound, programmatic art music."}]
+            },
+            {
+                year: 1963,
+                artist: "Herbie Hancock",
+                title: "My Point of View",
+                cover: "https://upload.wikimedia.org/wikipedia/en/5/5e/Herbie_Hancock_-_My_Point_of_View.jpg",
+                pivotalTracks: [{name: "King Cobra", analysis: "Moving decisively beyond the accessible funk of his debut, Herbie Hancock showcases his rapidly evolving compositional genius with 'King Cobra.' The piece is built on a slippery, serpentine melody and a harmonically sophisticated structure that constantly shifts under the soloist. It's a challenging piece that requires intense focus from the ensemble, perfectly exemplifying the adventurous, composer-driven ethos that defined Blue Note Records in this period and marking a key step in Hancock's own evolution."}]
+            },
+            {
+                year: 1963,
+                artist: "Kenny Dorham",
+                title: "Una Mas",
+                cover: "https://upload.wikimedia.org/wikipedia/en/d/dd/Kenny_Dorham_-_Una_Mas.jpg",
+                pivotalTracks: [{name: "Una Mas (One More Time)", analysis: "This 15-minute journey is a masterclass in patient, smoldering tension. Trumpeter Kenny Dorham crafts a piece built on a simple, hypnotic Latin vamp, a modal concept that allows for long, exploratory improvisations. The track is pivotal for showcasing a young, powerhouse rhythm section (Herbie Hancock, Butch Warren, and a 16-year-old Tony Williams) and for the epic solos by Dorham and Joe Henderson. It demonstrates the evolution of hard bop into longer forms, using modal jazz as a gateway to sustained, deep-groove improvisation."}]
+            },
+            {
+                year: 1963,
+                artist: "Miles Davis",
+                title: "Seven Steps to Heaven",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/9c/Seven_Steps_to_Heaven.jpg",
+                pivotalTracks: [{name: "Seven Steps to Heaven", analysis: "This track signals a critical turning point for Miles Davis and the birth of his Second Great Quintet. Played at a blistering tempo, the piece is a formidable showcase of technical and improvisational prowess. It marks the recorded debut of drummer Tony Williams, whose explosive, interactive style immediately redefines the band's energy. This aggressive, harmonically complex take on hard bop was a clear break from the past, setting the stage for the revolutionary modal deconstructions the new quintet would pioneer."}]
+            },
+            {
+                year: 1963,
+                artist: "Gil Evans",
+                title: "The Individualism of Gil Evans",
+                cover: "https://upload.wikimedia.org/wikipedia/en/7/7b/The_Individualism_of_Gil_Evans.jpg",
+                pivotalTracks: [{name: "The Barbara Song", analysis: "A sublime interpretation of a Kurt Weill composition, this track is a definitive statement from one of jazz's greatest orchestrators. Gil Evans creates a floating, dreamlike soundscape, using his unique mastery of instrumental color and texture to craft a world that is both lush and deeply modern. Wayne Shorter's lyrical tenor saxophone solo is perfectly integrated into Evans's sonic tapestry. The piece is a landmark of the 'third stream' movement, representing a complex and deeply personal evolution of the jazz orchestra."}]
+            },
+            {
+                year: 1963,
+                artist: "Jackie McLean",
+                title: "Destination... Out!",
+                cover: "https://upload.wikimedia.org/wikipedia/en/2/25/Jackie_McLean_-_Destination..._Out%21.jpg",
+                pivotalTracks: [{name: "Love And Hate", analysis: "Pushing further into the avant-garde, Jackie McLean expands his sonic palette by adding the trombone of Grachan Moncur III and the vibraphone of Bobby Hutcherson. 'Love And Hate' is defined by this new textural combination. The theme is fragmented, and the solos unfold over a free, churning rhythmic base with a sense of barely controlled chaos. The piece is a key step in the development of free jazz, shifting the focus toward textural and collective improvisation where mood and color become as important as melody."}]
+            },
+            {
+                year: 1963,
+                artist: "Grant Green",
+                title: "Idle Moments",
+                cover: "https://upload.wikimedia.org/wikipedia/en/5/52/Grant_Green_-_Idle_Moments.jpg",
+                pivotalTracks: [{name: "Idle Moments", analysis: "An accidental masterpiece, this nearly 15-minute ballad became a defining statement of the modal blues. Played at a spellbindingly slow tempo, the piece creates a meditative, hypnotic atmosphere that gives the soloists vast space to explore. The lyrical, introspective improvisations from guitarist Grant Green and saxophonist Joe Henderson are studies in poise and melodicism. It is a pivotal recording that perfects a kind of blues-inflected, modal quiet fire, influencing countless musicians with its profound sense of patience and mood."}]
+            },
+            {
+                year: 1963,
+                artist: "Andrew Hill",
+                title: "Black Fire",
+                cover: "https://upload.wikimedia.org/wikipedia/en/a/ad/Andrew_Hill_-_Black_Fire.jpg",
+                pivotalTracks: [{name: "Black Fire", analysis: "With his debut as a leader, pianist Andrew Hill announced himself as one of the era's most singular and sophisticated composers. The title track, 'Black Fire,' is a perfect introduction to his style: rhythmically complex, harmonically elusive, and structurally unpredictable. Hill's music occupies a unique space between advanced hard bop and the avant-garde, maintaining a dark, bluesy core while constantly subverting expectations. This track was the stunning arrival of a vital, unclassifiable new voice."}]
+            },
+            {
+                year: 1963,
+                artist: "Grachan Moncur III",
+                title: "Evolution",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/91/Grachan_Moncur_III_-_Evolution.jpg",
+                pivotalTracks: [{name: "Evolution", analysis: "The title track from the trombonist's debut album is a foundational text of the 1960s jazz avant-garde. Composer Grachan Moncur III creates a dark, spacious, and highly atmospheric sound-world, using a unique frontline of trombone, trumpet, and alto sax, colored by the shimmering vibraphone of Bobby Hutcherson. Moving through distinct thematic sections, 'Evolution' possesses a powerful sense of narrative momentum, establishing Moncur as a key compositional voice who was pushing free jazz into more structured, programmatic territory."}]
+            },
+            {
+                year: 1963,
+                artist: "Booker Ervin",
+                title: "The Freedom Book",
+                cover: "https://upload.wikimedia.org/wikipedia/en/b/b3/Booker_Ervin_-_The_Freedom_Book.jpg",
+                pivotalTracks: [{name: "A Lunar Tune", analysis: "Coming from an album explicitly titled The Freedom Book, this track showcases tenor saxophonist Booker Ervin's gutsy, blues-drenched approach to the new jazz. Ervin takes the harmonic freedom of modal playing and channels it through the raw, powerful cry of the Texas tenor tradition. His fiercely exploratory solo soars over the churning rhythm section, creating a pivotal synthesis of 'inside' and 'outside' playing. It's a perfect example of how the era's new freedoms were being personalized by players with deep roots in the blues."}]
+            },
+            {
+                year: 1963,
+                artist: "Lee Morgan",
+                title: "The Sidewinder",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/95/The_Sidewinder.jpg",
+                pivotalTracks: [{name: "The Sidewinder", analysis: "This infectious, 24-bar blues became a runaway hit that defined the boogaloo craze and secured the financial future of Blue Note Records. While the high-level hard bop solos from trumpeter Lee Morgan and saxophonist Joe Henderson are superb, the track's pivotal contribution is its irresistible, dance-floor-oriented rhythm. 'The Sidewinder' marks a major evolution for hard bop, infusing it with a heavy dose of R&B funk and creating a massively popular and influential new strain of soul jazz."}]
+            },
+            // 1964
+            {
+                year: 1964,
+                artist: "Art Blakey & The Jazz Messengers",
+                title: "Free For All",
+                cover: "https://upload.wikimedia.org/wikipedia/en/3/36/Art_Blakey_-_Free_For_All.jpg",
+                pivotalTracks: [{name: "Free For All", analysis: "This is the sound of a hard bop institution being pushed to its absolute breaking point. Driven by Art Blakey's volcanic drumming, the title track is a cathartic explosion of energy that borders on the avant-garde. The ferocious solos by Wayne Shorter and Freddie Hubbard dispense with bebop elegance in favor of raw, visceral cries. This pivotal performance demonstrates how the scorching intensity of free jazz was being absorbed back into the mainstream, resulting in an adventurous evolution of hard bop defined by unparalleled power."}]
+            },
+            {
+                year: 1964,
+                artist: "Lee Morgan",
+                title: "Search for the New Land",
+                cover: "https://upload.wikimedia.org/wikipedia/en/4/41/Lee_Morgan_-_Search_for_the_New_Land.jpg",
+                pivotalTracks: [{name: "Search For The New Land", analysis: "In this stunning, 16-minute epic, Lee Morgan moves far beyond his boogaloo hits to create a major compositional statement. The piece unfolds in distinct, cinematic movements, showcasing a new level of ambition and structural sophistication. Blending modal harmony with a searching, spiritual quality, the track is a prime example of the adventurous evolution of hard bop, as leading artists began crafting long-form, episodic works that reflected the era's expansive consciousness."}]
+            },
+            {
+                year: 1964,
+                artist: "Eric Dolphy",
+                title: "Out to Lunch!",
+                cover: "https://upload.wikimedia.org/wikipedia/en/0/03/Eric_Dolphy_-_Out_to_Lunch%21.jpg",
+                pivotalTracks: [{name: "Hat And Beard", analysis: "A tribute to Thelonious Monk, 'Hat and Beard' is a definitive example of Eric Dolphy's 'organized freedom' and a cornerstone of the jazz avant-garde. The track uses a quirky, angular theme as a jumping-off point for breathtakingly abstract improvisations from Dolphy, Freddie Hubbard, and vibraphonist Bobby Hutcherson. The rhythm section of Richard Davis and Tony Williams liberates the beat entirely, creating a fluid, conversational pulse. It is a masterpiece of structured yet completely untethered improvisation."}]
+            },
+            {
+                year: 1964,
+                artist: "Andrew Hill",
+                title: "Point of Departure",
+                cover: "https://upload.wikimedia.org/wikipedia/en/c/c2/Andrew_Hill_-_Point_of_Departure.jpg",
+                pivotalTracks: [{name: "Refuge", analysis: "From one of the most celebrated sessions of the avant-garde, 'Refuge' is a perfect encapsulation of Andrew Hill's singular compositional vision. The piece is tense and rhythmically complex, providing a turbulent, shifting framework for a legendary ensemble including Eric Dolphy and Joe Henderson. Hill's writing occupies a unique space between intricate structure and explosive freedom, pushing his players to the edge and epitomizing the adventurous, composer-led evolution that defined this era of jazz."}]
+            },
+            {
+                year: 1964,
+                artist: "Charles Mingus",
+                title: "Town Hall Concert",
+                cover: "https://upload.wikimedia.org/wikipedia/en/e/e0/Charles_Mingus_Town_Hall_Concert_1964.jpg",
+                pivotalTracks: [{name: "Meditations on Integration", analysis: "One of Mingus's most profound political statements, this sprawling, programmatic work depicts the struggle for civil rights in sound. The music moves through passages of chaotic turmoil, deep despair, and moments of sublime, prayerful beauty. Featuring a legendary, searching performance by Eric Dolphy on flute and bass clarinet, the piece is a pinnacle of the avant-garde as social commentary and a key document in the formation of spiritual jazz, directly linking the music's quest for freedom with the fight for social justice."}]
+            },
+            {
+                year: 1964,
+                artist: "John Coltrane Quartet",
+                title: "Crescent",
+                cover: "https://upload.wikimedia.org/wikipedia/en/e/e7/John_Coltrane_-_Crescent.jpg",
+                pivotalTracks: [{name: "Crescent", analysis: "Serving as the contemplative prelude to the spiritual eruption of A Love Supreme, this title track is a ballad of immense weight and patience. Coltrane's magnificent tenor saxophone solo is a model of melodic construction, building with logical and emotional clarity over the quartet's shimmering modal landscape. The piece is a pivotal showcase of the deep, introspective side of Coltrane's spiritual quest, demonstrating that his search for the divine could be expressed as powerfully through stillness as through fire."}]
+            },
+            {
+                year: 1964,
+                artist: "Herbie Hancock",
+                title: "Empyrean Isles",
+                cover: "https://upload.wikimedia.org/wikipedia/en/b/b5/Herbie_Hancock_-_Empyrean_Isles.jpg",
+                pivotalTracks: [{name: "One Finger Snap", analysis: "This track is a masterclass in compositional flexibility and a showcase for the nascent Miles Davis Second Great Quintet rhythm section. The piece is constructed with an open-ended structure that allows the solo section to be interpreted with different tempos and rhythms, making the song form itself an interactive part of the improvisation. It is a perfect example of the increasingly complex and adventurous evolution of hard bop, where the era's leading composers were creating new rhythmic and structural puzzles for the soloists to solve."}]
+            },
+            {
+                year: 1964,
+                artist: "Grachan Moncur III",
+                title: "Some Other Stuff",
+                cover: "https://upload.wikimedia.org/wikipedia/en/e/e9/Grachan_Moncur_III_-_Some_Other_Stuff.jpg",
+                pivotalTracks: [{name: "Gnostic", analysis: "On his second album as a leader, trombonist Grachan Moncur III continues to chart a highly original path through the avant-garde. 'Gnostic' is a mysterious, slow-burning piece that evokes a sense of ancient ritual. The composition unfolds with deliberate patience, using the unique textures of trombone, saxophone, and trumpet to build a profound atmosphere of spiritual inquiry. It is a key work from the free jazz movement as it evolved beyond explosive energy toward more esoteric and contemplative territory."}]
+            },
+            {
+                year: 1964,
+                artist: "Albert Ayler",
+                title: "Spiritual Unity",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/90/Spiritual_Unity.jpg",
+                pivotalTracks: [{name: "Ghosts (First Variation)", analysis: "A foundational statement of free jazz in its most radical form. On 'Ghosts,' Albert Ayler's trio dispenses almost entirely with conventional melody, harmony, and rhythm. Ayler takes a simple, folk-like theme and uses it as a launching point for ecstatic, overblown saxophone cries that prioritize raw sound and energy above all else. This was a pivotal moment for the avant-garde, pushing into pure sonic expression and establishing the revival-meeting fervor that would become a key element of spiritual jazz."}]
+            },
+            {
+                year: 1964,
+                artist: "Wayne Shorter",
+                title: "Juju",
+                cover: "https://upload.wikimedia.org/wikipedia/en/2/23/Wayne_Shorter_-_Juju.jpg",
+                pivotalTracks: [{name: "Juju", analysis: "With the title track of this landmark album, Wayne Shorter steps into the formidable territory of John Coltrane and emerges with his own singular vision. Using Coltrane's own rhythm section, Shorter builds upon a hypnotic, Afro-centric modal vamp. But his tenor saxophone solo and enigmatic compositional voice are entirely his own. The track is a pivotal moment in the evolution of modal jazz, demonstrating how the Coltrane paradigm could be used by another master as a catalyst for a deeply personal and brilliant statement."}]
+            },
+            {
+                year: 1964,
+                artist: "Thelonious Monk",
+                title: "Monk.",
+                cover: "https://upload.wikimedia.org/wikipedia/en/f/f3/Thelonious_Monk_-_Monk..jpg",
+                pivotalTracks: [{name: "Pannonica", analysis: "As the jazz world churned with revolution, Thelonious Monk remained its unwavering point of reference. This beautifully polished version of his ballad for his patron, the Baroness Pannonica, is a definitive take from his new major-label period. It serves as a perfect document of his tender, lyrical, and deeply eccentric compositional genius. In the context of 1964, the track is a powerful reminder of the foundational language Monk had created, which deeply influenced the entire post-bop era."}]
+            },
+            {
+                year: 1964,
+                artist: "Horace Silver",
+                title: "Song for My Father",
+                cover: "https://upload.wikimedia.org/wikipedia/en/d/d2/Horace_Silver_-_Song_for_My_Father.jpg",
+                pivotalTracks: [{name: "Song For My Father", analysis: "A massive and enduring hit, this title track is a pivotal moment in the evolution of hard bop. Inspired by a trip to Brazil and his own Cape Verdean heritage, Horace Silver infuses the piece with a captivating, bossa nova-inflected rhythm. The unforgettable melody and sophisticated groove created a new, commercially potent strain of hard bop that absorbed international influences. Joe Henderson's concise, masterfully constructed tenor solo is a landmark of the form."}]
+            },
+            {
+                year: 1964,
+                artist: "Joe Henderson",
+                title: "Inner Urge",
+                cover: "https://upload.wikimedia.org/wikipedia/en/7/7b/Joe_Henderson_-_Inner_Urge.jpg",
+                pivotalTracks: [{name: "Inner Urge", analysis: "The title track from Joe Henderson's signature album is a pinnacle of compositional and improvisational mastery. The piece is a formidable test for any improviser, built on a series of difficult, rapidly shifting modal centers that demand complete harmonic command. It represents the apex of adventurous hard bop, a style that was becoming increasingly complex and challenging. Henderson's own ferocious, masterful solo remains a benchmark of modern tenor saxophone playing."}]
+            },
+            {
+                year: 1964,
+                artist: "John Coltrane",
+                title: "A Love Supreme",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/9a/A_Love_Supreme.jpg",
+                pivotalTracks: [{name: "A Love Supreme, Pt. I - Acknowledgement", analysis: "This is the opening statement of the most iconic spiritual jazz album ever created. The piece is a perfect synthesis of musical innovation and religious devotion. From the iconic four-note bass motif that structures the work to Coltrane's sermon-like saxophone and the climactic, mantra-like vocal chant, 'Acknowledgement' serves as a declaration of faith. It is the definitive document of spiritual jazz, a pivotal work that blurred the lines between the sacred and the secular and transcended the genre to become a universal cultural touchstone."}]
+            },
+            {
+                year: 1964,
+                artist: "Sam Rivers",
+                title: "Fuchsia Swing Song",
+                cover: "https://upload.wikimedia.org/wikipedia/en/b/b3/Sam_Rivers_-_Fuchsia_Swing_Song.jpg",
+                pivotalTracks: [{name: "Fuchsia Swing Song", analysis: "The title track from saxophonist Sam Rivers' debut album perfectly encapsulates the 'inside-outside' playing that came to define much of the era's advanced jazz. The piece begins with a sophisticated, memorable theme rooted in the bop tradition, but the solos-particularly from Rivers dart seamlessly between respecting the underlying harmony and soaring freely beyond its constraints. It is a key example of the complete blurring of the lines between hard bop and the avant-garde, showcasing a new, fluid improvisational language."}]
+            },
+            {
+                year: 1964,
+                artist: "Wayne Shorter",
+                title: "Speak No Evil",
+                cover: "https://upload.wikimedia.org/wikipedia/en/b/b2/Wayne_Shorter_-_Speak_No_Evil.jpg",
+                pivotalTracks: [{name: "Infant Eyes", analysis: "A masterpiece of mood and melody, this ballad is one of Wayne Shorter's most beloved and sophisticated compositions. Written for his young daughter, the piece avoids all sentimentality, instead crafting a fragile, mysterious, and harmonically advanced atmosphere. The through-composed melody unfolds with breathtaking logic and beauty. Recorded on Christmas Eve, 'Infant Eyes' represents a new peak of compositional maturity and emotional depth within the post-bop framework."}]
+            },
+            // 1965
+            {
+                year: 1965,
+                artist: "Roland Kirk Quartet",
+                title: "Rip, Rig & Panic",
+                cover: "https://upload.wikimedia.org/wikipedia/en/b/be/Rip%2C_Rig_%26_Panic.jpg",
+                pivotalTracks: [{name: "Rip, Rig And Panic", analysis: "This track is a ferocious whirlwind tour of jazz history, played with the anarchic energy of the avant-garde. Multi-instrumentalist Roland Kirk leads a powerhouse rhythm section (Jaki Byard, Richard Davis, and Elvin Jones) through a piece that violently shifts between hard swing, sirens, and chaotic free-form breakdowns. It is a pivotal example of an artist blending deep tradition with the explosive freedom of the new music, creating a sound that is both reverent and riotous."}]
+            },
+            {
+                year: 1965,
+                artist: "Miles Davis",
+                title: "E.S.P.",
+                cover: "https://upload.wikimedia.org/wikipedia/en/6/64/E.S.P._%28Miles_Davis_album%29_cover_art.jpg",
+                pivotalTracks: [{name: "E.S.P.", analysis: "The title track from the debut album of the Second Great Miles Davis Quintet is the sound of a new language being forged. Composed by Wayne Shorter, the harmonically ambiguous melody, built on intervals of fourths, provides the perfect launchpad for what was dubbed 'controlled freedom.' The quintet stretches the song's form to its limits without ever fully breaking it, showcasing a stunning, telepathic interplay that would redefine small group jazz for the next decade. This is the adventurous evolution of post-bop in its purest form."}]
+            },
+            {
+                year: 1965,
+                artist: "Herbie Hancock",
+                title: "Maiden Voyage",
+                cover: "https://upload.wikimedia.org/wikipedia/en/5/52/Herbie_Hancock_-_Maiden_Voyage.jpg",
+                pivotalTracks: [{name: "Maiden Voyage", analysis: "One of the most iconic recordings of the era, this title track is a masterpiece of modal jazz. Conceived as part of a concept album about the sea, Herbie Hancock's composition uses a spacious structure and suspended harmonies to create a powerful feeling of open space and discovery. The piece was pivotal in perfecting and popularizing a cooler, more atmospheric, and deeply sophisticated strain of modal harmony that became immensely influential on the sound of modern jazz."}]
+            },
+            {
+                year: 1965,
+                artist: "Bobby Hutcherson",
+                title: "Dialogue",
+                cover: "https://upload.wikimedia.org/wikipedia/en/f/f6/Bobby_Hutcherson_-_Dialogue.jpg",
+                pivotalTracks: [{name: "Catta", analysis: "A landmark session from the Blue Note avant-garde, 'Catta' exemplifies the movement's 'structured freedom.' Composed by Sam Rivers, the track features a unique and colorful ensemble-including Bobby Hutcherson's vibraphone and Andrew Hill's piano-that navigates a tense, rhythmically complex theme before breaking into sections of freer, textural improvisation. It is a key document of how the era's leading innovators were applying rigorous compositional thought to the new freedoms of the avant-garde."}]
+            },
+            {
+                year: 1965,
+                artist: "Sam Rivers",
+                title: "Contours",
+                cover: "https://upload.wikimedia.org/wikipedia/en/0/0c/Sam_Rivers_-_Contours.jpg",
+                pivotalTracks: [{name: "Point Of Many Returns", analysis: "This piece is a stunning example of composer-led innovation in the post-bop era. 'Point Of Many Returns' is a through-composed work, a constantly evolving piece with no repeating themes or standard song form. This challenging, unpredictable structure demanded immense concentration and creativity from the musicians. It is a pivotal work of the adventurous avant-garde, demonstrating how the very architecture of a song could be deconstructed and rebuilt into something entirely new."}]
+            },
+            {
+                year: 1965,
+                artist: "Anthony Williams",
+                title: "Spring",
+                cover: "https://upload.wikimedia.org/wikipedia/en/0/04/Anthony_Williams_-_Spring.jpg",
+                pivotalTracks: [{name: "Love Song", analysis: "On an album from a drummer that radically decenters the drum kit, 'Love Song' is a work of pure, abstract texture. Drummer Tony Williams uses his instrument for color and shading, not timekeeping, creating a sparse, mysterious, and suspenseful soundscape with fellow innovators Herbie Hancock, Sam Rivers, and Wayne Shorter. This piece is pivotal in redefining the role of the rhythm section in jazz, moving from accompaniment to collective, avant-garde sound design."}]
+            },
+            {
+                year: 1965,
+                artist: "Lee Morgan",
+                title: "Cornbread",
+                cover: "https://upload.wikimedia.org/wikipedia/en/1/14/Lee_Morgan_-_Cornbread.jpg",
+                pivotalTracks: [{name: "Ceora", analysis: "In a year of explosive freedom, trumpeter Lee Morgan delivered this timeless masterpiece of lyrical post-bop. A perfectly crafted ballad with a gentle bossa nova inflection, 'Ceora' stands as a testament to the enduring power of melody and elegant form. Its inclusion is pivotal because it represents the pinnacle of the mainstream tradition, a form of sophisticated, soulful, and immaculately structured hard bop that continued to thrive and evolve alongside the avant-garde."}]
+            },
+            {
+                year: 1965,
+                artist: "Albert Ayler",
+                title: "Spirits Rejoice",
+                cover: "https://upload.wikimedia.org/wikipedia/en/b/b5/Spirits_Rejoice.jpg",
+                pivotalTracks: [{name: "Spirits Rejoice", analysis: "This is the sound of 'energy music' in its purest form. The title track is a chaotic and joyous explosion of sound, where Albert Ayler's roaring saxophone leads his band through a collage of marching band themes, folk melodies, and ecstatic free improvisation. It is a key document of spiritual jazz, translating the unbridled fervor of a sanctified church service into the language of the avant-garde. This is the sound of jubilation, a spiritual quest fulfilled through sheer sonic force."}]
+            },
+            {
+                year: 1965,
+                artist: "Horace Silver Quintet",
+                title: "The Cape Verdean Blues",
+                cover: "https://upload.wikimedia.org/wikipedia/en/c/c5/Horace_Silver_-_The_Cape_Verdean_Blues.jpg",
+                pivotalTracks: [{name: "The Cape Verdean Blues", analysis: "Paying tribute to his father's heritage, Horace Silver continues to enrich the hard bop tradition by incorporating global rhythms. The title track is built on an infectious folk melody and a buoyant, Cape Verdean-inspired beat. Featuring brilliant solos from a young Woody Shaw and Joe Henderson, the piece is a pivotal example of Silver's genius for creating music that was simultaneously harmonically sophisticated, compositionally rigorous, and deeply soulful, further expanding the language of post-bop."}]
+            },
+            {
+                year: 1965,
+                artist: "Andrew Hill",
+                title: "Compulsion!!!!!",
+                cover: "https://upload.wikimedia.org/wikipedia/en/d/dc/Andrew_Hill_-_Compulsion%21%21%21%21%21.jpg",
+                pivotalTracks: [{name: "Compulsion", analysis: "With this title track, pianist Andrew Hill pushes his music into deeply percussive, Afro-centric territory. Featuring multiple percussionists in place of a standard drum kit, the piece is a dense, churning, and ritualistic exploration of pure rhythm. This was a pivotal work for the avant-garde, consciously moving beyond the Western conventions of melody and harmony to explore the foundational power of the drum as the music's primary organizing principle."}]
+            },
+            {
+                year: 1965,
+                artist: "Sun Ra and His Arkestra",
+                title: "The Magic City",
+                cover: "https://upload.wikimedia.org/wikipedia/en/1/1a/The_Magic_City_%28Sun_Ra_album%29.jpg",
+                pivotalTracks: [{name: "The Shadow World", analysis: "A stunning and formidable document of large-ensemble free improvisation, 'The Shadow World' is Sun Ra pushing the big band into a black hole. After a dizzyingly complex written theme, the Arkestra erupts into a maelstrom of collective, free-form invention, anchored by the searing alto saxophone of Marshall Allen. This is a pivotal recording of the jazz avant-garde, demonstrating a path for free jazz on a massive, orchestral scale that few others dared to tread."}]
+            },
+            {
+                year: 1965,
+                artist: "Wayne Shorter",
+                title: "The All Seeing Eye",
+                cover: "https://upload.wikimedia.org/wikipedia/en/3/30/Wayne_Shorter_-_The_All_Seeing_Eye.jpg",
+                pivotalTracks: [{name: "The All Seeing Eye", analysis: "This is Wayne Shorter's most ambitious and overtly spiritual work. The title track is the centerpiece of a suite exploring cosmic and existential themes, from the creation of the universe to the nature of evil. Using a larger ensemble, Shorter's dense, dramatic composition evokes a sense of awe and terror. It is a pivotal work of composed spiritual jazz, marking the moment a master of post-bop turned his gaze fully to the heavens and created a singular, programmatic avant-garde statement."}]
+            },
+            {
+                year: 1965,
+                artist: "Larry Young",
+                title: "Unity",
+                cover: "https://upload.wikimedia.org/wikipedia/en/4/4b/Larry_Young_-_Unity.jpg",
+                pivotalTracks: [{name: "Zoltan", analysis: "With this track, organist Larry Young single-handedly redefined the role of the Hammond B-3 in jazz. Inspired by John Coltrane's modal explorations, Young uses the organ not for earthy funk but for harmonically advanced, horn-like improvisations. On the fiery 'Zoltan,' composed by trumpeter Woody Shaw, Young's fluid lines and sophisticated chordal work are revolutionary. The track is pivotal for liberating the organ from its genre trappings and establishing it as a primary voice for adventurous, modal-based post-bop."}]
+            },
+            {
+                year: 1965,
+                artist: "Ornette Coleman Trio",
+                title: "At the Golden Circle Stockholm",
+                cover: "https://upload.wikimedia.org/wikipedia/en/8/8c/Ornette_Coleman_Trio_-_At_the_Golden_Circle_Stockholm_-_Volume_One.jpg",
+                pivotalTracks: [{name: "Faces And Places (Live)", analysis: "This live recording captures Ornette Coleman's triumphant return with a new, dynamic trio. 'Faces and Places' reveals the continuing evolution of his harmolodic theory, where melody, harmony, and rhythm are equal partners. The intense, telepathic interplay between Coleman (on alto sax), bassist David Izenzon, and drummer Charles Moffett is on full display. This performance is a pivotal document of a free jazz pioneer reinvigorating his own revolution in a live setting."}]
+            },
+            {
+                year: 1965,
+                artist: "Krzysztof Komeda",
+                title: "Astigmatic",
+                cover: "https://upload.wikimedia.org/wikipedia/en/e/e6/Astigmatic.jpg",
+                pivotalTracks: [{name: "Kattorna", analysis: "A landmark of European jazz, 'Kattorna' ('The Cats') showcases Polish composer Krzysztof Komeda's unique genius for blending memorable, Slavic-toned melodies with fierce, free-form improvisation. The music is dramatic, cinematic, and emotionally raw, establishing a powerful aesthetic distinct from the American avant-garde. The album Astigmatic was pivotal in codifying a powerful and independent European approach to free jazz, one rooted in its own folk and classical traditions."}]
+            },
+            {
+                year: 1965,
+                artist: "Don Cherry",
+                title: "Complete Communion",
+                cover: "https://upload.wikimedia.org/wikipedia/en/6/62/Don_Cherry_-_Complete_Communion.jpg",
+                pivotalTracks: [{name: "Complete Communion", analysis: "This album introduced a revolutionary concept in long-form free jazz composition. The title piece is a continuous suite that weaves four of Don Cherry's compositions into a single, seamless performance. The band, featuring the fiery tenor of Argentinian saxophonist Gato Barbieri, moves fluidly between the different themes without breaks. This was a pivotal innovation for the avant-garde, creating a new way to structure an entire album side as one unified, freely improvised work."}]
+            },
+            // 1966
+            {
+                year: 1966,
+                artist: "Thad Jones/Mel Lewis Orchestra",
+                title: "Presenting Thad Jones/Mel Lewis & The Jazz Orchestra",
+                cover: "https://upload.wikimedia.org/wikipedia/en/e/ef/Presenting_Thad_Jones_Mel_Lewis_%26_The_Jazz_Orchestra.jpg",
+                pivotalTracks: [{name: "Big Dipper", analysis: "This track is a shot of adrenaline for the jazz orchestra, proving the big band could be a vehicle for thoroughly modern expression. Composer Thad Jones's writing is the star harmonically dense, rhythmically unpredictable, but always swinging with unstoppable momentum. 'Big Dipper' is a pivotal work that showcases a new path for the large ensemble, one that embraced the harmonic sophistication of post-bop and created a blueprint for the modern big band sound."}]
+            },
+            {
+                year: 1966,
+                artist: "Bobby Hutcherson",
+                title: "Happenings",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/90/Bobby_Hutcherson_-_Happenings.jpg",
+                pivotalTracks: [{name: "Bouquet", analysis: "A masterpiece of lyrical introspection, this waltz showcases the cool, atmospheric side of the evolving Blue Note aesthetic. Vibraphonist Bobby Hutcherson and pianist Herbie Hancock engage in a delicate, almost telepathic interplay. The piece is a key example of the adventurous evolution of post-bop, using the harmonic openness of modal jazz not for fiery exploration, but to create a sophisticated and deeply melancholic mood piece that stands in stark contrast to the era's more explosive sounds."}]
+            },
+            {
+                year: 1966,
+                artist: "Albert Ayler",
+                title: "Live in Greenwich Village: The Complete Impulse! Recordings",
+                cover: "https://upload.wikimedia.org/wikipedia/en/c/c5/Albert_Ayler_Live_in_Greenwich_Village.jpg",
+                pivotalTracks: [{name: "Truth Is Marching In", analysis: "Captured live, this is Albert Ayler's spiritual 'energy music' at its most potent and celebratory. Using a simple, anthemic march as a theme, Ayler leads his ensemble in a cathartic explosion of sound that equates the raw energy of free jazz with a quest for divine truth. This performance is a quintessential document of spiritual jazz, a joyous noise that blurs the line between a street parade and a religious revival meeting."}]
+            },
+            {
+                year: 1966,
+                artist: "Sonny Rollins",
+                title: "East Broadway Run Down",
+                cover: "https://upload.wikimedia.org/wikipedia/en/a/a2/East_Broadway_Run_Down.jpg",
+                pivotalTracks: [{name: "East Broadway Run Down", analysis: "This is the monumental sound of a hard bop titan grappling directly with the avant-garde. On the sprawling title track, Sonny Rollins pushes his own improvisational limits, sparring with the chaotic, free-flowing drumming of Elvin Jones. For long, audacious stretches, Rollins solos without any harmonic accompaniment, a pivotal and daring move that shows a foundational master stepping into the fire of the new music entirely on his own terms."}]
+            },
+            {
+                year: 1966,
+                artist: "Cecil Taylor",
+                title: "Unit Structures",
+                cover: "https://upload.wikimedia.org/wikipedia/en/d/d3/Unit_Structures.jpg",
+                pivotalTracks: [{name: "Steps", analysis: "A landmark recording from the jazz avant-garde, 'Steps' is a ferocious onslaught of 'energy music' guided by a formidable intellect. Pianist Cecil Taylor treats the ensemble as a single percussive unit, creating dense blocks of sound and texture that abandon conventional melody and harmony. This is the codification of a new musical language, one built on energy, gesture, and rapid-fire group interaction. It's a foundational text for a generation of free jazz players."}]
+            },
+            {
+                year: 1966,
+                artist: "Joe Henderson",
+                title: "Mode for Joe",
+                cover: "https://upload.wikimedia.org/wikipedia/en/7/77/Joe_Henderson_-_Mode_for_Joe.jpg",
+                pivotalTracks: [{name: "Mode For Joe", analysis: "The title track from this album is the epitome of sophisticated, all-star post-bop. The tune itself is infectiously groovy and modally flavored, providing a perfect framework for an incredible lineup of soloists, including Lee Morgan and Curtis Fuller. Joe Henderson's own tenor solo is a masterclass in 'inside-outside' playing, full of harmonic daring and thrilling melodic invention. The piece represents the absolute peak of the adventurous, composer-led hard bop that defined the Blue Note label."}]
+            },
+            {
+                year: 1966,
+                artist: "Archie Shepp",
+                title: "Mama Too Tight",
+                cover: "https://upload.wikimedia.org/wikipedia/en/c/ca/Mama_Too_Tight.jpg",
+                pivotalTracks: [{name: "Mama Too Tight", analysis: "This track showcases Archie Shepp's unique brand of avant-garde one that is deeply and joyously rooted in Black American musical history. 'Mama Too Tight' sounds like a traditional marching band being playfully deconstructed, with a swaggering, R&B-inflected rhythm and raucous horn lines. It's a pivotal work for demonstrating a politically conscious strain of free jazz that was celebratory and humorous, proving that the 'new thing' could connect to the oldest traditions even as it turned them upside down."}]
+            },
+            {
+                year: 1966,
+                artist: "Charles Lloyd Quartet",
+                title: "Forest Flower: Charles Lloyd at Monterey",
+                cover: "https://upload.wikimedia.org/wikipedia/en/9/9f/Forest_Flower.jpg",
+                pivotalTracks: [{name: "Forest Flower: Sunrise (Live)", analysis: "This performance was a watershed moment, a pivotal track that brought post-bop to the masses and made saxophonist Charles Lloyd an unlikely star. The music's blend of accessible modal structures, spiritual curiosity, and the rhapsodic, lyrical piano of a young Keith Jarrett connected deeply with the burgeoning hippie counterculture. Its unprecedented commercial success introduced a gentler, more globally-influenced vision of jazz to a vast new audience."}]
+            },
+            {
+                year: 1966,
+                artist: "Don Cherry",
+                title: "Symphony for Improvisers",
+                cover: "https://upload.wikimedia.org/wikipedia/en/2/25/Don_Cherry_-_Symphony_for_Improvisers.jpg",
+                pivotalTracks: [{name: "Symphony For Improvisers", analysis: "Expanding on the suite-like concepts of his previous work, Don Cherry creates a pivotal masterpiece of the international avant-garde. The title track weaves together themes influenced by music from Africa, India, and South America, seamlessly blending them with free improvisation. Featuring a twin-tenor frontline of Pharoah Sanders and Gato Barbieri, the piece is a key document in the birth of 'world jazz,' consciously moving beyond American forms to create a unified symphony of global sounds."}]
+            },
+            {
+                year: 1966,
+                artist: "Cecil Taylor",
+                title: "Conquistador!",
+                cover: "https://upload.wikimedia.org/wikipedia/en/2/28/Cecil_Taylor_-_Conquistador%21.jpg",
+                pivotalTracks: [{name: "Conquistador", analysis: "The title track from Cecil Taylor's second Blue Note masterpiece is a monumental achievement of the avant-garde. While still a maelstrom of energy, the piece is slightly more spacious than his previous work, allowing for breathtakingly clear instances of interplay between Taylor's percussive piano and the horns of Bill Dixon and Jimmy Lyons. This is the sound of free jazz's premier architect refining his revolutionary language at the absolute zenith of his creative power."}]
+            },
+            {
+                year: 1966,
+                artist: "Miles Davis",
+                title: "Miles Smiles",
+                cover: "https://upload.wikimedia.org/wikipedia/en/8/89/Miles_Smiles.jpg",
+                pivotalTracks: [{name: "Footprints", analysis: "This performance represents the telepathic peak of the Second Great Quintet and a pivotal moment in the evolution of group improvisation. On this Wayne Shorter composition, the quintet deconstructs the underlying 6/8 waltz rhythm. Drummer Tony Williams brilliantly superimposes a fast 4/4 swing rhythm against it, creating a revolutionary rhythmic tension that propels the soloists into new zones of abstraction. This is the quintet's 'controlled freedom' perfected."}]
+            },
+            {
+                year: 1966,
+                artist: "Pharoah Sanders",
+                title: "Tauhid",
+                cover: "https://upload.wikimedia.org/wikipedia/en/4/41/Pharoah_Sanders_-_Tauhid.jpg",
+                pivotalTracks: [{name: "Upper Egypt & Lower Egypt", analysis: "With this epic, two-part piece, Pharoah Sanders announced himself as a primary new voice of spiritual jazz. The track begins with a mysterious soundscape of bells and percussion before transitioning into a hypnotic, driving modal groove. Over this foundation, Sanders unleashes his signature saxophone sound a raw, vocalized, and deeply cathartic cry. The track is a foundational text of the spiritual jazz movement, establishing a blueprint for a journey from meditative mystery to ecstatic release."}]
+            },
+            {
+                year: 1966,
+                artist: "Duke Ellington",
+                title: "The Far East Suite",
+                cover: "https://upload.wikimedia.org/wikipedia/en/6/69/Far_East_Suite.jpg",
+                pivotalTracks: [{name: "Isfahan", analysis: "A highlight from a late-career masterpiece, 'Isfahan' is an achingly beautiful melody, co-written with Billy Strayhorn and featuring a legendary performance by alto saxophonist Johnny Hodges. Its inclusion here is pivotal. In a year of explosive revolution, it serves as a powerful reminder that the foundational masters were still creating music of unparalleled grace and sophistication. It is a timeless benchmark for compositional elegance that transcends any era."}]
+            },
+            // 1967
+            {
+                year: 1967,
+                artist: "Thelonious Monk",
+                title: "Straight, No Chaser",
+                cover: "https://upload.wikimedia.org/wikipedia/en/a/a2/Thelonious_Monk_-_Straight%2C_No_Chaser.jpg",
+                pivotalTracks: [{name: "Straight, No Chaser", analysis: "From his last studio session for Columbia, this polished take on one of Monk's signature blues compositions serves as a final, definitive statement from a foundational master. Backed by his stellar working quartet, Monk delivers the classic tune with a relaxed, confident authority. In a rapidly changing jazz landscape, the performance is a pivotal reaffirmation of his timeless and revolutionary language, a reminder of the eccentric genius whose work provided the bedrock for much of the post-bop era."}]
+            },
+            {
+                year: 1967,
+                artist: "John Coltrane",
+                title: "Interstellar Space",
+                cover: "https://upload.wikimedia.org/wikipedia/en/6/63/John_Coltrane_-_Interstellar_Space.jpg",
+                pivotalTracks: [{name: "Mars", analysis: "Recorded just five months before his death, this duet between John Coltrane and drummer Rashied Ali is a journey into the furthest reaches of the avant-garde. The music is stripped to its elemental core: a dialogue of pure sound and energy that dispenses with melody, harmony, and conventional rhythm. 'Mars' represents the ultimate endpoint of Coltrane's spiritual quest, a pivotal and uncompromising work where he transcends musical language itself in a final, untethered expression of pure sound."}]
+            },
+            {
+                year: 1967,
+                artist: "Jackie McLean",
+                title: "New and Old Gospel",
+                cover: "https://upload.wikimedia.org/wikipedia/en/3/30/Jackie_McLean_-_New_and_Old_Gospel.jpg",
+                pivotalTracks: [{name: "Lifeline", analysis: "This hard-charging track brings together two giants of the alto saxophone, Jackie McLean and Ornette Coleman (here on trumpet), for a thrilling, blues-drenched excursion. The piece is a powerful testament to the avant-garde's deep connection to gospel and blues traditions. The raw, freewheeling interplay between these two pioneers creates a pivotal performance that is both a look back at the music's roots and a celebration of the freedom they had both championed."}]
+            },
+            {
+                year: 1967,
+                artist: "Stan Getz",
+                title: "Sweet Rain",
+                cover: "https://upload.wikimedia.org/wikipedia/en/3/30/Stan_Getz_-_Sweet_Rain.jpg",
+                pivotalTracks: [{name: "Litha", analysis: "On this track, mainstream giant Stan Getz masterfully embraces the language of the new generation. 'Litha,' a complex and energetic modal piece by a young Chick Corea, pushes Getz far beyond his cool school comfort zone. Backed by a brilliant modern rhythm section, his success is a pivotal moment, demonstrating how the harmonic and rhythmic sophistication of post-bop had become the new mainstream, a challenging but vital language that even the most established players had to confront."}]
+            },
+            {
+                year: 1967,
+                artist: "McCoy Tyner",
+                title: "The Real McCoy",
+                cover: "https://upload.wikimedia.org/wikipedia/en/d/d8/McCoy_Tyner_-_The_Real_McCoy.jpg",
+                pivotalTracks: [{name: "Passion Dance", analysis: "The explosive opening track from his first masterpiece as a leader, 'Passion Dance' is the definitive codification of McCoy Tyner's powerful style. Built on his signature piano sound of thunderous left-hand rhythms and quartal harmonies, the piece is a soaring, joyous, and intensely spiritual declaration of independence. It is a pivotal work that established Tyner as a primary voice in his own right, defining the sound of modern modal jazz piano and carrying the spiritual fire of the Coltrane quartet forward."}]
+            },
+            {
+                year: 1967,
+                artist: "John Coltrane",
+                title: "The Olatunji Concert: The Last Live Recording",
+                cover: "https://upload.wikimedia.org/wikipedia/en/c/cb/The_Olatunji_Concert.jpg",
+                pivotalTracks: [{name: "Ogunde - Live", analysis: "From his final concert, this performance is a document of almost overwhelming spiritual intensity. Leading an expanded group that included Pharoah Sanders, Coltrane delivers a final, cathartic sermon on his saxophone. The music is a maelstrom of sound, a dense and turbulent outpouring of energy that serves as the poignant, explosive conclusion to the decade's most important musical journey. This is the sound of an artist pushing himself and his music to the absolute limit one last time."}]
+            },
+            {
+                year: 1967,
+                artist: "Archie Shepp",
+                title: "The Magic of Ju-Ju",
+                cover: "https://upload.wikimedia.org/wikipedia/en/1/1a/The_Magic_of_Ju-Ju.jpg",
+                pivotalTracks: [{name: "The Magic Of Ju-Ju", analysis: "This 19-minute title track is a pivotal work of the avant-garde and a deep exploration of rhythm. Shepp constructs the piece over a dense, hypnotic thicket of African percussion, creating a ritualistic groove that connects the 'new thing' directly to its African roots. Shepp's own saxophone solo builds from a slow burn into a searing, intense cry. It is a landmark of Afro-centric spiritual jazz, prioritizing the power of the drum and collective rhythm."}]
+            },
+            {
+                year: 1967,
+                artist: "Miles Davis",
+                title: "Sorcerer",
+                cover: "https://upload.wikimedia.org/wikipedia/en/5/58/Miles_Davis_-_Sorcerer.jpg",
+                pivotalTracks: [{name: "Prince of Darkness", analysis: "Composed by Wayne Shorter, this track perfectly captures the enigmatic and elusive quality of the Second Great Quintet in its final phase. The theme is quick and slippery, the solos are marvels of tension and suggestion, and the interplay is telepathic. The piece is a key example of the quintet's 'controlled freedom,' a highly sophisticated and adventurous evolution of post-bop that was more concerned with mood and subtlety than fire."}]
+            },
+            {
+                year: 1967,
+                artist: "Miles Davis",
+                title: "Nefertiti",
+                cover: "https://upload.wikimedia.org/wikipedia/en/7/73/Nefertiti_Miles_Davis.jpg",
+                pivotalTracks: [{name: "Nefertiti", analysis: "This track is a quiet revolution and a stunning conclusion to the acoustic journey of the Miles Davis Quintet. In a radical reversal of roles, the horns state the haunting, repetitive theme throughout the piece without soloing, while the rhythm section improvises with breathtaking freedom and creativity beneath them. This dissolution of traditional function was a pivotal moment for the avant-garde, creating a mesmerizing, abstract soundscape that was truly unprecedented."}]
+            },
+            {
+                year: 1967,
+                artist: "Lee Morgan",
+                title: "The Procrastinator",
+                cover: "https://upload.wikimedia.org/wikipedia/en/1/1a/Lee_Morgan_-_The_Procrastinator.jpg",
+                pivotalTracks: [{name: "The Procrastinator", analysis: "The title track from one of Lee Morgan's finest sessions is a pinnacle of late-era post-bop composition. It is a moody, intricate, and impeccably structured piece, featuring brilliant contributions from Wayne Shorter and Herbie Hancock. Recorded the same week that John Coltrane died, this performance is a poignant and powerful statement on the enduring depth and beauty of the acoustic tradition, a high-water mark for the hard bop language as it reached its peak of sophistication."}]
+            },
+            {
+                year: 1967,
+                artist: "McCoy Tyner",
+                title: "Tender Moments",
+                cover: "https://upload.wikimedia.org/wikipedia/en/7/79/McCoy_Tyner_-_Tender_Moments.jpg",
+                pivotalTracks: [{name: "Mode To John", analysis: "Recorded just months after John Coltrane's passing, this piece is a direct and powerful elegy from his most influential disciple. Using the powerful modal language they had pioneered together, McCoy Tyner crafts a soaring, emotional, and deeply felt tribute to his friend and former leader. It is a pivotal and poignant conclusion to the decade's narrative: a final, heartfelt look back from a master who would carry the spiritual and musical legacy of John Coltrane into the future."}]
+            }
+        ];
+
+
+        const styleMatrixData = [
+            {
+                feature: 'Harmony',
+                hardBop: 'Functional, blues-based, strong resolutions. Often uses standard song progressions.',
+                modalJazz: 'Static or slow-moving. Based on scales (modes) rather than chord progressions.',
+                postBop: 'Ambiguous, non-functional. Use of complex, altered, and non-diatonic chords.',
+                freeJazz: 'Often atonal. Harmony is spontaneous, with no pre-determined structure.'
+            },
+            {
+                feature: 'Rhythm',
+                hardBop: 'Strong, driving backbeat. Often danceable, funky, and groove-oriented.',
+                modalJazz: 'Open, spacious, and contemplative. Slower tempos are common.',
+                postBop: 'Interactive, conversational. Use of mixed and irregular meters; time is fluid.',
+                freeJazz: 'Often abandons fixed meter and tempo. Focus on collective rhythmic texture.'
+            },
+            {
+                feature: 'Form',
+                hardBop: 'Standard forms (12-bar blues, 32-bar AABA). Head-Solo-Head structure.',
+                modalJazz: 'Simple, open-ended structures, often based on a single mode or a few modes.',
+                postBop: 'Complex, abstract, flexible, and original forms. Band members are featured composers.',
+                freeJazz: 'Often abandons pre-set forms entirely in favor of spontaneous improvisation.'
+            },
+            {
+                feature: 'Improvisation',
+                hardBop: 'Soloists outline chord changes, often with bluesy, soulful phrasing.',
+                modalJazz: 'Melodic development over scales, exploring the character of a mode.',
+                postBop: '"Inside/Outside" playing; use of pentatonics, substitutions, and motivic development.',
+                freeJazz: 'Collective, textural improvisation. Focus on sound, timbre, and emotional intensity.'
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const timelineNav = document.getElementById('timeline-nav');
+            const albumGrid = document.getElementById('album-grid');
+            const years = [...new Set(albumData.map(album => album.year))].sort();
+
+            function renderAlbumCard(album) {
+                return `
+                    <div class="album-card bg-stone-50 rounded-lg shadow-md overflow-hidden cursor-pointer transform hover:-translate-y-1 transition-transform duration-200" data-title="${album.title}" data-artist="${album.artist}">
+                        <img src="${album.cover}" alt="Cover for ${album.title}" class="w-full h-48 sm:h-56 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x400/999/fff?text=Image+Not+Found';">
+                        <div class="p-4">
+                            <h4 class="font-bold text-lg truncate">${album.title}</h4>
+                            <p class="text-stone-600 truncate">${album.artist}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function renderAlbumsForYear(year) {
+                const albumsOfYear = albumData.filter(album => album.year === year);
+                albumGrid.innerHTML = albumsOfYear.map(renderAlbumCard).join('');
+                document.querySelectorAll('.year-marker').forEach(btn => {
+                    btn.classList.toggle('active', parseInt(btn.dataset.year) === year);
+                });
+            }
+
+            years.forEach(year => {
+                const yearButton = document.createElement('button');
+                yearButton.textContent = year;
+                yearButton.dataset.year = year;
+                yearButton.className = 'year-marker px-4 py-2 text-sm font-semibold rounded-full bg-stone-200 text-stone-700 hover:bg-sky-700 hover:text-white';
+                yearButton.addEventListener('click', () => renderAlbumsForYear(year));
+                timelineNav.appendChild(yearButton);
+            });
+
+            renderAlbumsForYear(1959); 
+
+            const modal = document.getElementById('album-modal');
+            const modalContent = document.getElementById('modal-content');
+            const closeModalBtn = document.getElementById('close-modal');
+            
+            albumGrid.addEventListener('click', e => {
+                const card = e.target.closest('.album-card');
+                if (card) {
+                    const title = card.dataset.title;
+                    const artist = card.dataset.artist;
+                    const album = albumData.find(a => a.title === title && a.artist === artist);
+                    if (album) {
+                        openModal(album);
+                    }
+                }
+            });
+
+            async function getAiAnalysis(album, buttonElement, resultContainer) {
+                buttonElement.disabled = true;
+                resultContainer.innerHTML = '<div class="flex justify-center items-center p-4"><div class="loader"></div></div>';
+                
+                let existingInfo = '';
+                if (album.pivotalTracks && album.pivotalTracks.length > 0) {
+                    existingInfo = album.pivotalTracks.map(t => `Analysis for '${t.name}': ${t.analysis}`).join(' ');
+                }
+
+                const prompt = `You are a world-renowned musicologist and jazz critic, known for your eloquent and insightful prose. Your task is to provide a fresh analysis of a classic post-bop album for an interactive encyclopedia. Please analyze the album "${album.title}" (${album.year}) by ${album.artist}. Here is the existing information to build upon: ${existingInfo}. Based on this, write a compelling new analysis of about 150-200 words. Go beyond the provided text. Speculate on the emotional atmosphere in the studio, connect the musical innovations to broader artistic movements of the 1960s (like abstract expressionism or the Beat Generation), or imagine how a modern listener might experience these sounds for the first time. Use vivid, descriptive language. Frame your analysis under the heading 'A Modern Listener's Perspective'.`;
+
+                try {
+                    let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                    const payload = { contents: chatHistory };
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates[0] && result.candidates[0].content.parts[0].text) {
+                        const text = result.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+                        resultContainer.innerHTML = text;
+                    } else {
+                        throw new Error('Invalid response structure from API.');
+                    }
+                } catch (error) {
+                    console.error("Gemini API Error:", error);
+                    resultContainer.innerHTML = `<p class="text-red-600">Sorry, the analysis could not be generated at this time. Please try again later.</p>`;
+                } finally {
+                     buttonElement.disabled = false;
+                }
+            }
+
+            function openModal(album) {
+                document.getElementById('modal-title').textContent = album.title;
+                document.getElementById('modal-artist').textContent = album.artist;
+                const modalBody = document.getElementById('modal-body');
+
+                let pivotalTracksHtml = '';
+                if(album.pivotalTracks && album.pivotalTracks.length > 0) {
+                     pivotalTracksHtml = `
+                        <div>
+                            <h4 class="text-xl font-bold font-lora mb-2 text-sky-800">Pivotal Track Analysis</h4>
+                            ${album.pivotalTracks.map(track => `
+                                <div class="mb-4">
+                                    <h5 class="font-bold text-lg">${track.name}</h5>
+                                    <p>${track.analysis}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                     `;
+                }
+
+                modalBody.innerHTML = `
+                    <div class="space-y-6">
+                        ${pivotalTracksHtml}
+                        <div class="border-t border-stone-200 pt-6">
+                             <button id="ai-analysis-btn" class="w-full sm:w-auto bg-sky-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-800 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">✨ Get AI Analysis</button>
+                             <div id="ai-result-container" class="mt-4 p-4 bg-stone-50 rounded-lg border border-stone-200 min-h-[50px]"></div>
+                        </div>
+                    </div>
+                `;
+                
+                const aiButton = modalBody.querySelector('#ai-analysis-btn');
+                const aiResultContainer = modalBody.querySelector('#ai-result-container');
+                aiResultContainer.innerHTML = '';
+                aiButton.addEventListener('click', () => getAiAnalysis(album, aiButton, aiResultContainer));
+
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95');
+            }
+            
+            function closeModal() {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modalContent.classList.add('scale-95');
+            }
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', e => {
+                if(e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            const matrixTableBody = document.querySelector('#style-matrix-table tbody');
+            matrixTableBody.innerHTML = styleMatrixData.map(row => `
+                <tr data-feature="${row.feature}">
+                    <td class="p-4 border-b border-stone-200 font-semibold">${row.feature}</td>
+                    <td class="p-4 border-b border-stone-200" data-style="Hard Bop">${row.hardBop}</td>
+                    <td class="p-4 border-b border-stone-200" data-style="Modal Jazz">${row.modalJazz}</td>
+                    <td class="p-4 border-b border-stone-200 bg-sky-50" data-style="Post-Bop">${row.postBop}</td>
+                    <td class="p-4 border-b border-stone-200" data-style="Free Jazz">${row.freeJazz}</td>
+                </tr>
+            `).join('');
+
+            const matrixCells = document.querySelectorAll('#style-matrix-table th, #style-matrix-table td');
+            matrixCells.forEach(cell => {
+                cell.addEventListener('mouseenter', () => {
+                    const style = cell.dataset.style || cell.textContent;
+                    const feature = cell.parentElement.dataset.feature || cell.textContent;
+                    document.querySelectorAll(`[data-style='${style}']`).forEach(c => c.classList.add('highlight'));
+                    document.querySelectorAll(`[data-feature='${feature}'] td, [data-feature='${feature}'] th`).forEach(c => c.classList.add('highlight'));
+                });
+                cell.addEventListener('mouseleave', () => {
+                     matrixCells.forEach(c => c.classList.remove('highlight'));
+                });
+            });
+
+            const architectsChartCtx = document.getElementById('architectsChart').getContext('2d');
+            new Chart(architectsChartCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['Miles Davis (as Leader)', 'John Coltrane', 'Charles Mingus', 'Blue Note Records'],
+                    datasets: [{
+                        label: 'Impact Score',
+                        data: [5, 4.5, 4, 4.8],
+                        backgroundColor: [
+                            'rgba(14, 116, 144, 0.6)', 
+                            'rgba(8, 145, 178, 0.6)',  
+                            'rgba(6, 182, 212, 0.6)', 
+                            'rgba(103, 232, 249, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgb(14, 116, 144)',
+                            'rgb(8, 145, 178)',
+                            'rgb(6, 182, 212)',
+                            'rgb(103, 232, 249)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            pointLabels: {
+                                display: true,
+                                centerPointLabels: true,
+                                font: {
+                                    size: 14,
+                                    family: "'Lora', serif"
+                                }
+                            },
+                             ticks: {
+                                backdropColor: 'rgba(255, 255, 255, 0.75)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                             labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    const customTooltips = {
+                                        'Miles Davis (as Leader)': 'Pioneered modality and abstract interplay.',
+                                        'John Coltrane': 'Pushed harmonic and spiritual boundaries.',
+                                        'Charles Mingus': 'Fused tradition with compositional complexity.',
+                                        'Blue Note Records': 'Provided crucial institutional support for innovation.'
+                                    };
+                                    label += customTooltips[context.label];
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+             const mobileNav = document.getElementById('mobile-nav');
+             mobileNav.addEventListener('change', (e) => {
+                 window.location.hash = e.target.value;
+             });
+        });
+    </script>
+</body>
+</html>
