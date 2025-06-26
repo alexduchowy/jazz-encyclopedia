@@ -80,61 +80,64 @@
         #horizontal-timeline-container {
             width: 100%;
             overflow-x: auto;
-            overflow-y: hidden;
-            padding: 2rem 0;
+            padding-bottom: 2rem;
             cursor: grab;
+            border-top: 1px solid #334155;
+            border-bottom: 1px solid #334155;
+            background: #1e293b;
         }
         #horizontal-timeline-container:active {
             cursor: grabbing;
         }
-        #timeline-bar {
-            position: relative;
-            width: 5000px; /* Will be set by JS */
-            height: 4px;
-            background-color: #475569; /* slate-600 */
+        #timeline-wrapper {
+            display: inline-flex;
+            align-items: flex-start;
+            padding: 2rem 1rem;
         }
-        .timeline-marker {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            background-color: #94a3b8; /* slate-400 */
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .timeline-year-section {
+            display: flex;
+            flex-shrink: 0;
+            flex-direction: column;
+            align-items: center;
+            border-left: 2px dashed #475569;
+            padding: 0 2rem;
         }
-        .timeline-marker:hover {
-            background-color: #38bdf8; /* sky-400 */
-            transform: translateY(-50%) scale(1.5);
+        .timeline-year-section:first-child {
+            border-left: none;
         }
-        .timeline-year-label {
-            position: absolute;
-            top: 20px;
-            transform: translateX(-50%);
-            color: #94a3b8; /* slate-400 */
-            font-family: 'Lora', serif;
-            font-size: 1.25rem;
+        .timeline-year-header {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #475569;
+            margin-bottom: 1.5rem;
         }
-        .timeline-tooltip {
-            position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #0f172a; /* slate-900 */
-            color: #d1d5db;
-            padding: 0.5rem 1rem;
+        .timeline-track-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .timeline-track-card {
+            width: 250px;
+            flex-shrink: 0;
+            background-color: #334155;
             border-radius: 0.5rem;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s, visibility 0.2s;
-            pointer-events: none;
-            z-index: 10;
+            padding: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid transparent;
         }
-        .timeline-marker:hover .timeline-tooltip {
-            opacity: 1;
-            visibility: visible;
+        .timeline-track-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+            border-color: #38bdf8;
+        }
+        .timeline-track-card h5 {
+            color: #e2e8f0; /* slate-200 */
+        }
+        .timeline-track-card p {
+            color: #94a3b8; /* slate-400 */
         }
     </style>
 </head>
@@ -179,13 +182,13 @@
         <section id="timeline" class="py-16 sm:py-20 bg-slate-900">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">Timeline Explorer</h2>
-                <p class="text-center text-lg text-slate-400 mb-12 max-w-3xl mx-auto">Click a year to navigate the timeline, then hover over the dots to explore. Click a dot to see the full analysis for that track.</p>
+                <p class="text-center text-lg text-slate-400 mb-12 max-w-3xl mx-auto">Click a year to navigate the timeline, then click a track to see the full analysis.</p>
                 
                 <div id="timeline-nav" class="flex flex-wrap justify-center gap-2 mb-12">
                 </div>
 
                 <div id="horizontal-timeline-container">
-                    <div id="timeline-bar"></div>
+                    <div id="timeline-wrapper"></div>
                 </div>
             </div>
         </section>
@@ -364,64 +367,64 @@
         document.addEventListener('DOMContentLoaded', () => {
             const timelineNav = document.getElementById('timeline-nav');
             const timelineContainer = document.getElementById('horizontal-timeline-container');
-            const timelineBar = document.getElementById('timeline-bar');
+            const timelineWrapper = document.getElementById('timeline-wrapper');
 
             const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
+            
             function parseDate(dateString) {
-                 if (typeof dateString !== 'string') return null;
+                if (typeof dateString !== 'string') return null;
                 if (dateString.startsWith('c.')) {
                     const year = parseInt(dateString.split(' ').pop());
                     return new Date(year, 11, 31);
                 }
                 const parts = dateString.replace(/,/g, '').split(' ');
-                if (parts.length === 3) return new Date(parts[2], monthMap[parts[0]], parts[1]);
-                if (parts.length === 2 && monthMap[parts[0]]) return new Date(parts[1], monthMap[parts[0]], 15);
-                if (parts.length === 2 && parts[0].includes('/')) return new Date(parts[1], parseInt(parts[0].split('/')[0]) - 1, 15);
+                if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
+                if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 15);
+                if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 0, 1);
                 if (!isNaN(new Date(dateString))) return new Date(dateString);
                 return null;
             }
 
             const validAlbumData = albumData.filter(d => parseDate(d.recordingDate) !== null);
             const sortedByDate = validAlbumData.sort((a, b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
-            const startDate = parseDate(sortedByDate[0].recordingDate);
-            const endDate = parseDate(sortedByDate[sortedByDate.length - 1].recordingDate);
-            const totalDuration = endDate - startDate;
             const years = [...new Set(albumData.map(album => album.year))].sort();
 
-            const timelineWidth = years.length * 800;
-            timelineBar.style.width = `${timelineWidth}px`;
+            const groupedByYear = years.reduce((acc, year) => {
+                acc[year] = sortedByDate.filter(d => d.year === year);
+                return acc;
+            }, {});
 
+            timelineWrapper.innerHTML = ''; // Clear previous content
+            
             years.forEach(year => {
-                const yearStartDate = new Date(year, 0, 1);
-                const yearTimeOffset = yearStartDate - startDate;
-                const yearPosition = (yearTimeOffset / totalDuration) * timelineWidth;
+                const yearSection = document.createElement('div');
+                yearSection.className = 'timeline-year-section';
+                yearSection.id = `year-${year}`;
+
+                const yearHeader = document.createElement('div');
+                yearHeader.className = 'timeline-year-header';
+                yearHeader.textContent = year;
+                yearSection.appendChild(yearHeader);
+
+                const trackList = document.createElement('div');
+                trackList.className = 'timeline-track-list';
                 
-                const yearLabel = document.createElement('div');
-                yearLabel.className = 'timeline-year-label';
-                yearLabel.textContent = year;
-                yearLabel.style.left = `${yearPosition}px`;
-                yearLabel.dataset.year = year;
-                timelineBar.appendChild(yearLabel);
-            });
-
-            sortedByDate.forEach(album => {
-                const albumDate = parseDate(album.recordingDate);
-                const timeOffset = albumDate - startDate;
-                const position = (timeOffset / totalDuration) * timelineWidth;
-
-                const marker = document.createElement('div');
-                marker.className = 'timeline-marker';
-                marker.style.left = `${position}px`;
-                marker.dataset.title = album.title;
-                marker.dataset.artist = album.artist;
-                marker.dataset.album = album.album;
-
-                const tooltip = document.createElement('div');
-                tooltip.className = 'timeline-tooltip';
-                tooltip.innerHTML = `<span class='font-bold'>${album.title}</span><br><span class='text-sm'>${album.artist}</span>`;
-                marker.appendChild(tooltip);
-
-                timelineBar.appendChild(marker);
+                groupedByYear[year].forEach(album => {
+                    const card = document.createElement('div');
+                    card.className = 'timeline-track-card';
+                    card.dataset.title = album.title;
+                    card.dataset.artist = album.artist;
+                    card.dataset.album = album.album;
+                    card.innerHTML = `
+                        <h5 class="font-bold truncate">💿 ${album.title}</h5>
+                        <p class="text-sm truncate">${album.artist}</p>
+                        <p class="text-xs text-slate-500 mt-2">${album.recordingDate}</p>
+                    `;
+                    trackList.appendChild(card);
+                });
+                
+                yearSection.appendChild(trackList);
+                timelineWrapper.appendChild(yearSection);
             });
             
             years.forEach(year => {
@@ -432,22 +435,22 @@
                 yearButton.addEventListener('click', () => {
                     document.querySelectorAll('.year-marker').forEach(btn => btn.classList.remove('active'));
                     yearButton.classList.add('active');
-                    const yearLabel = document.querySelector(`.timeline-year-label[data-year='${year}']`);
-                    if(yearLabel) {
+                    const yearSection = document.getElementById(`year-${year}`);
+                    if(yearSection) {
                         timelineContainer.scrollTo({
-                            left: yearLabel.offsetLeft - timelineContainer.offsetWidth / 2,
+                            left: yearSection.offsetLeft - 32, // 32px padding
                             behavior: 'smooth'
                         });
                     }
                 });
                 timelineNav.appendChild(yearButton);
             });
-
+            
             const modal = document.getElementById('album-modal');
-            timelineBar.addEventListener('click', e => {
-                const marker = e.target.closest('.timeline-marker');
-                if (marker) {
-                    const { title, artist, album: albumName } = marker.dataset;
+            timelineWrapper.addEventListener('click', e => {
+                const card = e.target.closest('.timeline-track-card');
+                if (card) {
+                    const { title, artist, album: albumName } = card.dataset;
                     const album = albumData.find(a => a.title === title && a.artist === artist && a.album === albumName);
                     if (album) openModal(album);
                 }
