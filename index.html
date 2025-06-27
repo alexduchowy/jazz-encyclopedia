@@ -9,43 +9,82 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     
     <!-- Custom CSS Styling -->
     <style>
+        /* Define custom color properties for easy theme management */
+        :root {
+            --bg-main: #f5f5f4; /* stone-100 */
+            --bg-secondary: #e7e5e4; /* stone-200 */
+            --bg-dark: #1c1917; /* stone-900 */
+            --text-main: #1c1917; /* stone-900 */
+            --text-muted: #57534e; /* stone-600 */
+            --accent: #f97316; /* orange-500 */
+            --accent-dark: #ea580c; /* orange-600 */
+        }
+
         /* Base body styling */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1e293b; /* slate-800 */
-            color: #d1d5db; /* slate-300 */
+            background-color: var(--bg-main);
+            color: var(--text-main);
         }
-        /* Heading font styling */
+        
+        /* Heading font styling with new Bebas Neue font */
         h1, h2, h3, h4, h5 {
-            font-family: 'Lora', serif;
-            font-weight: 600;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
         }
+
+        /* Crooked Header Style */
+        header {
+            transform: rotate(-1.5deg);
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 5px 5px 0px var(--text-main);
+            border: 2px solid var(--text-main);
+        }
+
         /* Navigation link transition effects */
         .nav-link {
             transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
         }
         .nav-link:hover, .nav-link.active {
-            color: #38bdf8; /* sky-400 */
+            color: var(--accent);
         }
+
+        /* Section header styling */
+        .section-header {
+             transform: rotate(-1deg);
+             display: inline-block;
+             background-color: var(--accent);
+             color: var(--bg-main);
+             padding: 0.25rem 1rem;
+             margin-bottom: 1rem;
+        }
+
         /* Timeline year marker styling */
         .year-marker {
             transition: background-color 0.2s, color 0.2s;
+            border: 2px solid var(--text-main);
         }
-        .year-marker.active {
-            background-color: #0ea5e9; /* sky-500 */
-            color: #0f172a;
+        .year-marker.active, .year-marker:hover {
+            background-color: var(--text-main);
+            color: var(--bg-main);
         }
+
         /* Style matrix table transitions */
         .matrix-table th, .matrix-table td {
             transition: background-color 0.2s;
         }
         .matrix-table .highlight {
-            background-color: #334155; /* slate-700 */
+            background-color: var(--bg-secondary); 
         }
+
         /* Modal transition styles */
         .modal {
             transition: opacity 0.25s ease;
@@ -53,10 +92,11 @@
         .modal-content {
             transition: transform 0.25s ease;
         }
+
         /* Loading spinner animation */
         .loader {
-            border: 4px solid #475569; /* slate-600 */
-            border-top: 4px solid #38bdf8; /* sky-400 */
+            border: 4px solid var(--text-muted); 
+            border-top: 4px solid var(--accent);
             border-radius: 50%;
             width: 32px;
             height: 32px;
@@ -71,11 +111,8 @@
         #horizontal-timeline-container {
             width: 100%;
             overflow-x: auto;
-            padding-bottom: 2rem;
             cursor: grab;
-            border-top: 1px solid #334155;
-            border-bottom: 1px solid #334155;
-            background: #1e293b;
+            border: none;
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
@@ -97,16 +134,16 @@
             flex-shrink: 0;
             flex-direction: column;
             align-items: flex-start;
-            border-left: 2px dashed #475569;
+            border-left: 4px dotted var(--bg-secondary);
             padding: 0 2rem;
         }
         .timeline-year-section:first-child {
             border-left: none;
         }
         .timeline-year-header {
-            font-size: 2.5rem;
+            font-size: 4rem;
             font-weight: 900;
-            color: #475569;
+            color: var(--bg-secondary);
             margin-bottom: 1.5rem;
             width: 100%;
             text-align: left;
@@ -122,47 +159,60 @@
         .timeline-album-card {
             width: 200px;
             flex-shrink: 0;
-            background-color: #334155;
-            border-radius: 0.5rem;
+            background-color: var(--bg-main);
+            border-radius: 0.25rem;
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            border: 1px solid transparent;
+            box-shadow: 4px 4px 0px var(--text-main);
+            border: 2px solid var(--text-main);
             overflow: hidden;
         }
         .timeline-album-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0,0,0,0.3);
-            border-color: #38bdf8;
+            transform: translateY(-5px) rotate(-2deg);
+            box-shadow: 8px 8px 0px var(--accent);
         }
         .timeline-album-card img {
             width: 100%;
             height: 200px;
             object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+        .timeline-album-card:hover img {
+            filter: grayscale(0%);
         }
         .timeline-album-card-info {
             padding: 0.75rem;
         }
         .timeline-album-card-info h5 {
-            color: #e2e8f0; /* slate-200 */
+            color: var(--text-main);
+            font-size: 1.25rem;
         }
         .timeline-album-card-info p {
-            color: #94a3b8; /* slate-400 */
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
         }
         /* Artist card styling */
         .artist-card {
-            background-color: #334155;
-            border-radius: 0.5rem;
+            background-color: var(--bg-main);
+            border-radius: 0.25rem;
             overflow: hidden;
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            border: 1px solid transparent;
+            box-shadow: 4px 4px 0px var(--text-main);
+            border: 2px solid var(--text-main);
         }
         .artist-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0,0,0,0.3);
-            border-color: #38bdf8;
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 8px 8px 0px var(--accent);
+        }
+        .artist-card img {
+             filter: grayscale(100%);
+             transition: filter 0.3s ease;
+        }
+         .artist-card:hover img {
+            filter: grayscale(0%);
         }
         /* Artist Slider Styles */
         #artists-slider-container {
@@ -201,24 +251,34 @@
                 grid-template-columns: repeat(6, 1fr);
             }
         }
+        
+        .styled-select select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1.2em;
+        }
     </style>
 </head>
-<body class="bg-slate-800 text-slate-300">
+<body class="bg-stone-100 text-stone-900">
 
     <!-- Sticky Header Navigation -->
-    <header class="bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 shadow-md shadow-black/20">
+    <header class="bg-stone-100 sticky top-0 z-50">
         <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <h1 class="text-xl md:text-2xl font-bold text-sky-400 tracking-tight">Controlled Freedom</h1>
+                <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
                 <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
-                    <a href="#overview" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-400">Overview</a>
-                    <a href="#timeline" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-400">Timeline</a>
-                    <a href="#matrix" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-400">Genres</a>
-                    <a href="#artists" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-400">Artists</a>
-                    <a href="#legacy" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-400">Legacy</a>
+                    <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
+                    <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
+                    <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
+                    <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
+                    <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                 </div>
-                <div class="sm:hidden">
-                    <select id="mobile-nav" class="block w-full rounded-md border-slate-600 bg-slate-700 text-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm">
+                <div class="sm:hidden styled-select">
+                    <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
                         <option value="#overview">Overview</option>
                         <option value="#timeline">Timeline</option>
                         <option value="#matrix">Genres</option>
@@ -230,29 +290,29 @@
         </nav>
     </header>
 
-    <main>
+    <main class="pt-8">
         <!-- Hero Banner Section -->
-        <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
-            <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover">
+        <section id="banner" class="w-full h-64 md:h-80 lg:h-96 mb-24">
+            <img src="https://placehold.co/1200x400/1c1917/f97316?text=POST-BOP" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover border-y-4 border-stone-900">
         </section>
 
         <!-- Overview Section -->
         <section id="overview" class="py-16 sm:py-20">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-                <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">Post-Bop Encyclopedia</h2>
-                <p class="text-center text-lg text-slate-400 mb-12">An exploration into the era of "controlled freedom" that redefined jazz in the sixties.</p>
-                <div class="space-y-6 text-lg leading-relaxed text-slate-300">
-                    <p>The term "post-bop" is a retrospective label for a musical methodology that flourished in the late 1950s and 1960s. It wasn't a genre with rigid rules, but a shared philosophy of <strong class="text-sky-400">"controlled freedom."</strong> Musicians of this era sought a middle ground between the structured harmony of hard bop and the radical abandon of free jazz. They aimed to expand the expressive possibilities of jazz by incorporating harmonic ambiguity and rhythmic complexity without completely discarding form and melody.</p>
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
+                 <h2 class="section-header text-5xl">An Introduction</h2>
+                <p class="text-center text-lg text-stone-600 mb-12 italic">An exploration into the era of "controlled freedom" that redefined jazz in the sixties.</p>
+                <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
+                    <p>The term "post-bop" is a retrospective label for a musical methodology that flourished in the late 1950s and 1960s. It wasn't a genre with rigid rules, but a shared philosophy of <strong class="text-orange-500">"controlled freedom."</strong> Musicians of this era sought a middle ground between the structured harmony of hard bop and the radical abandon of free jazz. They aimed to expand the expressive possibilities of jazz by incorporating harmonic ambiguity and rhythmic complexity without completely discarding form and melody.</p>
                     <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
                 </div>
             </div>
         </section>
 
         <!-- Interactive Timeline Section -->
-        <section id="timeline" class="py-16 sm:py-20 bg-slate-900">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">Timeline Explorer</h2>
-                <p class="text-center text-lg text-slate-400 mb-12 max-w-3xl mx-auto">Click a year to navigate the timeline, then click an album cover to see the full analysis.</p>
+        <section id="timeline" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="section-header text-5xl">Timeline Explorer</h2>
+                <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Drag or use the buttons to explore a year-by-year breakdown of landmark albums.</p>
                 <div class="flex items-center justify-center gap-4 mb-12">
                     <div id="timeline-nav" class="flex flex-wrap justify-center gap-2"></div>
                 </div>
@@ -260,10 +320,10 @@
                     <div id="horizontal-timeline-container">
                         <div id="timeline-wrapper"></div>
                     </div>
-                    <button id="scroll-left-btn" class="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-slate-800/50 hover:bg-sky-500 text-slate-300 hover:text-slate-900 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
+                    <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                     </button>
-                    <button id="scroll-right-btn" class="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-slate-800/50 hover:bg-sky-500 text-slate-300 hover:text-slate-900 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
+                    <button id="scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                     </button>
                 </div>
@@ -271,19 +331,19 @@
         </section>
 
         <!-- Genre Comparison Matrix Section -->
-        <section id="matrix" class="py-16 sm:py-20 bg-slate-800">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">The Genres</h2>
-                <p class="text-center text-lg text-slate-400 mb-12 max-w-3xl mx-auto">Understand what makes post-bop unique by comparing it to its stylistic neighbors. Hover over a style (column) or a musical feature (row) to highlight and compare the distinct approaches to harmony, rhythm, and form.</p>
-                <div class="overflow-x-auto">
+        <section id="matrix" class="py-16 sm:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="section-header text-5xl">The Genres</h2>
+                <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Hover over the matrix to see how post-bop differed from its stylistic neighbors.</p>
+                <div class="overflow-x-auto border-2 border-stone-900">
                     <table id="style-matrix-table" class="matrix-table w-full min-w-[800px] border-collapse text-left">
                         <thead>
-                            <tr>
-                                <th class="p-4 border-b-2 border-slate-600 font-bold text-lg">Feature</th>
-                                <th class="p-4 border-b-2 border-slate-600 font-bold text-lg text-center">Hard Bop</th>
-                                <th class="p-4 border-b-2 border-slate-600 font-bold text-lg text-center">Modal Jazz</th>
-                                <th class="p-4 border-b-2 border-slate-600 font-bold text-lg text-center bg-sky-900/20">Post-Bop</th>
-                                <th class="p-4 border-b-2 border-slate-600 font-bold text-lg text-center">Free Jazz</th>
+                            <tr class="bg-stone-900 text-stone-100">
+                                <th class="p-4 border-b-2 border-stone-900 font-bold text-2xl">Feature</th>
+                                <th class="p-4 border-b-2 border-stone-900 font-bold text-2xl text-center">Hard Bop</th>
+                                <th class="p-4 border-b-2 border-stone-900 font-bold text-2xl text-center">Modal Jazz</th>
+                                <th class="p-4 border-b-2 border-stone-900 font-bold text-2xl text-center bg-orange-500 text-stone-900">Post-Bop</th>
+                                <th class="p-4 border-b-2 border-stone-900 font-bold text-2xl text-center">Free Jazz</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -293,17 +353,16 @@
         </section>
 
         <!-- Key Artists Slider Section -->
-        <section id="artists" class="py-16 sm:py-20 bg-slate-900">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">The Artists</h2>
-                <p class="text-center text-lg text-slate-400 mb-12 max-w-3xl mx-auto">Explore the profiles of the musicians who defined the post-bop era. Use the arrows or filter by instrument to navigate.</p>
+        <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                 <h2 class="section-header text-5xl">The Architects</h2>
+                <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined the post-bop era. Filter by instrument to begin.</p>
                 
                 <!-- Instrument Filter Dropdown -->
                 <div class="flex justify-center mb-8">
-                    <div class="w-full max-w-xs">
-                        <label for="instrument-filter" class="block text-sm font-medium text-slate-400 mb-2 text-center">Filter by Instrument:</label>
-                        <select id="instrument-filter" class="block w-full rounded-md border-slate-600 bg-slate-700 text-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm">
-                            <!-- Options will be populated by JS -->
+                    <div class="w-full max-w-xs styled-select">
+                        <label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label>
+                        <select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
                         </select>
                     </div>
                 </div>
@@ -314,10 +373,10 @@
                             <!-- Artist pages will be injected here by JavaScript -->
                         </div>
                     </div>
-                    <button id="artist-scroll-left-btn" class="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-slate-800/50 hover:bg-sky-500 text-slate-300 hover:text-slate-900 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
+                    <button id="artist-scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                     </button>
-                    <button id="artist-scroll-right-btn" class="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-slate-800/50 hover:bg-sky-500 text-slate-300 hover:text-slate-900 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
+                    <button id="artist-scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                     </button>
                 </div>
@@ -325,11 +384,11 @@
         </section>
         
         <!-- Legacy Section -->
-        <section id="legacy" class="py-16 sm:py-20 bg-slate-800">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-                <h2 class="text-4xl font-bold text-center mb-4 text-sky-400">Legacy and Dissolution</h2>
-                <p class="text-center text-lg text-slate-400 mb-12">How a golden age splintered into new forms, leaving an indelible mark on the future of music.</p>
-                <div class="space-y-6 text-lg leading-relaxed text-slate-300">
+        <section id="legacy" class="py-16 sm:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
+                <h2 class="section-header text-5xl">Legacy & Dissolution</h2>
+                <p class="text-center text-lg text-stone-600 mb-12 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
+                <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
                     <p>The golden age of acoustic innovation from 1958 to 1967 was a period of intense, shared creativity. However, by its end, the cohesive center of post-bop began to dissolve. The death of John Coltrane in 1967 removed a spiritual and musical lodestar. Simultaneously, Miles Davis began incorporating electric instruments and rock-influenced rhythms, paving the way for jazz-rock fusion with albums like *In a Silent Way* and *Bitches Brew*. This seismic shift created a new mainstream that would dominate the 1970s.</p>
                     <p>Yet, the legacy of post-bop is profound. Its harmonic, rhythmic, and compositional innovations became a permanent part of the modern jazz vocabulary. In the 1980s, the "Young Lions" movement, led by trumpeter Wynton Marsalis, sparked a "post-bop revival" that looked directly back to the acoustic, small-group aesthetic of the 1960s. This cemented the 1958-1967 period as a classic era, and its language remains the primary foundation for much of the acoustic jazz being played today.</p>
                 </div>
@@ -338,27 +397,27 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-8">
+    <footer class="bg-stone-900 text-stone-200 py-8">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>An interactive exploration based on the "Chronological Encyclopedia of Post-Bop (1958-1967)".</p>
-            <p class="text-sm text-slate-500 mt-2">Designed to bring music history to life through interactive data visualization.</p>
+            <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Post-Bop".</p>
+            <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
         </div>
     </footer>
 
     <!-- Album Detail Modal -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div id="modal-content" class="modal-content bg-slate-800 border border-slate-600 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
-            <div class="flex justify-between items-start p-4 border-b border-slate-600 flex-shrink-0">
+        <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
                 <div>
-                    <h3 id="modal-title" class="text-2xl font-bold text-sky-400"></h3>
-                    <p id="modal-artist" class="text-md text-slate-400"></p>
+                    <h3 id="modal-title" class="text-4xl text-orange-500"></h3>
+                    <p id="modal-artist" class="text-xl text-stone-600"></p>
                 </div>
-                <button id="close-modal" class="text-2xl font-bold p-2 leading-none text-slate-500 hover:text-white">&times;</button>
+                <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">&times;</button>
             </div>
             <div id="modal-body" class="p-6 overflow-y-auto">
-                <div class="flex flex-col md:flex-row gap-6 mb-6 pb-6 border-b border-slate-700">
+                <div class="flex flex-col md:flex-row gap-6 mb-6 pb-6 border-b-2 border-stone-200">
                     <div id="modal-album-art-container" class="w-full md:w-1/3 flex-shrink-0">
-                         <img id="modal-album-art" src="" class="w-full h-auto rounded-md shadow-lg" alt="">
+                         <img id="modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="">
                     </div>
                     <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
@@ -369,10 +428,10 @@
 
     <!-- Artist Detail Modal -->
     <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content bg-slate-800 border border-slate-600 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b border-slate-600 flex-shrink-0">
-                <h3 id="artist-modal-title" class="text-2xl font-bold text-sky-400"></h3>
-                <button id="close-artist-modal" class="text-2xl font-bold p-2 leading-none text-slate-500 hover:text-white">&times;</button>
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+                <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
+                <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">&times;</button>
             </div>
             <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
@@ -555,7 +614,7 @@
                     card.className = 'timeline-album-card';
                     card.dataset.albumTitle = album.albumTitle;
                     card.dataset.artist = album.artist;
-                    card.innerHTML = `<img src="${album.cover}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/334155/94a3b8?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate text-sm">${album.albumTitle}</h5><p class="text-xs truncate">${album.artist}</p></div>`;
+                    card.innerHTML = `<img src="${album.cover}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
                     albumList.appendChild(card);
                 });
                 yearSection.appendChild(albumList);
@@ -566,7 +625,7 @@
                 const yearButton = document.createElement('button');
                 yearButton.textContent = year;
                 yearButton.dataset.year = year;
-                yearButton.className = 'year-marker px-4 py-2 text-sm font-semibold rounded-full bg-slate-700 text-slate-300 hover:bg-sky-500 hover:text-slate-900';
+                yearButton.className = 'year-marker px-4 py-2 text-sm font-semibold rounded-sm bg-stone-100 text-stone-900';
                 yearButton.addEventListener('click', () => {
                     document.querySelectorAll('.year-marker').forEach(btn => btn.classList.remove('active'));
                     yearButton.classList.add('active');
@@ -601,13 +660,13 @@
                 const modalImg = albumModal.querySelector('#modal-album-art');
                 modalImg.src = album.cover;
                 modalImg.alt = `Cover for ${album.albumTitle}`;
-                modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/334155/94a3b8?text=No+Image'; };
+                modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
                 const firstTrack = album.pivotalTracks[0];
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
-                detailsContainer.innerHTML = `<h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Album Details</h4><ul class="text-sm space-y-1.5"><li><strong class="font-semibold text-slate-300 w-32 inline-block">Genres:</strong> ${album.genres.join(', ')}</li><li><strong class="font-semibold text-slate-300 w-32 inline-block">Recording Date:</strong> ${firstTrack.recordingDate}</li><li><strong class="font-semibold text-slate-300 w-32 inline-block">Label:</strong> ${firstTrack.label}</li><li><strong class="font-semibold text-slate-300 w-32 inline-block">Line-Up:</strong> ${firstTrack.lineup}</li></ul>`;
+                detailsContainer.innerHTML = `<h4 class="text-3xl text-stone-900 mb-3">Album Details</h4><ul class="text-base space-y-2 text-stone-900"><li><strong class="font-bold w-32 inline-block">Genres:</strong> ${album.genres.join(', ')}</li><li><strong class="font-bold w-32 inline-block">Recording Date:</strong> ${firstTrack.recordingDate}</li><li><strong class="font-bold w-32 inline-block">Label:</strong> ${firstTrack.label}</li><li><strong class="font-bold w-32 inline-block">Line-Up:</strong> ${firstTrack.lineup}</li></ul>`;
                 const analysisContainer = albumModal.querySelector('#modal-analysis-section');
-                const pivotalTracksHtml = album.pivotalTracks.map(track => `<div class="mb-6 pb-4 border-b border-slate-700 last:border-b-0"><h5 class="font-bold text-lg text-slate-200">${track.title}</h5><p class="text-sm mt-2">${track.analysis}</p></div>`).join('');
-                analysisContainer.innerHTML = `<div><h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Pivotal Tracks Analysis</h4>${pivotalTracksHtml}</div><div class="border-t border-slate-700 mt-6 pt-4"><button id="ai-analysis-btn" class="w-full sm:w-auto bg-sky-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-500 transition-colors disabled:bg-slate-600">✨ Get AI Album Analysis</button><div id="ai-result-container" class="mt-4 p-4 bg-slate-700 rounded-lg border border-slate-600 min-h-[50px]"></div></div>`;
+                const pivotalTracksHtml = album.pivotalTracks.map(track => `<div class="mb-6 pb-4 border-b-2 border-stone-200 last:border-b-0"><h5 class="text-2xl font-bold text-stone-900">${track.title}</h5><p class="text-base mt-2 text-stone-900">${track.analysis}</p></div>`).join('');
+                analysisContainer.innerHTML = `<div><h4 class="text-3xl text-stone-900 mb-3">Pivotal Tracks Analysis</h4>${pivotalTracksHtml}</div><div class="border-t-2 border-stone-200 mt-6 pt-4"><button id="ai-analysis-btn" class="w-full sm:w-auto bg-orange-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-orange-600 transition-colors disabled:bg-stone-400">✨ Get AI Album Analysis</button><div id="ai-result-container" class="mt-4 p-4 bg-stone-200 rounded-sm border-2 border-stone-900 min-h-[50px]"></div></div>`;
                 const aiButton = analysisContainer.querySelector('#ai-analysis-btn');
                 const aiResultContainer = analysisContainer.querySelector('#ai-result-container');
                 aiResultContainer.innerHTML = '';
@@ -638,17 +697,10 @@
                 renderArtistSlider(filteredArtists);
             });
             
-            /**
-             * Processes the raw track data to extract a unique list of artists and their instruments.
-             * This rewritten function is robust and handles all lineup string variations.
-             * @param {Array} tracks - The raw array of track objects.
-             * @returns {Array} A sorted array of unique artist objects.
-             */
             function processArtists(tracks) {
                 const artistsMap = new Map();
 
                 tracks.forEach(track => {
-                    // Split the lineup string by the comma that appears OUTSIDE parentheses
                     const lineupParts = track.lineup.split(/,(?![^()]*\))/);
                     
                     lineupParts.forEach(part => {
@@ -662,15 +714,15 @@
                                     name: name, 
                                     instruments: new Set(), 
                                     albums: new Set(), 
-                                    photo: `https://placehold.co/200x240/334155/94a3b8?text=${name.replace(/\s/g, '+')}` 
+                                    photo: `https://placehold.co/200x240/1c1917/f5f5f4?text=${name.replace(/\s/g, '+')}` 
                                 });
                             }
                             
                             const artistEntry = artistsMap.get(name);
                             
-                            instrumentsString.split(',').forEach(inst => {
+                            instrumentsString.split(/, | \/ /).forEach(inst => {
                                 const trimmedInst = inst.trim();
-                                if (trimmedInst && trimmedInst !== 'arranger' && !trimmedInst.includes('vocals')) {
+                                if (trimmedInst && !/vocals|arranger/.test(trimmedInst)) {
                                     artistEntry.instruments.add(trimmedInst);
                                 }
                             });
@@ -709,7 +761,7 @@
                 artistsSliderContainer.scrollLeft = 0;
 
                 if (artistsToRender.length === 0) {
-                    artistsSliderWrapper.innerHTML = `<div class="w-full text-center p-8 text-slate-400">No artists found for this instrument.</div>`;
+                    artistsSliderWrapper.innerHTML = `<div class="w-full text-center p-8 text-stone-600">No artists found for this instrument.</div>`;
                     artistScrollLeftBtn.style.display = 'none';
                     artistScrollRightBtn.style.display = 'none';
                     return;
@@ -730,7 +782,7 @@
                         const card = document.createElement('div');
                         card.className = 'artist-card';
                         card.dataset.artistName = artist.name;
-                        card.innerHTML = `<img src="${artist.photo}" alt="Photo of ${artist.name}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x240/334155/94a3b8?text=${artist.name.replace(/\s/g, '+')}';"><div class="p-4"><h4 class="font-bold text-lg text-slate-200">${artist.name}</h4></div>`;
+                        card.innerHTML = `<img src="${artist.photo}" alt="Photo of ${artist.name}" class="w-full h-48 object-cover"><div class="p-4"><h4 class="font-bold text-lg text-stone-900">${artist.name}</h4></div>`;
                         card.addEventListener('click', () => openArtistModal(artist));
                         page.appendChild(card);
                     });
@@ -775,7 +827,7 @@
             function openArtistModal(artist) {
                 artistModal.querySelector('#artist-modal-title').textContent = artist.name;
                 const body = artistModal.querySelector('#artist-modal-body');
-                body.innerHTML = `<div class="flex flex-col md:flex-row gap-6"><div class="w-full md:w-1/3 flex-shrink-0"><img src="${artist.photo}" class="w-full h-auto rounded-md shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/200x240/334155/94a3b8?text=${artist.name.replace(/\s/g, '+')}';"></div><div class="w-full md:w-2/3"><h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Details</h4><p class="mb-4"><strong class="font-semibold text-slate-300">Instruments:</strong> ${Array.from(artist.instruments).join(', ')}</p><h4 class="text-xl font-bold font-lora mb-3 text-sky-400">Album Appearances</h4><ul class="list-disc list-inside text-sm space-y-1">${Array.from(artist.albums).map(title => `<li>${title}</li>`).join('')}</ul></div></div>`;
+                body.innerHTML = `<div class="flex flex-col md:flex-row gap-6"><div class="w-full md:w-1/3 flex-shrink-0"><img src="${artist.photo}" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='https://placehold.co/200x240/1c1917/f5f5f4?text=${artist.name.replace(/\s/g, '+')}';"></div><div class="w-full md:w-2/3"><h4 class="text-3xl text-stone-900 mb-3">Details</h4><p class="mb-4 text-stone-900"><strong class="font-bold">Instruments:</strong> ${Array.from(artist.instruments).join(', ')}</p><h4 class="text-3xl text-stone-900 mb-3">Album Appearances</h4><ul class="list-disc list-inside text-sm space-y-1 text-stone-900">${Array.from(artist.albums).map(title => `<li>${title}</li>`).join('')}</ul></div></div>`;
                 artistModal.classList.remove('opacity-0', 'pointer-events-none');
                 artistModalContent.classList.remove('scale-95');
             }
@@ -807,14 +859,14 @@
                     } else { throw new Error('Invalid response structure.'); }
                 } catch (error) {
                     console.error("Gemini API Error:", error);
-                    resultContainer.innerHTML = `<p class="text-red-400">Sorry, the analysis could not be generated.</p>`;
+                    resultContainer.innerHTML = `<p class="text-red-500">Sorry, the analysis could not be generated.</p>`;
                 } finally {
                     buttonElement.disabled = false;
                 }
             }
 
             const matrixTableBody = document.querySelector('#style-matrix-table tbody');
-            matrixTableBody.innerHTML = styleMatrixData.map(row => `<tr data-feature="${row.feature}"><td class="p-4 border-b border-slate-700 font-semibold">${row.feature}</td><td class="p-4 border-b border-slate-700" data-style="Hard Bop">${row.hardBop}</td><td class="p-4 border-b border-slate-700" data-style="Modal Jazz">${row.modalJazz}</td><td class="p-4 border-b border-slate-700 bg-sky-900/20" data-style="Post-Bop">${row.postBop}</td><td class="p-4 border-b border-slate-700" data-style="Free Jazz">${row.freeJazz}</td></tr>`).join('');
+            matrixTableBody.innerHTML = styleMatrixData.map(row => `<tr class="border-b-2 border-stone-200"><td class="p-4 font-bold">${row.feature}</td><td class="p-4">${row.hardBop}</td><td class="p-4">${row.modalJazz}</td><td class="p-4 bg-orange-500/10">${row.postBop}</td><td class="p-4">${row.freeJazz}</td></tr>`).join('');
 
             document.querySelectorAll('#style-matrix-table th, #style-matrix-table td').forEach(cell => {
                 cell.addEventListener('mouseenter', () => {
@@ -829,6 +881,7 @@
             document.getElementById('mobile-nav').addEventListener('change', e => window.location.hash = e.target.value);
             
             function setupDraggable(container) {
+                if (!container) return;
                 let isDown = false;
                 let startX;
                 let scrollLeft;
