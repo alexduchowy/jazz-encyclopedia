@@ -269,6 +269,17 @@
             background-position: right 0.7rem center;
             background-size: 1.2em;
         }
+        #background-audio-player {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            width: 300px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        #background-audio-player:hover {
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -416,6 +427,9 @@
             <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
         </div>
     </footer>
+
+    <!-- Audio Player -->
+    <audio id="background-audio-player" controls loop></audio>
 
     <!-- Modals -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
@@ -677,8 +691,8 @@
                 
                 const analysisContainer = albumModal.querySelector('#modal-analysis-section');
                 const pivotalTracksHtml = album.pivotalTracks.map(track => {
-                    const spotifyEmbed = track.spotifyId ? `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/${track.spotifyId}?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>` : `<div class="w-full p-2 border-2 border-stone-300 rounded-sm text-center bg-stone-200">Spotify Player Coming Soon...</div>`;
-                    const appleMusicEmbed = track.appleMusicId ? `<iframe allow="autoplay *; encrypted-media *; fullscreen *" frameborder="0" height="150" style="width:100%;max-width:660px;overflow:hidden;background:transparent;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/album/${track.appleMusicId}"></iframe>` : `<div class="w-full p-2 border-2 border-stone-300 rounded-sm text-center bg-stone-200">Apple Music Player Coming Soon...</div>`;
+                    const spotifyEmbed = track.spotifyId ? `<iframe style="border-radius:0; border: 2px solid #1c1917;" src="https://open.spotify.com/embed/track/${track.spotifyId}?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>` : `<div class="w-full p-2 border-2 border-stone-300 rounded-sm text-center bg-stone-200">Spotify Player Coming Soon...</div>`;
+                    const appleMusicEmbed = track.appleMusicId ? `<iframe allow="autoplay *; encrypted-media *; fullscreen *" frameborder="0" height="150" style="width:100%;max-width:660px;overflow:hidden;background:transparent;border:2px solid #1c1917;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/album/${track.appleMusicId}"></iframe>` : `<div class="w-full p-2 border-2 border-stone-300 rounded-sm text-center bg-stone-200">Apple Music Player Coming Soon...</div>`;
 
                     return `<div class="mb-6 pb-4 border-b-2 border-stone-200 last:border-b-0">
                                 <h5 class="text-2xl font-bold text-stone-900">${track.title}</h5>
@@ -907,6 +921,30 @@
 
             setupDraggable(timelineContainer);
             setupDraggable(artistsSliderContainer);
+
+             // --- Background Audio Player ---
+            const audioPlayer = document.getElementById('background-audio-player');
+            const songList = ['songs/Misterioso.mp3', 'songs/Saturn.mp3', 'songs/Moanin.mp3', 'songs/Footprints.mp3', 'songs/Nefertiti.mp3'];
+            let currentSongIndex = 0;
+
+            function playNextSong() {
+                if (songList.length === 0) return;
+                audioPlayer.src = songList[currentSongIndex];
+                const playPromise = audioPlayer.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Autoplay was prevented. User must interact with the page first.");
+                    });
+                }
+            }
+
+            audioPlayer.addEventListener('ended', () => {
+                currentSongIndex = (currentSongIndex + 1) % songList.length;
+                playNextSong();
+            });
+
+            // Start playing the first song.
+            playNextSong();
         }
     </script>
 </body>
