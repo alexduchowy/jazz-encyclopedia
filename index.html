@@ -43,12 +43,13 @@
             margin-top: 1rem;
             box-shadow: 5px 5px 0px var(--text-main);
             border: 2px solid var(--text-main);
+            margin-bottom: -100px; /* Pulls subsequent content up */
+            position: relative; /* Needed for z-index and negative margin to work correctly */
         }
         
-        /* Pull main content up to overlap with header */
+        /* Adjust main content to account for header overlap */
         main {
-            margin-top: -3rem;
-            padding-top: 2rem;
+            padding-top: 100px; /* Pushes content down to create space for overlapping header */
         }
 
         /* Navigation link transition effects */
@@ -145,12 +146,12 @@
         .timeline-year-section:first-child {
             border-left: none;
         }
-        /* UPDATED: Year header styling */
+        /* Year header styling */
         .timeline-year-header {
-            font-size: 3rem; /* Made smaller */
+            font-size: 3rem; 
             font-weight: 900;
-            color: var(--text-main); /* Changed to black */
-            opacity: 0.15; /* Added opacity for stamp effect */
+            color: var(--text-main); 
+            opacity: 0.15;
             margin-bottom: 1.5rem;
             width: 100%;
             text-align: left;
@@ -312,9 +313,10 @@
                     <p>The term "post-bop" is a retrospective label for a musical methodology that flourished in the late 1950s and 1960s. It wasn't a genre with rigid rules, but a shared philosophy of <strong class="text-orange-500">"controlled freedom."</strong> Musicians of this era sought a middle ground between the structured harmony of hard bop and the radical abandon of free jazz. They aimed to expand the expressive possibilities of jazz by incorporating harmonic ambiguity and rhythmic complexity without completely discarding form and melody.</p>
                     <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
                 </div>
-                <!-- Spotify Playlist Iframe -->
-                <div class="mt-16">
-                     <iframe style="border-radius:12px; border: 2px solid #1c1917;" src="https://open.spotify.com/embed/playlist/6JT7jtrtYO7d5FBC3Fhh0p?utm_source=generator&theme=0" width="100%" height="500" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                <!-- Spotify Playlist -->
+                <div class="mt-16 text-left">
+                     <h3 class="text-3xl text-stone-900 mb-4">Listen now on Spotify:</h3>
+                     <iframe style="border-radius:0; border: 2px solid #1c1917;" src="https://open.spotify.com/embed/playlist/6JT7jtrtYO7d5FBC3Fhh0p?utm_source=generator&theme=0" width="100%" height="500" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 </div>
             </div>
         </section>
@@ -415,7 +417,7 @@
         </div>
     </footer>
 
-    <!-- Album Detail Modal -->
+    <!-- Modals -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
@@ -436,8 +438,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Artist Detail Modal -->
     <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
              <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
@@ -451,8 +451,7 @@
     <!-- Main Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Using the full, original dataset to ensure all artists are processed.
-            const rawTrackData = [
+             const rawTrackData = [
                 { year: 1958, artist: "Thelonious Monk Quartet", title: "Misterioso", album: "Misterioso", cover: "images/misterioso.jpg", recordingDate: "August 7, 1958", location: "Five Spot Café, New York City, NY", label: "Riverside", lineup: "Thelonious Monk (piano), Johnny Griffin (tenor saxophone), Ahmed Abdul-Malik (bass), Roy Haynes (drums)", composer: "Thelonious Monk", analysis: "Captured during a legendary residency at the Five Spot Café, this recording showcases Thelonious Monk's pivotal role in the adventurous evolution of hard bop. 'Misterioso' is a 12-bar blues, but in Monk's hands, the familiar structure becomes a vehicle for profound innovation. His angular, dissonant piano work and idiosyncratic use of silence challenge bop conventions from the inside out. Supported by the fiery tenor saxophone of Johnny Griffin, Monk demonstrates how a master improviser could deconstruct traditional forms in a live setting, turning a standard into a complex, unpredictable, and thoroughly modern statement." },
                 { year: 1958, artist: "Sun Ra and His Arkestra", title: "Saturn", album: "Jazz in Silhouette", cover: "images/jazz-in-silhouette.jpg", recordingDate: "c. late 1958", location: "El Saturn Studios, Chicago, IL", label: "El Saturn Records", lineup: "Sun Ra (piano), Hobart Dotson (trumpet), Marshall Allen (alto saxophone), James Spaulding (alto saxophone), John Gilmore (tenor saxophone), Pat Patrick (baritone saxophone), Charles Davis (baritone saxophone), Julian Priester (trombone), Victor Sproles (bass), William Bugs Cochran (drums)", composer: "Sun Ra", analysis: "With 'Saturn,' Sun Ra officially plants the flag for a new cosmic consciousness in jazz. While the piece is rooted in the swing and bop traditions of an orchestra, its theme, propelled by an insistent and otherworldly rhythm, signals a definitive break. This track is a key early document of Afrofuturism and a foundational text for what would become spiritual jazz. By blending familiar big band precision with visionary concepts, 'Saturn' acts as a bridge from the known world to the outer realms the Arkestra would explore, prefiguring the avant-garde and free jazz movements of the coming decade." },
                 { year: 1959, artist: "Charles Mingus", title: "Moanin'", album: "Blues & Roots", cover: "images/blues-&-roots.jpg", recordingDate: "February 4, 1959", location: "Atlantic Studios, New York City, NY", label: "Atlantic", lineup: "Charles Mingus (bass), Jackie McLean (alto saxophone), John Handy (alto saxophone), Booker Ervin (tenor saxophone), Pepper Adams (baritone saxophone), Jimmy Knepper (trombone), Willie Dennis (trombone), Horace Parlan (piano), Dannie Richmond (drums)", composer: "Charles Mingus", analysis: "This track is a visceral manifesto for Mingus's vision of jazz as a deeply rooted art form. In a direct response to critics who found his music overly complex, Mingus created a work of stunning, elemental power. 'Moanin'' is built on a simple, earthy baritone saxophone riff that becomes a platform for layered, blues-drenched horns and shouting exhortations. This is a key example of the adventurous evolution of hard bop, as Mingus injects the genre with the raw fervor of a sanctified church service, creating a sound that is simultaneously sophisticated in its arrangement and profoundly primal in its emotional impact." },
