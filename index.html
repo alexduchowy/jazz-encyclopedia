@@ -674,13 +674,30 @@
                 const firstTrack = album.pivotalTracks[0];
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
                 detailsContainer.innerHTML = `<h4 class="text-3xl text-stone-900 mb-3">Album Details</h4><ul class="text-base space-y-2 text-stone-900"><li><strong class="font-bold w-32 inline-block">Genres:</strong> ${album.genres.join(', ')}</li><li><strong class="font-bold w-32 inline-block">Recording Date:</strong> ${firstTrack.recordingDate}</li><li><strong class="font-bold w-32 inline-block">Label:</strong> ${firstTrack.label}</li><li><strong class="font-bold w-32 inline-block">Line-Up:</strong> ${firstTrack.lineup}</li></ul>`;
+                
                 const analysisContainer = albumModal.querySelector('#modal-analysis-section');
-                const pivotalTracksHtml = album.pivotalTracks.map(track => `<div class="mb-6 pb-4 border-b-2 border-stone-200 last:border-b-0"><h5 class="text-2xl font-bold text-stone-900">${track.title}</h5><p class="text-base mt-2 text-stone-900">${track.analysis}</p></div>`).join('');
-                analysisContainer.innerHTML = `<div><h4 class="text-3xl text-stone-900 mb-3">Pivotal Tracks Analysis</h4>${pivotalTracksHtml}</div><div class="border-t-2 border-stone-200 mt-6 pt-4"><button id="ai-analysis-btn" class="w-full sm:w-auto bg-orange-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-orange-600 transition-colors disabled:bg-stone-400">✨ Get AI Album Analysis</button><div id="ai-result-container" class="mt-4 p-4 bg-stone-200 rounded-sm border-2 border-stone-900 min-h-[50px]"></div></div>`;
-                const aiButton = analysisContainer.querySelector('#ai-analysis-btn');
-                const aiResultContainer = analysisContainer.querySelector('#ai-result-container');
-                aiResultContainer.innerHTML = '';
-                aiButton.addEventListener('click', () => getAiAnalysis(album, aiButton, aiResultContainer));
+                const pivotalTracksHtml = album.pivotalTracks.map(track => {
+                    const spotifyEmbed = track.spotifyId ? `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/${track.spotifyId}?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>` : `<div class="w-full p-2 border-2 border-stone-300 rounded-sm text-center bg-stone-200">Spotify Player Coming Soon...</div>`;
+                    const appleMusicEmbed = track.appleMusicId ? `<iframe allow="autoplay *; encrypted-media *; fullscreen *" frameborder="0" height="150" style="width:100%;max-width:660px;overflow:hidden;background:transparent;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/album/${track.appleMusicId}"></iframe>` : `<div class="w-full p-2 border-2 border-stone-300 rounded-sm text-center bg-stone-200">Apple Music Player Coming Soon...</div>`;
+
+                    return `<div class="mb-6 pb-4 border-b-2 border-stone-200 last:border-b-0">
+                                <h5 class="text-2xl font-bold text-stone-900">${track.title}</h5>
+                                <p class="text-base mt-2 text-stone-900">${track.analysis}</p>
+                                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <h6 class="font-bold text-stone-600 mb-2">Spotify</h6>
+                                        ${spotifyEmbed}
+                                    </div>
+                                    <div>
+                                        <h6 class="font-bold text-stone-600 mb-2">Apple Music</h6>
+                                        ${appleMusicEmbed}
+                                    </div>
+                                </div>
+                            </div>`;
+                }).join('');
+
+                analysisContainer.innerHTML = `<div><h4 class="text-3xl text-stone-900 mb-3">Pivotal Tracks</h4>${pivotalTracksHtml}</div>`;
+                
                 albumModal.classList.remove('opacity-0', 'pointer-events-none');
                 albumModalContent.classList.remove('scale-95');
             }
@@ -850,31 +867,7 @@
             artistModal.querySelector('#close-artist-modal').addEventListener('click', closeArtistModal);
             artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') closeArtistModal(); });
             document.addEventListener('keydown', e => { if (e.key === "Escape") { closeAlbumModal(); closeArtistModal(); } });
-
-            async function getAiAnalysis(album, buttonElement, resultContainer) {
-                buttonElement.disabled = true;
-                resultContainer.innerHTML = '<div class="flex justify-center items-center p-4"><div class="loader"></div></div>';
-                let existingInfo = album.pivotalTracks.map(t => `Analysis for track '${t.title}': ${t.analysis}`).join('; ');
-                const prompt = `You are a musicologist. Provide a fresh analysis of the album "${album.albumTitle}" by ${album.artist} (${album.year}). Synthesize the following track analyses into a cohesive overview: ${existingInfo}. Discuss the album's overall mood and impact. Frame it under the heading 'A Modern Listener's Perspective'.`;
-                try {
-                    let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                    const payload = { contents: chatHistory };
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    if (!response.ok) throw new Error(`API request failed`);
-                    const result = await response.json();
-                    if (result.candidates && result.candidates[0] && result.candidates[0].content.parts[0].text) {
-                        resultContainer.innerHTML = result.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
-                    } else { throw new Error('Invalid response structure.'); }
-                } catch (error) {
-                    console.error("Gemini API Error:", error);
-                    resultContainer.innerHTML = `<p class="text-red-500">Sorry, the analysis could not be generated.</p>`;
-                } finally {
-                    buttonElement.disabled = false;
-                }
-            }
-
+            
             const matrixTableBody = document.querySelector('#style-matrix-table tbody');
             matrixTableBody.innerHTML = styleMatrixData.map(row => `<tr class="border-b-2 border-stone-200"><td class="p-4 font-bold">${row.feature}</td><td class="p-4">${row.hardBop}</td><td class="p-4">${row.modalJazz}</td><td class="p-4 bg-orange-500/10">${row.postBop}</td><td class="p-4">${row.freeJazz}</td></tr>`).join('');
 
