@@ -269,17 +269,6 @@
             background-position: right 0.7rem center;
             background-size: 1.2em;
         }
-        #background-audio-player {
-            position: fixed;
-            bottom: 1rem;
-            right: 1rem;
-            width: 300px;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-        }
-        #background-audio-player:hover {
-            opacity: 1;
-        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -323,11 +312,6 @@
                 <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
                     <p>The term "post-bop" is a retrospective label for a musical methodology that flourished in the late 1950s and 1960s. It wasn't a genre with rigid rules, but a shared philosophy of <strong class="text-orange-500">"controlled freedom."</strong> Musicians of this era sought a middle ground between the structured harmony of hard bop and the radical abandon of free jazz. They aimed to expand the expressive possibilities of jazz by incorporating harmonic ambiguity and rhythmic complexity without completely discarding form and melody.</p>
                     <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
-                </div>
-                <!-- Spotify Playlist -->
-                <div class="mt-16 text-left">
-                     <h3 class="text-3xl text-stone-900 mb-4">Listen now on Spotify:</h3>
-                     <iframe style="border-radius:0; border: 2px solid #1c1917;" src="https://open.spotify.com/embed/playlist/6JT7jtrtYO7d5FBC3Fhh0p?utm_source=generator&theme=0" width="100%" height="500" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 </div>
             </div>
         </section>
@@ -410,11 +394,16 @@
         <!-- Legacy Section -->
         <section id="legacy" class="py-16 sm:py-20">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
-                <h2 class="section-header text-5xl">Legacy & Dissolution</h2>
+                <h2 class="section-header text-5xl">Legacy</h2>
                 <p class="text-center text-lg text-stone-600 mb-12 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
                 <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
                     <p>The golden age of acoustic innovation from 1958 to 1967 was a period of intense, shared creativity. However, by its end, the cohesive center of post-bop began to dissolve. The death of John Coltrane in 1967 removed a spiritual and musical lodestar. Simultaneously, Miles Davis began incorporating electric instruments and rock-influenced rhythms, paving the way for jazz-rock fusion with albums like *In a Silent Way* and *Bitches Brew*. This seismic shift created a new mainstream that would dominate the 1970s.</p>
                     <p>Yet, the legacy of post-bop is profound. Its harmonic, rhythmic, and compositional innovations became a permanent part of the modern jazz vocabulary. In the 1980s, the "Young Lions" movement, led by trumpeter Wynton Marsalis, sparked a "post-bop revival" that looked directly back to the acoustic, small-group aesthetic of the 1960s. This cemented the 1958-1967 period as a classic era, and its language remains the primary foundation for much of the acoustic jazz being played today.</p>
+                </div>
+                 <!-- Spotify Playlist -->
+                <div class="mt-16 text-left">
+                     <h3 class="text-3xl text-stone-900 mb-4">Listen now on Spotify:</h3>
+                     <iframe style="border-radius:0; border: 2px solid #1c1917;" src="https://open.spotify.com/embed/playlist/6JT7jtrtYO7d5FBC3Fhh0p?utm_source=generator&theme=0" width="100%" height="500" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 </div>
             </div>
         </section>
@@ -427,9 +416,6 @@
             <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
         </div>
     </footer>
-
-    <!-- Audio Player -->
-    <audio id="background-audio-player" controls loop></audio>
 
     <!-- Modals -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
@@ -596,6 +582,17 @@
                 if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
                 return null;
             }
+            
+            // Helper to format names for audio file paths
+            const slugify = (name) => {
+                return name.toLowerCase()
+                    .replace(/\s+/g, '-') // Replace spaces with -
+                    .replace(/[^\w-]+/g, '') // Remove all non-word chars
+                    .replace(/--+/g, '-') // Replace multiple - with single -
+                    .replace(/^-+/, '') // Trim - from start of text
+                    .replace(/-+$/, ''); // Trim - from end of text
+            }
+
 
             albums = rawTrackData.reduce((acc, track) => {
                 let album = acc.find(a => a.albumTitle === track.album && a.artist === track.artist);
@@ -705,9 +702,15 @@
                 
                 const analysisContainer = albumModal.querySelector('#modal-analysis-section');
                 const pivotalTracksHtml = album.pivotalTracks.map(track => {
+                    const songFileName = slugify(track.title) + '.mp3';
                     return `<div class="mb-6 pb-4 border-b-2 border-stone-200 last:border-b-0">
                                 <h5 class="text-2xl font-bold text-stone-900">${track.title}</h5>
                                 <p class="text-base mt-2 text-stone-900">${track.analysis}</p>
+                                <div class="mt-4">
+                                    <audio controls class="w-full" src="songs/${songFileName}">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                </div>
                             </div>`;
                 }).join('');
 
@@ -727,6 +730,8 @@
             function closeAlbumModal() {
                 albumModal.classList.add('opacity-0', 'pointer-events-none');
                 albumModalContent.classList.add('scale-95');
+                // Stop all audio players when modal closes
+                albumModal.querySelectorAll('audio').forEach(audio => audio.pause());
             }
             albumModal.querySelector('#close-modal').addEventListener('click', closeAlbumModal);
             albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') closeAlbumModal(); });
@@ -761,7 +766,7 @@
             
             function processArtists(tracks) {
                 const artistsMap = new Map();
-                const slugify = (name) => name.toLowerCase().replace(/\s+/g, '-');
+                const slugify = (name) => name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
                 tracks.forEach(track => {
                     const mainArtistString = track.artist;
                     const lineupParts = track.lineup.split(/,(?![^()]*\))/);
@@ -966,46 +971,6 @@
             setupDraggable(timelineContainer);
             setupDraggable(artistsSliderContainer);
 
-            // --- Background Audio Player (FIXED) ---
-            const audioPlayer = document.getElementById('background-audio-player');
-            const songList = [
-                'songs/Misterioso.mp3', 
-                'songs/Better Git It In Your Soul.mp3', 
-                'songs/Lonely Woman.mp3', 
-                'songs/Stratusphunk.mp3', 
-                'songs/Stolen Moments.mp3'
-            ];
-            let currentSongIndex = 0;
-
-            function playCurrentSong() {
-                if (songList.length === 0) return;
-                
-                audioPlayer.src = songList[currentSongIndex];
-                const playPromise = audioPlayer.play();
-
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.error("Playback failed:", error);
-                        // This error might happen if the user interacts, then the browser goes idle and revokes permission.
-                        // In this case, we'd need another interaction. The best we can do is log it.
-                    });
-                }
-            }
-
-            audioPlayer.addEventListener('ended', () => {
-                currentSongIndex = (currentSongIndex + 1) % songList.length;
-                playCurrentSong();
-            });
-
-            // This function will be called only once on the first user click.
-            function startPlayback() {
-                 if (audioPlayer.paused) {
-                    playCurrentSong();
-                }
-            }
-            
-            // Add the one-time listener for the first user interaction.
-            document.body.addEventListener('click', startPlayback, { once: true });
         }
     </script>
 </body>
