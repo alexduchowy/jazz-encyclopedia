@@ -140,10 +140,12 @@
         .timeline-year-section:first-child {
             border-left: none;
         }
+        /* UPDATED: Year header styling */
         .timeline-year-header {
-            font-size: 4rem;
+            font-size: 3rem; /* Made smaller */
             font-weight: 900;
-            color: var(--bg-secondary);
+            color: var(--text-main); /* Changed to black */
+            opacity: 0.15; /* Added opacity for stamp effect */
             margin-bottom: 1.5rem;
             width: 100%;
             text-align: left;
@@ -293,7 +295,8 @@
     <main class="pt-8">
         <!-- Hero Banner Section -->
         <section id="banner" class="w-full h-64 md:h-80 lg:h-96 mb-24">
-            <img src="https://placehold.co/1200x400/1c1917/f97316?text=POST-BOP" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover border-y-4 border-stone-900">
+            <!-- UPDATED: Banner Image Source -->
+            <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover border-y-4 border-stone-900">
         </section>
 
         <!-- Overview Section -->
