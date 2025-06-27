@@ -966,7 +966,7 @@
             setupDraggable(timelineContainer);
             setupDraggable(artistsSliderContainer);
 
-             // --- Background Audio Player (FIXED) ---
+            // --- Background Audio Player (FIXED) ---
             const audioPlayer = document.getElementById('background-audio-player');
             const songList = [
                 'songs/Misterioso.mp3', 
@@ -977,26 +977,35 @@
             ];
             let currentSongIndex = 0;
 
-            function playNextSong() {
+            function playCurrentSong() {
                 if (songList.length === 0) return;
+                
                 audioPlayer.src = songList[currentSongIndex];
                 const playPromise = audioPlayer.play();
+
                 if (playPromise !== undefined) {
                     playPromise.catch(error => {
-                        console.log("Autoplay was prevented. User must interact with the page first.");
-                         // We can add a click handler to the body to start playback on first user interaction
-                        document.body.addEventListener('click', () => audioPlayer.play(), { once: true });
+                        console.error("Playback failed:", error);
+                        // This error might happen if the user interacts, then the browser goes idle and revokes permission.
+                        // In this case, we'd need another interaction. The best we can do is log it.
                     });
                 }
             }
 
             audioPlayer.addEventListener('ended', () => {
                 currentSongIndex = (currentSongIndex + 1) % songList.length;
-                playNextSong();
+                playCurrentSong();
             });
 
-            // Start playing the first song.
-            playNextSong();
+            // This function will be called only once on the first user click.
+            function startPlayback() {
+                 if (audioPlayer.paused) {
+                    playCurrentSong();
+                }
+            }
+            
+            // Add the one-time listener for the first user interaction.
+            document.body.addEventListener('click', startPlayback, { once: true });
         }
     </script>
 </body>
