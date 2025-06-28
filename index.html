@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
     <!-- Custom CSS Styling -->
     <style>
@@ -255,43 +255,26 @@
         #modal-analysis-section {
             background-color: var(--bg-dark);
             padding: 1.5rem;
-            border-top: 2px solid var(--text-main);
-        }
-        #modal-analysis-section h4 {
-            color: var(--bg-main);
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 0.5rem;
-            display: inline-block;
+            transform: rotate(-1deg);
+            margin-top: 2rem;
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
         }
         #modal-analysis-section h5 {
             color: var(--bg-main);
         }
-        #modal-analysis-section p {
-            color: var(--bg-secondary);
+        
+        .liner-notes-text {
+            font-family: 'Lora', serif;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            font-style: italic;
+            color: #d4d4d2; /* A slightly off-white for better readability */
         }
         
         .styled-audio-player {
             accent-color: var(--accent);
-            background-color: var(--accent);
-            border-radius: 9999px;
-            padding: 2px;
-        }
-        .styled-audio-player::-webkit-media-controls-panel {
-            background-color: var(--accent);
-        }
-        .styled-audio-player::-webkit-media-controls-play-button {
-            background-color: white;
-            border-radius: 50%;
-        }
-        .styled-audio-player::-webkit-media-controls-current-time-display,
-        .styled-audio-player::-webkit-media-controls-time-remaining-display {
-            color: white;
-            font-weight: bold;
-        }
-        .styled-audio-player::-webkit-media-controls-volume-slider {
-            background-color: white;
-            border-radius: 25px;
-            padding: 0 5px;
+            filter: saturate(0.8) brightness(1.2);
         }
 
     </style>
@@ -453,7 +436,7 @@
                 <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">&times;</button>
             </div>
             <div id="modal-body" class="p-6 overflow-y-auto">
-                <div class="flex flex-col md:flex-row gap-6 mb-6 pb-6 border-b-2 border-stone-200">
+                <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
                     <div id="modal-album-art-container" class="w-full md:w-1/3 flex-shrink-0">
                          <img id="modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="">
                     </div>
@@ -723,26 +706,28 @@
                 modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
                 const firstTrack = album.pivotalTracks[0];
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
-                detailsContainer.innerHTML = `<h4 class="text-3xl text-stone-900 mb-3">Album Details</h4><ul class="text-base space-y-2 text-stone-900"><li><strong class="font-bold w-32 inline-block">Genres:</strong> ${album.genres.join(', ')}</li><li><strong class="font-bold w-32 inline-block">Recording Date:</strong> ${firstTrack.recordingDate}</li><li><strong class="font-bold w-32 inline-block">Label:</strong> ${firstTrack.label}</li><li><strong class="font-bold w-32 inline-block">Line-Up:</strong> ${firstTrack.lineup}</li></ul>`;
-                
+                 detailsContainer.innerHTML = `
+                    <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
+                    <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                        <strong class="font-bold text-right">Genre:</strong> <span>${album.genres.join(', ')}</span>
+                        <strong class="font-bold text-right">Recorded:</strong> <span>${firstTrack.recordingDate}</span>
+                        <strong class="font-bold text-right">Label:</strong> <span>${firstTrack.label}</span>
+                        <strong class="font-bold text-right">Line-Up:</strong> <span>${firstTrack.lineup}</span>
+                    </div>`;
+
                 const analysisContainer = albumModal.querySelector('#modal-analysis-section');
                 const pivotalTracksHtml = album.pivotalTracks.map(track => {
                     const songFileName = slugify(track.title) + '.mp3';
                      return `
-                        <div class="mb-8 pb-4 border-b-2 border-stone-700 last:border-b-0">
-                            <div class="flex justify-between items-center gap-4 mb-2 flex-wrap">
-                                <h5 class="text-2xl font-bold">${track.title}</h5>
-                                <div class="flex flex-col items-end">
-                                    <span class="text-xs uppercase font-bold text-white bg-orange-500 px-2 py-1 rounded-t-md">Play The Song</span>
-                                    <audio controls class="styled-audio-player" src="songs/${songFileName}" preload="metadata"></audio>
-                                </div>
-                            </div>
-                            <p class="text-base mt-2">${track.analysis}</p>
+                        <div class="mb-8 last:mb-0">
+                             <h5 class="text-3xl font-bold text-white mb-3">Pivotal Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                             <audio controls class="styled-audio-player w-full mb-4" src="songs/${songFileName}" preload="metadata"></audio>
+                             <p class="liner-notes-text">${track.analysis}</p>
                         </div>
                     `;
-                }).join('');
+                }).join('<hr class="border-stone-700 my-8">');
 
-                analysisContainer.innerHTML = `<h4 class="text-3xl mb-4">Pivotal Tracks</h4>${pivotalTracksHtml}`;
+                analysisContainer.innerHTML = pivotalTracksHtml;
                 
                 // Add event listeners to ensure only one audio plays at a time
                 const audioPlayers = analysisContainer.querySelectorAll('audio');
