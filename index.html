@@ -232,12 +232,12 @@
             padding: 1rem;
             box-sizing: border-box;
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
+            grid-template-columns: repeat(2, 1fr); /* 3 rows of 2 on mobile */
             gap: 1.5rem;
         }
         @media (min-width: 768px) { /* md breakpoint for 4 columns */
             .artist-page {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(4, 1fr); /* 2 rows of 4 on web */
             }
         }
         
@@ -706,10 +706,10 @@
                  detailsContainer.innerHTML = `
                     <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
                     <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
-                        <strong>Genre:</strong> <span>${album.genres.join(', ')}</span>
-                        <strong>Recorded:</strong> <span>${firstTrack.recordingDate}</span>
-                        <strong>Label:</strong> <span>${firstTrack.label}</span>
-                        <strong>Line-Up:</strong> <span>${firstTrack.lineup}</span>
+                        <strong class="font-bold">Genre:</strong> <span>${album.genres.join(', ')}</span>
+                        <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate}</span>
+                        <strong class="font-bold">Label:</strong> <span>${firstTrack.label}</span>
+                        <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup}</span>
                     </div>`;
 
                 const analysisContainer = albumModal.querySelector('#modal-analysis-section');
@@ -717,8 +717,13 @@
                     const songFileName = slugify(track.title) + '.mp3';
                     return `
                         <div class="mb-8 last:mb-0">
-                            <h5 class="text-3xl font-bold text-white mb-4">Pivotal Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
-                            <audio controls class="styled-audio-player w-full mb-4" src="songs/${songFileName}" preload="metadata"></audio>
+                            <div class="flex justify-between items-center gap-4 mb-3 flex-wrap">
+                                <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Pivotal Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                <div class="flex flex-col items-end">
+                                    <span class="text-xs uppercase font-bold text-white bg-orange-500 px-2 py-1 rounded-t-md">Listen</span>
+                                    <audio controls class="styled-audio-player" style="width: 150px;" src="songs/${songFileName}" preload="metadata"></audio>
+                                </div>
+                            </div>
                             <p class="liner-notes-text">${track.analysis}</p>
                         </div>
                     `;
