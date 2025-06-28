@@ -246,17 +246,12 @@
             padding: 1rem;
             box-sizing: border-box;
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
             gap: 1.5rem;
         }
-        @media (min-width: 640px) { /* sm breakpoint */
+        @media (min-width: 768px) { /* md breakpoint for 4 columns */
             .artist-page {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        @media (min-width: 1024px) { /* lg breakpoint */
-            .artist-page {
-                grid-template-columns: repeat(6, 1fr);
+                grid-template-columns: repeat(4, 1fr);
             }
         }
         
@@ -857,7 +852,7 @@
                 artistScrollLeftBtn.style.display = 'block';
                 artistScrollRightBtn.style.display = 'block';
 
-                const batchSize = 6; 
+                const batchSize = 8; // Changed to 8
                 const numPages = Math.ceil(artistsToRender.length / batchSize);
 
                 for (let i = 0; i < artistsToRender.length; i += batchSize) {
@@ -898,15 +893,15 @@
                 }
 
                 artistScrollLeftBtn.onclick = () => {
-                    if (currentArtistPage > 0) {
+                     if (currentArtistPage > 0) {
                         currentArtistPage--;
                         artistsSliderContainer.scrollBy({ left: -artistsSliderContainer.clientWidth, behavior: 'smooth' });
-                    }
+                     }
                 };
     
                 artistScrollRightBtn.onclick = () => {
                     if (currentArtistPage < numPages - 1) {
-                        currentArtistPage++;
+                         currentArtistPage++;
                         artistsSliderContainer.scrollBy({ left: artistsSliderContainer.clientWidth, behavior: 'smooth' });
                     }
                 };
@@ -916,11 +911,9 @@
                     clearTimeout(scrollTimeout);
                     scrollTimeout = setTimeout(() => {
                         const newPage = Math.round(artistsSliderContainer.scrollLeft / artistsSliderContainer.clientWidth);
-                        if (newPage !== currentArtistPage) {
-                            currentArtistPage = newPage;
-                            updateArtistSliderButtons();
-                        }
-                    }, 150);
+                        currentArtistPage = newPage;
+                        updateArtistSliderButtons();
+                    }, 250); // Increased timeout for smoother experience
                 };
                 
                 updateArtistSliderButtons();
