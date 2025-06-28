@@ -704,13 +704,13 @@
                 const pivotalTracksHtml = album.pivotalTracks.map(track => {
                     const songFileName = slugify(track.title) + '.mp3';
                     return `<div class="mb-6 pb-4 border-b-2 border-stone-200 last:border-b-0">
-                                <h5 class="text-2xl font-bold text-stone-900">${track.title}</h5>
-                                <p class="text-base mt-2 text-stone-900">${track.analysis}</p>
-                                <div class="mt-4">
-                                    <audio controls class="w-full" src="songs/${songFileName}">
+                                <div class="flex justify-between items-center mb-2 flex-wrap">
+                                    <h5 class="text-2xl font-bold text-stone-900 mr-4">${track.title}</h5>
+                                    <audio controls class="max-w-xs w-full" src="songs/${songFileName}">
                                         Your browser does not support the audio element.
                                     </audio>
                                 </div>
+                                <p class="text-base mt-2 text-stone-900">${track.analysis}</p>
                             </div>`;
                 }).join('');
 
