@@ -17,7 +17,7 @@
         :root {
             --bg-main: #f5f5f4; /* stone-100 */
             --bg-secondary: #e7e5e4; /* stone-200 */
-            --bg-dark: #1c1917; /* stone-900 */
+            --bg-dark: #1a1a1a; /* Custom dark gray */
             --text-main: #1c1917; /* stone-900 */
             --text-muted: #57534e; /* stone-600 */
             --accent: #f97316; /* orange-500 */
@@ -97,20 +97,6 @@
         }
         .modal-content {
             transition: transform 0.25s ease;
-        }
-
-        /* Loading spinner animation */
-        .loader {
-            border: 4px solid var(--text-muted); 
-            border-top: 4px solid var(--accent);
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
         
         /* Horizontal draggable timeline container */
@@ -264,6 +250,50 @@
             background-position: right 0.7rem center;
             background-size: 1.2em;
         }
+
+        /* Modal Night Mode & Player Styles */
+        #modal-analysis-section {
+            background-color: var(--bg-dark);
+            padding: 1.5rem;
+            border-top: 2px solid var(--text-main);
+        }
+        #modal-analysis-section h4 {
+            color: var(--bg-main);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        #modal-analysis-section h5 {
+            color: var(--bg-main);
+        }
+        #modal-analysis-section p {
+            color: var(--bg-secondary);
+        }
+        
+        .styled-audio-player {
+            accent-color: var(--accent);
+            background-color: var(--accent);
+            border-radius: 9999px;
+            padding: 2px;
+        }
+        .styled-audio-player::-webkit-media-controls-panel {
+            background-color: var(--accent);
+        }
+        .styled-audio-player::-webkit-media-controls-play-button {
+            background-color: white;
+            border-radius: 50%;
+        }
+        .styled-audio-player::-webkit-media-controls-current-time-display,
+        .styled-audio-player::-webkit-media-controls-time-remaining-display {
+            color: white;
+            font-weight: bold;
+        }
+        .styled-audio-player::-webkit-media-controls-volume-slider {
+            background-color: white;
+            border-radius: 25px;
+            padding: 0 5px;
+        }
+
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -698,19 +728,34 @@
                 const analysisContainer = albumModal.querySelector('#modal-analysis-section');
                 const pivotalTracksHtml = album.pivotalTracks.map(track => {
                     const songFileName = slugify(track.title) + '.mp3';
-                    return `<div class="mb-6 pb-4 border-b-2 border-stone-200 last:border-b-0">
-                                <div class="flex justify-between items-center mb-2 flex-wrap">
-                                    <h5 class="text-2xl font-bold text-stone-900 mr-4">${track.title}</h5>
-                                    <audio controls class="max-w-xs w-full" src="songs/${songFileName}">
-                                        Your browser does not support the audio element.
-                                    </audio>
+                     return `
+                        <div class="mb-8 pb-4 border-b-2 border-stone-700 last:border-b-0">
+                            <div class="flex justify-between items-center gap-4 mb-2 flex-wrap">
+                                <h5 class="text-2xl font-bold">${track.title}</h5>
+                                <div class="flex flex-col items-end">
+                                    <span class="text-xs uppercase font-bold text-white bg-orange-500 px-2 py-1 rounded-t-md">Play The Song</span>
+                                    <audio controls class="styled-audio-player" src="songs/${songFileName}" preload="metadata"></audio>
                                 </div>
-                                <p class="text-base mt-2 text-stone-900">${track.analysis}</p>
-                            </div>`;
+                            </div>
+                            <p class="text-base mt-2">${track.analysis}</p>
+                        </div>
+                    `;
                 }).join('');
 
-                analysisContainer.innerHTML = `<div><h4 class="text-3xl text-stone-900 mb-3">Pivotal Tracks</h4>${pivotalTracksHtml}</div>`;
+                analysisContainer.innerHTML = `<h4 class="text-3xl mb-4">Pivotal Tracks</h4>${pivotalTracksHtml}`;
                 
+                // Add event listeners to ensure only one audio plays at a time
+                const audioPlayers = analysisContainer.querySelectorAll('audio');
+                audioPlayers.forEach(player => {
+                    player.addEventListener('play', () => {
+                        audioPlayers.forEach(otherPlayer => {
+                            if (otherPlayer !== player) {
+                                otherPlayer.pause();
+                            }
+                        });
+                    });
+                });
+
                 // Update nav buttons
                 const prevBtn = document.getElementById('prev-album-btn');
                 const nextBtn = document.getElementById('next-album-btn');
@@ -851,8 +896,9 @@
                 
                 artistScrollLeftBtn.style.display = 'block';
                 artistScrollRightBtn.style.display = 'block';
-
-                const batchSize = 8; // Changed to 8
+                
+                const isMobile = window.innerWidth < 768;
+                const batchSize = isMobile ? 6 : 8;
                 const numPages = Math.ceil(artistsToRender.length / batchSize);
 
                 for (let i = 0; i < artistsToRender.length; i += batchSize) {
@@ -891,32 +937,35 @@
                     artistScrollLeftBtn.disabled = currentArtistPage === 0;
                     artistScrollRightBtn.disabled = currentArtistPage >= numPages - 1;
                 }
+                
+                updateArtistSliderButtons(); // Initial state
 
                 artistScrollLeftBtn.onclick = () => {
                      if (currentArtistPage > 0) {
                         currentArtistPage--;
-                        artistsSliderContainer.scrollBy({ left: -artistsSliderContainer.clientWidth, behavior: 'smooth' });
+                        artistsSliderContainer.scrollTo({ left: artistsSliderContainer.clientWidth * currentArtistPage, behavior: 'smooth' });
                      }
                 };
     
                 artistScrollRightBtn.onclick = () => {
                     if (currentArtistPage < numPages - 1) {
                          currentArtistPage++;
-                        artistsSliderContainer.scrollBy({ left: artistsSliderContainer.clientWidth, behavior: 'smooth' });
+                        artistsSliderContainer.scrollTo({ left: artistsSliderContainer.clientWidth * currentArtistPage, behavior: 'smooth' });
                     }
                 };
                 
+                // This listener is for updating buttons when user DRAGS the slider.
                 let scrollTimeout;
                 artistsSliderContainer.onscroll = () => {
                     clearTimeout(scrollTimeout);
                     scrollTimeout = setTimeout(() => {
                         const newPage = Math.round(artistsSliderContainer.scrollLeft / artistsSliderContainer.clientWidth);
-                        currentArtistPage = newPage;
-                        updateArtistSliderButtons();
-                    }, 250); // Increased timeout for smoother experience
+                        if(newPage !== currentArtistPage) {
+                           currentArtistPage = newPage;
+                           updateArtistSliderButtons();
+                        }
+                    }, 250);
                 };
-                
-                updateArtistSliderButtons();
             }
 
             const artistModal = document.getElementById('artist-modal');
