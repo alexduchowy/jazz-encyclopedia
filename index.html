@@ -802,15 +802,31 @@
             }
 
             function populateInstrumentFilter(artists, filterElement) {
-                const allInstruments = new Set();
+                // Define a curated list of core instruments for the filter to avoid clutter.
+                const relevantInstruments = new Set([
+                    'alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 
+                    'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 
+                    'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'vibraphone',
+                ]);
+
+                const instrumentsInDataset = new Set();
                 artists.forEach(artist => {
-                    artist.instruments.forEach(instrument => allInstruments.add(instrument));
+                    artist.instruments.forEach(instrument => {
+                        // Only add the instrument to our list if it's on the relevant list.
+                        if (relevantInstruments.has(instrument)) {
+                           instrumentsInDataset.add(instrument);
+                        }
+                    });
                 });
-                const sortedInstruments = Array.from(allInstruments).sort();
+                
+                // Sort the instruments that are actually in the data alphabetically.
+                const sortedInstruments = Array.from(instrumentsInDataset).sort();
+
                 filterElement.innerHTML = '<option value="all">All Instruments</option>';
                 sortedInstruments.forEach(instrument => {
                     const option = document.createElement('option');
                     option.value = instrument;
+                    // Capitalize the first letter for display
                     option.textContent = instrument.charAt(0).toUpperCase() + instrument.slice(1);
                     filterElement.appendChild(option);
                 });
