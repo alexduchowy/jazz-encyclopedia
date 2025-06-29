@@ -585,11 +585,20 @@
                     
                     // Initialize the application with the fetched data.
                     initializeAppUI(rawTrackData, styleMatrixData);
+
+                    // Show the page and hide loader
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('page-content').classList.remove('content-hidden');
+                    
+                    // FIX: Ensure timeline starts at the beginning after rendering
+                    setTimeout(() => {
+                        document.getElementById('horizontal-timeline-container').scrollLeft = 0;
+                    }, 0);
                 })
                 .catch(error => {
                     // If fetching fails, initialize with empty data for editing.
-                    console.warn('Could not load database.html. Initializing with empty data.', error);
-                    initializeAppUI([], { features: [], genres: {} });
+                    console.error('Error fetching or parsing data:', error);
+                    document.getElementById('loader').innerHTML = '<p class="text-red-500 font-bold">Failed to load data.</p>';
                 });
         });
 
@@ -734,12 +743,6 @@
 
             timelineWrapper.innerHTML = '';
             if (years.length > 0) {
-                // Add a spacer element to create a visual buffer on the left
-                const spacer = document.createElement('div');
-                spacer.style.width = '1px'; 
-                spacer.style.flexShrink = '0';
-                timelineWrapper.appendChild(spacer);
-                
                 years.forEach(year => {
                     const yearSection = document.createElement('div');
                     yearSection.className = 'timeline-year-section';
