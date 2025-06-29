@@ -767,9 +767,8 @@
                 });
                 if (timelineNav.firstElementChild) timelineNav.firstElementChild.classList.add('active');
                 
-                // Initial Filter and Scroll Reset
+                // Initial Filter
                 filterTimeline();
-                timelineContainer.scrollLeft = 0;
             } else {
                  timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
             }
@@ -886,6 +885,8 @@
 
 
             // --- ARTISTS SECTION LOGIC ---
+            const artistsSliderContainer = document.getElementById('artists-slider-container');
+            const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
             const artistsData = processArtists(rawTrackData);
             const instrumentFilter = document.getElementById('instrument-filter');
             populateInstrumentFilter(artistsData);
@@ -991,8 +992,6 @@
             }
             
             function renderArtistSlider(artistsToRender) {
-                const artistsSliderContainer = document.getElementById('artists-slider-container');
-                const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
                 const artistScrollLeftBtn = document.getElementById('artist-scroll-left-btn');
                 const artistScrollRightBtn = document.getElementById('artist-scroll-right-btn');
                 
