@@ -743,12 +743,6 @@
 
             timelineWrapper.innerHTML = '';
             if (years.length > 0) {
-                // Add a spacer element to create a visual buffer on the left
-                const spacer = document.createElement('div');
-                spacer.style.width = '1px'; 
-                spacer.style.flexShrink = '0';
-                timelineWrapper.appendChild(spacer);
-                
                 years.forEach(year => {
                     const yearSection = document.createElement('div');
                     yearSection.className = 'timeline-year-section';
@@ -907,6 +901,8 @@
 
 
             // --- ARTISTS SECTION LOGIC ---
+            const artistsSliderContainer = document.getElementById('artists-slider-container');
+            const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
             const artistsData = processArtists(rawTrackData);
             const instrumentFilter = document.getElementById('instrument-filter');
             populateInstrumentFilter(artistsData);
@@ -1012,8 +1008,6 @@
             }
             
             function renderArtistSlider(artistsToRender) {
-                const artistsSliderContainer = document.getElementById('artists-slider-container');
-                const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
                 const artistScrollLeftBtn = document.getElementById('artist-scroll-left-btn');
                 const artistScrollRightBtn = document.getElementById('artist-scroll-right-btn');
                 
