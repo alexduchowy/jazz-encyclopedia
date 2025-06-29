@@ -223,35 +223,22 @@
          .artist-card:hover img {
             filter: grayscale(0%);
         }
-        /* Artist Slider Styles */
-        #artists-slider-container {
-            width: 100%;
-            overflow-x: auto;
-            cursor: grab;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            scroll-behavior: smooth; /* For button scrolling */
-        }
-        #artists-slider-container::-webkit-scrollbar {
-            display: none;
-        }
-        #artists-slider-container:active {
-            cursor: grabbing;
-        }
-        #artists-slider-wrapper {
-            display: flex;
-        }
-        .artist-page {
-            width: 100%;
-            flex-shrink: 0;
+        
+        #artists-grid-container {
+            max-height: 70vh;
+            overflow-y: auto;
             padding: 1rem;
-            box-sizing: border-box;
+            border: 2px solid var(--bg-secondary);
+            border-radius: 0.25rem;
+        }
+
+        #artists-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1rem; 
+            gap: 1.5rem;
         }
         @media (min-width: 768px) {
-            .artist-page {
+            #artists-grid {
                 grid-template-columns: repeat(6, 1fr);
             }
         }
@@ -456,18 +443,10 @@
                     </div>
                 </div>
 
-                <div class="relative group">
-                    <div id="artists-slider-container" class="min-h-[300px] flex items-center justify-center">
-                        <div id="artists-slider-wrapper">
-                            <!-- Artist pages will be injected here by JavaScript -->
-                        </div>
+                <div id="artists-grid-container" class="min-h-[300px]">
+                    <div id="artists-grid">
+                        <!-- Artist cards will be injected here by JavaScript -->
                     </div>
-                    <button id="artist-scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                    </button>
-                    <button id="artist-scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
                 </div>
             </div>
         </section>
@@ -541,9 +520,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Show loading indicators while data is fetched.
             const timelineWrapper = document.getElementById('timeline-wrapper');
-            const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
+            const artistsGrid = document.getElementById('artists-grid');
             timelineWrapper.innerHTML = '<div class="loader"></div>';
-            artistsSliderWrapper.innerHTML = '<div class="loader"></div>';
+            artistsGrid.innerHTML = '<div class="loader"></div>';
             
             // Fetch data from the external database.html file.
             fetch('database.html')
@@ -879,19 +858,18 @@
 
 
             // --- ARTISTS SECTION LOGIC ---
-            const artistsSliderContainer = document.getElementById('artists-slider-container');
-            const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
+            const artistsGrid = document.getElementById('artists-grid');
             const artistsData = processArtists(rawTrackData);
             const instrumentFilter = document.getElementById('instrument-filter');
             populateInstrumentFilter(artistsData);
-            renderArtistSlider(artistsData);
+            renderArtistGrid(artistsData);
 
             instrumentFilter.addEventListener('change', (e) => {
                 const selectedInstrument = e.target.value;
                 const filteredArtists = selectedInstrument === 'all'
                     ? artistsData
                     : artistsData.filter(artist => artist.instruments.includes(selectedInstrument));
-                renderArtistSlider(filteredArtists);
+                renderArtistGrid(filteredArtists);
             });
             
             function processArtists(tracks) {
@@ -975,17 +953,11 @@
                 });
             }
             
-            function renderArtistSlider(artistsToRender) {
-                const artistScrollLeftBtn = document.getElementById('artist-scroll-left-btn');
-                const artistScrollRightBtn = document.getElementById('artist-scroll-right-btn');
-                
-                artistsSliderWrapper.innerHTML = ''; 
-                artistsSliderContainer.scrollLeft = 0;
+            function renderArtistGrid(artistsToRender) {
+                artistsGrid.innerHTML = ''; 
 
                 if (artistsToRender.length === 0) {
-                    artistsSliderWrapper.innerHTML = `<div class="w-full text-center p-8 text-stone-500 col-span-full">No artist data available.</div>`;
-                    if (artistScrollLeftBtn) artistScrollLeftBtn.style.display = 'none';
-                    if (artistScrollRightBtn) artistScrollRightBtn.style.display = 'none';
+                    artistsGrid.innerHTML = `<div class="w-full text-center p-8 text-stone-500 col-span-full">No artist data available.</div>`;
                     return;
                 }
 
@@ -996,80 +968,28 @@
                     return a.name.localeCompare(b.name); 
                 });
                 
-                if (artistScrollLeftBtn) artistScrollLeftBtn.style.display = 'block';
-                if (artistScrollRightBtn) artistScrollRightBtn.style.display = 'block';
-                
-                const isMobile = window.innerWidth < 768;
-                const batchSize = isMobile ? 6 : 12;
-                const numPages = Math.ceil(artistsToRender.length / batchSize);
-
-                for (let i = 0; i < numPages; i++) {
-                    const batch = artistsToRender.slice(i * batchSize, (i + 1) * batchSize);
-                    const page = document.createElement('div');
-                    page.className = 'artist-page';
+                artistsToRender.forEach(artist => {
+                    const card = document.createElement('div');
+                    card.className = 'artist-card';
                     
-                    batch.forEach(artist => {
-                        const card = document.createElement('div');
-                        card.className = 'artist-card';
-                        
-                        if (artist.isBandleader) {
-                            card.style.boxShadow = `4px 4px 0px var(--accent)`;
-                        }
-                        
-                        card.dataset.artistName = artist.name;
-                        
-                        const placeholderUrl = `https://placehold.co/200x240/1c1917/f5f5f4?text=${encodeURIComponent(artist.name)}`;
-                        card.innerHTML = `
-                            <div class="h-56 bg-stone-900">
-                                <img src="${artist.photo || ''}" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${placeholderUrl}';">
-                            </div>
-                            <div class="p-3">
-                                <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
-                            </div>`;
-
-                        card.addEventListener('click', () => openArtistModal(artist));
-                        page.appendChild(card);
-                    });
-                    
-                    artistsSliderWrapper.appendChild(page);
-                }
-
-                let currentArtistPage = 0;
-                function updateArtistSliderButtons() {
-                    if (artistScrollLeftBtn) artistScrollLeftBtn.disabled = currentArtistPage === 0;
-                    if (artistScrollRightBtn) artistScrollRightBtn.disabled = currentArtistPage >= numPages - 1;
-                }
-                
-                updateArtistSliderButtons(); // Initial state
-
-                if (artistScrollLeftBtn) artistScrollLeftBtn.onclick = () => {
-                     if (currentArtistPage > 0) {
-                         currentArtistPage--;
-                         artistsSliderContainer.scrollTo({ left: artistsSliderContainer.clientWidth * currentArtistPage, behavior: 'smooth' });
-                         updateArtistSliderButtons();
-                     }
-                };
-    
-                if (artistScrollRightBtn) artistScrollRightBtn.onclick = () => {
-                    if (currentArtistPage < numPages - 1) {
-                         currentArtistPage++;
-                         artistsSliderContainer.scrollTo({ left: artistsSliderContainer.clientWidth * currentArtistPage, behavior: 'smooth' });
-                         updateArtistSliderButtons();
+                    if (artist.isBandleader) {
+                        card.style.boxShadow = `4px 4px 0px var(--accent)`;
                     }
-                };
-                
-                // This listener is for updating buttons when user DRAGS the slider.
-                let scrollTimeout;
-                artistsSliderContainer.onscroll = () => {
-                    clearTimeout(scrollTimeout);
-                    scrollTimeout = setTimeout(() => {
-                        const newPage = Math.round(artistsSliderContainer.scrollLeft / artistsSliderContainer.clientWidth);
-                        if(newPage !== currentArtistPage) {
-                           currentArtistPage = newPage;
-                           updateArtistSliderButtons();
-                        }
-                    }, 250);
-                };
+                    
+                    card.dataset.artistName = artist.name;
+                    
+                    const placeholderUrl = `https://placehold.co/200x240/1c1917/f5f5f4?text=${encodeURIComponent(artist.name)}`;
+                    card.innerHTML = `
+                        <div class="h-56 bg-stone-900">
+                            <img src="${artist.photo || ''}" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${placeholderUrl}';">
+                        </div>
+                        <div class="p-3">
+                            <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
+                        </div>`;
+
+                    card.addEventListener('click', () => openArtistModal(artist));
+                    artistsGrid.appendChild(card);
+                });
             }
 
             const artistModal = document.getElementById('artist-modal');
@@ -1182,7 +1102,6 @@
             }
 
             setupDraggable(timelineContainer);
-            setupDraggable(artistsSliderContainer);
 
         }
     </script>
