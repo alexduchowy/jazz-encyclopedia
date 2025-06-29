@@ -241,13 +241,11 @@
             box-sizing: border-box;
             display: grid;
             grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns */
-            grid-template-rows: repeat(2, 1fr);    /* FIX: Enforce 2 rows */
             gap: 1rem; 
         }
         @media (min-width: 768px) { /* md breakpoint */
             .artist-page {
                 grid-template-columns: repeat(6, 1fr);  /* Desktop: 6 columns */
-                grid-template-rows: repeat(2, 1fr);    /* FIX: Enforce 2 rows */
             }
         }
         
@@ -522,9 +520,8 @@
                     initializeAppUI(rawTrackData, styleMatrixData);
                 })
                 .catch(error => {
-                    // FIX: If fetching fails (e.g., in a canvas environment),
-                    // initialize with empty data instead of stopping the script.
-                    console.warn('Could not load database.html. Initializing with empty data for editing.', error);
+                    // If fetching fails, initialize with empty data for editing.
+                    console.warn('Could not load database.html. Initializing with empty data.', error);
                     initializeAppUI([], []);
                 });
         });
