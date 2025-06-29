@@ -196,14 +196,16 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 4px 4px 0px var(--text-main);
             border: 2px solid var(--text-main);
-            max-width: 200px; /* Limit card width */
-            margin: auto;
         }
         .artist-card:hover {
             transform: translateY(-5px) rotate(2deg);
             box-shadow: 8px 8px 0px var(--accent) !important; /* Ensure hover always wins */
         }
         .artist-card img {
+             width: 100%;
+             height: 100%;
+             object-fit: cover;
+             object-position: center;
              filter: grayscale(100%);
              transition: filter 0.3s ease;
         }
@@ -234,12 +236,17 @@
             padding: 1rem;
             box-sizing: border-box;
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 3 rows of 2 on mobile */
-            gap: 1.5rem;
+            grid-template-columns: repeat(2, 1fr); /* Mobile */
+            gap: 1rem;
         }
-        @media (min-width: 768px) { /* md breakpoint for 4 columns */
+        @media (min-width: 640px) { /* sm breakpoint */
             .artist-page {
-                grid-template-columns: repeat(4, 1fr); /* 2 rows of 4 on web */
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+         @media (min-width: 1024px) { /* lg breakpoint */
+            .artist-page {
+                grid-template-columns: repeat(6, 1fr); 
             }
         }
         
@@ -281,8 +288,8 @@
             background-color: var(--accent);
             border-radius: 5px;
         }
-        audio.styled-player::-webkit-media-controls-play-button {
-            color: white;
+        audio.styled-player::-webkit-media-controls-play-button,
+        audio.styled-player::-webkit-media-controls-mute-button {
             background-color: white;
             border-radius: 50%;
         }
@@ -292,7 +299,6 @@
              color: white;
              font-weight: bold;
         }
-
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -458,10 +464,8 @@
                     </div>
                     <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
-                <div id="analysis-wrapper" class="relative">
-                     <div id="modal-analysis-section">
-                        <!-- Content injected by JS -->
-                    </div>
+                <div id="analysis-wrapper" class="relative mt-4">
+                    <!-- Content injected by JS -->
                 </div>
             </div>
              <!-- NEW: Modal Navigation Footer -->
@@ -729,47 +733,49 @@
                  detailsContainer.innerHTML = `
                     <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
                     <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
-                        <strong>Genre:</strong> <span>${album.genres.join(', ')}</span>
-                        <strong>Recorded:</strong> <span>${firstTrack.recordingDate}</span>
-                        <strong>Label:</strong> <span>${firstTrack.label}</span>
-                        <strong>Line-Up:</strong> <span>${firstTrack.lineup}</span>
+                        <strong class="font-bold">Genre:</strong> <span>${album.genres.join(', ')}</span>
+                        <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate}</span>
+                        <strong class="font-bold">Label:</strong> <span>${firstTrack.label}</span>
+                        <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup}</span>
                     </div>`;
 
                 const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                 analysisWrapper.innerHTML = ''; // Clear previous content
-
+                
+                const analysisContainer = document.createElement('div');
+                analysisContainer.id = 'modal-analysis-section';
+                
                 if(album.pivotalTracks.length > 0) {
-                     const analysisContainer = document.createElement('div');
-                    analysisContainer.id = 'modal-analysis-section';
-                    const pivotalTracksHtml = album.pivotalTracks.map(track => {
-                        const songFileName = slugify(track.title) + '.mp3';
-                        return `
-                            <div class="mb-8 last:mb-0">
-                                <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
-                                    <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Pivotal Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
-                                    <audio controls class="styled-player" src="songs/${songFileName}" preload="metadata"></audio>
-                                </div>
-                                <p class="liner-notes-text">${track.analysis}</p>
-                            </div>
-                        `;
-                    }).join('<hr class="border-stone-700 my-8">');
-
-                    analysisContainer.innerHTML = pivotalTracksHtml;
-                    analysisWrapper.appendChild(analysisContainer);
-
-                     // Add event listeners to ensure only one audio plays at a time
-                    const audioPlayers = analysisContainer.querySelectorAll('audio');
-                    audioPlayers.forEach(player => {
-                        player.addEventListener('play', () => {
-                            audioPlayers.forEach(otherPlayer => {
-                                if (otherPlayer !== player) {
-                                    otherPlayer.pause();
-                                }
-                            });
-                        });
-                    });
+                     analysisContainer.style.paddingTop = '1.5rem';
                 }
 
+                const pivotalTracksHtml = album.pivotalTracks.map(track => {
+                    const songFileName = slugify(track.title) + '.mp3';
+                    return `
+                        <div class="mb-8 last:mb-0">
+                            <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
+                                 <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Pivotal Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                <audio controls class="styled-player" src="songs/${songFileName}" preload="metadata"></audio>
+                            </div>
+                            <p class="liner-notes-text">${track.analysis}</p>
+                        </div>
+                    `;
+                }).join('<hr class="border-stone-700 my-8">');
+
+                analysisContainer.innerHTML = pivotalTracksHtml;
+                analysisWrapper.appendChild(analysisContainer);
+                
+                // Add event listeners to ensure only one audio plays at a time
+                const audioPlayers = analysisContainer.querySelectorAll('audio');
+                audioPlayers.forEach(player => {
+                    player.addEventListener('play', () => {
+                        audioPlayers.forEach(otherPlayer => {
+                            if (otherPlayer !== player) {
+                                otherPlayer.pause();
+                            }
+                        });
+                    });
+                });
 
                 // Update nav buttons
                 const prevBtn = document.getElementById('prev-album-btn');
@@ -952,7 +958,7 @@
                         
                         const placeholderUrl = `https://placehold.co/200x240/1c1917/f5f5f4?text=${encodeURIComponent(artist.name)}`;
                         card.innerHTML = `
-                            <div class="relative h-48 bg-stone-900">
+                            <div class="h-48 bg-stone-900">
                                 <img src="${artist.photo}" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${placeholderUrl}';">
                             </div>
                             <div class="p-4">
