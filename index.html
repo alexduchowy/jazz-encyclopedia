@@ -236,15 +236,10 @@
             padding: 1rem;
             box-sizing: border-box;
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Mobile */
-            gap: 1rem;
+            grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns */
+            gap: 1rem; 
         }
-        @media (min-width: 640px) { /* sm breakpoint */
-            .artist-page {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-         @media (min-width: 1024px) { /* lg breakpoint */
+        @media (min-width: 768px) { /* md breakpoint */
             .artist-page {
                 grid-template-columns: repeat(6, 1fr); 
             }
@@ -283,21 +278,6 @@
             width: 50%;
             height: 30px; 
             accent-color: var(--accent);
-        }
-        audio.styled-player::-webkit-media-controls-panel {
-            background-color: var(--accent);
-            border-radius: 5px;
-        }
-        audio.styled-player::-webkit-media-controls-play-button,
-        audio.styled-player::-webkit-media-controls-mute-button {
-            background-color: white;
-            border-radius: 50%;
-        }
-        audio.styled-player::-webkit-media-controls-current-time-display,
-        audio.styled-player::-webkit-media-controls-time-remaining-display,
-        audio.styled-player::-webkit-media-controls-volume-slider-container {
-             color: white;
-             font-weight: bold;
         }
     </style>
 </head>
@@ -744,16 +724,12 @@
                 
                 const analysisContainer = document.createElement('div');
                 analysisContainer.id = 'modal-analysis-section';
-                
-                if(album.pivotalTracks.length > 0) {
-                     analysisContainer.style.paddingTop = '1.5rem';
-                }
 
                 const pivotalTracksHtml = album.pivotalTracks.map(track => {
                     const songFileName = slugify(track.title) + '.mp3';
                     return `
                         <div class="mb-8 last:mb-0">
-                            <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
+                             <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
                                  <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Pivotal Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
                                 <audio controls class="styled-player" src="songs/${songFileName}" preload="metadata"></audio>
                             </div>
@@ -866,6 +842,72 @@
                                      case "Ornette Coleman":
                                         artistEntry.profile = "A major innovator of the free jazz movement, alto saxophonist Ornette Coleman's concept of 'harmolodics' liberated improvisation from traditional harmonic structures, emphasizing melodic freedom and collective invention.";
                                         break;
+                                    case "Eric Dolphy":
+                                         artistEntry.profile = "A virtuosic multi-instrumentalist, Eric Dolphy was a key figure in the avant-garde, known for his work on alto saxophone, flute, and bass clarinet. He pushed the boundaries of harmony and improvisation, acting as a bridge between hard bop and free jazz.";
+                                        break;
+                                    case "Max Roach":
+                                        artistEntry.profile = "A pioneering bebop drummer, Max Roach was also a key figure in the development of hard bop and a leading voice in political jazz. His 'Freedom Now Suite' is a landmark of the Civil Rights era.";
+                                        break;
+                                    case "George Russell":
+                                        artistEntry.profile = "A groundbreaking composer and theorist, George Russell's Lydian Chromatic Concept of Tonal Organization was a foundational influence on modal jazz, providing a new way for musicians to think about harmony and improvisation.";
+                                        break;
+                                     case "Gil Evans":
+                                        artistEntry.profile = "A brilliant and innovative arranger, Gil Evans was renowned for his lush, textured orchestrations. His collaborations with Miles Davis, such as 'Sketches of Spain,' are masterpieces of modern jazz.";
+                                        break;
+                                      case "Oliver Nelson":
+                                        artistEntry.profile = "A saxophonist, composer, and arranger, Oliver Nelson is best known for his masterpiece 'The Blues and the Abstract Truth,' a landmark album that perfectly blended the blues with sophisticated, modern harmonies.";
+                                        break;
+                                      case "Sonny Rollins":
+                                        artistEntry.profile = "One of the most influential tenor saxophonists in jazz history, Sonny Rollins is known for his massive tone, thematic improvisation, and relentless creative drive. He has been a major force in jazz since the 1950s.";
+                                        break;
+                                      case "Jackie McLean":
+                                         artistEntry.profile = "An alto saxophonist with a distinctive, sharp-edged tone, Jackie McLean was a hard bop veteran who fully embraced the avant-garde, creating a unique style that blended fiery emotion with harmonic freedom.";
+                                        break;
+                                      case "Herbie Hancock":
+                                         artistEntry.profile = "A chameleonic pianist and composer, Herbie Hancock was a key member of Miles Davis's Second Great Quintet and a pioneer of post-bop, funk, and electronic jazz. His album 'Maiden Voyage' is a cornerstone of modal jazz.";
+                                        break;
+                                       case "Dexter Gordon":
+                                         artistEntry.profile = "A towering figure of the tenor saxophone, Dexter Gordon was a bebop pioneer who returned to prominence in the 1960s with a series of classic Blue Note albums that defined the hard bop sound.";
+                                        break;
+                                        case "Freddie Hubbard":
+                                         artistEntry.profile = "A trumpeter of breathtaking virtuosity, Freddie Hubbard was a leading voice in the evolution of hard bop, known for his fiery solos and his ability to navigate both traditional and more adventurous harmonic territory.";
+                                        break;
+                                         case "Wayne Shorter":
+                                         artistEntry.profile = "As both a saxophonist and a composer, Wayne Shorter was a primary architect of the post-bop language. His enigmatic compositions for his own albums and for Miles Davis's Second Great Quintet redefined the sound of modern jazz.";
+                                        break;
+                                        case "Horace Silver":
+                                         artistEntry.profile = "A pianist and composer, Horace Silver was a key architect of the hard bop style, known for his catchy, bluesy, and often funk-infused compositions. His quintet was a launching pad for many of the era's top young musicians.";
+                                        break;
+                                        case "Lee Morgan":
+                                         artistEntry.profile = "A trumpeter with a brash, fiery style, Lee Morgan was a star of the hard bop and soul jazz movements. His hit 'The Sidewinder' was a massive commercial success that helped define the boogaloo sound.";
+                                        break;
+                                         case "Andrew Hill":
+                                         artistEntry.profile = "A highly original pianist and composer, Andrew Hill's music occupied a unique space between advanced hard bop and the avant-garde. His complex, unpredictable compositions challenged musicians and listeners alike.";
+                                        break;
+                                        case "Sam Rivers":
+                                         artistEntry.profile = "A versatile multi-instrumentalist and composer, Sam Rivers was a leading figure in the avant-garde, known for his 'inside-outside' playing that seamlessly blended traditional and free improvisation.";
+                                        break;
+                                        case "Bobby Hutcherson":
+                                         artistEntry.profile = "The leading vibraphonist of the post-bop era, Bobby Hutcherson was a key member of the Blue Note avant-garde, known for his lyrical and harmonically advanced improvisations.";
+                                        break;
+                                         case "Larry Young":
+                                         artistEntry.profile = "An organist who revolutionized the instrument's role in jazz, Larry Young applied the modal concepts of John Coltrane to the Hammond B-3, creating a new, horn-like approach to improvisation.";
+                                        break;
+                                        case "Cecil Taylor":
+                                         artistEntry.profile = "A visionary pianist and a pioneer of free jazz, Cecil Taylor developed a unique and highly percussive approach to the instrument, focusing on energy, texture, and collective improvisation.";
+                                        break;
+                                        case "Archie Shepp":
+                                         artistEntry.profile = "A tenor saxophonist, composer, and playwright, Archie Shepp was a leading voice in the free jazz movement, known for his raw, visceral sound and his politically charged compositions that celebrated Black American history and culture.";
+                                        break;
+                                        case "Charles Lloyd":
+                                         artistEntry.profile = "A saxophonist and flutist whose 1966 album 'Forest Flower' became a surprise crossover hit, Charles Lloyd's music blended post-bop with elements of folk and world music, connecting with the burgeoning hippie counterculture.";
+                                        break;
+                                         case "Pharoah Sanders":
+                                         artistEntry.profile = "A tenor saxophonist known for his overblown, multiphonic techniques and his central role in the spiritual jazz movement. A key collaborator with John Coltrane, his own work as a leader explored themes of spirituality and cosmic consciousness.";
+                                        break;
+                                         case "McCoy Tyner":
+                                         artistEntry.profile = "The pianist in John Coltrane's classic quartet, McCoy Tyner's powerful, percussive style and use of quartal harmonies made him one of the most influential pianists of the post-bop era.";
+                                        break;
                                 }
                             }
                             instrumentsString.split(/, | \/ /).forEach(inst => {
@@ -938,7 +980,7 @@
                 artistScrollRightBtn.style.display = 'block';
                 
                 const isMobile = window.innerWidth < 768;
-                const batchSize = isMobile ? 6 : 8;
+                const batchSize = isMobile ? 6 : 12;
                 const numPages = Math.ceil(artistsToRender.length / batchSize);
 
                 for (let i = 0; i < artistsToRender.length; i += batchSize) {
@@ -958,11 +1000,11 @@
                         
                         const placeholderUrl = `https://placehold.co/200x240/1c1917/f5f5f4?text=${encodeURIComponent(artist.name)}`;
                         card.innerHTML = `
-                            <div class="h-48 bg-stone-900">
+                            <div class="h-56 bg-stone-900">
                                 <img src="${artist.photo}" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${placeholderUrl}';">
                             </div>
-                            <div class="p-4">
-                                <h4 class="font-bold text-lg text-stone-900 truncate">${artist.name}</h4>
+                            <div class="p-3">
+                                <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
                             </div>`;
 
                         card.addEventListener('click', () => openArtistModal(artist));
@@ -984,6 +1026,7 @@
                      if (currentArtistPage > 0) {
                         currentArtistPage--;
                         artistsSliderContainer.scrollTo({ left: artistsSliderContainer.clientWidth * currentArtistPage, behavior: 'smooth' });
+                        updateArtistSliderButtons();
                      }
                 };
     
@@ -991,6 +1034,7 @@
                     if (currentArtistPage < numPages - 1) {
                          currentArtistPage++;
                         artistsSliderContainer.scrollTo({ left: artistsSliderContainer.clientWidth * currentArtistPage, behavior: 'smooth' });
+                        updateArtistSliderButtons();
                     }
                 };
                 
