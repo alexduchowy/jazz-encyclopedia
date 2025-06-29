@@ -223,16 +223,36 @@
          .artist-card:hover img {
             filter: grayscale(0%);
         }
-        /* FIX: Corrected artist grid layout */
-        #artists-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1.5rem;
-            padding: 1rem;
+        /* Artist Slider Styles */
+        #artists-slider-container {
+            width: 100%;
+            overflow-x: auto;
+            cursor: grab;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            scroll-behavior: smooth; /* For button scrolling */
         }
-        @media (min-width: 640px) {
-            #artists-grid {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        #artists-slider-container::-webkit-scrollbar {
+            display: none;
+        }
+        #artists-slider-container:active {
+            cursor: grabbing;
+        }
+        #artists-slider-wrapper {
+            display: flex;
+        }
+        .artist-page {
+            width: 100%;
+            flex-shrink: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem; 
+        }
+        @media (min-width: 768px) {
+            .artist-page {
+                grid-template-columns: repeat(6, 1fr);
             }
         }
         
@@ -627,6 +647,17 @@
             }, {}) : {};
 
             // Populate Genre Filters
+            const allCheckboxLabel = document.createElement('label');
+            allCheckboxLabel.className = 'genre-checkbox-label';
+            allCheckboxLabel.style.setProperty('--genre-color', 'var(--text-muted)');
+            const allCheckbox = document.createElement('input');
+            allCheckbox.type = 'checkbox';
+            allCheckbox.id = 'all-genres-checkbox';
+            allCheckbox.checked = true; // Start with all selected
+            allCheckboxLabel.appendChild(allCheckbox);
+            allCheckboxLabel.append('All');
+            genreFilterContainer.appendChild(allCheckboxLabel);
+
             Object.keys(genreColors).forEach(genre => {
                 const label = document.createElement('label');
                 label.className = 'genre-checkbox-label';
@@ -635,14 +666,52 @@
                 checkbox.type = 'checkbox';
                 checkbox.value = genre;
                 checkbox.dataset.genre = genre;
+                checkbox.checked = true; // Start with all selected
                 label.appendChild(checkbox);
                 label.append(genre);
                 genreFilterContainer.appendChild(label);
             });
+            
+            const allGenreCheckboxes = genreFilterContainer.querySelectorAll('input[data-genre]');
+            
+            allCheckbox.addEventListener('change', () => {
+                allGenreCheckboxes.forEach(cb => {
+                    cb.checked = allCheckbox.checked;
+                });
+                filterTimeline();
+            });
+
+            function filterTimeline() {
+                const selectedGenres = Array.from(genreFilterContainer.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
+                
+                document.querySelectorAll('.timeline-album-card').forEach(card => {
+                    const cardGenres = card.dataset.genres.split(', ');
+                    const isVisible = selectedGenres.length === 0 || cardGenres.some(genre => selectedGenres.includes(genre));
+                    
+                    if (isVisible) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                document.querySelectorAll('.timeline-year-section').forEach(yearSection => {
+                    const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
+                    yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
+                });
+
+                const allChecked = selectedGenres.length === allGenreCheckboxes.length;
+                allCheckbox.checked = allChecked;
+            }
+            
+            genreFilterContainer.addEventListener('change', (e) => {
+                if(e.target.id !== 'all-genres-checkbox') {
+                    filterTimeline();
+                }
+            });
 
             timelineWrapper.innerHTML = '';
             if (years.length > 0) {
-                // FIX: Ensure timeline starts at the beginning
                 timelineContainer.scrollLeft = 0;
                 years.forEach(year => {
                     const yearSection = document.createElement('div');
@@ -659,7 +728,7 @@
                         card.className = 'timeline-album-card';
                         card.dataset.albumTitle = album.albumTitle;
                         card.dataset.artist = album.artist;
-                        card.dataset.genres = album.genres; // Add genres to dataset
+                        card.dataset.genres = album.genres;
                         card.innerHTML = `<img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
                         albumList.appendChild(card);
                     });
@@ -677,7 +746,7 @@
                         yearButton.classList.add('active');
                         const yearSection = document.getElementById(`year-${year}`);
                         if(yearSection) {
-                            timelineContainer.scrollTo({ left: yearSection.offsetLeft - 32, behavior: 'smooth' });
+                            timelineContainer.scrollTo({ left: yearSection.offsetLeft, behavior: 'smooth' });
                         }
                     });
                     timelineNav.appendChild(yearButton);
@@ -687,26 +756,8 @@
                  timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
             }
 
-            // Genre Filter Logic
-            genreFilterContainer.addEventListener('change', () => {
-                const selectedGenres = Array.from(genreFilterContainer.querySelectorAll('input:checked')).map(input => input.value);
-                
-                document.querySelectorAll('.timeline-album-card').forEach(card => {
-                    const cardGenres = card.dataset.genres.split(', ');
-                    const isVisible = selectedGenres.length === 0 || cardGenres.some(genre => selectedGenres.includes(genre));
-                    
-                    if (isVisible) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                });
-
-                document.querySelectorAll('.timeline-year-section').forEach(yearSection => {
-                    const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
-                    yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
-                });
-            });
+            // Initial Filter
+            filterTimeline();
 
             const scrollAmount = 400;
             scrollLeftBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
