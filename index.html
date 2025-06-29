@@ -710,8 +710,6 @@
 
                 const allChecked = selectedGenres.length === allGenreCheckboxes.length;
                 allCheckbox.checked = allChecked;
-                // FIX: Reset scroll position after filtering
-                timelineContainer.scrollLeft = 0;
             }
             
             genreFilterContainer.addEventListener('change', (e) => {
@@ -722,7 +720,6 @@
 
             timelineWrapper.innerHTML = '';
             if (years.length > 0) {
-                timelineContainer.scrollLeft = 0;
                 years.forEach(year => {
                     const yearSection = document.createElement('div');
                     yearSection.className = 'timeline-year-section';
@@ -765,7 +762,7 @@
                 
                 // Initial Filter and Scroll Reset
                 filterTimeline();
-                setTimeout(() => { timelineContainer.scrollLeft = 0; }, 0);
+                requestAnimationFrame(() => { timelineContainer.scrollLeft = 0; });
             } else {
                  timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
             }
@@ -882,6 +879,8 @@
 
 
             // --- ARTISTS SECTION LOGIC ---
+            const artistsSliderContainer = document.getElementById('artists-slider-container');
+            const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
             const artistsData = processArtists(rawTrackData);
             const instrumentFilter = document.getElementById('instrument-filter');
             populateInstrumentFilter(artistsData);
@@ -977,8 +976,6 @@
             }
             
             function renderArtistSlider(artistsToRender) {
-                const artistsSliderContainer = document.getElementById('artists-slider-container');
-                const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
                 const artistScrollLeftBtn = document.getElementById('artist-scroll-left-btn');
                 const artistScrollRightBtn = document.getElementById('artist-scroll-right-btn');
                 
@@ -1185,6 +1182,7 @@
             }
 
             setupDraggable(timelineContainer);
+            setupDraggable(artistsSliderContainer);
 
         }
     </script>
