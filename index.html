@@ -224,24 +224,14 @@
             filter: grayscale(0%);
         }
         
-        /* NEW: Artist Grid Styling */
+        /* UPDATED: Artist Grid Styling */
         #artist-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Mobile first: 2 columns */
+            grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns for 2 rows of 3 */
             gap: 1.5rem;
             padding-top: 1rem;
         }
-        @media (min-width: 640px) { /* sm breakpoint */
-            #artist-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        @media (min-width: 768px) { /* md breakpoint */
-            #artist-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        @media (min-width: 1024px) { /* lg breakpoint */
+        @media (min-width: 768px) { /* Tablet and Web: 6 columns for 2 rows of 6 */
             #artist-grid {
                 grid-template-columns: repeat(6, 1fr);
             }
@@ -466,11 +456,18 @@
                     </div>
 
                     <!-- Artist Grid Container -->
-                    <div id="artist-grid-container">
-                        <div id="artist-grid" class="min-h-[300px]">
+                    <div id="artist-grid-container" class="min-h-[550px] md:min-h-[580px]">
+                        <div id="artist-grid">
                             <!-- Artist cards will be injected here by JavaScript -->
                         </div>
                    </div>
+
+                   <!-- NEW: Artist Pagination Controls -->
+                   <div id="artist-pagination-controls" class="mt-8 flex justify-center items-center gap-4">
+                        <button id="artist-prev-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous</button>
+                        <span id="artist-page-indicator" class="px-4 py-2 text-stone-900 font-bold text-lg"></span>
+                        <button id="artist-next-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next</button>
+                    </div>
                 </div>
             </section>
             
@@ -891,9 +888,18 @@
             });
 
 
-            // --- ARTISTS SECTION LOGIC ---
+            // --- ARTISTS SECTION LOGIC (REFACTORED FOR PAGINATION) ---
             const artistsData = processArtists(rawTrackData);
             const instrumentFilter = document.getElementById('instrument-filter');
+            const artistGrid = document.getElementById('artist-grid');
+            const artistPrevBtn = document.getElementById('artist-prev-btn');
+            const artistNextBtn = document.getElementById('artist-next-btn');
+            const artistPageIndicator = document.getElementById('artist-page-indicator');
+            const artistPaginationControls = document.getElementById('artist-pagination-controls');
+
+            let currentArtistPage = 1;
+            let filteredArtists = [];
+            let pageSize = window.innerWidth >= 768 ? 12 : 6;
             
             function processArtists(tracks) {
                 const artistsMap = new Map();
@@ -985,22 +991,14 @@
                     instrumentFilter.appendChild(option);
                 });
             }
-            
-            function renderArtistGrid(artistsToRender) {
-                const artistGrid = document.getElementById('artist-grid');
+
+            function renderArtistGridPage(artistsToRender) {
                 artistGrid.innerHTML = ''; 
 
                 if (artistsToRender.length === 0) {
-                    artistGrid.innerHTML = `<div class="w-full text-center p-8 text-stone-500 col-span-full">No artists found for the selected instrument.</div>`;
+                    artistGrid.innerHTML = `<div class="w-full text-center p-8 text-stone-500 col-span-full">No artists found.</div>`;
                     return;
                 }
-
-                artistsToRender.sort((a, b) => {
-                    if (a.isBandleader !== b.isBandleader) {
-                        return a.isBandleader ? -1 : 1; 
-                    }
-                    return a.name.localeCompare(b.name); 
-                });
                 
                 artistsToRender.forEach(artist => {
                     const card = document.createElement('div');
@@ -1024,6 +1022,45 @@
                     card.addEventListener('click', () => openArtistModal(artist));
                     artistGrid.appendChild(card);
                 });
+            }
+
+            function updateArtistPagination() {
+                pageSize = window.innerWidth >= 768 ? 12 : 6;
+                const totalPages = Math.ceil(filteredArtists.length / pageSize);
+
+                if (currentArtistPage > totalPages) currentArtistPage = totalPages > 0 ? totalPages : 1;
+                if (currentArtistPage < 1) currentArtistPage = 1;
+
+                const startIndex = (currentArtistPage - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+                const artistsForPage = filteredArtists.slice(startIndex, endIndex);
+
+                renderArtistGridPage(artistsForPage);
+
+                if (totalPages <= 1) {
+                    artistPaginationControls.classList.add('hidden');
+                } else {
+                    artistPaginationControls.classList.remove('hidden');
+                    artistPageIndicator.textContent = `Page ${currentArtistPage} of ${totalPages}`;
+                    artistPrevBtn.disabled = currentArtistPage === 1;
+                    artistNextBtn.disabled = currentArtistPage === totalPages;
+                }
+            }
+
+            function filterAndPaginateArtists() {
+                currentArtistPage = 1;
+                const selectedInstrument = instrumentFilter.value;
+                
+                filteredArtists = selectedInstrument === 'all'
+                    ? [...artistsData]
+                    : artistsData.filter(artist => artist.instruments.includes(selectedInstrument));
+                
+                filteredArtists.sort((a, b) => {
+                    if (a.isBandleader !== b.isBandleader) return a.isBandleader ? -1 : 1;
+                    return a.name.localeCompare(b.name);
+                });
+
+                updateArtistPagination();
             }
 
             const artistModal = document.getElementById('artist-modal');
@@ -1070,19 +1107,32 @@
             artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') closeArtistModal(); });
             document.addEventListener('keydown', e => { if (e.key === "Escape") { closeAlbumModal(); closeArtistModal(); } });
             
-            // --- ARTISTS GRID SETUP ---
+            // --- ARTISTS GRID EVENT LISTENERS ---
             populateInstrumentFilter(artistsData);
+            instrumentFilter.addEventListener('change', filterAndPaginateArtists);
+            
+            artistPrevBtn.addEventListener('click', () => {
+                if (currentArtistPage > 1) {
+                    currentArtistPage--;
+                    updateArtistPagination();
+                }
+            });
 
-            function updateArtistGridView() {
-                const selectedInstrument = instrumentFilter.value;
-                const artistsToRender = selectedInstrument === 'all'
-                    ? artistsData
-                    : artistsData.filter(artist => artist.instruments.includes(selectedInstrument));
-                renderArtistGrid(artistsToRender);
-            }
-
-            instrumentFilter.addEventListener('change', updateArtistGridView);
-            updateArtistGridView(); // Initial call
+            artistNextBtn.addEventListener('click', () => {
+                const totalPages = Math.ceil(filteredArtists.length / pageSize);
+                if (currentArtistPage < totalPages) {
+                    currentArtistPage++;
+                    updateArtistPagination();
+                }
+            });
+            
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(updateArtistPagination, 200);
+            });
+            
+            filterAndPaginateArtists(); // Initial population of the artist grid
 
 
             // Build the transposed genre matrix
