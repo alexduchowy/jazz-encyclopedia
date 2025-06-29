@@ -721,6 +721,12 @@
 
             timelineWrapper.innerHTML = '';
             if (years.length > 0) {
+                // FIX: Add spacer element to push content from the edge
+                const spacer = document.createElement('div');
+                spacer.style.width = '1px'; // Just enough to create space
+                spacer.style.flexShrink = '0';
+                timelineWrapper.appendChild(spacer);
+
                 years.forEach(year => {
                     const yearSection = document.createElement('div');
                     yearSection.className = 'timeline-year-section';
@@ -761,9 +767,8 @@
                 });
                 if (timelineNav.firstElementChild) timelineNav.firstElementChild.classList.add('active');
                 
-                // Initial Filter and Scroll Reset
+                // Initial Filter
                 filterTimeline();
-                requestAnimationFrame(() => { timelineContainer.scrollLeft = 32; });
             } else {
                  timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
             }
