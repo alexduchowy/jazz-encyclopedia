@@ -248,7 +248,6 @@
             box-sizing: border-box;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(2, 1fr);
             gap: 1.5rem;
         }
         @media (min-width: 768px) {
@@ -599,6 +598,8 @@
                     // If fetching fails, initialize with empty data for editing.
                     console.warn('Could not load database.html. Initializing with empty data.', error);
                     initializeAppUI([], { features: [], genres: {} });
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('page-content').classList.remove('content-hidden');
                 });
         });
 
@@ -745,7 +746,7 @@
             if (years.length > 0) {
                 // Add a spacer element to create a visual buffer on the left
                 const spacer = document.createElement('div');
-                spacer.style.width = '1rem'; 
+                spacer.style.width = '1px'; 
                 spacer.style.flexShrink = '0';
                 timelineWrapper.appendChild(spacer);
                 
