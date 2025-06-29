@@ -310,21 +310,21 @@
             -webkit-appearance: none;
             width: 1.25rem;
             height: 1.25rem;
-            border: 2px solid var(--text-main);
             border-radius: 0.25rem;
             margin-right: 0.5rem;
             cursor: pointer;
             position: relative;
             transition: background-color 0.2s;
+            border: 2px solid var(--genre-color, var(--text-main));
         }
         .genre-checkbox-label input:checked {
-            background-color: var(--accent);
-            border-color: var(--accent-dark);
+            background-color: var(--genre-color, var(--accent));
+            border-color: var(--text-main);
         }
         .genre-checkbox-label input:checked::after {
             content: '✔';
             position: absolute;
-            color: var(--bg-main);
+            color: var(--text-main);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -352,6 +352,10 @@
             font-weight: 600;
             color: var(--text-main);
             border: 2px solid var(--text-main);
+        }
+
+        .hidden {
+            display: none !important;
         }
 
     </style>
@@ -665,6 +669,7 @@
             Object.keys(genres).forEach(genre => {
                 const label = document.createElement('label');
                 label.className = 'genre-checkbox-label';
+                label.style.setProperty('--genre-color', genres[genre]);
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.value = genre;
@@ -726,11 +731,16 @@
                 document.querySelectorAll('.timeline-album-card').forEach(card => {
                     const cardGenres = card.dataset.genres.split(', ');
                     const isVisible = selectedGenres.length === 0 || cardGenres.some(genre => selectedGenres.includes(genre));
-                    card.style.display = isVisible ? 'block' : 'none';
+                    
+                    if (isVisible) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
                 });
 
                 document.querySelectorAll('.timeline-year-section').forEach(yearSection => {
-                    const visibleCards = yearSection.querySelectorAll('.timeline-album-card[style="display: block;"]');
+                    const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
                     yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
                 });
             });
