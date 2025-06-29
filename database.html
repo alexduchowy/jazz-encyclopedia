@@ -173,13 +173,47 @@
 
     <!-- This script tag holds the style matrix data as a JSON object. -->
     <script id="styleMatrixData" type="application/json">
-    [
-        { "feature": "Harmony", "hardBop": "Functional (ii-V-I), blues-based", "modalJazz": "Static, slow harmonic rhythm, based on modes/scales", "postBop": "Expanded functional harmony, non-functional chords, ambiguity", "freeJazz": "Harmony often abandoned in favor of pure melody and texture" },
-        { "feature": "Rhythm", "hardBop": "Strong, driving swing feel, prominent drumming", "modalJazz": "More subtle, floating pulse, less aggressive swing", "postBop": "Highly interactive, fluid time, polyrhythms", "freeJazz": "Abstract, free pulse, focus on collective texture over timekeeping" },
-        { "feature": "Form", "hardBop": "Standard forms (AABA, 12-bar blues)", "modalJazz": "Open-ended, simple structures, often just a single mode", "postBop": "Modified standard forms, original compositions with complex structures", "freeJazz": "Form often abandoned, focus on spontaneous, collective creation" },
-        { "feature": "Improvisation", "hardBop": "Melodic invention based on navigating chord changes", "modalJazz": "Melodic invention based on exploring a single scale or mode", "postBop": "'Inside-outside' playing, moving between functional and abstract ideas", "freeJazz": "Atonal, textural, based on motifs and energy rather than chords" },
-        { "feature": "Key Artists", "hardBop": "Art Blakey, Horace Silver, Clifford Brown", "modalJazz": "Miles Davis (Kind of Blue), Bill Evans", "postBop": "Miles Davis's 2nd Quintet, John Coltrane's Classic Quartet", "freeJazz": "Ornette Coleman, Cecil Taylor, late John Coltrane" }
-    ]
+    {
+        "features": ["Harmony", "Rhythm", "Form", "Key Artists"],
+        "genres": {
+            "Hard Bop": {
+                "color": "var(--genre-hard-bop)",
+                "data": [
+                    "Functional (ii-V-I), blues-based, gospel influences",
+                    "Strong, driving swing feel, prominent drumming, danceable grooves",
+                    "Standard forms (AABA, 12-bar blues), often with catchy, memorable heads",
+                    "Art Blakey, Horace Silver, Clifford Brown, Lee Morgan"
+                ]
+            },
+            "Cool Jazz": {
+                "color": "var(--genre-cool-jazz)",
+                "data": [
+                    "More complex, often drawing from classical harmony, less blues-centric",
+                    "Relaxed, subtle pulse, lighter drumming, focus on understatement",
+                    "Often employed complex, contrapuntal arrangements and non-standard forms",
+                    "Miles Davis (early), Dave Brubeck, Stan Getz, Gerry Mulligan"
+                ]
+            },
+            "Modal Jazz": {
+                "color": "var(--genre-modal-jazz)",
+                "data": [
+                    "Static harmony, based on modes/scales rather than chord progressions",
+                    "Floating, ambiguous pulse, less aggressive swing, focus on texture",
+                    "Open-ended, simple structures, often just a single mode or vamp",
+                    "Miles Davis ('Kind of Blue'), John Coltrane ('My Favorite Things'), Bill Evans"
+                ]
+            },
+            "Post-Bop": {
+                "color": "var(--genre-post-bop)",
+                "data": [
+                    "Expanded functional harmony, non-functional chords, controlled dissonance",
+                    "Highly interactive, fluid time, polyrhythms, elastic sense of swing",
+                    "Modified standard forms, original compositions with complex, unique structures",
+                    "Miles Davis's 2nd Quintet, Wayne Shorter, Herbie Hancock, Andrew Hill"
+                ]
+            }
+        }
+    }
     </script>
 
 </body>
