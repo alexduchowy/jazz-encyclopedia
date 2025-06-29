@@ -22,6 +22,13 @@
             --text-muted: #57534e; /* stone-600 */
             --accent: #f97316; /* orange-500 */
             --accent-dark: #ea580c; /* orange-600 */
+
+            /* Genre Colors */
+            --genre-hard-bop: #d8b4fe; /* purple-300 */
+            --genre-cool-jazz: #93c5fd; /* blue-300 */
+            --genre-modal-jazz: #a7f3d0; /* emerald-200 */
+            --genre-post-bop: #fed7aa; /* orange-200 */
+            --genre-default: #e7e5e4; /* stone-200 */
         }
 
         /* Base body styling */
@@ -283,6 +290,47 @@
             accent-color: var(--accent);
         }
 
+        /* Genre Filter Styling */
+        #genre-filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .genre-checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .genre-checkbox-label input {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+        .genre-checkbox-label input:checked {
+            background-color: var(--accent);
+            border-color: var(--accent-dark);
+        }
+        .genre-checkbox-label input:checked::after {
+            content: '✔';
+            position: absolute;
+            color: var(--bg-main);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+        }
+
         /* Loading indicator styles */
         .loader {
             border: 4px solid var(--bg-secondary);
@@ -295,6 +343,15 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        .genre-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            border: 2px solid var(--text-main);
         }
 
     </style>
@@ -349,6 +406,7 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 class="section-header text-5xl">Timeline Explorer</h2>
                 <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Drag or use the buttons to explore a year-by-year breakdown of landmark albums.</p>
+                <div id="genre-filter-container"></div>
                 <div class="flex items-center justify-center gap-4 mb-12">
                     <div id="timeline-nav" class="flex flex-wrap justify-center gap-2"></div>
                 </div>
@@ -594,7 +652,28 @@
             const timelineWrapper = document.getElementById('timeline-wrapper');
             const scrollLeftBtn = document.getElementById('scroll-left-btn');
             const scrollRightBtn = document.getElementById('scroll-right-btn');
+            const genreFilterContainer = document.getElementById('genre-filter-container');
             
+            const genres = {
+                "Hard Bop": "var(--genre-hard-bop)",
+                "Cool Jazz": "var(--genre-cool-jazz)",
+                "Modal Jazz": "var(--genre-modal-jazz)",
+                "Post-Bop": "var(--genre-post-bop)",
+            };
+
+            // Populate Genre Filters
+            Object.keys(genres).forEach(genre => {
+                const label = document.createElement('label');
+                label.className = 'genre-checkbox-label';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = genre;
+                checkbox.dataset.genre = genre;
+                label.appendChild(checkbox);
+                label.append(genre);
+                genreFilterContainer.appendChild(label);
+            });
+
             timelineWrapper.innerHTML = '';
             if (years.length > 0) {
                 years.forEach(year => {
@@ -612,6 +691,7 @@
                         card.className = 'timeline-album-card';
                         card.dataset.albumTitle = album.albumTitle;
                         card.dataset.artist = album.artist;
+                        card.dataset.genres = album.genres; // Add genres to dataset
                         card.innerHTML = `<img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
                         albumList.appendChild(card);
                     });
@@ -638,6 +718,22 @@
             } else {
                  timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
             }
+
+            // Genre Filter Logic
+            genreFilterContainer.addEventListener('change', () => {
+                const selectedGenres = Array.from(genreFilterContainer.querySelectorAll('input:checked')).map(input => input.value);
+                
+                document.querySelectorAll('.timeline-album-card').forEach(card => {
+                    const cardGenres = card.dataset.genres.split(', ');
+                    const isVisible = selectedGenres.length === 0 || cardGenres.some(genre => selectedGenres.includes(genre));
+                    card.style.display = isVisible ? 'block' : 'none';
+                });
+
+                document.querySelectorAll('.timeline-year-section').forEach(yearSection => {
+                    const visibleCards = yearSection.querySelectorAll('.timeline-album-card[style="display: block;"]');
+                    yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
+                });
+            });
 
             const scrollAmount = 400;
             scrollLeftBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
@@ -667,11 +763,17 @@
                 modalImg.alt = `Cover for ${album.albumTitle}`;
                 modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
                 const firstTrack = album.pivotalTracks[0] || {};
+                
+                const genreTags = album.genres.split(', ').map(genre => {
+                    const colorVar = genres[genre] || 'var(--genre-default)';
+                    return `<span class="genre-tag" style="background-color: ${colorVar}">${genre}</span>`;
+                }).join(' ');
+
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
                  detailsContainer.innerHTML = `
                       <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
                       <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
-                           <strong class="font-bold">Genre:</strong> <span>${album.genres || 'N/A'}</span>
+                           <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
                            <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
                            <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
                            <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup || 'N/A'}</span>
