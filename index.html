@@ -232,7 +232,7 @@
             cursor: grabbing;
         }
         #artists-slider-wrapper {
-            display: flex; /* FIX: Use flexbox to hold pages */
+            display: flex;
         }
         .artist-page {
             width: 100%;
@@ -240,12 +240,12 @@
             padding: 1rem;
             box-sizing: border-box;
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns */
-            gap: 1rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem; 
         }
-        @media (min-width: 768px) { /* md breakpoint */
+        @media (min-width: 768px) {
             .artist-page {
-                grid-template-columns: repeat(6, 1fr);  /* Desktop: 6 columns */
+                grid-template-columns: repeat(6, 1fr);
             }
         }
         
@@ -508,25 +508,27 @@
                     // Extract the JSON data from the script tags.
                     const rawTrackDataEl = doc.getElementById('rawTrackData');
                     const styleMatrixDataEl = doc.getElementById('styleMatrixData');
+                    const artistsDataEl = doc.getElementById('artistsData');
 
-                    if (!rawTrackDataEl || !styleMatrixDataEl) {
+                    if (!rawTrackDataEl || !styleMatrixDataEl || !artistsDataEl) {
                         throw new Error('Data script tags not found in database.html');
                     }
                     
                     const rawTrackData = JSON.parse(rawTrackDataEl.textContent);
                     const styleMatrixData = JSON.parse(styleMatrixDataEl.textContent);
+                    const artistsData = JSON.parse(artistsDataEl.textContent);
                     
                     // Initialize the application with the fetched data.
-                    initializeAppUI(rawTrackData, styleMatrixData);
+                    initializeAppUI(rawTrackData, styleMatrixData, artistsData);
                 })
                 .catch(error => {
                     // If fetching fails, initialize with empty data for editing.
                     console.warn('Could not load database.html. Initializing with empty data.', error);
-                    initializeAppUI([], []);
+                    initializeAppUI([], [], []);
                 });
         });
 
-        function initializeAppUI(rawTrackData, styleMatrixData) {
+        function initializeAppUI(rawTrackData, styleMatrixData, artistsData) {
             
             // Global state for album navigation
             let currentAlbumIndex = -1;
@@ -747,119 +749,32 @@
             // --- ARTISTS SECTION LOGIC ---
             const artistsSliderContainer = document.getElementById('artists-slider-container');
             const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
-            const artistsData = processArtists(rawTrackData);
             const instrumentFilter = document.getElementById('instrument-filter');
-            populateInstrumentFilter(artistsData, instrumentFilter);
+            populateInstrumentFilter(artistsData); 
             renderArtistSlider(artistsData);
 
             instrumentFilter.addEventListener('change', (e) => {
                 const selectedInstrument = e.target.value;
                 const filteredArtists = selectedInstrument === 'all'
                     ? artistsData
-                    : artistsData.filter(artist => artist.instruments.has(selectedInstrument));
+                    : artistsData.filter(artist => artist.instruments.includes(selectedInstrument));
                 renderArtistSlider(filteredArtists);
             });
             
-            function processArtists(tracks) {
-                const artistsMap = new Map();
-                const slugify = (name) => name ? name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '') : '';
-                tracks.forEach(track => {
-                    const mainArtistString = track.artist;
-                    if (!track.lineup) return;
-                    const lineupParts = track.lineup.split(/,(?![^()]*\))/);
-                    lineupParts.forEach(part => {
-                        const match = part.trim().match(/(.+?)\s\((.+)\)/);
-                        if (match) {
-                            const name = match[1].trim();
-                            const instrumentsString = match[2];
-                            if (!artistsMap.has(name)) {
-                                artistsMap.set(name, { 
-                                    name: name, 
-                                    instruments: new Set(), 
-                                    albums: new Set(), 
-                                    photo: `images/${slugify(name)}.jpg`,
-                                    isBandleader: false,
-                                    profile: '' // Add profile property
-                                });
-                            }
-                            const artistEntry = artistsMap.get(name);
-                            if (mainArtistString && mainArtistString.includes(name)) {
-                                artistEntry.isBandleader = true;
-                                 // Add artist profiles only for bandleaders
-                                 switch(name) {
-                                     case "Miles Davis":
-                                         artistEntry.profile = "One of the most influential and acclaimed figures in the history of jazz, trumpeter Miles Davis was at the forefront of several major stylistic developments, including cool jazz, hard bop, modal jazz, and jazz fusion.";
-                                         break;
-                                     case "John Coltrane":
-                                         artistEntry.profile = "A revolutionary saxophonist and composer, John Coltrane's work on modal and free jazz had a profound impact on the direction of music. His 'sheets of sound' and spiritual explorations redefined the saxophone's role in jazz.";
-                                         break;
-                                     case "Ornette Coleman":
-                                         artistEntry.profile = "A major innovator of the free jazz movement, alto saxophonist Ornette Coleman's concept of 'harmolodics' liberated improvisation from traditional harmonic structures, emphasizing melodic freedom and collective invention.";
-                                         break;
-                                     case "Eric Dolphy":
-                                          artistEntry.profile = "A virtuosic multi-instrumentalist, Eric Dolphy was a key figure in the avant-garde, known for his work on alto saxophone, flute, and bass clarinet. He pushed the boundaries of harmony and improvisation, acting as a bridge between hard bop and free jazz.";
-                                         break;
-                                     case "Charles Mingus":
-                                         artistEntry.profile = "A virtuoso bassist, composer, and bandleader, Charles Mingus was known for his ambitious compositions that blended hard bop with gospel, blues, and classical music. His work often carried strong political and social messages.";
-                                         break;
-                                     case "Oliver Nelson":
-                                         artistEntry.profile = "A saxophonist, composer, and arranger, Oliver Nelson is best known for his masterpiece 'The Blues and the Abstract Truth,' a landmark album that perfectly blended the blues with sophisticated, modern harmonies.";
-                                         break;
-                                     case "Herbie Hancock":
-                                          artistEntry.profile = "A chameleonic pianist and composer, Herbie Hancock was a key member of Miles Davis's Second Great Quintet and a pioneer of post-bop, funk, and electronic jazz. His album 'Maiden Voyage' is a cornerstone of modal jazz.";
-                                         break;
-                                    case "Wayne Shorter":
-                                          artistEntry.profile = "As both a saxophonist and a composer, Wayne Shorter was a primary architect of the post-bop language. His enigmatic compositions for his own albums and for Miles Davis's Second Great Quintet redefined the sound of modern jazz.";
-                                         break;
-                                    case "McCoy Tyner":
-                                          artistEntry.profile = "The pianist in John Coltrane's classic quartet, McCoy Tyner's powerful, percussive style and use of quartal harmonies made him one of the most influential pianists of the post-bop era.";
-                                         break;
-                                     case "Dexter Gordon":
-                                          artistEntry.profile = "A towering figure of the tenor saxophone, Dexter Gordon was a bebop pioneer who returned to prominence in the 1960s with a series of classic Blue Note albums that defined the hard bop sound.";
-                                         break;
-                                 }
-                            }
-                            instrumentsString.split(/, | \/ /).forEach(inst => {
-                                const trimmedInst = inst.trim();
-                                if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
-                                    artistEntry.instruments.add(trimmedInst);
-                                }
-                            });
-                            artistEntry.albums.add(track.album);
-                        }
-                    });
-                });
-                return Array.from(artistsMap.values());
-            }
-
-            function populateInstrumentFilter(artists, filterElement) {
-                // Define a curated list of core instruments for the filter to avoid clutter.
-                const relevantInstruments = new Set([
-                    'alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 
-                    'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 
-                    'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'tuba', 'vibraphone',
-                ]);
-
-                const instrumentsInDataset = new Set();
+            function populateInstrumentFilter(artists) {
+                const allInstruments = new Set();
                 artists.forEach(artist => {
-                    artist.instruments.forEach(instrument => {
-                        // Only add the instrument to our list if it's on the relevant list.
-                        if (relevantInstruments.has(instrument)) {
-                           instrumentsInDataset.add(instrument);
-                        }
-                    });
+                    artist.instruments.forEach(instrument => allInstruments.add(instrument));
                 });
                 
-                // Sort the instruments that are actually in the data alphabetically.
-                const sortedInstruments = Array.from(instrumentsInDataset).sort();
+                const sortedInstruments = Array.from(allInstruments).sort();
 
-                filterElement.innerHTML = '<option value="all">All Instruments</option>';
+                instrumentFilter.innerHTML = '<option value="all">All Instruments</option>';
                 sortedInstruments.forEach(instrument => {
                     const option = document.createElement('option');
                     option.value = instrument;
-                    // Capitalize the first letter for display
                     option.textContent = instrument.charAt(0).toUpperCase() + instrument.slice(1);
-                    filterElement.appendChild(option);
+                    instrumentFilter.appendChild(option);
                 });
             }
             
@@ -984,9 +899,9 @@
                     </div>
                     <div class="w-full sm:w-2/3">
                         <h4 class="text-3xl text-stone-900 mb-3">Details</h4>
-                        <p class="mb-4 text-stone-900"><strong class="font-bold">Instruments:</strong> ${Array.from(artist.instruments).join(', ')}</p>
+                        <p class="mb-4 text-stone-900"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
                         <h4 class="text-3xl text-stone-900 mb-3">Album Appearances</h4>
-                        <ul class="list-disc list-inside text-sm space-y-1 text-stone-900 h-32 overflow-y-auto">${Array.from(artist.albums).map(title => `<li>${title}</li>`).join('')}</ul>
+                        <ul class="list-disc list-inside text-sm space-y-1 text-stone-900 h-32 overflow-y-auto">${artist.albums.map(title => `<li>${title}</li>`).join('')}</ul>
                     </div>
                 </div>
                 ${profileHtml}
