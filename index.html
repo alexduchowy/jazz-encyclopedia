@@ -505,21 +505,43 @@
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
                     
-                    // Extract the JSON data from the script tags.
-                    const rawTrackDataEl = doc.getElementById('rawTrackData');
-                    const styleMatrixDataEl = doc.getElementById('styleMatrixData');
-                    const artistsDataEl = doc.getElementById('artistsData');
+                    // Use a MutationObserver to wait for the dynamic script in database.html to execute
+                    const observer = new MutationObserver((mutationsList, observer) => {
+                        const artistsDataEl = doc.getElementById('artistsData');
+                        if (artistsDataEl) {
+                            observer.disconnect(); // Stop observing once the element is found
 
-                    if (!rawTrackDataEl || !styleMatrixDataEl || !artistsDataEl) {
-                        throw new Error('Data script tags not found in database.html');
-                    }
+                            const rawTrackDataEl = doc.getElementById('rawTrackData');
+                            const styleMatrixDataEl = doc.getElementById('styleMatrixData');
+
+                            if (!rawTrackDataEl || !styleMatrixDataEl) {
+                                throw new Error('Core data script tags not found in database.html');
+                            }
+                            
+                            const rawTrackData = JSON.parse(rawTrackDataEl.textContent);
+                            const styleMatrixData = JSON.parse(styleMatrixDataEl.textContent);
+                            const artistsData = JSON.parse(artistsDataEl.textContent);
+                            
+                            // Initialize the application with the fetched data.
+                            initializeAppUI(rawTrackData, styleMatrixData, artistsData);
+                        }
+                    });
+
+                    // Start observing the body of the parsed document for changes.
+                    observer.observe(doc.body, { childList: true, subtree: true });
                     
-                    const rawTrackData = JSON.parse(rawTrackDataEl.textContent);
-                    const styleMatrixData = JSON.parse(styleMatrixDataEl.textContent);
-                    const artistsData = JSON.parse(artistsDataEl.textContent);
-                    
-                    // Initialize the application with the fetched data.
-                    initializeAppUI(rawTrackData, styleMatrixData, artistsData);
+                    // Append the script from database.html to the main document's head to execute it.
+                    const scripts = Array.from(doc.querySelectorAll('script'));
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        // Copy attributes
+                        for (const attr of script.attributes) {
+                            newScript.setAttribute(attr.name, attr.value);
+                        }
+                        newScript.textContent = script.textContent;
+                        document.head.appendChild(newScript);
+                    });
+
                 })
                 .catch(error => {
                     // If fetching fails, initialize with empty data for editing.
@@ -750,7 +772,7 @@
             const artistsSliderContainer = document.getElementById('artists-slider-container');
             const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
             const instrumentFilter = document.getElementById('instrument-filter');
-            populateInstrumentFilter(artistsData); 
+            populateInstrumentFilter(artistsData);
             renderArtistSlider(artistsData);
 
             instrumentFilter.addEventListener('change', (e) => {
