@@ -8,7 +8,7 @@
     <!-- This script tag holds the raw track data as a JSON object. -->
     <script id="rawTrackData" type="application/json">
     [
-        { "year": 1954, "artist": "Art Blakey Quintet", "title": "A Night In Tunisia", "album": "A Night at Birdland, Vol. 1", "genre": "Hard Bop", "cover": "images/a-night-at-birdland-vol-1.jpg", "recordingDate": "February 21, 1954", "label": "Blue Note", "lineup": "Art Blakey (drums), Clifford Brown (trumpet), Lou Donaldson (alto saxophone), Horace Silver (piano), Curly Russell (bass)", "analysis": "This iconic live recording captures the raw energy of the legendary New York City jazz club. This version of Dizzy Gillespie's tune is a quintessential example of hard bop, featuring blistering solos from a young and brilliant Clifford Brown and alto saxophonist Lou Donaldson, all driven by Blakey's powerhouse swing." },
+{ "year": 1954, "artist": "Art Blakey Quintet", "title": "A Night In Tunisia", "album": "A Night at Birdland, Vol. 1", "genre": "Hard Bop", "cover": "images/a-night-at-birdland-vol-1.jpg", "recordingDate": "February 21, 1954", "label": "Blue Note", "lineup": "Art Blakey (drums), Clifford Brown (trumpet), Lou Donaldson (alto saxophone), Horace Silver (piano), Curly Russell (bass)", "analysis": "This iconic live recording captures the raw energy of the legendary New York City jazz club. This version of Dizzy Gillespie's tune is a quintessential example of hard bop, featuring blistering solos from a young and brilliant Clifford Brown and alto saxophonist Lou Donaldson, all driven by Blakey's powerhouse swing." },
         { "year": 1954, "artist": "Miles Davis", "title": "Walkin'", "album": "Walkin'", "genre": "Hard Bop", "cover": "images/walkin.jpg", "recordingDate": "April 29, 1954", "label": "Prestige", "lineup": "Miles Davis (trumpet), J.J. Johnson (trombone), Lucky Thompson (tenor saxophone), Horace Silver (piano), Percy Heath (bass), Kenny Clarke (drums)", "analysis": "The title track of this album is often cited as a key recording in the birth of the hard bop movement. It signaled a return to a more aggressive, swinging, and blues-based style for Davis, re-establishing him as a leading voice in modern jazz after his cooler, more arranged period." },
         { "year": 1954, "artist": "Clifford Brown & Max Roach Quintet", "title": "Joy Spring", "album": "Clifford Brown & Max Roach", "genre": "Hard Bop", "cover": "images/clifford-brown-&-max-roach.jpg", "recordingDate": "August 6, 1954", "label": "EmArcy", "lineup": "Clifford Brown (trumpet), Max Roach (drums), Harold Land (tenor saxophone), Richie Powell (piano), George Morrow (bass)", "analysis": "A brilliant original by Clifford Brown, 'Joy Spring' is a testament to his prodigious talents. The tune's intricate melody and sophisticated chord changes became a standard, and this definitive version showcases the band's incredible precision, telepathic interplay, and the sheer joy of creation its title suggests." },
         { "year": 1954, "artist": "Miles Davis", "title": "Bags' Groove", "album": "Bags' Groove", "genre": "Hard Bop, Cool Jazz", "cover": "images/bags-groove.jpg", "recordingDate": "December 24, 1954", "label": "Prestige", "lineup": "Miles Davis (trumpet), Milt Jackson (vibraphone), Thelonious Monk (piano), Percy Heath (bass), Kenny Clarke (drums)", "analysis": "This Christmas Eve session is legendary. The story goes that Davis asked Thelonious Monk not to play behind his trumpet solo, resulting in a uniquely sparse and compelling performance. The interplay between Milt Jackson's warm vibraphone and Davis's cool, poignant trumpet created a timeless jazz classic." },
@@ -180,6 +180,85 @@
         { "feature": "Improvisation", "hardBop": "Melodic invention based on navigating chord changes", "modalJazz": "Melodic invention based on exploring a single scale or mode", "postBop": "'Inside-outside' playing, moving between functional and abstract ideas", "freeJazz": "Atonal, textural, based on motifs and energy rather than chords" },
         { "feature": "Key Artists", "hardBop": "Art Blakey, Horace Silver, Clifford Brown", "modalJazz": "Miles Davis (Kind of Blue), Bill Evans", "postBop": "Miles Davis's 2nd Quintet, John Coltrane's Classic Quartet", "freeJazz": "Ornette Coleman, Cecil Taylor, late John Coltrane" }
     ]
+    </script>
+
+    <!-- This script dynamically processes the raw track data to generate the artist data. -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function processArtists(tracks) {
+                const artistsMap = new Map();
+                const slugify = (name) => name ? name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '') : '';
+                
+                tracks.forEach(track => {
+                    const mainArtistString = track.artist;
+                    if (!track.lineup) return;
+                    const lineupParts = track.lineup.split(/,(?![^()]*\))/);
+
+                    lineupParts.forEach(part => {
+                        const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                        if (match) {
+                            const name = match[1].trim();
+                            const instrumentsString = match[2];
+                            if (!artistsMap.has(name)) {
+                                artistsMap.set(name, { 
+                                    name: name, 
+                                    instruments: new Set(), 
+                                    albums: new Set(), 
+                                    photo: `images/${slugify(name)}.jpg`,
+                                    isBandleader: false,
+                                    profile: ''
+                                });
+                            }
+                            const artistEntry = artistsMap.get(name);
+                            if (mainArtistString && mainArtistString.includes(name)) {
+                                artistEntry.isBandleader = true;
+                                switch(name) {
+                                     case "Miles Davis":
+                                         artistEntry.profile = "One of the most influential and acclaimed figures in the history of jazz, trumpeter Miles Davis was at the forefront of several major stylistic developments, including cool jazz, hard bop, modal jazz, and jazz fusion.";
+                                         break;
+                                     case "Thelonious Monk":
+                                          artistEntry.profile = "A pioneering pianist and composer, Thelonious Monk was a central figure in the development of bebop. His unique improvisational style, characterized by dissonant harmonies and angular melodic twists, made him an icon of modern jazz.";
+                                          break;
+                                     case "Horace Silver":
+                                          artistEntry.profile = "A pianist and composer, Horace Silver was a key architect of the hard bop style, known for his catchy, bluesy, and often funk-infused compositions. His quintet was a launching pad for many of the era's top young musicians.";
+                                          break;
+                                     case "Max Roach":
+                                         artistEntry.profile = "A pioneering bebop drummer, Max Roach was also a key figure in the development of hard bop and a leading voice in political jazz. His 'Freedom Now Suite' is a landmark of the Civil Rights era.";
+                                         break;
+                                     case "Dexter Gordon":
+                                          artistEntry.profile = "A towering figure of the tenor saxophone, Dexter Gordon was a bebop pioneer who returned to prominence in the 1960s with a series of classic Blue Note albums that defined the hard bop sound.";
+                                          break;
+                                 }
+                            }
+                            instrumentsString.split(/, | \/ /).forEach(inst => {
+                                const trimmedInst = inst.trim();
+                                if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
+                                    artistEntry.instruments.add(trimmedInst);
+                                }
+                            });
+                            artistEntry.albums.add(track.album);
+                        }
+                    });
+                });
+                
+                // Convert Sets to Arrays for JSON serialization
+                const artistsArray = Array.from(artistsMap.values());
+                artistsArray.forEach(artist => {
+                    artist.instruments = Array.from(artist.instruments);
+                    artist.albums = Array.from(artist.albums);
+                });
+                return artistsArray;
+            }
+
+            const rawTrackData = JSON.parse(document.getElementById('rawTrackData').textContent);
+            const artistsData = processArtists(rawTrackData);
+
+            const artistsDataScript = document.createElement('script');
+            artistsDataScript.id = 'artistsData';
+            artistsDataScript.type = 'application/json';
+            artistsDataScript.textContent = JSON.stringify(artistsData, null, 4);
+            document.body.appendChild(artistsDataScript);
+        });
     </script>
 
 </body>
