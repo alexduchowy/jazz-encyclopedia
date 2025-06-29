@@ -240,12 +240,14 @@
             padding: 1rem;
             box-sizing: border-box;
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns for 2 rows of 3 */
+            grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns */
+            grid-template-rows: repeat(2, 1fr);    /* FIX: Enforce 2 rows */
             gap: 1rem; 
         }
         @media (min-width: 768px) { /* md breakpoint */
             .artist-page {
-                grid-template-columns: repeat(6, 1fr);  /* Desktop: 6 columns for 2 rows of 6 */
+                grid-template-columns: repeat(6, 1fr);  /* Desktop: 6 columns */
+                grid-template-rows: repeat(2, 1fr);    /* FIX: Enforce 2 rows */
             }
         }
         
@@ -329,7 +331,7 @@
     <main>
         <!-- Hero Banner Section -->
         <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
-            <img src="https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover border-y-4 border-stone-900">
+            <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover border-y-4 border-stone-900" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
         </section>
 
         <!-- Overview Section -->
