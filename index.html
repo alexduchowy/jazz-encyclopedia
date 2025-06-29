@@ -223,7 +223,7 @@
          .artist-card:hover img {
             filter: grayscale(0%);
         }
-        /* Artist Slider Styles */
+        
         #artists-slider-container {
             width: 100%;
             overflow-x: auto;
@@ -763,7 +763,7 @@
                 
                 // Initial Filter and Scroll Reset
                 filterTimeline();
-                requestAnimationFrame(() => { timelineContainer.scrollLeft = 0; });
+                requestAnimationFrame(() => { timelineContainer.scrollLeft = 32; });
             } else {
                  timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
             }
