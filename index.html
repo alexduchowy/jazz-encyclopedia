@@ -234,12 +234,12 @@
 
         #artists-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns for 2 rows */
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
         }
         @media (min-width: 768px) {
             #artists-grid {
-                grid-template-columns: repeat(6, 1fr); /* Desktop: 6 columns for 2 rows */
+                grid-template-columns: repeat(6, 1fr);
             }
         }
         
@@ -517,7 +517,7 @@
 
     <!-- Main Application Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        window.onload = () => {
             // Show loading indicators while data is fetched.
             const timelineWrapper = document.getElementById('timeline-wrapper');
             const artistsGrid = document.getElementById('artists-grid');
@@ -556,7 +556,7 @@
                     console.warn('Could not load database.html. Initializing with empty data.', error);
                     initializeAppUI([], { features: [], genres: {} });
                 });
-        });
+        };
 
         function initializeAppUI(rawTrackData, styleMatrixData) {
             
@@ -937,12 +937,22 @@
             }
 
             function populateInstrumentFilter(artists) {
-                const allInstruments = new Set();
+                const relevantInstruments = new Set([
+                    'alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 
+                    'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 
+                    'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'tuba', 'vibraphone', 'congas'
+                ]);
+                
+                const instrumentsInDataset = new Set();
                 artists.forEach(artist => {
-                    artist.instruments.forEach(instrument => allInstruments.add(instrument));
+                    artist.instruments.forEach(instrument => {
+                        if (relevantInstruments.has(instrument)) {
+                           instrumentsInDataset.add(instrument);
+                        }
+                    });
                 });
                 
-                const sortedInstruments = Array.from(allInstruments).sort();
+                const sortedInstruments = Array.from(instrumentsInDataset).sort();
 
                 instrumentFilter.innerHTML = '<option value="all">All Instruments</option>';
                 sortedInstruments.forEach(instrument => {
