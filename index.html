@@ -832,13 +832,13 @@
 
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
                  detailsContainer.innerHTML = `
-                      <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
-                      <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
-                           <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
-                           <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
-                           <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
-                           <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup || 'N/A'}</span>
-                      </div>`;
+                        <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
+                        <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                             <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                             <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
+                             <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
+                             <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup || 'N/A'}</span>
+                        </div>`;
 
                 const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                 analysisWrapper.innerHTML = ''; // Clear previous content
@@ -849,14 +849,14 @@
                 const pivotalTracksHtml = album.pivotalTracks.map(track => {
                     const songFileName = slugify(track.title) + '.mp3';
                      return `
-                          <div class="mb-8 last:mb-0">
-                               <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
-                                     <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
-                                    <audio controls class="styled-player w-full sm:w-52" src="songs/${songFileName}" preload="none"></audio>
-                               </div>
-                               <p class="liner-notes-text">${track.analysis}</p>
-                          </div>
-                     `;
+                             <div class="mb-8 last:mb-0">
+                                  <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
+                                       <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                       <audio controls class="styled-player w-full sm:w-52" src="songs/${songFileName}" preload="none"></audio>
+                                  </div>
+                                  <p class="liner-notes-text">${track.analysis}</p>
+                             </div>
+                        `;
                 }).join('<hr class="border-stone-700 my-8">');
 
                 analysisContainer.innerHTML = pivotalTracksHtml;
@@ -912,16 +912,6 @@
             const artistsSliderWrapper = document.getElementById('artists-slider-wrapper');
             const artistsData = processArtists(rawTrackData);
             const instrumentFilter = document.getElementById('instrument-filter');
-            populateInstrumentFilter(artistsData);
-            renderArtistSlider(artistsData);
-
-            instrumentFilter.addEventListener('change', (e) => {
-                const selectedInstrument = e.target.value;
-                const filteredArtists = selectedInstrument === 'all'
-                    ? artistsData
-                    : artistsData.filter(artist => artist.instruments.includes(selectedInstrument));
-                renderArtistSlider(filteredArtists);
-            });
             
             function processArtists(tracks) {
                 const artistsMap = new Map();
@@ -955,18 +945,18 @@
                                          artistEntry.profile = "One of the most influential and acclaimed figures in the history of jazz, trumpeter Miles Davis was at the forefront of several major stylistic developments, including cool jazz, hard bop, modal jazz, and jazz fusion.";
                                          break;
                                      case "Thelonious Monk":
-                                          artistEntry.profile = "A pioneering pianist and composer, Thelonious Monk was a central figure in the development of bebop. His unique improvisational style, characterized by dissonant harmonies and angular melodic twists, made him an icon of modern jazz.";
-                                          break;
+                                         artistEntry.profile = "A pioneering pianist and composer, Thelonious Monk was a central figure in the development of bebop. His unique improvisational style, characterized by dissonant harmonies and angular melodic twists, made him an icon of modern jazz.";
+                                         break;
                                      case "Horace Silver":
-                                          artistEntry.profile = "A pianist and composer, Horace Silver was a key architect of the hard bop style, known for his catchy, bluesy, and often funk-infused compositions. His quintet was a launching pad for many of the era's top young musicians.";
-                                          break;
+                                         artistEntry.profile = "A pianist and composer, Horace Silver was a key architect of the hard bop style, known for his catchy, bluesy, and often funk-infused compositions. His quintet was a launching pad for many of the era's top young musicians.";
+                                         break;
                                      case "Max Roach":
                                          artistEntry.profile = "A pioneering bebop drummer, Max Roach was also a key figure in the development of hard bop and a leading voice in political jazz. His 'Freedom Now Suite' is a landmark of the Civil Rights era.";
-                                          break;
+                                         break;
                                      case "Dexter Gordon":
-                                          artistEntry.profile = "A towering figure of the tenor saxophone, Dexter Gordon was a bebop pioneer who returned to prominence in the 1960s with a series of classic Blue Note albums that defined the hard bop sound.";
-                                          break;
-                                 }
+                                         artistEntry.profile = "A towering figure of the tenor saxophone, Dexter Gordon was a bebop pioneer who returned to prominence in the 1960s with a series of classic Blue Note albums that defined the hard bop sound.";
+                                         break;
+                                   }
                             }
                             instrumentsString.split(/, | \/ /).forEach(inst => {
                                 const trimmedInst = inst.trim();
@@ -1155,6 +1145,28 @@
             artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') closeArtistModal(); });
             document.addEventListener('keydown', e => { if (e.key === "Escape") { closeAlbumModal(); closeArtistModal(); } });
             
+            // --- ARTIST SLIDER SETUP ---
+            populateInstrumentFilter(artistsData);
+
+            function updateArtistSliderView() {
+                const selectedInstrument = instrumentFilter.value;
+                const artistsToRender = selectedInstrument === 'all'
+                    ? artistsData
+                    : artistsData.filter(artist => artist.instruments.includes(selectedInstrument));
+                renderArtistSlider(artistsToRender);
+            }
+
+            instrumentFilter.addEventListener('change', updateArtistSliderView);
+
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(updateArtistSliderView, 200);
+            });
+
+            updateArtistSliderView(); // Initial call
+
+
             // Build the transposed genre matrix
             const matrixTable = document.getElementById('style-matrix-table');
             if (styleMatrixData.features && styleMatrixData.genres) {
