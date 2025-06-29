@@ -196,6 +196,8 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 4px 4px 0px var(--text-main);
             border: 2px solid var(--text-main);
+            max-width: 200px; /* Limit card width */
+            margin: auto;
         }
         .artist-card:hover {
             transform: translateY(-5px) rotate(2deg);
@@ -271,7 +273,24 @@
         }
         
         audio.styled-player {
+            width: 50%;
+            height: 30px; 
             accent-color: var(--accent);
+        }
+        audio.styled-player::-webkit-media-controls-panel {
+            background-color: var(--accent);
+            border-radius: 5px;
+        }
+        audio.styled-player::-webkit-media-controls-play-button {
+            color: white;
+            background-color: white;
+            border-radius: 50%;
+        }
+        audio.styled-player::-webkit-media-controls-current-time-display,
+        audio.styled-player::-webkit-media-controls-time-remaining-display,
+        audio.styled-player::-webkit-media-controls-volume-slider-container {
+             color: white;
+             font-weight: bold;
         }
 
     </style>
@@ -439,7 +458,11 @@
                     </div>
                     <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
-                <div id="modal-analysis-section"></div>
+                <div id="analysis-wrapper" class="relative">
+                     <div id="modal-analysis-section">
+                        <!-- Content injected by JS -->
+                    </div>
+                </div>
             </div>
              <!-- NEW: Modal Navigation Footer -->
             <div id="modal-nav-footer" class="flex justify-between items-center p-4 border-t-2 border-stone-900 flex-shrink-0 bg-stone-200">
@@ -706,42 +729,47 @@
                  detailsContainer.innerHTML = `
                     <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
                     <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
-                        <strong class="font-bold">Genre:</strong> <span>${album.genres.join(', ')}</span>
-                        <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate}</span>
-                        <strong class="font-bold">Label:</strong> <span>${firstTrack.label}</span>
-                        <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup}</span>
+                        <strong>Genre:</strong> <span>${album.genres.join(', ')}</span>
+                        <strong>Recorded:</strong> <span>${firstTrack.recordingDate}</span>
+                        <strong>Label:</strong> <span>${firstTrack.label}</span>
+                        <strong>Line-Up:</strong> <span>${firstTrack.lineup}</span>
                     </div>`;
 
-                const analysisContainer = albumModal.querySelector('#modal-analysis-section');
-                const pivotalTracksHtml = album.pivotalTracks.map(track => {
-                    const songFileName = slugify(track.title) + '.mp3';
-                    return `
-                        <div class="mb-8 last:mb-0">
-                            <div class="flex justify-between items-center gap-4 mb-3 flex-wrap">
-                                <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Pivotal Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
-                                <div class="flex flex-col items-end">
-                                    <span class="text-xs uppercase font-bold text-white bg-orange-500 px-2 py-1 rounded-t-md">Listen</span>
-                                    <audio controls class="styled-audio-player" style="width: 150px;" src="songs/${songFileName}" preload="metadata"></audio>
-                                </div>
-                            </div>
-                            <p class="liner-notes-text">${track.analysis}</p>
-                        </div>
-                    `;
-                }).join('<hr class="border-stone-700 my-8">');
+                const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
+                analysisWrapper.innerHTML = ''; // Clear previous content
 
-                analysisContainer.innerHTML = pivotalTracksHtml;
-                
-                // Add event listeners to ensure only one audio plays at a time
-                const audioPlayers = analysisContainer.querySelectorAll('audio');
-                audioPlayers.forEach(player => {
-                    player.addEventListener('play', () => {
-                        audioPlayers.forEach(otherPlayer => {
-                            if (otherPlayer !== player) {
-                                otherPlayer.pause();
-                            }
+                if(album.pivotalTracks.length > 0) {
+                     const analysisContainer = document.createElement('div');
+                    analysisContainer.id = 'modal-analysis-section';
+                    const pivotalTracksHtml = album.pivotalTracks.map(track => {
+                        const songFileName = slugify(track.title) + '.mp3';
+                        return `
+                            <div class="mb-8 last:mb-0">
+                                <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
+                                    <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Pivotal Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                    <audio controls class="styled-player" src="songs/${songFileName}" preload="metadata"></audio>
+                                </div>
+                                <p class="liner-notes-text">${track.analysis}</p>
+                            </div>
+                        `;
+                    }).join('<hr class="border-stone-700 my-8">');
+
+                    analysisContainer.innerHTML = pivotalTracksHtml;
+                    analysisWrapper.appendChild(analysisContainer);
+
+                     // Add event listeners to ensure only one audio plays at a time
+                    const audioPlayers = analysisContainer.querySelectorAll('audio');
+                    audioPlayers.forEach(player => {
+                        player.addEventListener('play', () => {
+                            audioPlayers.forEach(otherPlayer => {
+                                if (otherPlayer !== player) {
+                                    otherPlayer.pause();
+                                }
+                            });
                         });
                     });
-                });
+                }
+
 
                 // Update nav buttons
                 const prevBtn = document.getElementById('prev-album-btn');
@@ -808,12 +836,31 @@
                                     instruments: new Set(), 
                                     albums: new Set(), 
                                     photo: `images/${slugify(name)}.jpg`,
-                                    isBandleader: false 
+                                    isBandleader: false,
+                                    profile: '' // Add profile property
                                 });
                             }
                             const artistEntry = artistsMap.get(name);
                             if (mainArtistString.includes(name)) {
                                 artistEntry.isBandleader = true;
+                                 // Add artist profiles only for bandleaders
+                                switch(name) {
+                                    case "Thelonious Monk":
+                                        artistEntry.profile = "A pioneering pianist and composer, Thelonious Monk was a central figure in the development of bebop. His unique improvisational style, characterized by dissonant harmonies and angular melodic twists, made him an icon of modern jazz.";
+                                        break;
+                                    case "Charles Mingus":
+                                        artistEntry.profile = "A virtuoso bassist, composer, and bandleader, Charles Mingus was known for his ambitious compositions that blended hard bop with gospel, blues, and classical music. His work often carried strong political and social messages.";
+                                        break;
+                                    case "Miles Davis":
+                                        artistEntry.profile = "One of the most influential and acclaimed figures in the history of jazz, trumpeter Miles Davis was at the forefront of several major stylistic developments, including cool jazz, hard bop, modal jazz, and jazz fusion.";
+                                        break;
+                                    case "John Coltrane":
+                                        artistEntry.profile = "A revolutionary saxophonist and composer, John Coltrane's work on modal and free jazz had a profound impact on the direction of music. His 'sheets of sound' and spiritual explorations redefined the saxophone's role in jazz.";
+                                        break;
+                                     case "Ornette Coleman":
+                                        artistEntry.profile = "A major innovator of the free jazz movement, alto saxophonist Ornette Coleman's concept of 'harmolodics' liberated improvisation from traditional harmonic structures, emphasizing melodic freedom and collective invention.";
+                                        break;
+                                }
                             }
                             instrumentsString.split(/, | \/ /).forEach(inst => {
                                 const trimmedInst = inst.trim();
@@ -962,7 +1009,30 @@
                 artistModal.querySelector('#artist-modal-title').textContent = artist.name;
                 const body = artistModal.querySelector('#artist-modal-body');
                 const placeholderUrl = `https://placehold.co/200x240/1c1917/f5f5f4?text=${encodeURIComponent(artist.name)}`;
-                body.innerHTML = `<div class="flex flex-col md:flex-row gap-6"><div class="w-full md:w-1/3 flex-shrink-0"><img src="${artist.photo}" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='${placeholderUrl}';"></div><div class="w-full md:w-2/3"><h4 class="text-3xl text-stone-900 mb-3">Details</h4><p class="mb-4 text-stone-900"><strong class="font-bold">Instruments:</strong> ${Array.from(artist.instruments).join(', ')}</p><h4 class="text-3xl text-stone-900 mb-3">Album Appearances</h4><ul class="list-disc list-inside text-sm space-y-1 text-stone-900">${Array.from(artist.albums).map(title => `<li>${title}</li>`).join('')}</ul></div></div>`;
+                
+                let profileHtml = '';
+                if(artist.isBandleader && artist.profile) {
+                    profileHtml = `
+                    <div class="mt-6 pt-4 border-t-2 border-stone-200">
+                        <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
+                        <p class="text-base text-stone-700 leading-relaxed">${artist.profile}</p>
+                    </div>`;
+                }
+
+                body.innerHTML = `
+                <div class="flex flex-col sm:flex-row gap-6">
+                    <div class="w-full sm:w-1/3 flex-shrink-0">
+                        <img src="${artist.photo}" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='${placeholderUrl}';">
+                    </div>
+                    <div class="w-full sm:w-2/3">
+                        <h4 class="text-3xl text-stone-900 mb-3">Details</h4>
+                        <p class="mb-4 text-stone-900"><strong class="font-bold">Instruments:</strong> ${Array.from(artist.instruments).join(', ')}</p>
+                        <h4 class="text-3xl text-stone-900 mb-3">Album Appearances</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1 text-stone-900 h-32 overflow-y-auto">${Array.from(artist.albums).map(title => `<li>${title}</li>`).join('')}</ul>
+                    </div>
+                </div>
+                ${profileHtml}
+                `;
                 artistModal.classList.remove('opacity-0', 'pointer-events-none');
                 artistModalContent.classList.remove('scale-95');
             }
