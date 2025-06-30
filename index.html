@@ -355,10 +355,10 @@
     </div>
 
     <div id="page-content" class="content-hidden">
-        <!-- Sticky Header Navigation -->
-        <header class="bg-stone-100 sticky top-0 z-50">
-            <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
+        <!-- CORRECTED HEADER -->
+        <div class="sticky top-0 z-50 h-28">
+            <header class="crooked-header container mx-auto bg-stone-100">
+                <nav class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                     <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
                     <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
                         <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
@@ -376,17 +376,16 @@
                             <option value="#legacy">Legacy</option>
                         </select>
                     </div>
-                </div>
-            </nav>
-        </header>
+                </nav>
+            </header>
+        </div>
 
-        <main>
+
+        <main class="pt-8"> <!-- Adjusted main padding -->
             <!-- Hero Banner Section -->
             <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
-                <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover border-y-4 border-stone-900" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
+                <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
             </section>
-
-
 
             <!-- Overview Section -->
             <section id="overview" class="py-16 sm:py-20">
@@ -635,7 +634,25 @@
                 }
             });
             
-            albums.sort((a,b) => parseDate(a.firstRecordingDate) - parseDate(b.firstRecordingDate));
+            // CORRECTED SORTING LOGIC
+            albums.sort((a, b) => {
+                // Primary sort criterion: Year
+                if (a.year !== b.year) {
+                    return a.year - b.year;
+                }
+                // Secondary sort criterion: Full recording date, if available
+                const dateA = parseDate(a.firstRecordingDate);
+                const dateB = parseDate(b.firstRecordingDate);
+
+                if (dateA && dateB) {
+                    return dateA - dateB;
+                }
+                // Fallback for items with invalid or missing dates
+                if (dateA) return -1; // dateA is valid, it comes first
+                if (dateB) return 1;  // dateB is valid, it comes first
+                return 0; // both are invalid, maintain relative order
+            });
+
             const years = [...new Set(albums.map(album => album.year))].sort();
             const groupedByYear = years.reduce((acc, year) => {
                 acc[year] = albums.filter(d => d.year === year);
