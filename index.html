@@ -43,22 +43,7 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
         }
-
-        /* Crooked Header Style */
-        header {
-            transform: rotate(-1.5deg);
-            margin-top: 1rem;
-            box-shadow: 5px 5px 0px var(--text-main);
-            border: 2px solid var(--text-main);
-            margin-bottom: -100px; /* Pulls subsequent content up */
-            position: relative; /* Needed for z-index and negative margin to work correctly */
-        }
         
-        /* Adjust main content to account for header overlap */
-        main {
-            padding-top: 100px; /* Pushes content down to create space for overlapping header */
-        }
-
         /* Navigation link transition effects */
         .nav-link {
             transition: color 0.2s;
@@ -363,29 +348,33 @@
 
     <div id="page-content" class="content-hidden">
         <!-- Sticky Header Navigation -->
-        <header class="bg-stone-100 sticky top-0 z-50">
-            <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
-                    <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
-                        <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
-                        <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                        <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
-                        <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
-                        <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+        <!-- UPDATED HEADER STRUCTURE -->
+        <header class="sticky top-0 z-50 py-4">
+            <div class="bg-stone-100 container mx-auto border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main);">
+                 <nav>
+                    <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+                        <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
+                        <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
+                            <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
+                            <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
+                            <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
+                            <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
+                            <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                        </div>
+                        <div class="sm:hidden styled-select">
+                            <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
+                                <option value="#overview">Overview</option>
+                                <option value="#timeline">Timeline</option>
+                                <option value="#matrix">Genres</option>
+                                <option value="#artists">Artists</option>
+                                <option value="#legacy">Legacy</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="sm:hidden styled-select">
-                        <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
-                            <option value="#overview">Overview</option>
-                            <option value="#timeline">Timeline</option>
-                            <option value="#matrix">Genres</option>
-                            <option value="#artists">Artists</option>
-                            <option value="#legacy">Legacy</option>
-                        </select>
-                    </div>
-                </div>
-            </nav>
+                </nav>
+            </div>
         </header>
+
 
         <main>
             <!-- Hero Banner Section -->
@@ -394,7 +383,7 @@
             </section>
 
             <!-- Overview Section -->
-            <section id="overview" class="pt-4 pb-16 sm:pb-20">
+            <section id="overview" class="pt-20 pb-16 sm:pb-20"> <!-- Increased pt to account for header -->
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
                      <h2 class="section-header text-5xl">Post-Bop Encyclopedia</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 italic">An exploration into the era of "controlled freedom" that redefined jazz in the sixties.</p>
@@ -1204,13 +1193,13 @@
             setupDraggable(timelineContainer);
             
             // --- Nav Link Active State on Scroll ---
-            const sections = document.querySelectorAll('section[id]');
+            const sections = document.querySelectorAll('main section[id]');
             const navLinks = document.querySelectorAll('header nav a');
             const mobileNav = document.getElementById('mobile-nav');
 
             const observerOptions = {
                 root: null,
-                rootMargin: '0px 0px -60% 0px', // When top of section is 40% from top of viewport
+                rootMargin: '0px 0px -50% 0px', 
                 threshold: 0
             };
 
