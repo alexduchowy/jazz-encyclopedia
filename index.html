@@ -139,12 +139,12 @@
         .timeline-year-section:first-child {
             border-left: none;
         }
-        /* Year header styling */
+        /* UPDATED: Year header styling */
         .timeline-year-header {
             font-size: 3rem; 
             font-weight: 900;
-            color: var(--text-main); 
-            opacity: 0.15;
+            color: var(--accent); /* Changed to accent color */
+            opacity: 0.2; /* Increased opacity for better visibility */
             margin-bottom: 1.5rem;
             width: 100%;
             text-align: left;
@@ -410,7 +410,8 @@
                     <h2 class="section-header text-5xl">Timeline Explorer</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Drag or use the buttons to explore a year-by-year breakdown of landmark albums.</p>
                     <div id="genre-filter-container"></div>
-                    <div class="flex items-center justify-center gap-4 mb-12">
+                    <!-- UPDATED: Reduced margin-bottom from mb-12 to mb-6 -->
+                    <div class="flex items-center justify-center gap-4 mb-6">
                         <div id="timeline-nav" class="flex flex-wrap justify-center gap-2"></div>
                     </div>
                     <div class="relative group">
