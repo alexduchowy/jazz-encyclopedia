@@ -52,11 +52,6 @@
             border: 2px solid var(--text-main);
         }
 
-        /* Adjust main content to account for header overlap */
-        main {
-            padding-top: 140px; /* Increased padding for more space below header */
-        }
-
         /* Navigation link transition effects */
         .nav-link {
             transition: color 0.2s;
@@ -360,8 +355,8 @@
     </div>
 
     <div id="page-content" class="content-hidden">
-        <!-- FINAL CORRECTED HEADER -->
-        <div class="sticky top-0 z-50 h-28 mb-[-100px]">
+        <!-- CORRECTED HEADER -->
+        <div class="sticky top-0 z-50 h-28">
             <header class="crooked-header container mx-auto bg-stone-100">
                 <nav class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                     <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
@@ -386,7 +381,7 @@
         </div>
 
 
-        <main>
+        <main class="pt-8"> <!-- Adjusted main padding -->
             <!-- Hero Banner Section -->
             <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
