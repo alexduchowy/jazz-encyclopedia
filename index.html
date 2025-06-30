@@ -355,19 +355,19 @@
     </div>
 
     <div id="page-content" class="content-hidden">
-        <!-- CORRECTED HEADER -->
-        <div class="sticky top-0 z-50 h-28">
-            <header class="crooked-header container mx-auto bg-stone-100">
-                <nav class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+        <!-- Sticky Header Navigation -->
+        <header class="bg-stone-100 sticky top-0 z-50">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
                     <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
-                    <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
+                    <div class="hidden sm: flex sm:items-baseline sm:space-x-8">
                         <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
                         <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
                         <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
                         <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
                         <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                     </div>
-                    <div class="sm:hidden styled-select">
+                    <div class="sm: hidden styled-select">
                         <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
                             <option value="#overview">Overview</option>
                             <option value="#timeline">Timeline</option>
@@ -376,16 +376,17 @@
                             <option value="#legacy">Legacy</option>
                         </select>
                     </div>
-                </nav>
-            </header>
-        </div>
+                </div>
+            </nav>
+        </header>
 
-
-        <main class="pt-8"> <!-- Adjusted main padding -->
+        <main>
             <!-- Hero Banner Section -->
             <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
-                <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
+                <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover border-y-4 border-stone-900" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
             </section>
+
+
 
             <!-- Overview Section -->
             <section id="overview" class="py-16 sm:py-20">
