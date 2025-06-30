@@ -124,7 +124,7 @@
         .timeline-year-section:first-child {
             border-left: none;
         }
-        /* UPDATED: Year header styling */
+        /* Year header styling */
         .timeline-year-header {
             font-size: 3rem; 
             font-weight: 900;
@@ -348,28 +348,30 @@
 
     <div id="page-content" class="content-hidden">
         <!-- Sticky Header Navigation -->
-        <!-- UPDATED HEADER STRUCTURE -->
-        <header class="sticky top-0 z-50 py-4">
-            <div class="bg-stone-100 container mx-auto border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main);">
-                 <nav>
-                    <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-                        <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
-                        <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
-                            <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
-                            <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                            <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
-                            <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
-                            <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                        </div>
-                        <div class="sm:hidden styled-select">
-                            <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
-                                <option value="#overview">Overview</option>
-                                <option value="#timeline">Timeline</option>
-                                <option value="#matrix">Genres</option>
-                                <option value="#artists">Artists</option>
-                                <option value="#legacy">Legacy</option>
-                            </select>
-                        </div>
+        <!-- FINAL REVISED HEADER STRUCTURE -->
+        <header class="sticky top-0 z-50 py-6">
+            <div class="relative container mx-auto">
+                <!-- Crooked background element -->
+                <div class="absolute inset-x-0 top-0 h-full bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
+                
+                <!-- Navigation Content -->
+                <nav class="relative z-10 flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
+                    <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
+                        <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
+                        <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
+                        <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
+                        <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
+                        <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                    </div>
+                    <div class="sm:hidden styled-select">
+                        <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
+                            <option value="#overview">Overview</option>
+                            <option value="#timeline">Timeline</option>
+                            <option value="#matrix">Genres</option>
+                            <option value="#artists">Artists</option>
+                            <option value="#legacy">Legacy</option>
+                        </select>
                     </div>
                 </nav>
             </div>
@@ -378,7 +380,7 @@
 
         <main>
             <!-- Hero Banner Section -->
-            <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
+            <section id="banner" class="w-full h-64 md:h-80 lg:h-96 -mt-16"> <!-- Negative margin to pull it up -->
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover border-y-4 border-stone-900" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
             </section>
 
@@ -399,7 +401,7 @@
                     <h2 class="section-header text-5xl">Timeline Explorer</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Drag or use the buttons to explore a year-by-year breakdown of landmark albums.</p>
                     <div id="genre-filter-container"></div>
-                    <!-- UPDATED: Reduced margin-bottom from mb-12 to mb-6 -->
+                    <!-- Reduced margin-bottom from mb-12 to mb-6 -->
                     <div class="flex items-center justify-center gap-4 mb-6">
                         <div id="timeline-nav" class="flex flex-wrap justify-center gap-2"></div>
                     </div>
@@ -452,7 +454,7 @@
                         </div>
                    </div>
 
-                   <!-- NEW: Artist Pagination Controls -->
+                   <!-- Artist Pagination Controls -->
                    <div id="artist-pagination-controls" class="mt-8 flex justify-center items-center gap-4">
                         <button id="artist-prev-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous</button>
                         <span id="artist-page-indicator" class="px-4 py-2 text-stone-900 font-bold text-lg"></span>
@@ -509,7 +511,7 @@
                     <!-- Content injected by JS -->
                 </div>
             </div>
-             <!-- NEW: Modal Navigation Footer -->
+             <!-- Modal Navigation Footer -->
             <div id="modal-nav-footer" class="flex justify-between items-center p-4 border-t-2 border-stone-900 flex-shrink-0 bg-stone-200">
                 <button id="prev-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous Album</button>
                 <button id="next-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next Album</button>
@@ -878,7 +880,7 @@
             });
 
 
-            // --- ARTISTS SECTION LOGIC (REFACTORED FOR PAGINATION) ---
+            // --- ARTISTS SECTION LOGIC (PAGINATION) ---
             const artistsData = processArtists(rawTrackData);
             const instrumentFilter = document.getElementById('instrument-filter');
             const artistGrid = document.getElementById('artist-grid');
@@ -1162,7 +1164,7 @@
                  if (targetElement) {
                      // Using smooth scroll behavior
                      window.scrollTo({
-                         top: targetElement.offsetTop - 80, // Adjust for sticky header
+                         top: targetElement.offsetTop - 120, // Adjust for sticky header height
                          behavior: 'smooth'
                      });
                  }
