@@ -45,9 +45,8 @@
         }
 
         /* Crooked Header Style */
-        .crooked-header {
+        .crooked-header-bg {
             transform: rotate(-1.5deg);
-            margin-top: 1rem;
             box-shadow: 5px 5px 0px var(--text-main);
             border: 2px solid var(--text-main);
         }
@@ -356,9 +355,13 @@
 
     <div id="page-content" class="content-hidden">
         <!-- CORRECTED HEADER -->
-        <div class="sticky top-0 z-50 h-28">
-            <header class="crooked-header container mx-auto bg-stone-100">
-                <nav class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+        <header class="sticky top-0 z-50 h-28">
+            <div class="relative container mx-auto h-full">
+                <!-- This is the crooked background. It is positioned absolutely within the header -->
+                <div class="crooked-header-bg absolute inset-x-0 top-4 h-20 bg-stone-100"></div>
+                
+                <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
+                <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                     <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
                     <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
                         <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
@@ -377,8 +380,8 @@
                         </select>
                     </div>
                 </nav>
-            </header>
-        </div>
+            </div>
+        </header>
 
 
         <main class="-mt-28"> <!-- PULLS MAIN CONTENT UP -->
