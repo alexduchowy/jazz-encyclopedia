@@ -47,8 +47,8 @@
         /* Crooked Header Style */
         .crooked-header-bg {
             transform: rotate(-1.5deg);
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
-            border: 2px solid white;
+            box-shadow: 5px 5px 0px var(--text-main);
+            border: 2px solid var(--text-main);
         }
 
         /* Navigation link transition effects */
@@ -57,16 +57,11 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.1em;
             font-size: 1.1rem;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
         }
         
-        header h1 {
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        }
-
         /* Section header styling */
         .section-header {
              transform: rotate(-1deg);
@@ -362,18 +357,18 @@
         
         <header class="sticky top-0 z-50 h-28">
             <div class="relative container mx-auto h-full">
-                <div class="crooked-header-bg absolute inset-x-0 top-4 h-20 bg-transparent"></div>
+                <div class="crooked-header-bg absolute inset-x-0 top-4 h-20 bg-white"></div>
                 <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Controlled Freedom</h1>
+                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
                     <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
-                        <a href="#overview" class="nav-link text-white">Overview</a>
-                        <a href="#timeline" class="nav-link text-white">Timeline</a>
-                        <a href="#matrix" class="nav-link text-white">Genres</a>
-                        <a href="#artists" class="nav-link text-white">Artists</a>
-                        <a href="#legacy" class="nav-link text-white">Legacy</a>
+                        <a href="#overview" class="nav-link text-stone-600">Overview</a>
+                        <a href="#timeline" class="nav-link text-stone-600">Timeline</a>
+                        <a href="#matrix" class="nav-link text-stone-600">Genres</a>
+                        <a href="#artists" class="nav-link text-stone-600">Artists</a>
+                        <a href="#legacy" class="nav-link text-stone-600">Legacy</a>
                     </div>
                     <div class="sm:hidden styled-select">
-                        <select id="mobile-nav" class="block w-full rounded-sm border-2 border-white bg-black bg-opacity-20 text-white py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
+                        <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
                             <option value="#overview">Overview</option>
                             <option value="#timeline">Timeline</option>
                             <option value="#matrix">Genres</option>
@@ -386,7 +381,7 @@
         </header>
 
         <main class="-mt-28">
-            <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
+            <section id="banner" class="w-full h-64 md:h-80 lg:h-96 pt-28">
                 <img src="images/banner2.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
             </section>
 
