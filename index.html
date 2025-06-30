@@ -1201,6 +1201,43 @@
             }
 
             setupDraggable(timelineContainer);
+            
+            // --- Nav Link Active State on Scroll ---
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('header nav a');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -60% 0px', // When top of section is 40% from top of viewport
+                threshold: 0
+            };
+
+            const sectionObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        // Update desktop nav
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                        // Update mobile nav
+                        if (document.activeElement !== mobileNav) {
+                            mobileNav.value = `#${id}`;
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                if (section.id) { // Only observe sections with an ID
+                    sectionObserver.observe(section);
+                }
+            });
+
 
         }
     </script>
