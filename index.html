@@ -45,16 +45,10 @@
         }
 
         /* Crooked Header Style */
-        .crooked-header {
+        .crooked-header-bg {
             transform: rotate(-1.5deg);
-            margin-top: 1rem;
-            box-shadow: 5px 5px 0px var(--text-main);
-            border: 2px solid var(--text-main);
-        }
-
-        /* Adjust main content to account for header overlap */
-        main {
-            padding-top: 100px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
+            border: 2px solid white;
         }
 
         /* Navigation link transition effects */
@@ -63,9 +57,14 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.1em;
             font-size: 1.1rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
+        }
+        
+        header h1 {
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
 
         /* Section header styling */
@@ -360,20 +359,21 @@
     </div>
 
     <div id="page-content" class="content-hidden">
-        <!-- CORRECTED HEADER -->
-        <div class="sticky top-0 z-50 h-28 mb-[-64px]">
-            <header class="crooked-header container mx-auto bg-stone-100">
-                <nav class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
+        
+        <header class="sticky top-0 z-50 h-28">
+            <div class="relative container mx-auto h-full">
+                <div class="crooked-header-bg absolute inset-x-0 top-4 h-20 bg-transparent"></div>
+                <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Controlled Freedom</h1>
                     <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
-                        <a href="#overview" class="nav-link text-stone-600">Overview</a>
-                        <a href="#timeline" class="nav-link text-stone-600">Timeline</a>
-                        <a href="#matrix" class="nav-link text-stone-600">Genres</a>
-                        <a href="#artists" class="nav-link text-stone-600">Artists</a>
-                        <a href="#legacy" class="nav-link text-stone-600">Legacy</a>
+                        <a href="#overview" class="nav-link text-white">Overview</a>
+                        <a href="#timeline" class="nav-link text-white">Timeline</a>
+                        <a href="#matrix" class="nav-link text-white">Genres</a>
+                        <a href="#artists" class="nav-link text-white">Artists</a>
+                        <a href="#legacy" class="nav-link text-white">Legacy</a>
                     </div>
                     <div class="sm:hidden styled-select">
-                        <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
+                        <select id="mobile-nav" class="block w-full rounded-sm border-2 border-white bg-black bg-opacity-20 text-white py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
                             <option value="#overview">Overview</option>
                             <option value="#timeline">Timeline</option>
                             <option value="#matrix">Genres</option>
@@ -382,26 +382,26 @@
                         </select>
                     </div>
                 </nav>
-            </header>
-        </div>
+            </div>
+        </header>
 
-
-        <main>
-            <!-- Hero Banner Section -->
+        <main class="-mt-28">
             <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
                 <img src="images/banner2.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
             </section>
 
-            <!-- Overview Section -->
-            <section id="overview" class="py-16 sm:py-20 bg-white">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
-                     <h2 class="section-header text-5xl">Post-Bop Encyclopedia</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 italic">An exploration into the era of "controlled freedom" that redefined jazz in the sixties.</p>
-                    <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
-                        <p>The term "post-bop" is a retrospective label for a musical methodology that flourished in the late 1950s and 1960s. It wasn't a genre with rigid rules, but a shared philosophy of <strong class="text-orange-500">"controlled freedom."</strong> Musicians of this era sought a middle ground between the structured harmony of hard bop and the radical abandon of free jazz. They aimed to expand the expressive possibilities of jazz by incorporating harmonic ambiguity and rhythmic complexity without completely discarding form and melody.</p>
-                    <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
-                </div>
-            </section>
+            <div class="bg-white">
+                 <section id="overview" class="py-16 sm:py-20">
+                    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
+                         <h2 class="section-header text-5xl">Post-Bop Encyclopedia</h2>
+                        <p class="text-center text-lg text-stone-600 mb-12 italic">An exploration into the era of "controlled freedom" that redefined jazz in the sixties.</p>
+                        <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
+                            <p>The term "post-bop" is a retrospective label for a musical methodology that flourished in the late 1950s and 1960s. It wasn't a genre with rigid rules, but a shared philosophy of <strong class="text-orange-500">"controlled freedom."</strong> Musicians of this era sought a middle ground between the structured harmony of hard bop and the radical abandon of free jazz. They aimed to expand the expressive possibilities of jazz by incorporating harmonic ambiguity and rhythmic complexity without completely discarding form and melody.</p>
+                        <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
 
             <!-- Interactive Timeline Section -->
             <section id="timeline" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
@@ -554,6 +554,7 @@
                     // Extract the JSON data from the script tags.
                     const rawTrackDataEl = doc.getElementById('rawTrackData');
                     const styleMatrixDataEl = doc.getElementById('styleMatrixData');
+                    const artistProfilesDataEl = doc.getElementById('artistProfilesData');
 
                     if (!rawTrackDataEl || !styleMatrixDataEl) {
                         throw new Error('Data script tags not found in database.html');
@@ -561,9 +562,10 @@
                     
                     const rawTrackData = JSON.parse(rawTrackDataEl.textContent);
                     const styleMatrixData = JSON.parse(styleMatrixDataEl.textContent);
+                    const artistProfiles = artistProfilesDataEl ? JSON.parse(artistProfilesDataEl.textContent) : {};
                     
                     // Initialize the application with the fetched data.
-                    initializeAppUI(rawTrackData, styleMatrixData);
+                    initializeAppUI(rawTrackData, styleMatrixData, artistProfiles);
                     
                     // Show the page and hide loader
                     document.getElementById('loader').style.display = 'none';
@@ -577,13 +579,13 @@
                 .catch(error => {
                     // If fetching fails, initialize with empty data for editing.
                     console.warn('Could not load database.html. Initializing with empty data.', error);
-                    initializeAppUI([], { features: [], genres: {} });
+                    initializeAppUI([], { features: [], genres: {} }, {});
                     document.getElementById('loader').style.display = 'none';
                     document.getElementById('page-content').classList.remove('content-hidden');
                 });
         });
 
-        function initializeAppUI(rawTrackData, styleMatrixData) {
+        function initializeAppUI(rawTrackData, styleMatrixData, artistProfiles) {
             
             // Global state for album navigation
             let currentAlbumIndex = -1;
@@ -934,7 +936,7 @@
 
 
             // --- ARTISTS SECTION LOGIC (PAGINATION) ---
-            const artistsData = processArtists(rawTrackData);
+            const artistsData = processArtists(rawTrackData, artistProfiles);
             const instrumentFilter = document.getElementById('instrument-filter');
             const artistGrid = document.getElementById('artist-grid');
             const artistPrevBtn = document.getElementById('artist-prev-btn');
@@ -946,7 +948,7 @@
             let filteredArtists = [];
             let pageSize = window.innerWidth >= 768 ? 12 : 6;
             
-            function processArtists(tracks) {
+            function processArtists(tracks, profiles) {
                 const artistsMap = new Map();
                 const slugify = (name) => name ? name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '') : '';
                 
@@ -973,23 +975,9 @@
                             const artistEntry = artistsMap.get(name);
                             if (mainArtistString && mainArtistString.includes(name)) {
                                 artistEntry.isBandleader = true;
-                                switch(name) {
-                                     case "Miles Davis":
-                                         artistEntry.profile = "One of the most influential and acclaimed figures in the history of jazz, trumpeter Miles Davis was at the forefront of several major stylistic developments, including cool jazz, hard bop, modal jazz, and jazz fusion.";
-                                         break;
-                                     case "Thelonious Monk":
-                                         artistEntry.profile = "A pioneering pianist and composer, Thelonious Monk was a central figure in the development of bebop. His unique improvisational style, characterized by dissonant harmonies and angular melodic twists, made him an icon of modern jazz.";
-                                         break;
-                                     case "Horace Silver":
-                                         artistEntry.profile = "A pianist and composer, Horace Silver was a key architect of the hard bop style, known for his catchy, bluesy, and often funk-infused compositions. His quintet was a launching pad for many of the era's top young musicians.";
-                                         break;
-                                     case "Max Roach":
-                                         artistEntry.profile = "A pioneering bebop drummer, Max Roach was also a key figure in the development of hard bop and a leading voice in political jazz. His 'Freedom Now Suite' is a landmark of the Civil Rights era.";
-                                         break;
-                                     case "Dexter Gordon":
-                                         artistEntry.profile = "A towering figure of the tenor saxophone, Dexter Gordon was a bebop pioneer who returned to prominence in the 1960s with a series of classic Blue Note albums that defined the hard bop sound.";
-                                         break;
-                                   }
+                            }
+                            if (profiles[name]) {
+                                artistEntry.profile = profiles[name];
                             }
                             instrumentsString.split(/, | \/ /).forEach(inst => {
                                 const trimmedInst = inst.trim();
@@ -1183,6 +1171,22 @@
             // Build the transposed genre matrix
             const matrixTable = document.getElementById('style-matrix-table');
             if (styleMatrixData.features && styleMatrixData.genres) {
+                matrixTable.addEventListener('mouseover', (e) => {
+                    if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
+                        const cell = e.target;
+                        const colIndex = cell.cellIndex;
+                        const rowIndex = cell.parentElement.rowIndex;
+
+                        matrixTable.querySelectorAll('tr').forEach(row => {
+                            row.cells[colIndex].classList.add('highlight');
+                        });
+                        cell.parentElement.classList.add('highlight');
+                    }
+                });
+                matrixTable.addEventListener('mouseout', () => {
+                    matrixTable.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+                });
+
                 const headerRow = document.createElement('tr');
                 headerRow.className = 'bg-stone-900 text-stone-100';
                 let headerHtml = `<th class="p-4 border-b-2 border-stone-900 font-bold text-2xl">Feature</th>`;
