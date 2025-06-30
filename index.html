@@ -44,6 +44,19 @@
             letter-spacing: 0.05em;
         }
 
+        /* Crooked Header Style */
+        .crooked-header {
+            transform: rotate(-1.5deg);
+            margin-top: 1rem;
+            box-shadow: 5px 5px 0px var(--text-main);
+            border: 2px solid var(--text-main);
+        }
+
+        /* Adjust main content to account for header overlap */
+        main {
+            padding-top: 140px; /* Increased padding for more space below header */
+        }
+
         /* Navigation link transition effects */
         .nav-link {
             transition: color 0.2s;
@@ -348,13 +361,9 @@
 
     <div id="page-content" class="content-hidden">
         <!-- FINAL CORRECTED HEADER -->
-        <div class="sticky top-0 z-50 h-24 mb-[-64px]">
-             <header class="relative container mx-auto h-full">
-                <!-- This is the crooked background. It is positioned absolutely within the header -->
-                <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
-                
-                <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
-                <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+        <div class="sticky top-0 z-50 h-28 mb-[-100px]">
+            <header class="crooked-header container mx-auto bg-stone-100">
+                <nav class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                     <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
                     <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
                         <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
@@ -384,7 +393,7 @@
             </section>
 
             <!-- Overview Section -->
-            <section id="overview" class="pt-20 pb-16 sm:pb-20">
+            <section id="overview" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
                      <h2 class="section-header text-5xl">Post-Bop Encyclopedia</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 italic">An exploration into the era of "controlled freedom" that redefined jazz in the sixties.</p>
