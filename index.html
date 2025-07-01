@@ -578,13 +578,59 @@
         </div>
     </div>
 
+    <!-- Embedded Genre Matrix Data -->
+    <script id="styleMatrixData" type="application/json">
+    {
+        "features": ["Harmony", "Rhythm", "Form", "Key Artists"],
+        "genres": {
+            "Hard Bop": {
+                "color": "var(--genre-hard-bop)",
+                "data": [
+                    "Functional (ii-V-I), blues-based, gospel influences",
+                    "Strong, driving swing feel, prominent drumming, danceable grooves",
+                    "Standard forms (AABA, 12-bar blues), often with catchy, memorable heads",
+                    "Art Blakey, Horace Silver, Clifford Brown, Lee Morgan"
+                ]
+            },
+            "Cool Jazz": {
+                "color": "var(--genre-cool-jazz)",
+                "data": [
+                    "More complex, often drawing from classical harmony, less blues-centric",
+                    "Relaxed, subtle pulse, lighter drumming, focus on understatement",
+                    "Often employed complex, contrapuntal arrangements and non-standard forms",
+                    "Miles Davis (early), Dave Brubeck, Stan Getz, Gerry Mulligan"
+                ]
+            },
+            "Modal Jazz": {
+                "color": "var(--genre-modal-jazz)",
+                "data": [
+                    "Static harmony, based on modes/scales rather than chord progressions",
+                    "Floating, ambiguous pulse, less aggressive swing, focus on texture",
+                    "Open-ended, simple structures, often just a single mode or vamp",
+                    "Miles Davis ('Kind of Blue'), John Coltrane ('My Favorite Things'), Bill Evans"
+                ]
+            },
+            "Post-Bop": {
+                "color": "var(--genre-post-bop)",
+                "data": [
+                    "Expanded functional harmony, non-functional chords, controlled dissonance",
+                    "Highly interactive, fluid time, polyrhythms, elastic sense of swing",
+                    "Modified standard forms, original compositions with complex, unique structures",
+                    "Miles Davis's 2nd Quintet, Wayne Shorter, Herbie Hancock, Andrew Hill"
+                ]
+            }
+        }
+    }
+    </script>
+    
     <!-- Main Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // NOTE: Fetching a relative path like 'database.json' works when the HTML file
-            // is served from a standard web server where both files are in the same directory.
-            // In some sandboxed preview environments, this may fail. This code is intended
-            // for a standard server environment.
+            // Get genre matrix data from the embedded script tag
+            const styleMatrixDataEl = document.getElementById('styleMatrixData');
+            const styleMatrixData = JSON.parse(styleMatrixDataEl.textContent);
+
+            // Fetch the rest of the data
             fetch('database.json')
                 .then(response => {
                     if (!response.ok) {
@@ -592,9 +638,9 @@
                     }
                     return response.json();
                 })
-                .then(data => {
-                    // Initialize the application with the fetched JSON data.
-                    initializeAppUI(data);
+                .then(dbData => {
+                    // Initialize the application with both data sources
+                    initializeAppUI({ ...dbData, styleMatrix: styleMatrixData });
                     
                     // Show the page and hide loader
                     document.getElementById('loader').style.display = 'none';
@@ -611,7 +657,7 @@
                     const pageContent = document.getElementById('page-content');
                     pageContent.innerHTML = `<div class="text-center p-8">
                         <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
-                        <p class="text-stone-600 mt-2">Could not fetch 'database.json'. Please ensure the file is in the same directory as the HTML file and the server is running correctly.</p>
+                        <p class="text-stone-600 mt-2">Could not fetch album/artist data. Please ensure 'database.json' is available.</p>
                         <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
                     </div>`;
                     document.getElementById('loader').style.display = 'none';
