@@ -167,10 +167,11 @@
             border: 2px solid var(--text-main);
             overflow: hidden;
             opacity: 1;
+            /* --highlight-color will be set by JS */
         }
         .timeline-album-card:hover {
             transform: translateY(-5px) rotate(-2deg);
-            box-shadow: 8px 8px 0px var(--accent);
+            box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
         }
         .timeline-album-card.dimmed {
             opacity: 0.5;
@@ -178,7 +179,7 @@
         .timeline-album-card.highlighted {
             opacity: 1;
             transform: translateY(-5px) rotate(-2deg);
-            box-shadow: 8px 8px 0px var(--accent);
+            box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
         }
         .timeline-album-card img {
             width: 100%;
@@ -1352,6 +1353,8 @@
 
             function drawConnections(hoveredCard) {
                 ctx.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
+                document.querySelectorAll('.timeline-album-card').forEach(c => c.style.removeProperty('--highlight-color'));
+
                 if (!hoveredCard) {
                     document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.remove('dimmed', 'highlighted'));
                     return;
@@ -1362,6 +1365,10 @@
                 hoveredCard.classList.add('highlighted');
 
                 const hoveredGenres = hoveredCard.dataset.genres.split(', ');
+                const primaryGenre = hoveredGenres[0];
+                const highlightColor = genreColors[primaryGenre] || 'var(--accent)';
+                hoveredCard.style.setProperty('--highlight-color', highlightColor);
+
                 const yearSection = hoveredCard.closest('.timeline-year-section');
                 if (!yearSection) return;
 
@@ -1389,6 +1396,8 @@
                     connections.forEach(card => {
                         card.classList.remove('dimmed');
                         card.classList.add('highlighted');
+                        card.style.setProperty('--highlight-color', highlightColor);
+                        
                         const endRect = card.getBoundingClientRect();
                         const endX = endRect.left - containerRect.left + (endRect.width / 2) + timelineContainer.scrollLeft;
                         const endY = endRect.top - containerRect.top + (endRect.height / 2);
@@ -1396,9 +1405,11 @@
                         ctx.beginPath();
                         ctx.moveTo(startX, startY);
                         ctx.lineTo(endX, endY);
-                        ctx.strokeStyle = 'rgba(249, 115, 22, 0.6)'; // orange-500 with opacity
+                        ctx.strokeStyle = highlightColor.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(highlightColor.slice(4, -1)) : highlightColor;
+                        ctx.globalAlpha = 0.6;
                         ctx.lineWidth = 2;
                         ctx.stroke();
+                        ctx.globalAlpha = 1.0;
                     });
                 }
             }
