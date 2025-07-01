@@ -1291,9 +1291,13 @@
                     const genreData = styleMatrixData.genres[genreName];
                     const row = document.createElement('tr');
                     row.className = 'border-b-2 border-stone-200';
-                    row.style.setProperty('--highlight-color', genreData.color);
+                    
+                    // Get the actual color value from the CSS variable
+                    const colorVarName = genreData.color.slice(4, -1);
+                    const actualColor = getComputedStyle(document.documentElement).getPropertyValue(colorVarName).trim();
+                    row.style.setProperty('--highlight-color', actualColor);
 
-                    let rowHtml = `<th class="p-4 font-bold text-lg" style="background-color:${genreData.color}; color: var(--text-main);">${genreName}</th>`;
+                    let rowHtml = `<th class="p-4 font-bold text-lg w-48" style="background-color:${genreData.color}; color: var(--text-main);">${genreName}</th>`;
                     
                     genreData.data.forEach(dataPoint => {
                         rowHtml += `<td class="p-4">${dataPoint}</td>`;
