@@ -77,11 +77,12 @@
 
         /* Style matrix table transitions */
         .matrix-table tbody tr {
-            transition: background-color 0.2s, box-shadow 0.2s;
+            transition: background-color 0.2s, border-left-color 0.2s;
+            border-left: 5px solid transparent;
         }
         .matrix-table tbody tr:hover {
             background-color: var(--bg-secondary);
-            box-shadow: inset 5px 0 0 0 var(--highlight-color, var(--accent));
+            border-left-color: var(--highlight-color, var(--accent));
         }
 
         /* Modal transition styles */
@@ -1277,10 +1278,8 @@
                 const headerRow = document.createElement('tr');
                 headerRow.className = 'bg-stone-900 text-stone-100';
                 
-                // First header cell is blank
-                headerRow.innerHTML = `<th class="p-4 border-b-2 border-stone-900 font-bold text-2xl">Genre</th>`;
+                headerRow.innerHTML = `<th class="p-4 border-b-2 border-stone-900 font-bold text-2xl w-48">Genre</th>`;
                 
-                // Subsequent header cells are the features
                 styleMatrixData.features.forEach(feature => {
                     headerRow.innerHTML += `<th class="p-4 border-b-2 border-stone-900 font-bold text-2xl text-center">${feature}</th>`;
                 });
@@ -1294,10 +1293,8 @@
                     row.className = 'border-b-2 border-stone-200';
                     row.style.setProperty('--highlight-color', genreData.color);
 
-                    // First cell is the genre name, with color
                     let rowHtml = `<th class="p-4 font-bold text-lg" style="background-color:${genreData.color}; color: var(--text-main);">${genreName}</th>`;
                     
-                    // Subsequent cells are the data points
                     genreData.data.forEach(dataPoint => {
                         rowHtml += `<td class="p-4">${dataPoint}</td>`;
                     });
