@@ -337,6 +337,17 @@
             display: none !important;
         }
 
+        /* Style for clickable links in modals */
+        .clickable-link {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-color: var(--accent);
+            transition: color 0.2s;
+        }
+        .clickable-link:hover {
+            color: var(--accent);
+        }
+
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -494,7 +505,7 @@
             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
                 <div>
                     <h3 id="modal-title" class="text-4xl text-orange-500"></h3>
-                    <p id="modal-artist" class="text-xl text-stone-600"></p>
+                    <button id="modal-artist" class="text-xl text-stone-600 bg-transparent border-none p-0"></button>
                 </div>
                 <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">&times;</button>
             </div>
@@ -531,12 +542,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Fetch data from the new database.json file
             fetch('database.json')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json(); // Directly parse the JSON response
-                })
+                .then(response => response.json())
                 .then(data => {
                     // Initialize the application with the fetched JSON data.
                     initializeAppUI(data);
@@ -549,17 +555,6 @@
                     setTimeout(() => {
                         document.getElementById('horizontal-timeline-container').scrollLeft = 0;
                     }, 0);
-                })
-                .catch(error => {
-                    // If fetching fails, initialize with empty data for editing.
-                    console.error('Could not load or parse database.json. Initializing with empty data.', error);
-                    initializeAppUI({
-                        albums: [],
-                        styleMatrix: { features: [], genres: {} },
-                        artistProfiles: {}
-                    });
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('page-content').classList.remove('content-hidden');
                 });
         });
 
@@ -764,7 +759,13 @@
                 currentAlbumIndex = index;
                 
                 albumModal.querySelector('#modal-title').textContent = album.albumTitle;
-                albumModal.querySelector('#modal-artist').textContent = album.artist;
+                
+                // Make artist name clickable
+                const artistBtn = albumModal.querySelector('#modal-artist');
+                artistBtn.textContent = album.artist;
+                artistBtn.dataset.artistName = album.artist;
+                artistBtn.className = 'text-xl text-stone-600 bg-transparent border-none p-0 clickable-link';
+
                 const modalImg = albumModal.querySelector('#modal-album-art');
                 modalImg.src = album.cover || '';
                 modalImg.alt = `Cover for ${album.albumTitle}`;
@@ -854,7 +855,6 @@
 
 
             // --- ARTISTS SECTION LOGIC (PAGINATION) ---
-            // Create a flat list of all tracks from the albums data to pass to processArtists
             const allTracks = albums.flatMap(album =>
                 album.pivotalTracks.map(track => ({
                     ...track,
@@ -905,7 +905,6 @@
                             if (mainArtistString && mainArtistString.includes(name)) {
                                 artistEntry.isBandleader = true;
                             }
-                            // Add profile from the dedicated profiles object
                             if (profiles && profiles[name]) {
                                 artistEntry.profile = profiles[name];
                             }
@@ -1043,6 +1042,12 @@
                     </div>`;
                 }
 
+                const albumListHtml = artist.albums.map(albumTitle => {
+                    const albumData = albums.find(a => a.albumTitle === albumTitle);
+                    if (!albumData) return `<li>${albumTitle}</li>`; // Fallback if album not found
+                    return `<li class="clickable-link" data-album-title="${albumData.albumTitle}" data-artist="${albumData.artist}">${albumTitle}</li>`;
+                }).join('');
+
                 body.innerHTML = `
                 <div class="flex flex-col sm:flex-row gap-6">
                     <div class="w-full sm:w-1/3 flex-shrink-0">
@@ -1052,7 +1057,7 @@
                         <h4 class="text-3xl text-stone-900 mb-3">Details</h4>
                         <p class="mb-4 text-stone-900"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
                         <h4 class="text-3xl text-stone-900 mb-3">Album Appearances</h4>
-                        <ul class="list-disc list-inside text-sm space-y-1 text-stone-900 h-32 overflow-y-auto">${artist.albums.map(title => `<li>${title}</li>`).join('')}</ul>
+                        <ul class="list-disc list-inside text-sm space-y-1 text-stone-900 h-32 overflow-y-auto">${albumListHtml}</ul>
                     </div>
                 </div>
                 ${profileHtml}
@@ -1070,6 +1075,29 @@
             artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') closeArtistModal(); });
             document.addEventListener('keydown', e => { if (e.key === "Escape") { closeAlbumModal(); closeArtistModal(); } });
             
+            // --- MODAL INTERLINKING EVENT LISTENERS ---
+            document.getElementById('modal-artist').addEventListener('click', (e) => {
+                const artistName = e.target.dataset.artistName;
+                if (!artistName) return;
+                const artist = artistsData.find(a => a.name === artistName);
+                if (artist) {
+                    closeAlbumModal();
+                    setTimeout(() => openArtistModal(artist), 250); // Timeout for smoother transition
+                }
+            });
+
+            document.getElementById('artist-modal-body').addEventListener('click', (e) => {
+                if (e.target.matches('.clickable-link[data-album-title]')) {
+                    const albumTitle = e.target.dataset.albumTitle;
+                    const artistName = e.target.dataset.artist;
+                    const albumIndex = albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artistName);
+                    if (albumIndex !== -1) {
+                        closeArtistModal();
+                        setTimeout(() => openAlbumModal(albums[albumIndex], albumIndex), 250);
+                    }
+                }
+            });
+
             // --- ARTISTS GRID EVENT LISTENERS ---
             populateInstrumentFilter(artistsData);
             instrumentFilter.addEventListener('change', filterAndPaginateArtists);
