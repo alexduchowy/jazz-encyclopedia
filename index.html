@@ -1365,8 +1365,8 @@
                 hoveredCard.classList.add('highlighted');
 
                 const hoveredGenres = hoveredCard.dataset.genres.split(', ');
-                const primaryGenre = hoveredGenres[0];
-                const highlightColor = genreColors[primaryGenre] || 'var(--accent)';
+                const primaryHoveredGenre = hoveredGenres[0];
+                const highlightColor = genreColors[primaryHoveredGenre] || 'var(--accent)';
                 hoveredCard.style.setProperty('--highlight-color', highlightColor);
 
                 const yearSection = hoveredCard.closest('.timeline-year-section');
@@ -1379,7 +1379,7 @@
                     if (card === hoveredCard) return;
 
                     const cardGenres = card.dataset.genres.split(', ');
-                    const hasConnection = cardGenres.some(genre => hoveredGenres.includes(genre));
+                    const hasConnection = cardGenres.includes(primaryHoveredGenre);
 
                     if (hasConnection) {
                         connections.push(card);
