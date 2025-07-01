@@ -582,6 +582,7 @@
             
             // Destructure data from the fetched JSON
             let { albums, styleMatrix: styleMatrixData, artistProfiles } = data;
+            let artistsData = []; // Will be populated by processArtists
 
             // Global state for album navigation
             let currentAlbumIndex = -1;
@@ -796,6 +797,21 @@
                     const colorVar = genreColors[genre] || 'var(--genre-default)';
                     return `<span class="genre-tag" style="background-color: ${colorVar}">${genre}</span>`;
                 }).join(' ');
+                
+                // Create clickable lineup
+                const lineupHtml = firstTrack.lineup ? firstTrack.lineup.split(/, (?![^()]*\))/).map(personnel => {
+                    const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
+                    if (match) {
+                        const name = match[1].trim();
+                        const instrument = match[2];
+                        const artistExists = artistsData.some(a => a.name === name);
+                        if (artistExists) {
+                            return `<span class="clickable-link" data-artist-name="${name}">${name}</span> (${instrument})`;
+                        }
+                    }
+                    return personnel; // Return as plain text if no match or artist doesn't exist
+                }).join(', ') : 'N/A';
+
 
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
                  detailsContainer.innerHTML = `
@@ -804,7 +820,7 @@
                               <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
                               <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
                               <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
-                              <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup || 'N/A'}</span>
+                              <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
                          </div>`;
 
                 const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
@@ -885,7 +901,7 @@
                     genre: album.genres
                 }))
             );
-            const artistsData = processArtists(allTracks, artistProfiles);
+            artistsData = processArtists(allTracks, artistProfiles);
             
             const instrumentFilter = document.getElementById('instrument-filter');
             const artistGrid = document.getElementById('artist-grid');
@@ -902,7 +918,6 @@
                 const artistsMap = new Map();
                 
                 tracks.forEach(track => {
-                    const mainArtistString = track.artist;
                     if (!track.lineup) return;
                     const lineupParts = track.lineup.split(/,(?![^()]*\))/);
 
@@ -922,7 +937,7 @@
                                 });
                             }
                             const artistEntry = artistsMap.get(name);
-                            if (mainArtistString && mainArtistString.includes(name)) {
+                            if (track.artist && track.artist.includes(name)) {
                                 artistEntry.isBandleader = true;
                             }
                             if (profiles && profiles[name]) {
@@ -1114,6 +1129,17 @@
                     if (albumIndex !== -1) {
                         closeArtistModal();
                         setTimeout(() => openAlbumModal(albums[albumIndex], albumIndex), 250);
+                    }
+                }
+            });
+            
+            document.getElementById('modal-album-details').addEventListener('click', (e) => {
+                if (e.target.matches('.clickable-link[data-artist-name]')) {
+                    const artistName = e.target.dataset.artistName;
+                    const artist = artistsData.find(a => a.name === artistName);
+                    if (artist) {
+                        closeAlbumModal();
+                        setTimeout(() => openArtistModal(artist), 250);
                     }
                 }
             });
