@@ -45,10 +45,16 @@
         }
 
         /* Crooked Header Style */
-        .crooked-header-bg {
+        .crooked-header {
             transform: rotate(-1.5deg);
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
-            border: 2px solid white;
+            margin-top: 1rem;
+            box-shadow: 5px 5px 0px var(--text-main);
+            border: 2px solid var(--text-main);
+        }
+
+        /* Adjust main content to account for header overlap */
+        main {
+            padding-top: 100px;
         }
 
         /* Navigation link transition effects */
@@ -57,14 +63,9 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.1em;
             font-size: 1.1rem;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
-        }
-        
-        header h1 {
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
 
         /* Section header styling */
@@ -360,20 +361,19 @@
 
     <div id="page-content" class="content-hidden">
         
-        <header class="sticky top-0 z-50 h-28">
-            <div class="relative container mx-auto h-full">
-                <div class="crooked-header-bg absolute inset-x-0 top-4 h-20 bg-transparent"></div>
-                <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Controlled Freedom</h1>
+        <div class="sticky top-0 z-50 h-28 mb-[-64px]">
+            <header class="crooked-header container mx-auto bg-stone-100">
+                <nav class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
                     <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
-                        <a href="#overview" class="nav-link text-white">Overview</a>
-                        <a href="#timeline" class="nav-link text-white">Timeline</a>
-                        <a href="#matrix" class="nav-link text-white">Genres</a>
-                        <a href="#artists" class="nav-link text-white">Artists</a>
-                        <a href="#legacy" class="nav-link text-white">Legacy</a>
+                        <a href="#overview" class="nav-link text-stone-600">Overview</a>
+                        <a href="#timeline" class="nav-link text-stone-600">Timeline</a>
+                        <a href="#matrix" class="nav-link text-stone-600">Genres</a>
+                        <a href="#artists" class="nav-link text-stone-600">Artists</a>
+                        <a href="#legacy" class="nav-link text-stone-600">Legacy</a>
                     </div>
                     <div class="sm:hidden styled-select">
-                        <select id="mobile-nav" class="block w-full rounded-sm border-2 border-white bg-black bg-opacity-20 text-white py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
+                        <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
                             <option value="#overview">Overview</option>
                             <option value="#timeline">Timeline</option>
                             <option value="#matrix">Genres</option>
@@ -382,10 +382,11 @@
                         </select>
                     </div>
                 </nav>
-            </div>
-        </header>
+            </header>
+        </div>
 
-        <main class="-mt-28">
+
+        <main>
             <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
                 <img src="images/banner2.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
             </section>
@@ -397,7 +398,7 @@
                         <p class="text-center text-lg text-stone-600 mb-12 italic">An exploration into the era of "controlled freedom" that redefined jazz in the sixties.</p>
                         <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
                             <p>The term "post-bop" is a retrospective label for a musical methodology that flourished in the late 1950s and 1960s. It wasn't a genre with rigid rules, but a shared philosophy of <strong class="text-orange-500">"controlled freedom."</strong> Musicians of this era sought a middle ground between the structured harmony of hard bop and the radical abandon of free jazz. They aimed to expand the expressive possibilities of jazz by incorporating harmonic ambiguity and rhythmic complexity without completely discarding form and melody.</p>
-                            <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
+                        <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
                         </div>
                     </div>
                 </section>
@@ -556,7 +557,7 @@
                     const styleMatrixDataEl = doc.getElementById('styleMatrixData');
                     const artistProfilesDataEl = doc.getElementById('artistProfilesData');
 
-                    if (!rawTrackDataEl || !styleMatrixDataEl) {
+                    if (!rawTrackDataEl || !styleMatrixDataEl || !artistProfilesDataEl) {
                         throw new Error('Data script tags not found in database.html');
                     }
                     
@@ -860,13 +861,13 @@
 
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
                  detailsContainer.innerHTML = `
-                         <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
-                         <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
-                               <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
-                               <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
-                               <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
-                               <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup || 'N/A'}</span>
-                         </div>`;
+                        <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
+                        <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                             <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                             <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
+                             <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
+                             <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup || 'N/A'}</span>
+                        </div>`;
 
                 const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                 analysisWrapper.innerHTML = ''; // Clear previous content
@@ -878,13 +879,13 @@
                     const songFileName = slugify(track.title) + '.mp3';
                      return `
                              <div class="mb-8 last:mb-0">
-                                   <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
+                                  <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
                                        <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
                                        <audio controls class="styled-player w-full sm:w-52" src="songs/${songFileName}" preload="none"></audio>
-                                   </div>
-                                   <p class="liner-notes-text">${track.analysis}</p>
+                                  </div>
+                                  <p class="liner-notes-text">${track.analysis}</p>
                              </div>
-                         `;
+                        `;
                 }).join('<hr class="border-stone-700 my-8">');
 
                 analysisContainer.innerHTML = pivotalTracksHtml;
@@ -1105,7 +1106,8 @@
                 const placeholderUrl = `https://placehold.co/200x240/1c1917/f5f5f4?text=${encodeURIComponent(artist.name)}`;
                 
                 let profileHtml = '';
-                if(artist.isBandleader && artist.profile) {
+                // CORRECTED LOGIC: Show profile if it exists, regardless of bandleader status
+                if(artist.profile) {
                     profileHtml = `
                     <div class="mt-6 pt-4 border-t-2 border-stone-200">
                         <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
@@ -1219,11 +1221,11 @@
                  const targetId = e.target.value;
                  const targetElement = document.querySelector(targetId);
                  if (targetElement) {
-                       // Using smooth scroll behavior
-                       window.scrollTo({
-                           top: targetElement.offsetTop - 80, // Adjust for sticky header height
-                           behavior: 'smooth'
-                       });
+                     // Using smooth scroll behavior
+                     window.scrollTo({
+                         top: targetElement.offsetTop - 80, // Adjust for sticky header height
+                         behavior: 'smooth'
+                     });
                  }
             });
             
