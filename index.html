@@ -364,13 +364,13 @@
             <div class="relative container mx-auto h-full">
                 <div class="crooked-header-bg absolute inset-x-0 top-4 h-20 bg-stone-100"></div>
                 <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
+                    <h1 class="text-3xl md:text-4xl font-bold text-black tracking-tight">Controlled Freedom</h1>
                     <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
-                        <a href="#overview" class="nav-link text-stone-900">Overview</a>
-                        <a href="#timeline" class="nav-link text-stone-900">Timeline</a>
-                        <a href="#matrix" class="nav-link text-stone-900">Genres</a>
-                        <a href="#artists" class="nav-link text-stone-900">Artists</a>
-                        <a href="#legacy" class="nav-link text-stone-900">Legacy</a>
+                        <a href="#overview" class="nav-link stone-900">Overview</a>
+                        <a href="#timeline" class="nav-link stone-900">Timeline</a>
+                        <a href="#matrix" class="nav-link stone-900">Genres</a>
+                        <a href="#artists" class="nav-link stone-900">Artists</a>
+                        <a href="#legacy" class="nav-link stone-900">Legacy</a>
                     </div>
                     <div class="sm:hidden styled-select">
                         <select id="mobile-nav" class="block w-full rounded-sm border-2 border-white bg-black bg-opacity-20 text-white py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
@@ -556,7 +556,7 @@
                     const styleMatrixDataEl = doc.getElementById('styleMatrixData');
                     const artistProfilesDataEl = doc.getElementById('artistProfilesData');
 
-                    if (!rawTrackDataEl || !styleMatrixDataEl || !artistProfilesDataEl) {
+                    if (!rawTrackDataEl || !styleMatrixDataEl) {
                         throw new Error('Data script tags not found in database.html');
                     }
                     
@@ -577,16 +577,8 @@
                     }, 0);
                 })
                 .catch(error => {
-                    // If fetching fails, display an error message and initialize with empty data.
-                    console.error('Could not load or parse database.html.', error);
-                    const timelineWrapper = document.getElementById('timeline-wrapper');
-                    if(timelineWrapper) {
-                        timelineWrapper.innerHTML = `<div class="text-center p-8 text-red-600 bg-red-100 border border-red-600 rounded-md">
-                            <h3 class="font-bold text-lg">Error Loading Data</h3>
-                            <p>Could not fetch 'database.html'. Please ensure the file exists in the same directory and that you are running this project from a local web server.</p>
-                            <p class="text-sm mt-2">See the browser console for more details.</p>
-                        </div>`;
-                    }
+                    // If fetching fails, initialize with empty data for editing.
+                    console.warn('Could not load database.html. Initializing with empty data.', error);
                     initializeAppUI([], { features: [], genres: {} }, {});
                     document.getElementById('loader').style.display = 'none';
                     document.getElementById('page-content').classList.remove('content-hidden');
@@ -828,8 +820,6 @@
                 
                 // Initial Filter
                 filterTimeline();
-            } else if (rawTrackData.length === 0) {
-                 // Do nothing here, the error is handled in the catch block
             } else {
                  timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
             }
@@ -1039,7 +1029,7 @@
                 artistGrid.innerHTML = ''; 
 
                 if (artistsToRender.length === 0) {
-                    artistGrid.innerHTML = `<div class="w-full text-center p-8 text-stone-500 col-span-full">No artists found for this instrument.</div>`;
+                    artistGrid.innerHTML = `<div class="w-full text-center p-8 text-stone-500 col-span-full">No artists found.</div>`;
                     return;
                 }
                 
@@ -1115,8 +1105,7 @@
                 const placeholderUrl = `https://placehold.co/200x240/1c1917/f5f5f4?text=${encodeURIComponent(artist.name)}`;
                 
                 let profileHtml = '';
-                // CORRECTED LOGIC: Show profile if it exists, regardless of bandleader status
-                if(artist.profile) {
+                if(artist.isBandleader && artist.profile) {
                     profileHtml = `
                     <div class="mt-6 pt-4 border-t-2 border-stone-200">
                         <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
@@ -1222,7 +1211,7 @@
                     tbody.appendChild(row);
                 });
                 matrixTable.appendChild(tbody);
-            } else if (rawTrackData.length > 0) {
+            } else {
                  matrixTable.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-stone-500">No genre data available.</td></tr>';
             }
             
