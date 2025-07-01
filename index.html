@@ -45,15 +45,13 @@
         }
 
         /* Crooked Header Style */
-        header {
+        .crooked-header {
             transform: rotate(-1.5deg);
             margin-top: 1rem;
             box-shadow: 5px 5px 0px var(--text-main);
             border: 2px solid var(--text-main);
-            margin-bottom: -100px; /* Pulls subsequent content up */
-            position: relative; /* Needed for z-index and negative margin to work correctly */
         }
-        
+
         /* Adjust main content to account for header overlap */
         main {
             padding-top: 100px;
@@ -363,27 +361,25 @@
 
     <div id="page-content" class="content-hidden">
         
-        <div class="sticky top-0 z-50">
-            <header class="bg-stone-100">
-                <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex items-center justify-between h-16">
-                        <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
-                        <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
-                            <a href="#overview" class="nav-link text-stone-600">Overview</a>
-                            <a href="#timeline" class="nav-link text-stone-600">Timeline</a>
-                            <a href="#matrix" class="nav-link text-stone-600">Genres</a>
-                            <a href="#artists" class="nav-link text-stone-600">Artists</a>
-                            <a href="#legacy" class="nav-link text-stone-600">Legacy</a>
-                        </div>
-                        <div class="sm:hidden styled-select">
-                            <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
-                                <option value="#overview">Overview</option>
-                                <option value="#timeline">Timeline</option>
-                                <option value="#matrix">Genres</option>
-                                <option value="#artists">Artists</option>
-                                <option value="#legacy">Legacy</option>
-                            </select>
-                        </div>
+        <div class="sticky top-0 z-50 h-28 mb-[-64px]">
+            <header class="crooked-header container mx-auto bg-stone-100">
+                <nav class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
+                    <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
+                        <a href="#overview" class="nav-link text-stone-600">Overview</a>
+                        <a href="#timeline" class="nav-link text-stone-600">Timeline</a>
+                        <a href="#matrix" class="nav-link text-stone-600">Genres</a>
+                        <a href="#artists" class="nav-link text-stone-600">Artists</a>
+                        <a href="#legacy" class="nav-link text-stone-600">Legacy</a>
+                    </div>
+                    <div class="sm:hidden styled-select">
+                        <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
+                            <option value="#overview">Overview</option>
+                            <option value="#timeline">Timeline</option>
+                            <option value="#matrix">Genres</option>
+                            <option value="#artists">Artists</option>
+                            <option value="#legacy">Legacy</option>
+                        </select>
                     </div>
                 </nav>
             </header>
