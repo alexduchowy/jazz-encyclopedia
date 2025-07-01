@@ -611,7 +611,6 @@
 
             // Global state for album navigation
             let currentAlbumIndex = -1;
-            let yearPaginationState = {};
             
             const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
             
@@ -732,52 +731,9 @@
                 }
             });
 
-            // --- Timeline Rendering with Pagination ---
-            
-            // Function to render a specific page of albums for a given year
-            function renderAlbumPageForYear(year) {
-                const state = yearPaginationState[year];
-                const albumsForYear = groupedByYear[year];
-                const totalPages = Math.ceil(albumsForYear.length / state.albumsPerPage);
-                
-                const listEl = document.getElementById(`album-list-${year}`);
-                if (!listEl) return;
-                listEl.innerHTML = ''; // Clear current albums
-                
-                const startIndex = (state.currentPage - 1) * state.albumsPerPage;
-                const endIndex = startIndex + state.albumsPerPage;
-                const pageAlbums = albumsForYear.slice(startIndex, endIndex);
-
-                pageAlbums.forEach(album => {
-                    const card = document.createElement('div');
-                    card.className = 'timeline-album-card';
-                    card.dataset.albumTitle = album.albumTitle;
-                    card.dataset.artist = album.artist;
-                    card.dataset.genres = album.genres;
-                    card.innerHTML = `<img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
-                    listEl.appendChild(card);
-                });
-
-                // Update pagination controls
-                const pageIndicator = document.getElementById(`page-indicator-${year}`);
-                const prevBtn = document.getElementById(`prev-btn-${year}`);
-                const nextBtn = document.getElementById(`next-btn-${year}`);
-
-                if (pageIndicator) {
-                    pageIndicator.textContent = `Page ${state.currentPage} of ${totalPages}`;
-                    prevBtn.disabled = state.currentPage === 1;
-                    nextBtn.disabled = state.currentPage === totalPages;
-                }
-                
-                // After rendering, resize the canvas as the height might have changed.
-                resizeCanvas();
-            }
-
+            // --- Timeline Rendering ---
             timelineWrapper.innerHTML = '';
             if (years.length > 0) {
-                // Initialize pagination state
-                years.forEach(y => { yearPaginationState[y] = { currentPage: 1, albumsPerPage: 12 } });
-                
                 // Add a spacer element to create a visual buffer on the left
                 const spacer = document.createElement('div');
                 spacer.style.width = '1px'; 
@@ -797,45 +753,19 @@
                     const albumList = document.createElement('div');
                     albumList.className = 'timeline-album-list';
                     albumList.id = `album-list-${year}`;
-                    yearSection.appendChild(albumList);
-
-                    // Create pagination controls if needed
-                    const albumsForYear = groupedByYear[year];
-                    const totalPages = Math.ceil(albumsForYear.length / yearPaginationState[year].albumsPerPage);
-
-                    if (totalPages > 1) {
-                        const paginationControls = document.createElement('div');
-                        paginationControls.className = 'w-full flex justify-center items-center gap-4 mt-4';
-                        
-                        const prevBtn = document.createElement('button');
-                        prevBtn.id = `prev-btn-${year}`;
-                        prevBtn.innerHTML = '&lt;';
-                        prevBtn.className = 'px-3 py-1 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed';
-                        prevBtn.onclick = () => {
-                            yearPaginationState[year].currentPage--;
-                            renderAlbumPageForYear(year);
-                        };
-
-                        const pageIndicator = document.createElement('span');
-                        pageIndicator.id = `page-indicator-${year}`;
-                        pageIndicator.className = 'text-sm font-semibold text-stone-600';
-
-                        const nextBtn = document.createElement('button');
-                        nextBtn.id = `next-btn-${year}`;
-                        nextBtn.innerHTML = '&gt;';
-                        nextBtn.className = 'px-3 py-1 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed';
-                        nextBtn.onclick = () => {
-                            yearPaginationState[year].currentPage++;
-                            renderAlbumPageForYear(year);
-                        };
-
-                        paginationControls.append(prevBtn, pageIndicator, nextBtn);
-                        yearSection.appendChild(paginationControls);
-                    }
                     
+                    groupedByYear[year].forEach(album => {
+                        const card = document.createElement('div');
+                        card.className = 'timeline-album-card';
+                        card.dataset.albumTitle = album.albumTitle;
+                        card.dataset.artist = album.artist;
+                        card.dataset.genres = album.genres;
+                        card.innerHTML = `<img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
+                        albumList.appendChild(card);
+                    });
+
+                    yearSection.appendChild(albumList);
                     timelineWrapper.appendChild(yearSection);
-                    // Initial render for the year's first page
-                    renderAlbumPageForYear(year);
                 });
                 
                 years.forEach(year => {
