@@ -85,10 +85,14 @@
 
         /* Modal transition styles */
         .modal {
-            transition: opacity 0.25s ease;
+            transition: opacity 0.3s ease;
         }
         .modal-content {
-            transition: transform 0.25s ease;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .modal.opacity-0 .modal-content {
+             opacity: 0;
+             transform: scale(0.95) translateY(10px);
         }
         
         /* Horizontal draggable timeline container */
@@ -370,6 +374,17 @@
         }
         .clickable-link:hover {
             color: var(--accent);
+        }
+
+        /* Animation for fade-in on scroll */
+        .fade-in-element {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .fade-in-element.is-visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
     </style>
@@ -756,7 +771,7 @@
                     
                     groupedByYear[year].forEach(album => {
                         const card = document.createElement('div');
-                        card.className = 'timeline-album-card';
+                        card.className = 'timeline-album-card fade-in-element';
                         card.dataset.albumTitle = album.albumTitle;
                         card.dataset.artist = album.artist;
                         card.dataset.genres = album.genres;
@@ -1032,7 +1047,7 @@
                 
                 artistsToRender.forEach(artist => {
                     const card = document.createElement('div');
-                    card.className = 'artist-card';
+                    card.className = 'artist-card fade-in-element';
                     
                     if (artist.isBandleader) {
                         card.style.boxShadow = `4px 4px 0px var(--accent)`;
@@ -1361,6 +1376,19 @@
             // Initial and resize canvas setup
             resizeCanvas();
             new ResizeObserver(resizeCanvas).observe(timelineWrapper);
+            
+            // --- Fade-in animation on scroll ---
+            const fadeElements = document.querySelectorAll('.fade-in-element');
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        scrollObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            fadeElements.forEach(el => scrollObserver.observe(el));
             
             // --- Nav Link Active State on Scroll ---
             const sections = document.querySelectorAll('main section[id]');
