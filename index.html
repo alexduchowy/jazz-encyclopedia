@@ -540,9 +540,17 @@
     <!-- Main Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Fetch data from the new database.json file
+            // NOTE: Fetching a relative path like 'database.json' works when the HTML file
+            // is served from a standard web server where both files are in the same directory.
+            // In some sandboxed preview environments, this may fail. This code is intended
+            // for a standard server environment.
             fetch('database.json')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     // Initialize the application with the fetched JSON data.
                     initializeAppUI(data);
@@ -555,6 +563,18 @@
                     setTimeout(() => {
                         document.getElementById('horizontal-timeline-container').scrollLeft = 0;
                     }, 0);
+                })
+                .catch(error => {
+                    console.error('Error fetching or parsing database.json:', error);
+                    // Display an informative error message to the user on the page
+                    const pageContent = document.getElementById('page-content');
+                    pageContent.innerHTML = `<div class="text-center p-8">
+                        <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
+                        <p class="text-stone-600 mt-2">Could not fetch 'database.json'. Please ensure the file is in the same directory as the HTML file and the server is running correctly.</p>
+                        <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
+                    </div>`;
+                    document.getElementById('loader').style.display = 'none';
+                    pageContent.classList.remove('content-hidden');
                 });
         });
 
