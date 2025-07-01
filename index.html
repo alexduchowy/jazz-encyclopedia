@@ -557,7 +557,7 @@
                     const styleMatrixDataEl = doc.getElementById('styleMatrixData');
                     const artistProfilesDataEl = doc.getElementById('artistProfilesData');
 
-                    if (!rawTrackDataEl || !styleMatrixDataEl) {
+                    if (!rawTrackDataEl || !styleMatrixDataEl || !artistProfilesDataEl) {
                         throw new Error('Data script tags not found in database.html');
                     }
                     
@@ -1106,7 +1106,8 @@
                 const placeholderUrl = `https://placehold.co/200x240/1c1917/f5f5f4?text=${encodeURIComponent(artist.name)}`;
                 
                 let profileHtml = '';
-                if(artist.isBandleader && artist.profile) {
+                // CORRECTED LOGIC: Show profile if it exists, regardless of bandleader status
+                if(artist.profile) {
                     profileHtml = `
                     <div class="mt-6 pt-4 border-t-2 border-stone-200">
                         <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
