@@ -347,33 +347,33 @@
     </div>
 
     <div id="page-content" class="content-hidden">
-        <!-- FINAL CORRECTED HEADER -->
+        <!-- HEADER -->
         <div class="sticky top-0 z-50 h-24 mb-[-64px]">
              <header class="relative container mx-auto h-full">
-                <!-- This is the crooked background. It is positioned absolutely within the header -->
-                <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
-                
-                <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
-                <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
-                    <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
-                        <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
-                        <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                        <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
-                        <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
-                        <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                    </div>
-                    <div class="sm:hidden styled-select">
-                        <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
-                            <option value="#overview">Overview</option>
-                            <option value="#timeline">Timeline</option>
-                            <option value="#matrix">Genres</option>
-                            <option value="#artists">Artists</option>
-                            <option value="#legacy">Legacy</option>
-                        </select>
-                    </div>
-                </nav>
-            </header>
+                 <!-- This is the crooked background. It is positioned absolutely within the header -->
+                 <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
+                 
+                 <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
+                 <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                     <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
+                     <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
+                         <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
+                         <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
+                         <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
+                         <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
+                         <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                     </div>
+                     <div class="sm:hidden styled-select">
+                         <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
+                             <option value="#overview">Overview</option>
+                             <option value="#timeline">Timeline</option>
+                             <option value="#matrix">Genres</option>
+                             <option value="#artists">Artists</option>
+                             <option value="#legacy">Legacy</option>
+                         </select>
+                     </div>
+                 </nav>
+             </header>
         </div>
 
 
@@ -391,7 +391,7 @@
                     <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
                         <p>The term "post-bop" is a retrospective label for a musical methodology that flourished in the late 1950s and 1960s. It wasn't a genre with rigid rules, but a shared philosophy of <strong class="text-orange-500">"controlled freedom."</strong> Musicians of this era sought a middle ground between the structured harmony of hard bop and the radical abandon of free jazz. They aimed to expand the expressive possibilities of jazz by incorporating harmonic ambiguity and rhythmic complexity without completely discarding form and melody.</p>
                     <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
-                </div>
+                    </div>
             </section>
 
             <!-- Interactive Timeline Section -->
@@ -457,7 +457,7 @@
                         <button id="artist-prev-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous</button>
                         <span id="artist-page-indicator" class="px-4 py-2 text-stone-900 font-bold text-lg"></span>
                         <button id="artist-next-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next</button>
-                    </div>
+                   </div>
                 </div>
             </section>
             
@@ -529,32 +529,17 @@
     <!-- Main Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Fetch data, then initialize UI
-            fetch('database.html')
+            // Fetch data from the new database.json file
+            fetch('database.json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    return response.text();
+                    return response.json(); // Directly parse the JSON response
                 })
-                .then(html => {
-                    // Create a temporary DOM element to parse the fetched HTML.
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    
-                    // Extract the JSON data from the script tags.
-                    const rawTrackDataEl = doc.getElementById('rawTrackData');
-                    const styleMatrixDataEl = doc.getElementById('styleMatrixData');
-
-                    if (!rawTrackDataEl || !styleMatrixDataEl) {
-                        throw new Error('Data script tags not found in database.html');
-                    }
-                    
-                    const rawTrackData = JSON.parse(rawTrackDataEl.textContent);
-                    const styleMatrixData = JSON.parse(styleMatrixDataEl.textContent);
-                    
-                    // Initialize the application with the fetched data.
-                    initializeAppUI(rawTrackData, styleMatrixData);
+                .then(data => {
+                    // Initialize the application with the fetched JSON data.
+                    initializeAppUI(data);
                     
                     // Show the page and hide loader
                     document.getElementById('loader').style.display = 'none';
@@ -567,18 +552,24 @@
                 })
                 .catch(error => {
                     // If fetching fails, initialize with empty data for editing.
-                    console.warn('Could not load database.html. Initializing with empty data.', error);
-                    initializeAppUI([], { features: [], genres: {} });
+                    console.error('Could not load or parse database.json. Initializing with empty data.', error);
+                    initializeAppUI({
+                        albums: [],
+                        styleMatrix: { features: [], genres: {} },
+                        artistProfiles: {}
+                    });
                     document.getElementById('loader').style.display = 'none';
                     document.getElementById('page-content').classList.remove('content-hidden');
                 });
         });
 
-        function initializeAppUI(rawTrackData, styleMatrixData) {
+        function initializeAppUI(data) {
             
+            // Destructure data from the fetched JSON
+            let { albums, styleMatrix: styleMatrixData, artistProfiles } = data;
+
             // Global state for album navigation
             let currentAlbumIndex = -1;
-            let albums = [];
             
             const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
             
@@ -604,33 +595,17 @@
                     .replace(/-+$/, ''); // Trim - from end of text
             }
 
-            // Process raw track data into albums
-            albums = rawTrackData.reduce((acc, track) => {
-                let album = acc.find(a => a.albumTitle === track.album && a.artist === track.artist);
-                if (!album) {
-                    album = { 
-                        year: track.year, 
-                        artist: track.artist, 
-                        albumTitle: track.album, 
-                        cover: track.cover, 
-                        pivotalTracks: [], 
-                        genres: track.genre 
-                    };
-                    acc.push(album);
-                }
-                album.pivotalTracks.push(track);
-                album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
-                return acc;
-            }, []);
-            
-            // Set the first recording date for sorting purposes
+            // Sort albums by their first recording date
             albums.forEach(album => {
-                if (album.pivotalTracks.length > 0) {
+                if (album.pivotalTracks && album.pivotalTracks.length > 0) {
+                    // Sort tracks within the album first
+                    album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
+                    // Assign the first date to the album for sorting
                     album.firstRecordingDate = album.pivotalTracks[0].recordingDate;
                 }
             });
-            
             albums.sort((a,b) => parseDate(a.firstRecordingDate) - parseDate(b.firstRecordingDate));
+            
             const years = [...new Set(albums.map(album => album.year))].sort();
             const groupedByYear = years.reduce((acc, year) => {
                 acc[year] = albums.filter(d => d.year === year);
@@ -803,13 +778,13 @@
 
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
                  detailsContainer.innerHTML = `
-                        <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
-                        <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
-                             <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
-                             <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
-                             <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
-                             <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup || 'N/A'}</span>
-                        </div>`;
+                         <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
+                         <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                              <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                              <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
+                              <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
+                              <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup || 'N/A'}</span>
+                         </div>`;
 
                 const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                 analysisWrapper.innerHTML = ''; // Clear previous content
@@ -827,7 +802,7 @@
                                   </div>
                                   <p class="liner-notes-text">${track.analysis}</p>
                              </div>
-                        `;
+                         `;
                 }).join('<hr class="border-stone-700 my-8">');
 
                 analysisContainer.innerHTML = pivotalTracksHtml;
@@ -879,7 +854,19 @@
 
 
             // --- ARTISTS SECTION LOGIC (PAGINATION) ---
-            const artistsData = processArtists(rawTrackData);
+            // Create a flat list of all tracks from the albums data to pass to processArtists
+            const allTracks = albums.flatMap(album =>
+                album.pivotalTracks.map(track => ({
+                    ...track,
+                    year: album.year,
+                    artist: album.artist,
+                    album: album.albumTitle,
+                    cover: album.cover,
+                    genre: album.genres
+                }))
+            );
+            const artistsData = processArtists(allTracks, artistProfiles);
+            
             const instrumentFilter = document.getElementById('instrument-filter');
             const artistGrid = document.getElementById('artist-grid');
             const artistPrevBtn = document.getElementById('artist-prev-btn');
@@ -891,9 +878,8 @@
             let filteredArtists = [];
             let pageSize = window.innerWidth >= 768 ? 12 : 6;
             
-            function processArtists(tracks) {
+            function processArtists(tracks, profiles) {
                 const artistsMap = new Map();
-                const slugify = (name) => name ? name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '') : '';
                 
                 tracks.forEach(track => {
                     const mainArtistString = track.artist;
@@ -918,23 +904,10 @@
                             const artistEntry = artistsMap.get(name);
                             if (mainArtistString && mainArtistString.includes(name)) {
                                 artistEntry.isBandleader = true;
-                                switch(name) {
-                                     case "Miles Davis":
-                                         artistEntry.profile = "One of the most influential and acclaimed figures in the history of jazz, trumpeter Miles Davis was at the forefront of several major stylistic developments, including cool jazz, hard bop, modal jazz, and jazz fusion.";
-                                         break;
-                                     case "Thelonious Monk":
-                                         artistEntry.profile = "A pioneering pianist and composer, Thelonious Monk was a central figure in the development of bebop. His unique improvisational style, characterized by dissonant harmonies and angular melodic twists, made him an icon of modern jazz.";
-                                         break;
-                                     case "Horace Silver":
-                                         artistEntry.profile = "A pianist and composer, Horace Silver was a key architect of the hard bop style, known for his catchy, bluesy, and often funk-infused compositions. His quintet was a launching pad for many of the era's top young musicians.";
-                                         break;
-                                     case "Max Roach":
-                                         artistEntry.profile = "A pioneering bebop drummer, Max Roach was also a key figure in the development of hard bop and a leading voice in political jazz. His 'Freedom Now Suite' is a landmark of the Civil Rights era.";
-                                         break;
-                                     case "Dexter Gordon":
-                                         artistEntry.profile = "A towering figure of the tenor saxophone, Dexter Gordon was a bebop pioneer who returned to prominence in the 1960s with a series of classic Blue Note albums that defined the hard bop sound.";
-                                         break;
-                                   }
+                            }
+                            // Add profile from the dedicated profiles object
+                            if (profiles && profiles[name]) {
+                                artistEntry.profile = profiles[name];
                             }
                             instrumentsString.split(/, | \/ /).forEach(inst => {
                                 const trimmedInst = inst.trim();
@@ -1062,7 +1035,7 @@
                 const placeholderUrl = `https://placehold.co/200x240/1c1917/f5f5f4?text=${encodeURIComponent(artist.name)}`;
                 
                 let profileHtml = '';
-                if(artist.isBandleader && artist.profile) {
+                if(artist.profile) {
                     profileHtml = `
                     <div class="mt-6 pt-4 border-t-2 border-stone-200">
                         <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
