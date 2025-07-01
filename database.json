@@ -1,4 +1,5 @@
 {
+  {
   "albums": [
     {
       "year": 1954,
@@ -45,6 +46,22 @@
           "label": "EmArcy",
           "lineup": "Clifford Brown (trumpet), Max Roach (drums), Harold Land (tenor saxophone), Richie Powell (piano), George Morrow (bass)",
           "analysis": "A brilliant original by Clifford Brown, 'Joy Spring' is a testament to his prodigious talents. The tune's intricate melody and sophisticated chord changes became a standard, and this definitive version showcases the band's incredible precision, telepathic interplay, and the sheer joy of creation its title suggests."
+        }
+      ]
+    },
+    {
+      "year": 1954,
+      "artist": "Clifford Brown and Max Roach",
+      "albumTitle": "Brown and Roach Incorporated",
+      "cover": "images/brown-and-roach-incorporated.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Sweet Clifford",
+          "recordingDate": "August 6, 1954",
+          "label": "EmArcy",
+          "lineup": "Clifford Brown (trumpet), Max Roach (drums), Harold Land (tenor saxophone), Richie Powell (piano), George Morrow (bass)",
+          "analysis": "A beautiful ballad that showcases Clifford Brown's lyrical and tender side. His warm tone and masterful phrasing are on full display, creating a poignant and memorable melody. The track serves as a perfect counterpoint to the album's more up-tempo hard bop numbers, highlighting the quintet's versatility and Brown's exceptional artistry as a balladeer."
         }
       ]
     },
@@ -114,6 +131,38 @@
     },
     {
       "year": 1955,
+      "artist": "Lennie Tristano",
+      "albumTitle": "Lennie Tristano",
+      "cover": "images/lennie-tristano.jpg",
+      "genres": "Cool Jazz",
+      "pivotalTracks": [
+        {
+          "title": "Line Up",
+          "recordingDate": "June 11, 1955",
+          "label": "Atlantic",
+          "lineup": "Lennie Tristano (piano), Peter Ind (bass), Jeff Morton (drums)",
+          "analysis": "A landmark track in the history of jazz, 'Line Up' features Lennie Tristano's revolutionary use of overdubbing. He recorded the piano part at half speed and then sped up the tape, creating a technically astonishing and rhythmically complex solo that was years ahead of its time. The result is a dazzling display of intricate lines and harmonic sophistication that continues to influence and inspire musicians today."
+        }
+      ]
+    },
+    {
+      "year": 1956,
+      "artist": "Herbie Nichols",
+      "albumTitle": "Herbie Nichols Trio",
+      "cover": "images/herbie-nichols-trio.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "The Gig",
+          "recordingDate": "August 1, 1955",
+          "label": "Blue Note",
+          "lineup": "Herbie Nichols (piano), Al McKibbon (bass), Max Roach (drums)",
+          "analysis": "An angular and rhythmically inventive composition that perfectly encapsulates Herbie Nichols' unique musical language. The track is full of unexpected twists and turns, showcasing his distinctive blend of bebop, Dixieland, and classical influences. 'The Gig' is a prime example of Nichols' compositional genius and his ability to create music that is both intellectually stimulating and deeply swinging."
+        }
+      ]
+    },
+    {
+      "year": 1955,
       "artist": "Dexter Gordon",
       "albumTitle": "Dexter Blows Hot and Cool",
       "cover": "images/dexter-blows-hot-and-cool.jpg",
@@ -162,6 +211,22 @@
     },
     {
       "year": 1956,
+      "artist": "Clifford Brown and Max Roach",
+      "albumTitle": "At Basin Street",
+      "cover": "images/at-basin-street.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "What Is This Thing Called Love?",
+          "recordingDate": "February 16, 1956",
+          "label": "EmArcy",
+          "lineup": "Clifford Brown (trumpet), Max Roach (drums), Sonny Rollins (tenor saxophone), Richie Powell (piano), George Morrow (bass)",
+          "analysis": "A blistering hard bop workout on the Cole Porter standard. The track is taken at a breathtaking tempo, showcasing the incredible technical facility and improvisational brilliance of the entire quintet. Clifford Brown's solo is a masterclass in bebop vocabulary and execution, while Sonny Rollins matches his intensity with a powerful and inventive solo of his own, all propelled by Max Roach's explosive drumming."
+        }
+      ]
+    },
+    {
+      "year": 1956,
       "artist": "Sonny Rollins",
       "albumTitle": "Sonny Rollins Plus 4",
       "cover": "images/sonny-rollins-plus-4.jpg",
@@ -178,22 +243,6 @@
     },
     {
       "year": 1956,
-      "artist": "Art Blakey & The Jazz Messengers",
-      "albumTitle": "The Jazz Messengers",
-      "cover": "images/the-jazz-messengers.jpg",
-      "genres": "Hard Bop",
-      "pivotalTracks": [
-        {
-          "title": "Nica's Dream",
-          "recordingDate": "May 4, 1956",
-          "label": "Columbia",
-          "lineup": "Art Blakey (drums), Donald Byrd (trumpet), Hank Mobley (tenor saxophone), Horace Silver (piano), Doug Watkins (bass)",
-          "analysis": "Horace Silver's 'Nica's Dream' is a sophisticated masterpiece of composition, written for the jazz patron Baroness Pannonica de Koenigswarter. The piece features a complex structure with a Latin-tinged A section and a swinging B section, showcasing Silver's compositional genius and the tight-knit playing of the group."
-        }
-      ]
-    },
-    {
-      "year": 1956,
       "artist": "Phineas Newborn Jr.",
       "albumTitle": "Here Is Phineas",
       "cover": "images/here-is-phineas.jpg",
@@ -205,6 +254,22 @@
           "label": "Atlantic",
           "lineup": "Phineas Newborn Jr. (piano), Calvin Newborn (guitar), Oscar Pettiford (bass), Kenny Clarke (drums)",
           "analysis": "This track from Phineas Newborn Jr.'s debut album introduced the world to his astonishing piano technique. His interpretation of the John Lewis classic is a tour de force of virtuosity, characterized by sparkling, two-handed runs executed with flawless precision that drew comparisons to Art Tatum and Bud Powell."
+        }
+      ]
+    },
+    {
+      "year": 1956,
+      "artist": "Art Blakey & The Jazz Messengers",
+      "albumTitle": "The Jazz Messengers",
+      "cover": "images/the-jazz-messengers.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Nica's Dream",
+          "recordingDate": "May 4, 1956",
+          "label": "Columbia",
+          "lineup": "Art Blakey (drums), Donald Byrd (trumpet), Hank Mobley (tenor saxophone), Horace Silver (piano), Doug Watkins (bass)",
+          "analysis": "Horace Silver's 'Nica's Dream' is a sophisticated masterpiece of composition, written for the jazz patron Baroness Pannonica de Koenigswarter. The piece features a complex structure with a Latin-tinged A section and a swinging B section, showcasing Silver's compositional genius and the tight-knit playing of the group."
         }
       ]
     },
@@ -290,22 +355,6 @@
     },
     {
       "year": 1956,
-      "artist": "Stan Getz, Dizzy Gillespie, Sonny Stitt",
-      "albumTitle": "For Musicians Only",
-      "cover": "images/for-musicians-only.jpg",
-      "genres": "Hard Bop",
-      "pivotalTracks": [
-        {
-          "title": "Wee (Allen's Alley)",
-          "recordingDate": "October 18, 1956",
-          "label": "Verve",
-          "lineup": "Stan Getz (tenor saxophone), Dizzy Gillespie (trumpet), Sonny Stitt (tenor saxophone), John Lewis (piano), Herb Ellis (guitar), Ray Brown (bass), Stan Levey (drums)",
-          "analysis": "The album title is a fitting description for this high-speed jam session. The track is a classic 'cutting contest,' a friendly duel between three titans. It's an exhilarating display of virtuosity and competitive spirit, with Dizzy Gillespie's pyrotechnic trumpet leading the charge against the contrasting tenor styles of Stitt and Getz."
-        }
-      ]
-    },
-    {
-      "year": 1956,
       "artist": "Johnny Griffin",
       "albumTitle": "Introducing Johnny Griffin",
       "cover": "images/introducing-johnny-griffin.jpg",
@@ -317,6 +366,22 @@
           "label": "Blue Note",
           "lineup": "Johnny Griffin (tenor saxophone), Wynton Kelly (piano), Curly Russell (bass), Max Roach (drums)",
           "analysis": "On his Blue Note debut, Johnny Griffin was often hailed for his incredible speed. This original composition, however, proves he was more than a speed demon. This relaxed, bluesy swinger showcases his rich, full tone and his deep connection to the jazz tradition, with impeccable backing from the legendary rhythm section."
+        }
+      ]
+    },
+    {
+      "year": 1956,
+      "artist": "Stan Getz, Dizzy Gillespie, Sonny Stitt",
+      "albumTitle": "For Musicians Only",
+      "cover": "images/for-musicians-only.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Wee (Allen's Alley)",
+          "recordingDate": "October 18, 1956",
+          "label": "Verve",
+          "lineup": "Stan Getz (tenor saxophone), Dizzy Gillespie (trumpet), Sonny Stitt (tenor saxophone), John Lewis (piano), Herb Ellis (guitar), Ray Brown (bass), Stan Levey (drums)",
+          "analysis": "The album title is a fitting description for this high-speed jam session. The track is a classic 'cutting contest,' a friendly duel between three titans. It's an exhilarating display of virtuosity and competitive spirit, with Dizzy Gillespie's pyrotechnic trumpet leading the charge against the contrasting tenor styles of Stitt and Getz."
         }
       ]
     },
@@ -370,22 +435,6 @@
     },
     {
       "year": 1957,
-      "artist": "Charles Mingus",
-      "albumTitle": "The Clown",
-      "cover": "images/the-clown.jpg",
-      "genres": "Post-Bop, Hard Bop",
-      "pivotalTracks": [
-        {
-          "title": "Haitian Fight Song",
-          "recordingDate": "March 12, 1957",
-          "label": "Atlantic",
-          "lineup": "Charles Mingus (bass), Shafi Hadi (alto and tenor saxophone), Jimmy Knepper (trombone), Wade Legge (piano), Dannie Richmond (drums)",
-          "analysis": "One of Charles Mingus's signature works, this is a powerful and raw expression of anger and pride. The piece opens with an extended, unaccompanied bass solo by Mingus that establishes a deep, defiant mood, driven by the powerful drumming of Dannie Richmond in his first collaboration with Mingus."
-        }
-      ]
-    },
-    {
-      "year": 1957,
       "artist": "Sonny Rollins",
       "albumTitle": "Way Out West",
       "cover": "images/way-out-west.jpg",
@@ -402,6 +451,38 @@
     },
     {
       "year": 1957,
+      "artist": "Charles Mingus",
+      "albumTitle": "The Clown",
+      "cover": "images/the-clown.jpg",
+      "genres": "Post-Bop, Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Haitian Fight Song",
+          "recordingDate": "March 12, 1957",
+          "label": "Atlantic",
+          "lineup": "Charles Mingus (bass), Shafi Hadi (alto and tenor saxophone), Jimmy Knepper (trombone), Wade Legge (piano), Dannie Richmond (drums)",
+          "analysis": "One of Charles Mingus's signature works, this is a powerful and raw expression of anger and pride. The piece opens with an extended, unaccompanied bass solo by Mingus that establishes a deep, defiant mood, driven by the powerful drumming of Dannie Richmond in his first collaboration with Mingus."
+        }
+      ]
+    },
+    {
+      "year": 1957,
+      "artist": "Coleman Hawkins",
+      "albumTitle": "The Hawk Flies High",
+      "cover": "images/the-hawk-flies-high.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Juicy Fruit",
+          "recordingDate": "March 12, 1957",
+          "label": "Riverside",
+          "lineup": "Coleman Hawkins (tenor saxophone), J.J. Johnson (trombone), Idrees Sulieman (trumpet), Hank Jones (piano), Barry Galbraith (guitar), Oscar Pettiford (bass), Jo Jones (drums)",
+          "analysis": "A soulful and swinging blues that gives each member of this all-star lineup a chance to shine. Hawkins' solo is a masterclass in storytelling and melodic invention, while J.J. Johnson and Idrees Sulieman contribute equally compelling improvisations. The track is a perfect example of mainstream jazz at its finest, with a relaxed yet deeply grooving feel."
+        }
+      ]
+    },
+    {
+      "year": 1957,
       "artist": "Lee Morgan",
       "albumTitle": "Lee Morgan Vol. 3",
       "cover": "images/lee-morgan-vol-3.jpg",
@@ -413,6 +494,54 @@
           "label": "Blue Note",
           "lineup": "Lee Morgan (trumpet), Gigi Gryce (alto saxophone), Benny Golson (tenor saxophone), Wynton Kelly (piano), Paul Chambers (bass), Charlie Persip (drums)",
           "analysis": "This is the very first recording of Benny Golson's beautiful ballad, written as a tribute to trumpeter Clifford Brown. Performed by a young Lee Morgan, a prodigy deeply influenced by Brown, the interpretation is heartfelt and mature beyond his 18 years. The track immediately became a jazz standard, a timeless elegy for a fallen giant."
+        }
+      ]
+    },
+    {
+      "year": 1957,
+      "artist": "Johnny Griffin",
+      "albumTitle": "A Blowin' Session",
+      "cover": "images/a-blowin-session.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "The Way You Look Tonight",
+          "recordingDate": "April 6, 1957",
+          "label": "Blue Note",
+          "lineup": "Johnny Griffin (tenor saxophone), John Coltrane (tenor saxophone), Hank Mobley (tenor saxophone), Lee Morgan (trumpet), Wynton Kelly (piano), Paul Chambers (bass), Art Blakey (drums)",
+          "analysis": "An epic tenor saxophone battle on a classic standard. This track is a thrilling display of one-upmanship, with Griffin, Coltrane, and Mobley all trading fiery and inventive solos. The sheer energy and competitive spirit of the performance make it a standout track and a classic example of the 'blowing session' format popular in the hard bop era."
+        }
+      ]
+    },
+    {
+      "year": 1957,
+      "artist": "Sonny Rollins",
+      "albumTitle": "Sonny Rollins, Vol. 2",
+      "cover": "images/sonny-rollins-vol-2.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Why Don't I",
+          "recordingDate": "April 14, 1957",
+          "label": "Blue Note",
+          "lineup": "Sonny Rollins (tenor saxophone), J.J. Johnson (trombone), Horace Silver (piano), Thelonious Monk (piano on 'Misterioso' and 'Reflections'), Paul Chambers (bass), Art Blakey (drums)",
+          "analysis": "A classic Sonny Rollins original with a catchy, calypso-tinged melody. Rollins' solo is a joy to behold, full of his characteristic wit, rhythmic ingenuity, and thematic development. The interplay between Rollins and the rhythm section, particularly the rapport with pianist Horace Silver and drummer Art Blakey, is a highlight of this quintessential hard bop recording."
+        }
+      ]
+    },
+    {
+      "year": 1957,
+      "artist": "Art Blakey's Jazz Messengers With Thelonious Monk",
+      "albumTitle": "Art Blakey's Jazz Messengers With Thelonious Monk",
+      "cover": "images/art-blakeys-jazz-messengers-with-thelonious-monk.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "In Walked Bud",
+          "recordingDate": "May 15, 1957",
+          "label": "Atlantic",
+          "lineup": "Art Blakey (drums), Thelonious Monk (piano), Johnny Griffin (tenor saxophone), Bill Hardman (trumpet), Spanky DeBrest (bass)",
+          "analysis": "A classic Monk composition given a powerful and swinging treatment by the Jazz Messengers. Monk's quirky and angular piano playing fits surprisingly well with the hard-driving energy of Blakey's drumming. Johnny Griffin's fiery tenor sax solo is a highlight, demonstrating his mastery of the bebop language within the unique harmonic landscape of a Monk tune."
         }
       ]
     },
@@ -498,6 +627,38 @@
     },
     {
       "year": 1957,
+      "artist": "The Ben Webster Quintet",
+      "albumTitle": "Soulville",
+      "cover": "images/soulville.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Soulville",
+          "recordingDate": "October 15, 1957",
+          "label": "Verve",
+          "lineup": "Ben Webster (tenor saxophone), Oscar Peterson (piano), Herb Ellis (guitar), Ray Brown (bass), Stan Levey (drums)",
+          "analysis": "The title track is a quintessential Ben Webster performance, a slow, sultry blues that perfectly showcases his breathy, sensual tone and deeply soulful phrasing. The interplay with the Oscar Peterson Trio is sublime, with Peterson's elegant piano and Herb Ellis's swinging guitar providing the perfect accompaniment to Webster's masterful storytelling."
+        }
+      ]
+    },
+    {
+      "year": 1957,
+      "artist": "Coleman Hawkins & Ben Webster",
+      "albumTitle": "Coleman Hawkins Encounters Ben Webster",
+      "cover": "images/coleman-hawkins-encounters-ben-webster.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Blues for Yolande",
+          "recordingDate": "October 16, 1957",
+          "label": "Verve",
+          "lineup": "Coleman Hawkins (tenor saxophone), Ben Webster (tenor saxophone), Oscar Peterson (piano), Herb Ellis (guitar), Ray Brown (bass), Alvin Stoller (drums)",
+          "analysis": "A stunningly beautiful ballad that features two of the greatest tenor saxophonists in jazz history. The contrast between Hawkins' more robust and harmonically complex style and Webster's breathy, romantic approach is a joy to hear. Their respectful and lyrical interplay, supported by the impeccable Oscar Peterson Trio, makes this track a timeless masterpiece."
+        }
+      ]
+    },
+    {
+      "year": 1957,
       "artist": "Sonny Rollins",
       "albumTitle": "A Night at the Village Vanguard",
       "cover": "images/a-night-at-the-village-vanguard.jpg",
@@ -509,6 +670,22 @@
           "label": "Blue Note",
           "lineup": "Sonny Rollins (tenor saxophone), Wilbur Ware (bass), Elvin Jones (drums)",
           "analysis": "This live recording is a landmark album, capturing Sonny Rollins at the peak of his powers in the revolutionary pianoless trio format. 'Striver's Row' is a high-energy performance that showcases the incredible freedom and interplay this format allowed, with Rollins, Ware, and Jones engaging in a dynamic three-way conversation."
+        }
+      ]
+    },
+    {
+      "year": 1957,
+      "artist": "Miles Davis",
+      "albumTitle": "Ascenseur pour l'échafaud",
+      "cover": "images/ascenseur-pour-lechafaud.jpg",
+      "genres": "Modal Jazz",
+      "pivotalTracks": [
+        {
+          "title": "Générique",
+          "recordingDate": "December 5, 1957",
+          "label": "Fontana",
+          "lineup": "Miles Davis (trumpet), Barney Wilen (tenor saxophone), René Urtreger (piano), Pierre Michelot (bass), Kenny Clarke (drums)",
+          "analysis": "A groundbreaking piece of modal jazz, recorded for the soundtrack of Louis Malle's film of the same name. The haunting, melancholic melody, played with Miles Davis's signature Harmon mute, perfectly captures the film's noir atmosphere. The improvisation is based on a simple scale rather than a complex chord progression, a revolutionary concept at the time that would have a profound impact on the future of jazz."
         }
       ]
     },
@@ -541,6 +718,22 @@
           "label": "Argo",
           "lineup": "Ahmad Jamal (piano), Israel Crosby (bass), Vernel Fournier (drums)",
           "analysis": "This is the definitive version of 'Poinciana' and Ahmad Jamal's signature song. The track's phenomenal success on jukeboxes and radio catapulted the trio to stardom. The magic lies in the infectious groove created by Vernel Fournier's distinctive Afro-Cuban inspired drum pattern and Jamal's elegant, minimalist piano."
+        }
+      ]
+    },
+    {
+      "year": 1958,
+      "artist": "John Coltrane",
+      "albumTitle": "Soultrane",
+      "cover": "images/soultrane.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Good Bait",
+          "recordingDate": "February 7, 1958",
+          "label": "Prestige",
+          "lineup": "John Coltrane (tenor saxophone), Red Garland (piano), Paul Chambers (bass), Art Taylor (drums)",
+          "analysis": "A classic example of Coltrane's 'sheets of sound' period, this Tadd Dameron composition is taken at a brisk tempo, allowing Coltrane to unleash a torrent of technically dazzling and harmonically advanced improvisational ideas. His relentless exploration of the harmony, combined with his powerful and searching tone, makes this track a landmark recording in his early career."
         }
       ]
     },
@@ -610,6 +803,38 @@
     },
     {
       "year": 1958,
+      "artist": "Thelonious Monk Quartet",
+      "albumTitle": "Misterioso",
+      "cover": "images/misterioso.jpg",
+      "genres": "Post-Bop, Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Misterioso",
+          "recordingDate": "August 7, 1958",
+          "label": "Riverside",
+          "lineup": "Thelonious Monk (piano), Johnny Griffin (tenor saxophone), Ahmed Abdul-Malik (bass), Roy Haynes (drums)",
+          "analysis": "Captured during a legendary residency at the Five Spot Café, this recording showcases Thelonious Monk's pivotal role in the adventurous evolution of hard bop. 'Misterioso' is a 12-bar blues, but in Monk's hands, the familiar structure becomes a vehicle for profound innovation. His angular, dissonant piano work and idiosyncratic use of silence challenge bop conventions from the inside out. Supported by the fiery tenor saxophone of Johnny Griffin, Monk demonstrates how a master improviser could deconstruct traditional forms in a live setting, turning a standard into a complex, unpredictable, and thoroughly modern statement."
+        }
+      ]
+    },
+    {
+      "year": 1958,
+      "artist": "Max Roach",
+      "albumTitle": "Deeds, Not Words",
+      "cover": "images/deeds-not-words.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Jodie's Cha-Cha",
+          "recordingDate": "September 4, 1958",
+          "label": "Riverside",
+          "lineup": "Max Roach (drums), Booker Little (trumpet), George Coleman (tenor saxophone), Ray Draper (tuba), Art Davis (bass)",
+          "analysis": "An infectious and rhythmically engaging piece that showcases Max Roach's compositional and arranging skills, as well as his virtuosic drumming. The use of the tuba in a hard bop setting is a unique and interesting touch, adding a different color to the ensemble sound. The track is a great example of Roach's ability to create music that is both intellectually stimulating and grooving."
+        }
+      ]
+    },
+    {
+      "year": 1958,
       "artist": "Art Blakey & The Jazz Messengers",
       "albumTitle": "Moanin'",
       "cover": "images/moanin.jpg",
@@ -621,6 +846,22 @@
           "label": "Blue Note",
           "lineup": "Art Blakey (drums), Lee Morgan (trumpet), Benny Golson (tenor saxophone), Bobby Timmons (piano), Jymie Merritt (bass)",
           "analysis": "'Moanin'' is one of the quintessential recordings of the hard bop era and a signature song for the Jazz Messengers. Pianist Bobby Timmons's composition is a masterpiece of the 'soul-jazz' style, with its gospel-inflected call-and-response melody that perfectly defines this legendary lineup."
+        }
+      ]
+    },
+    {
+      "year": 1958,
+      "artist": "Roy Haynes, Phineas Newborn, Paul Chambers",
+      "albumTitle": "We Three",
+      "cover": "images/we-three.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Reflection",
+          "recordingDate": "November 14, 1958",
+          "label": "New Jazz",
+          "lineup": "Roy Haynes (drums), Phineas Newborn Jr. (piano), Paul Chambers (bass)",
+          "analysis": "A stunning display of piano trio interplay. Phineas Newborn Jr.'s virtuosic and swinging piano is the star of the show, but Roy Haynes's crisp and interactive drumming and Paul Chambers's solid and melodic bass lines are equally essential to the success of this track. 'Reflection' is a masterclass in the art of the piano trio, with each musician listening and responding to the others with incredible sensitivity and creativity."
         }
       ]
     },
@@ -658,17 +899,17 @@
     },
     {
       "year": 1958,
-      "artist": "Thelonious Monk Quartet",
-      "albumTitle": "Misterioso",
-      "cover": "images/misterioso.jpg",
-      "genres": "Post-Bop, Hard Bop",
+      "artist": "The Chico Hamilton Quintet",
+      "albumTitle": "Gongs East!",
+      "cover": "images/gongs-east.jpg",
+      "genres": "Cool Jazz",
       "pivotalTracks": [
         {
-          "title": "Misterioso",
-          "recordingDate": "August 7, 1958",
-          "label": "Riverside",
-          "lineup": "Thelonious Monk (piano), Johnny Griffin (tenor saxophone), Ahmed Abdul-Malik (bass), Roy Haynes (drums)",
-          "analysis": "Captured during a legendary residency at the Five Spot Café, this recording showcases Thelonious Monk's pivotal role in the adventurous evolution of hard bop. 'Misterioso' is a 12-bar blues, but in Monk's hands, the familiar structure becomes a vehicle for profound innovation. His angular, dissonant piano work and idiosyncratic use of silence challenge bop conventions from the inside out. Supported by the fiery tenor saxophone of Johnny Griffin, Monk demonstrates how a master improviser could deconstruct traditional forms in a live setting, turning a standard into a complex, unpredictable, and thoroughly modern statement."
+          "title": "Gongs East",
+          "recordingDate": "December 30, 1958",
+          "label": "Warner Bros.",
+          "lineup": "Chico Hamilton (drums), Eric Dolphy (alto saxophone, bass clarinet, flute), Nathan Gershman (cello), John Pisano (guitar), Hal Gaylor (bass)",
+          "analysis": "The title track is a perfect example of the Chico Hamilton Quintet's unique 'chamber jazz' sound. The use of cello and flute creates a beautiful and ethereal texture, while Eric Dolphy's adventurous and harmonically advanced improvisations on alto saxophone and bass clarinet push the boundaries of cool jazz. The track is a fascinating and forward-thinking piece of music that anticipates many of the developments of the free jazz movement."
         }
       ]
     },
@@ -685,6 +926,38 @@
           "label": "El Saturn Records",
           "lineup": "Sun Ra (piano), Hobart Dotson (trumpet), Marshall Allen (alto saxophone), James Spaulding (alto saxophone), John Gilmore (tenor saxophone), Pat Patrick (baritone saxophone), Charles Davis (baritone saxophone), Julian Priester (trombone), Victor Sproles (bass), William Bugs Cochran (drums)",
           "analysis": "With 'Saturn,' Sun Ra officially plants the flag for a new cosmic consciousness in jazz. While the piece is rooted in the swing and bop traditions of an orchestra, its theme, propelled by an insistent and otherworldly rhythm, signals a definitive break. This track is a key early document of Afrofuturism and a foundational text for what would become spiritual jazz. By blending familiar big band precision with visionary concepts, 'Saturn' acts as a bridge from the known world to the outer realms the Arkestra would explore, prefiguring the avant-garde and free jazz movements of the coming decade."
+        }
+      ]
+    },
+    {
+      "year": 1959,
+      "artist": "The Horace Silver Quintet",
+      "albumTitle": "Finger Poppin' With the Horace Silver Quintet",
+      "cover": "images/finger-poppin-with-the-horace-silver-quintet.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Cookin' at the Continental",
+          "recordingDate": "February 1, 1959",
+          "label": "Blue Note",
+          "lineup": "Horace Silver (piano), Blue Mitchell (trumpet), Junior Cook (tenor saxophone), Gene Taylor (bass), Louis Hayes (drums)",
+          "analysis": "A quintessential Horace Silver composition, 'Cookin' at the Continental' is a perfect example of his funky, blues-drenched hard bop style. The infectious groove, catchy melody, and soulful solos from Blue Mitchell and Junior Cook make this track an instant classic. Silver's percussive and rhythmically driving piano playing is the engine that powers the whole performance, a masterclass in the art of the hard bop quintet."
+        }
+      ]
+    },
+    {
+      "year": 1959,
+      "artist": "Charles Mingus",
+      "albumTitle": "Blues & Roots",
+      "cover": "images/blues-&-roots.jpg",
+      "genres": "Post-Bop, Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Moanin'",
+          "recordingDate": "February 4, 1959",
+          "label": "Atlantic",
+          "lineup": "Charles Mingus (bass), Jackie McLean (alto saxophone), John Handy (alto saxophone), Booker Ervin (tenor saxophone), Pepper Adams (baritone saxophone), Jimmy Knepper (trombone), Willie Dennis (trombone), Horace Parlan (piano), Dannie Richmond (drums)",
+          "analysis": "This track is a visceral manifesto for Mingus's vision of jazz as a deeply rooted art form. In a direct response to critics who found his music overly complex, Mingus created a work of stunning, elemental power. 'Moanin'' is built on a simple, earthy baritone saxophone riff that becomes a platform for layered, blues-drenched horns and shouting exhortations. This is a key example of the adventurous evolution of hard bop, as Mingus injects the genre with the raw fervor of a sanctified church service, creating a sound that is simultaneously sophisticated in its arrangement and profoundly primal in its emotional impact."
         }
       ]
     },
@@ -722,6 +995,22 @@
     },
     {
       "year": 1959,
+      "artist": "Charles Mingus",
+      "albumTitle": "Mingus Ah Um",
+      "cover": "images/mingus-ah-um.jpg",
+      "genres": "Post-Bop, Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Better Git It in Your Soul",
+          "recordingDate": "May 5, 1959",
+          "label": "Columbia",
+          "lineup": "Charles Mingus (bass), John Handy (alto saxophone), Booker Ervin (tenor saxophone), Shafi Hadi (tenor saxophone), Willie Dennis (trombone), Jimmy Knepper (trombone), Horace Parlan (piano), Dannie Richmond (drums)",
+          "analysis": "An explosive opening to one of jazz's most celebrated albums, 'Better Git It in Your Soul' is pure, unadulterated Mingus. Propelled by a hand-clapping, gospel-infused 6/8 time signature, the track erupts with joyous chaos that blurs the line between tight composition and ecstatic collective improvisation. It perfectly encapsulates the increasingly complex and adventurous evolution of hard bop, pushing the music's emotional and structural boundaries. The shouts, hollers, and fiery solos create a work that feels both sacred and wildly secular, prefiguring the spiritual jazz movement while remaining fiercely unique."
+        }
+      ]
+    },
+    {
+      "year": 1959,
       "artist": "John Coltrane",
       "albumTitle": "Giant Steps",
       "cover": "images/giant-steps.jpg",
@@ -754,6 +1043,38 @@
     },
     {
       "year": 1959,
+      "artist": "Ornette Coleman",
+      "albumTitle": "The Shape of Jazz to Come",
+      "cover": "images/the-shape-of-jazz-to-come.jpg",
+      "genres": "Post-Bop",
+      "pivotalTracks": [
+        {
+          "title": "Lonely Woman",
+          "recordingDate": "May 22, 1959",
+          "label": "Atlantic",
+          "lineup": "Ornette Coleman (alto saxophone), Don Cherry (cornet), Charlie Haden (bass), Billy Higgins (drums)",
+          "analysis": "With 'Lonely Woman,' Ornette Coleman officially announced the arrival of the avant-garde as a powerful new language for jazz. The track was revolutionary in its structure: Coleman's achingly lyrical saxophone and Don Cherry's trumpet float a haunting melody completely independent of the frantic, propulsive rhythm set by bassist Charlie Haden and drummer Billy Higgins. By untethering melody from harmony and rhythm, Coleman established that profound feeling could be conveyed without adhering to traditional chord changes. It is a foundational moment for free jazz, demonstrating a new path for improvisation based on pure melodic and emotional logic."
+        }
+      ]
+    },
+    {
+      "year": 1959,
+      "artist": "Thelonious Monk Quintet",
+      "albumTitle": "5 by Monk by 5",
+      "cover": "images/5-by-monk-by-5.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Played Twice",
+          "recordingDate": "June 1, 1959",
+          "label": "Riverside",
+          "lineup": "Thelonious Monk (piano), Thad Jones (cornet), Charlie Rouse (tenor saxophone), Sam Jones (bass), Art Taylor (drums)",
+          "analysis": "A typically enigmatic and playful Thelonious Monk composition, 'Played Twice' features a melody that is, as the title suggests, played twice in a row. The solos from Thad Jones and Charlie Rouse are excellent examples of how to navigate Monk's unique harmonic and rhythmic world. Monk's own solo is a masterclass in economy and rhythmic displacement, demonstrating his genius for creating complex and compelling music from the simplest of materials."
+        }
+      ]
+    },
+    {
+      "year": 1959,
       "artist": "The Dave Brubeck Quartet",
       "albumTitle": "Time Out",
       "cover": "images/time-out.jpg",
@@ -781,6 +1102,22 @@
           "label": "Blue Note",
           "lineup": "Horace Silver (piano), Blue Mitchell (trumpet), Junior Cook (tenor saxophone), Gene Taylor (bass), Louis Hayes (drums)",
           "analysis": "'Sister Sadie' is one of Horace Silver's most famous and influential 'funky' jazz compositions. It's a classic example of soul-jazz, with a driving, gospel-tinged groove and an incredibly catchy, riff-based melody. The track is pure energy, propelled by Silver's percussive piano and the explosive drumming of Louis Hayes."
+        }
+      ]
+    },
+    {
+      "year": 1959,
+      "artist": "Ornette Coleman Quartet",
+      "albumTitle": "Change of the Century",
+      "cover": "images/change-of-the-century.jpg",
+      "genres": "Post-Bop",
+      "pivotalTracks": [
+        {
+          "title": "Ramblin'",
+          "recordingDate": "October 8, 1959",
+          "label": "Atlantic",
+          "lineup": "Ornette Coleman (alto saxophone), Don Cherry (cornet), Charlie Haden (bass), Billy Higgins (drums)",
+          "analysis": "If 'Lonely Woman' showcased the sorrowful, atmospheric potential of free jazz, 'Ramblin'' revealed its bluesy, swaggering heart. The track is built around a jaunty, down-home theme that feels distantly related to country and blues traditions. Coleman and Don Cherry then proceed to deconstruct this theme in their improvisations, engaging in a spirited, conversational interplay that follows its own internal logic. 'Ramblin'' was pivotal in demonstrating that the avant-garde wasn't merely abstract noise; it could be playful, thematic, and deeply connected to American folk forms, even as it liberated them from their harmonic constraints."
         }
       ]
     },
@@ -829,70 +1166,6 @@
           "label": "Riverside",
           "lineup": "Bill Evans (piano), Scott LaFaro (bass), Paul Motian (drums)",
           "analysis": "This album marks the debut of the legendary Bill Evans Trio with Scott LaFaro and Paul Motian. Their version of 'Autumn Leaves' immediately demonstrates the revolutionary nature of the group: a conversation between three equal partners. LaFaro's bass playing is astonishingly melodic and interactive, redefining the art of the piano trio."
-        }
-      ]
-    },
-    {
-      "year": 1959,
-      "artist": "Charles Mingus",
-      "albumTitle": "Blues & Roots",
-      "cover": "images/blues-&-roots.jpg",
-      "genres": "Post-Bop, Hard Bop",
-      "pivotalTracks": [
-        {
-          "title": "Moanin'",
-          "recordingDate": "February 4, 1959",
-          "label": "Atlantic",
-          "lineup": "Charles Mingus (bass), Jackie McLean (alto saxophone), John Handy (alto saxophone), Booker Ervin (tenor saxophone), Pepper Adams (baritone saxophone), Jimmy Knepper (trombone), Willie Dennis (trombone), Horace Parlan (piano), Dannie Richmond (drums)",
-          "analysis": "This track is a visceral manifesto for Mingus's vision of jazz as a deeply rooted art form. In a direct response to critics who found his music overly complex, Mingus created a work of stunning, elemental power. 'Moanin'' is built on a simple, earthy baritone saxophone riff that becomes a platform for layered, blues-drenched horns and shouting exhortations. This is a key example of the adventurous evolution of hard bop, as Mingus injects the genre with the raw fervor of a sanctified church service, creating a sound that is simultaneously sophisticated in its arrangement and profoundly primal in its emotional impact."
-        }
-      ]
-    },
-    {
-      "year": 1959,
-      "artist": "Charles Mingus",
-      "albumTitle": "Mingus Ah Um",
-      "cover": "images/mingus-ah-um.jpg",
-      "genres": "Post-Bop, Hard Bop",
-      "pivotalTracks": [
-        {
-          "title": "Better Git It in Your Soul",
-          "recordingDate": "May 5, 1959",
-          "label": "Columbia",
-          "lineup": "Charles Mingus (bass), John Handy (alto saxophone), Booker Ervin (tenor saxophone), Shafi Hadi (tenor saxophone), Willie Dennis (trombone), Jimmy Knepper (trombone), Horace Parlan (piano), Dannie Richmond (drums)",
-          "analysis": "An explosive opening to one of jazz's most celebrated albums, 'Better Git It in Your Soul' is pure, unadulterated Mingus. Propelled by a hand-clapping, gospel-infused 6/8 time signature, the track erupts with joyous chaos that blurs the line between tight composition and ecstatic collective improvisation. It perfectly encapsulates the increasingly complex and adventurous evolution of hard bop, pushing the music's emotional and structural boundaries. The shouts, hollers, and fiery solos create a work that feels both sacred and wildly secular, prefiguring the spiritual jazz movement while remaining fiercely unique."
-        }
-      ]
-    },
-    {
-      "year": 1959,
-      "artist": "Ornette Coleman",
-      "albumTitle": "The Shape of Jazz to Come",
-      "cover": "images/the-shape-of-jazz-to-come.jpg",
-      "genres": "Post-Bop",
-      "pivotalTracks": [
-        {
-          "title": "Lonely Woman",
-          "recordingDate": "May 22, 1959",
-          "label": "Atlantic",
-          "lineup": "Ornette Coleman (alto saxophone), Don Cherry (cornet), Charlie Haden (bass), Billy Higgins (drums)",
-          "analysis": "With 'Lonely Woman,' Ornette Coleman officially announced the arrival of the avant-garde as a powerful new language for jazz. The track was revolutionary in its structure: Coleman's achingly lyrical saxophone and Don Cherry's trumpet float a haunting melody completely independent of the frantic, propulsive rhythm set by bassist Charlie Haden and drummer Billy Higgins. By untethering melody from harmony and rhythm, Coleman established that profound feeling could be conveyed without adhering to traditional chord changes. It is a foundational moment for free jazz, demonstrating a new path for improvisation based on pure melodic and emotional logic."
-        }
-      ]
-    },
-    {
-      "year": 1959,
-      "artist": "Ornette Coleman Quartet",
-      "albumTitle": "Change of the Century",
-      "cover": "images/change-of-the-century.jpg",
-      "genres": "Post-Bop",
-      "pivotalTracks": [
-        {
-          "title": "Ramblin'",
-          "recordingDate": "October 8, 1959",
-          "label": "Atlantic",
-          "lineup": "Ornette Coleman (alto saxophone), Don Cherry (cornet), Charlie Haden (bass), Billy Higgins (drums)",
-          "analysis": "If 'Lonely Woman' showcased the sorrowful, atmospheric potential of free jazz, 'Ramblin'' revealed its bluesy, swaggering heart. The track is built around a jaunty, down-home theme that feels distantly related to country and blues traditions. Coleman and Don Cherry then proceed to deconstruct this theme in their improvisations, engaging in a spirited, conversational interplay that follows its own internal logic. 'Ramblin'' was pivotal in demonstrating that the avant-garde wasn't merely abstract noise; it could be playful, thematic, and deeply connected to American folk forms, even as it liberated them from their harmonic constraints."
         }
       ]
     },
