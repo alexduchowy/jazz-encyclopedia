@@ -1224,28 +1224,36 @@
             filterAndPaginateArtists(); // Initial population of the artist grid
 
 
-            // Build the transposed genre matrix
+            // --- Build the transposed genre matrix ---
             const matrixTable = document.getElementById('style-matrix-table');
             if (styleMatrixData.features && styleMatrixData.genres) {
+                const thead = document.createElement('thead');
                 const headerRow = document.createElement('tr');
                 headerRow.className = 'bg-stone-900 text-stone-100';
-                let headerHtml = `<th class="p-4 border-b-2 border-stone-900 font-bold text-2xl">Feature</th>`;
-                Object.keys(styleMatrixData.genres).forEach(genreName => {
-                    headerHtml += `<th class="p-4 border-b-2 border-stone-900 font-bold text-2xl text-center" style="background-color:${styleMatrixData.genres[genreName].color}; color: var(--text-main);">${genreName}</th>`;
-                });
-                headerRow.innerHTML = headerHtml;
                 
-                const thead = document.createElement('thead');
+                // First header cell is blank
+                headerRow.innerHTML = `<th class="p-4 border-b-2 border-stone-900 font-bold text-2xl">Genre</th>`;
+                
+                // Subsequent header cells are the features
+                styleMatrixData.features.forEach(feature => {
+                    headerRow.innerHTML += `<th class="p-4 border-b-2 border-stone-900 font-bold text-2xl text-center">${feature}</th>`;
+                });
                 thead.appendChild(headerRow);
                 matrixTable.appendChild(thead);
 
                 const tbody = document.createElement('tbody');
-                styleMatrixData.features.forEach((feature, index) => {
+                Object.keys(styleMatrixData.genres).forEach(genreName => {
+                    const genreData = styleMatrixData.genres[genreName];
                     const row = document.createElement('tr');
                     row.className = 'border-b-2 border-stone-200';
-                    let rowHtml = `<td class="p-4 font-bold">${feature}</td>`;
-                    Object.keys(styleMatrixData.genres).forEach(genreName => {
-                        rowHtml += `<td class="p-4">${styleMatrixData.genres[genreName].data[index]}</td>`;
+                    row.style.setProperty('--highlight-color', genreData.color);
+
+                    // First cell is the genre name, with color
+                    let rowHtml = `<th class="p-4 font-bold text-lg" style="background-color:${genreData.color}; color: var(--text-main);">${genreName}</th>`;
+                    
+                    // Subsequent cells are the data points
+                    genreData.data.forEach(dataPoint => {
+                        rowHtml += `<td class="p-4">${dataPoint}</td>`;
                     });
                     row.innerHTML = rowHtml;
                     tbody.appendChild(row);
