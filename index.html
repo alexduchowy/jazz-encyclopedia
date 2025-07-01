@@ -366,11 +366,11 @@
                 <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                     <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
                     <div class="hidden sm:flex sm:items-baseline sm:space-x-8">
-                        <a href="#overview" class="nav-link text-bg-stone-900">Overview</a>
-                        <a href="#timeline" class="nav-link text-bg-stone-900">Timeline</a>
-                        <a href="#matrix" class="nav-link text-bg-stone-900">Genres</a>
-                        <a href="#artists" class="nav-link text-bg-stone-900">Artists</a>
-                        <a href="#legacy" class="nav-link text-bg-stone-900">Legacy</a>
+                        <a href="#overview" class="nav-link text-stone-900">Overview</a>
+                        <a href="#timeline" class="nav-link text-stone-900">Timeline</a>
+                        <a href="#matrix" class="nav-link text-stone-900">Genres</a>
+                        <a href="#artists" class="nav-link text-stone-900">Artists</a>
+                        <a href="#legacy" class="nav-link text-stone-900">Legacy</a>
                     </div>
                     <div class="sm:hidden styled-select">
                         <select id="mobile-nav" class="block w-full rounded-sm border-2 border-white bg-black bg-opacity-20 text-white py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
@@ -397,7 +397,7 @@
                         <p class="text-center text-lg text-stone-600 mb-12 italic">An exploration into the era of "controlled freedom" that redefined jazz in the sixties.</p>
                         <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
                             <p>The term "post-bop" is a retrospective label for a musical methodology that flourished in the late 1950s and 1960s. It wasn't a genre with rigid rules, but a shared philosophy of <strong class="text-orange-500">"controlled freedom."</strong> Musicians of this era sought a middle ground between the structured harmony of hard bop and the radical abandon of free jazz. They aimed to expand the expressive possibilities of jazz by incorporating harmonic ambiguity and rhythmic complexity without completely discarding form and melody.</p>
-                        <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
+                            <p>This application provides an interactive journey through this pivotal decade. You can explore a year-by-year timeline of landmark albums, compare the core tenets of post-bop against its contemporary styles, and visualize the contributions of its key architects. It's a tool designed to make the dense, interconnected history of this music accessible and engaging.</p>
                         </div>
                     </div>
                 </section>
@@ -577,8 +577,16 @@
                     }, 0);
                 })
                 .catch(error => {
-                    // If fetching fails, initialize with empty data for editing.
-                    console.warn('Could not load database.html. Initializing with empty data.', error);
+                    // If fetching fails, display an error message and initialize with empty data.
+                    console.error('Could not load or parse database.html.', error);
+                    const timelineWrapper = document.getElementById('timeline-wrapper');
+                    if(timelineWrapper) {
+                        timelineWrapper.innerHTML = `<div class="text-center p-8 text-red-600 bg-red-100 border border-red-600 rounded-md">
+                            <h3 class="font-bold text-lg">Error Loading Data</h3>
+                            <p>Could not fetch 'database.html'. Please ensure the file exists in the same directory and that you are running this project from a local web server.</p>
+                            <p class="text-sm mt-2">See the browser console for more details.</p>
+                        </div>`;
+                    }
                     initializeAppUI([], { features: [], genres: {} }, {});
                     document.getElementById('loader').style.display = 'none';
                     document.getElementById('page-content').classList.remove('content-hidden');
@@ -820,6 +828,8 @@
                 
                 // Initial Filter
                 filterTimeline();
+            } else if (rawTrackData.length === 0) {
+                 // Do nothing here, the error is handled in the catch block
             } else {
                  timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
             }
@@ -860,13 +870,13 @@
 
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
                  detailsContainer.innerHTML = `
-                        <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
-                        <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
-                             <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
-                             <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
-                             <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
-                             <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup || 'N/A'}</span>
-                        </div>`;
+                         <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
+                         <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                               <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                               <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
+                               <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
+                               <strong class="font-bold">Line-Up:</strong> <span>${firstTrack.lineup || 'N/A'}</span>
+                         </div>`;
 
                 const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                 analysisWrapper.innerHTML = ''; // Clear previous content
@@ -878,13 +888,13 @@
                     const songFileName = slugify(track.title) + '.mp3';
                      return `
                              <div class="mb-8 last:mb-0">
-                                  <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
+                                   <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
                                        <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
                                        <audio controls class="styled-player w-full sm:w-52" src="songs/${songFileName}" preload="none"></audio>
-                                  </div>
-                                  <p class="liner-notes-text">${track.analysis}</p>
+                                   </div>
+                                   <p class="liner-notes-text">${track.analysis}</p>
                              </div>
-                        `;
+                         `;
                 }).join('<hr class="border-stone-700 my-8">');
 
                 analysisContainer.innerHTML = pivotalTracksHtml;
@@ -1029,7 +1039,7 @@
                 artistGrid.innerHTML = ''; 
 
                 if (artistsToRender.length === 0) {
-                    artistGrid.innerHTML = `<div class="w-full text-center p-8 text-stone-500 col-span-full">No artists found.</div>`;
+                    artistGrid.innerHTML = `<div class="w-full text-center p-8 text-stone-500 col-span-full">No artists found for this instrument.</div>`;
                     return;
                 }
                 
@@ -1212,7 +1222,7 @@
                     tbody.appendChild(row);
                 });
                 matrixTable.appendChild(tbody);
-            } else {
+            } else if (rawTrackData.length > 0) {
                  matrixTable.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-stone-500">No genre data available.</td></tr>';
             }
             
@@ -1220,11 +1230,11 @@
                  const targetId = e.target.value;
                  const targetElement = document.querySelector(targetId);
                  if (targetElement) {
-                     // Using smooth scroll behavior
-                     window.scrollTo({
-                         top: targetElement.offsetTop - 80, // Adjust for sticky header height
-                         behavior: 'smooth'
-                     });
+                       // Using smooth scroll behavior
+                       window.scrollTo({
+                           top: targetElement.offsetTop - 80, // Adjust for sticky header height
+                           behavior: 'smooth'
+                       });
                  }
             });
             
