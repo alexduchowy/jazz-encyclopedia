@@ -53,7 +53,7 @@
       "artist": "Bud Powell",
       "albumTitle": "The Amazing Bud Powell, Vol. 1",
       "cover": "images/the-amazing-bud-powell-vol-1.jpg",
-      "genres": "Bebop",
+      "genres": "Bebop, Hard Bop",
       "pivotalTracks": [
         {
           "title": "Un Poco Loco",
@@ -69,7 +69,7 @@
       "artist": "Thelonious Monk Sextet",
       "albumTitle": "Genius of Modern Music, Vol. 2",
       "cover": "images/genius-of-modern-music-vol-2.jpg",
-      "genres": "Bebop",
+      "genres": "Bebop, Post-Bop",
       "pivotalTracks": [
         {
           "title": "Criss Cross",
@@ -98,6 +98,22 @@
     },
     {
       "year": 1952,
+      "artist": "Lester Young with the Oscar Peterson Trio",
+      "albumTitle": "Lester Young with the Oscar Peterson Trio",
+      "cover": "images/lester-young-oscar-peterson.jpg",
+      "genres": "Swing, Mainstream Jazz",
+      "pivotalTracks": [
+        {
+          "title": "I Can't Get Started",
+          "recordingDate": "August 4, 1952",
+          "label": "Norgran",
+          "lineup": "Lester Young (tenor saxophone), Oscar Peterson (piano), Barney Kessel (guitar), Ray Brown (bass), J.C. Heard (drums)",
+          "analysis": "A sublime performance from the man who invented the 'cool' school of tenor saxophone. Years after his swing-era peak, Lester Young demonstrates his timeless genius for melodic invention. His solo is a masterclass in understatement and storytelling, floating effortlessly over the pristine accompaniment of the Oscar Peterson Trio. This track is a vital document linking the lyricism of the Swing era to the aesthetics of the Cool Jazz movement that he inspired."
+        }
+      ]
+    },
+    {
+      "year": 1952,
       "artist": "Gerry Mulligan Quartet",
       "albumTitle": "Gerry Mulligan Quartet",
       "cover": "images/gerry-mulligan-quartet.jpg",
@@ -114,10 +130,26 @@
     },
     {
       "year": 1952,
+      "artist": "Horace Silver Trio",
+      "albumTitle": "New Faces, New Sounds",
+      "cover": "images/horace-silver-new-faces.jpg",
+      "genres": "Bebop, Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Safari",
+          "recordingDate": "October 9, 1952",
+          "label": "Blue Note",
+          "lineup": "Horace Silver (piano), Gene Ramey (bass), Art Blakey (drums)",
+          "analysis": "This is one of the earliest recordings to clearly exhibit the nascent elements of hard bop. While still rooted in bebop's harmonic language, Horace Silver's piano playing here is starkly different from Bud Powell's. His style is more percussive, rhythmically direct, and infused with a healthy dose of the blues and what would soon be called \"funk.\" Teamed with the powerful, driving drumming of Art Blakey, \"Safari\" has a bounce and down-home feel that signals a move away from bebop's complex abstractions and towards a more groove-oriented and soulful approach."
+        }
+      ]
+    },
+    {
+      "year": 1952,
       "artist": "Thelonious Monk Trio",
       "albumTitle": "Thelonious Monk Trio",
       "cover": "images/thelonious-monk-trio.jpg",
-      "genres": "Bebop, Hard Bop",
+      "genres": "Bebop, Post-Bop",
       "pivotalTracks": [
         {
           "title": "Little Rootie Tootie",
@@ -141,22 +173,6 @@
           "label": "Verve",
           "lineup": "Charlie Parker (alto saxophone), Hank Jones (piano), Teddy Kotick (bass), Max Roach (drums)",
           "analysis": "A mature and masterful performance from Charlie Parker. Unlike some of his more frenetic early work, 'Laird Baird' showcases a relaxed confidence. Parker's solo is a marvel of melodic construction, effortlessly weaving complex lines through the chord changes with a deep blues feeling. Backed by a flawless rhythm section featuring Hank Jones and Max Roach, this track reveals the supreme logic and lyricism of Bird at the height of his powers."
-        }
-      ]
-    },
-    {
-      "year": 1953,
-      "artist": "The Dave Brubeck Quartet",
-      "albumTitle": "Jazz at Oberlin",
-      "cover": "images/jazz-at-oberlin.jpg",
-      "genres": "Cool Jazz, West Coast Jazz",
-      "pivotalTracks": [
-        {
-          "title": "These Foolish Things (Remind Me of You)",
-          "recordingDate": "March 2, 1953",
-          "label": "Fantasy",
-          "lineup": "Dave Brubeck (piano), Paul Desmond (alto saxophone), Ron Crotty (bass), Lloyd Davis (drums)",
-          "analysis": "A landmark live recording that captures the energy and invention of arguably the most popular jazz group of the 1950s. The track is a stunning showcase for the near-telepathic interplay between Paul Desmond's famously 'dry martini' toned alto sax and Dave Brubeck's adventurous, blocky piano chords. Desmond's solo is a masterclass in melodic storytelling, and the recording highlights the intellectual yet accessible appeal that made the Brubeck Quartet a sensation on college campuses."
         }
       ]
     },
@@ -210,17 +226,65 @@
     },
     {
       "year": 1953,
-      "artist": "Stan Getz and Dizzy Gillespie",
-      "albumTitle": "Diz and Getz",
-      "cover": "images/diz-and-getz.jpg",
-      "genres": "Bebop, Cool Jazz",
+      "artist": "Ben Webster",
+      "albumTitle": "King of the Tenors",
+      "cover": "images/king-of-the-tenors.jpg",
+      "genres": "Swing, Mainstream Jazz",
       "pivotalTracks": [
         {
-          "title": "Exactly Like You",
-          "recordingDate": "December 9, 1953",
+          "title": "Tenderly",
+          "recordingDate": "December 8, 1953",
           "label": "Norgran",
-          "lineup": "Stan Getz (tenor saxophone), Dizzy Gillespie (trumpet), Oscar Peterson (piano), Herb Ellis (guitar), Ray Brown (bass), Max Roach (drums)",
-          "analysis": "This all-star session brings together two titans of their respective instruments. Stan Getz, 'The Sound,' showcases his effortlessly lyrical and warm tenor tone, a style that defined a generation of saxophonists. His relaxed swing provides a brilliant contrast to Dizzy Gillespie's fiery bebop trumpet. Propelled by one of the greatest rhythm sections ever assembled, this track is a perfect example of high-level, mainstream bebop that is both exciting and eminently listenable."
+          "lineup": "Ben Webster (tenor saxophone), Oscar Peterson (piano), Herb Ellis (guitar), Ray Brown (bass), J.C. Heard (drums)",
+          "analysis": "A masterclass in the art of the jazz ballad from one of its greatest practitioners. Ben Webster's famously breathy and robust tone is used to stunning effect on this standard. His improvisation is less about harmonic complexity and more about pure emotion, tone, and space. Each phrase is impeccably shaped, telling a story of romantic world-weariness. It's a perfect example of how the titans of the Swing era continued to create timeless, essential music within the modern jazz landscape."
+        }
+      ]
+    },
+    {
+      "year": 1956,
+      "artist": "Kenny Burrell",
+      "albumTitle": "Introducing Kenny Burrell",
+      "cover": "images/introducing-kenny-burrell.jpg",
+      "genres": "Hard Bop, Soul Jazz",
+      "pivotalTracks": [
+        {
+          "title": "This Time the Dream's on Me",
+          "recordingDate": "May 29, 1956",
+          "label": "Blue Note",
+          "lineup": "Kenny Burrell (guitar), Tommy Flanagan (piano), Paul Chambers (bass), Kenny Clarke (drums), Candido Camero (congas)",
+          "analysis": "The debut album from one of the most important and elegant guitarists in jazz history. On this Harold Arlen standard, Kenny Burrell's sound is immediately recognizable: sophisticated, deeply infused with the blues, and impeccably swinging. His single-note lines are clean and logical, and his chord-melody work is lush and intelligent. This track announced the arrival of a major new voice on the guitar, one who would become a cornerstone of the Blue Note sound and a master of Hard Bop and Soul Jazz."
+        }
+      ]
+    },
+    {
+      "year": 1957,
+      "artist": "Dizzy Gillespie, Sonny Stitt, Stan Getz",
+      "albumTitle": "For Musicians Only",
+      "cover": "images/for-musicians-only.jpg",
+      "genres": "Bebop, Mainstream Jazz",
+      "pivotalTracks": [
+        {
+          "title": "Bebop",
+          "recordingDate": "October 18, 1956",
+          "label": "Verve",
+          "lineup": "Dizzy Gillespie (trumpet), Sonny Stitt (alto saxophone), Stan Getz (tenor saxophone), John Lewis (piano), Herb Ellis (guitar), Ray Brown (bass), Stan Levey (drums)",
+          "analysis": "The album's title is a mission statement. This is a no-holds-barred jam session on Dizzy Gillespie's notoriously difficult anthem, played at a punishing tempo. It's a thrilling display of virtuosic firepower, with Stitt's fiery Parker-esque alto and Getz's surprisingly aggressive tenor going toe-to-toe with Gillespie's pyrotechnics. It's the epitome of a 'cutting contest,' a high-energy blowing session designed to separate the men from the boys and a pure, uncut dose of high-level bebop."
+        }
+      ]
+    },
+    {
+      "year": 1957,
+      "artist": "Dizzy Gillespie, Sonny Stitt, Sonny Rollins",
+      "albumTitle": "Sonny Side Up",
+      "cover": "images/sonny-side-up.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "The Eternal Triangle",
+          "recordingDate": "December 19, 1957",
+          "label": "Verve",
+          "lineup": "Dizzy Gillespie (trumpet), Sonny Stitt (tenor saxophone), Sonny Rollins (tenor saxophone), Ray Bryant (piano), Tommy Bryant (bass), Charlie Persip (drums)",
+          "analysis": "A legendary tenor battle between two titans of the saxophone, Sonny Stitt and Sonny Rollins. On this uptempo blues, the two saxophonists trade fours, eights, and full choruses in a breathtaking display of improvisational one-upmanship. Their styles are a study in contrast—Stitt's fiery, bebop-rooted fluency versus Rollins's motivic, rhythmically daring explorations. Propelled by Dizzy Gillespie's brilliant trumpet and a powerhouse rhythm section, this track is one of the most exciting and iconic tenor saxophone duels ever recorded."
         }
       ]
     },
