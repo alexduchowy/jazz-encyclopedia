@@ -1,6 +1,230 @@
 {
   "albums": [
     {
+      "year": 1950,
+      "artist": "Miles Davis Nonet",
+      "albumTitle": "Birth of the Cool",
+      "cover": "images/birth-of-the-cool.jpg",
+      "genres": "Cool Jazz",
+      "pivotalTracks": [
+        {
+          "title": "Jeru",
+          "recordingDate": "April 22, 1949",
+          "label": "Capitol",
+          "lineup": "Miles Davis (trumpet), J. J. Johnson (trombone), Sandy Siegelstein (french horn), Bill Barber (tuba), Lee Konitz (alto saxophone), Gerry Mulligan (baritone saxophone), John Lewis (piano), Nelson Boyd (bass), Kenny Clarke (drums)",
+          "analysis": "Composed by Gerry Mulligan, 'Jeru' is a defining track from the 'Birth of the Cool' sessions and a perfect encapsulation of the emerging cool jazz aesthetic. The relaxed tempo, intricate but subtle arrangement, and the soft textures of the horns (including french horn and tuba) create a sound far removed from bebop's frenetic energy. Mulligan's own baritone solo is a model of melodic grace, prefiguring the sound that would make his pianoless quartet a sensation on the West Coast."
+        }
+      ]
+    },
+    {
+      "year": 1950,
+      "artist": "Charlie Parker & Dizzy Gillespie",
+      "albumTitle": "Bird and Diz",
+      "cover": "images/bird-and-diz.jpg",
+      "genres": "Bebop",
+      "pivotalTracks": [
+        {
+          "title": "Bloomdido",
+          "recordingDate": "June 6, 1950",
+          "label": "Mercury",
+          "lineup": "Charlie Parker (alto saxophone), Dizzy Gillespie (trumpet), Thelonious Monk (piano), Curly Russell (bass), Buddy Rich (drums)",
+          "analysis": "A landmark session that reunited the two primary architects of bebop, Charlie Parker and Dizzy Gillespie, for the only time in a studio setting with fellow innovator Thelonious Monk. 'Bloomdido' is a quintessential bebop blues, a high-energy vehicle for spectacular improvisational flights. Parker's solo is a torrent of brilliant ideas, while Gillespie's is fiery and rhythmically daring. The track is a masterclass in bebop performance, capturing the exhilarating chemistry of five giants of the genre."
+        }
+      ]
+    },
+    {
+      "year": 1951,
+      "artist": "Lee Konitz Sextet",
+      "albumTitle": "Conception",
+      "cover": "images/lee-konitz-conception.jpg",
+      "genres": "Cool Jazz",
+      "pivotalTracks": [
+        {
+          "title": "Hi-Beck",
+          "recordingDate": "March 8, 1951",
+          "label": "Prestige",
+          "lineup": "Lee Konitz (alto saxophone), Miles Davis (trumpet), Sal Mosca (piano), Billy Bauer (guitar), Arnold Fishkin (bass), Max Roach (drums)",
+          "analysis": "A fascinating document of the \"Tristano School\" of cool. Konitz, Lennie Tristano's star pupil, showcases a sound entirely distinct from Charlie Parker. His alto is dry, his lines are long and winding, and his improvisations prioritize melodic logic and harmonic sophistication over blues-inflected fire. On \"Hi-Beck,\" his intricate contrapuntal interplay with fellow Tristano-ite Billy Bauer and the harmonically advanced piano of Sal Mosca creates a cerebral yet swinging atmosphere. The presence of Miles Davis, who championed Konitz, bridges the gap between the \"Birth of the Cool\" sessions and this more academic, yet equally innovative, strain of cool jazz."
+        }
+      ]
+    },
+    {
+      "year": 1951,
+      "artist": "Bud Powell",
+      "albumTitle": "The Amazing Bud Powell, Vol. 1",
+      "cover": "images/the-amazing-bud-powell-vol-1.jpg",
+      "genres": "Bebop, Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Un Poco Loco",
+          "recordingDate": "May 1, 1951",
+          "label": "Blue Note",
+          "lineup": "Bud Powell (piano), Curly Russell (bass), Max Roach (drums)",
+          "analysis": "A landmark recording that pushed the boundaries of bebop. Powell's composition is built over a Latin-tinged rhythm, but his soloing is what makes the track legendary. He deconstructs the theme, building tension with obsessive, repeated phrases and dissonant clusters that verge on the avant-garde. Max Roach's explosive, layered drumming, particularly his use of the cowbell, is not mere accompaniment but a crucial part of the conversation. 'Un Poco Loco' showcased a more complex, darker, and rhythmically adventurous side of bebop, profoundly influencing the hard bop that would follow."
+        }
+      ]
+    },
+    {
+      "year": 1951,
+      "artist": "Thelonious Monk Sextet",
+      "albumTitle": "Genius of Modern Music, Vol. 2",
+      "cover": "images/genius-of-modern-music-vol-2.jpg",
+      "genres": "Bebop, Post-Bop",
+      "pivotalTracks": [
+        {
+          "title": "Criss Cross",
+          "recordingDate": "July 23, 1951",
+          "label": "Blue Note",
+          "lineup": "Thelonious Monk (piano), Sahib Shihab (alto saxophone), Milt Jackson (vibraphone), Al McKibbon (bass), Art Blakey (drums)",
+          "analysis": "A masterpiece of modern jazz composition, 'Criss Cross' is quintessential Monk. Its theme is a complex, ascending and descending motif built on rhythmic displacement and jarring intervals. This sextet recording is definitive, with Milt Jackson's cool, swinging vibraphone providing a perfect foil to Monk's percussive piano. The track demonstrates that Monk's modernism was not just in his playing, but in his revolutionary architectural approach to writing music, creating a logical but startlingly original sonic world."
+        }
+      ]
+    },
+    {
+      "year": 1951,
+      "artist": "Miles Davis",
+      "albumTitle": "The Blue Note and Prestige Recordings",
+      "cover": "images/miles-davis-blue-note-prestige.jpg",
+      "genres": "Bebop, Cool Jazz",
+      "pivotalTracks": [
+        {
+          "title": "Dig",
+          "recordingDate": "October 5, 1951",
+          "label": "Prestige",
+          "lineup": "Miles Davis (trumpet), Jackie McLean (alto saxophone), Sonny Rollins (tenor saxophone), Walter Bishop Jr. (piano), Tommy Potter (bass), Art Blakey (drums)",
+          "analysis": "This track, credited to Jackie McLean but based on 'Sweet Georgia Brown,' is a vital document of a generational shift. It features the recording debut of the fiery 19-year-old McLean and a young, confident Sonny Rollins, both of whom would become giants. Davis, emerging from his 'Birth of the Cool' phase, leads a session that is pure, hot, and swinging bebop. The raw energy and hungry soloing, particularly from McLean, signal a move away from the intricate arrangements of cool toward the more aggressive, blues-based feel of what would become hard bop."
+        }
+      ]
+    },
+    {
+      "year": 1952,
+      "artist": "Gerry Mulligan Quartet",
+      "albumTitle": "Gerry Mulligan Quartet",
+      "cover": "images/gerry-mulligan-quartet.jpg",
+      "genres": "Cool Jazz",
+      "pivotalTracks": [
+        {
+          "title": "My Funny Valentine",
+          "recordingDate": "September 2, 1952",
+          "label": "Pacific Jazz",
+          "lineup": "Gerry Mulligan (baritone saxophone), Chet Baker (trumpet), Carson Smith (bass), Chico Hamilton (drums)",
+          "analysis": "This recording is the definitive anthem of West Coast Cool Jazz. The revolutionary 'pianoless' format of the quartet created a sparse, open canvas, allowing for a delicate and intricate contrapuntal interplay between Mulligan's lyrical baritone sax and Chet Baker's fragile, melancholy trumpet. Baker's iconic, emotionally direct solo on this standard catapulted him to stardom and perfectly captured the romantic, understated aesthetic of the cool jazz movement."
+        }
+      ]
+    },
+    {
+      "year": 1952,
+      "artist": "Thelonious Monk Trio",
+      "albumTitle": "Thelonious Monk Trio",
+      "cover": "images/thelonious-monk-trio.jpg",
+      "genres": "Bebop, Post-Bop",
+      "pivotalTracks": [
+        {
+          "title": "Little Rootie Tootie",
+          "recordingDate": "October 15, 1952",
+          "label": "Prestige",
+          "lineup": "Thelonious Monk (piano), Gary Mapp (bass), Art Blakey (drums)",
+          "analysis": "Named for his son, 'Little Rootie Tootie' is a quintessential Monk composition, full of the angularity, wit, and rhythmic displacement that defined his unique musical language. This first trio recording of the tune is a masterclass in his pianistic style, demonstrating his percussive attack, unorthodox use of space, and his ability to imply a whole orchestra's worth of harmony and rhythm. It's a foundational text for understanding Monk's role as a primary architect of modern jazz, a composer whose work existed in a category all its own."
+        }
+      ]
+    },
+    {
+      "year": 1952,
+      "artist": "Charlie Parker",
+      "albumTitle": "Now's the Time",
+      "cover": "images/nows-the-time.jpg",
+      "genres": "Bebop",
+      "pivotalTracks": [
+        {
+          "title": "Laird Baird",
+          "recordingDate": "December 30, 1952",
+          "label": "Verve",
+          "lineup": "Charlie Parker (alto saxophone), Hank Jones (piano), Teddy Kotick (bass), Max Roach (drums)",
+          "analysis": "A mature and masterful performance from Charlie Parker. Unlike some of his more frenetic early work, 'Laird Baird' showcases a relaxed confidence. Parker's solo is a marvel of melodic construction, effortlessly weaving complex lines through the chord changes with a deep blues feeling. Backed by a flawless rhythm section featuring Hank Jones and Max Roach, this track reveals the supreme logic and lyricism of Bird at the height of his powers."
+        }
+      ]
+    },
+    {
+      "year": 1953,
+      "artist": "The Dave Brubeck Quartet",
+      "albumTitle": "Jazz at Oberlin",
+      "cover": "images/jazz-at-oberlin.jpg",
+      "genres": "Cool Jazz, West Coast Jazz",
+      "pivotalTracks": [
+        {
+          "title": "These Foolish Things (Remind Me of You)",
+          "recordingDate": "March 2, 1953",
+          "label": "Fantasy",
+          "lineup": "Dave Brubeck (piano), Paul Desmond (alto saxophone), Ron Crotty (bass), Lloyd Davis (drums)",
+          "analysis": "A landmark live recording that captures the energy and invention of arguably the most popular jazz group of the 1950s. The track is a stunning showcase for the near-telepathic interplay between Paul Desmond's famously 'dry martini' toned alto sax and Dave Brubeck's adventurous, blocky piano chords. Desmond's solo is a masterclass in melodic storytelling, and the recording highlights the intellectual yet accessible appeal that made the Brubeck Quartet a sensation on college campuses."
+        }
+      ]
+    },
+    {
+      "year": 1953,
+      "artist": "Parker/Gillespie/Powell/Mingus/Roach",
+      "albumTitle": "Jazz at Massey Hall",
+      "cover": "images/jazz-at-massey-hall.jpg",
+      "genres": "Bebop",
+      "pivotalTracks": [
+        {
+          "title": "Hot House",
+          "recordingDate": "May 15, 1953",
+          "label": "Debut",
+          "lineup": "Charlie Parker (alto saxophone), Dizzy Gillespie (trumpet), Bud Powell (piano), Charles Mingus (bass), Max Roach (drums)",
+          "analysis": "A Tadd Dameron composition that became a bebop anthem, this version from the legendary Massey Hall concert is arguably its most famous. The unison theme, played with breathtaking precision by Parker and Gillespie at a blistering tempo, gives way to one of the most celebrated improvisational exchanges in jazz history. Parker's solo is a torrent of melodic genius, immediately followed by Gillespie's equally brilliant and fiery response. It is a thrilling, essential document of bebop's two greatest masters sharing a stage."
+        }
+      ]
+    },
+    {
+      "year": 1953,
+      "artist": "Tadd Dameron with Clifford Brown",
+      "albumTitle": "Clifford Brown Memorial",
+      "cover": "images/clifford-brown-memorial-album.jpg",
+      "genres": "Hard Bop, Bebop",
+      "pivotalTracks": [
+        {
+          "title": "Easy Living",
+          "recordingDate": "June 22, 1953",
+          "label": "Blue Note",
+          "lineup": "Clifford Brown (trumpet), Idrees Sulieman (trumpet), Herb Mullins (trombone), Gigi Gryce (alto saxophone), Benny Golson (tenor saxophone), Tadd Dameron (piano), Percy Heath (bass), Philly Joe Jones (drums)",
+          "analysis": "In contrast to his fiery up-tempo work, Clifford Brown's performance on the ballad 'Easy Living' reveals his profound lyricism and gorgeous tone. Fronting a larger group arranged by the great Tadd Dameron, Brown's solo is a masterpiece of melodic storytelling. Every note is perfectly placed, his sound is warm and full, and his phrasing is breathtakingly beautiful. This track demonstrated that the emerging hard bop movement had a tender side, and it solidified Brown's reputation as the most complete trumpet player of his generation."
+        }
+      ]
+    },
+    {
+      "year": 1953,
+      "artist": "Clifford Brown",
+      "albumTitle": "Clifford Brown in Stockholm",
+      "cover": "images/clifford-brown-in-stockholm.jpg",
+      "genres": "Bebop, Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Stockholm Sweetnin'",
+          "recordingDate": "September 15, 1953",
+          "label": "Prestige",
+          "lineup": "Clifford Brown (trumpet), Art Farmer (trumpet), Lars Gullin (baritone saxophone), Ake Persson (trombone), Bengt Hallberg (piano), Gunnar Johnson (bass), Jack Noren (drums)",
+          "analysis": "This session, featuring the young Clifford Brown alongside top-tier Swedish jazz musicians, is a landmark of international jazz collaboration. On this buoyant Quincy Jones composition, Brown's trumpet soars with a warmth, confidence, and melodic brilliance that is simply astonishing. His solo is a perfect construction, full of dazzling runs and beautiful phrases, demonstrating why he was already considered a master at such a young age. The track is a joyful, swinging affair that captures the universal language of bebop."
+        }
+      ]
+    },
+    {
+      "year": 1953,
+      "artist": "Stan Getz and Dizzy Gillespie",
+      "albumTitle": "Diz and Getz",
+      "cover": "images/diz-and-getz.jpg",
+      "genres": "Bebop, Mainstream Jazz",
+      "pivotalTracks": [
+        {
+          "title": "Exactly Like You",
+          "recordingDate": "December 9, 1953",
+          "label": "Norgran",
+          "lineup": "Stan Getz (tenor saxophone), Dizzy Gillespie (trumpet), Oscar Peterson (piano), Herb Ellis (guitar), Ray Brown (bass), Max Roach (drums)",
+          "analysis": "This all-star session brings together two titans of their respective instruments. Stan Getz, 'The Sound,' showcases his effortlessly lyrical and warm tenor tone, a style that defined a generation of saxophonists. His relaxed swing provides a brilliant contrast to Dizzy Gillespie's fiery bebop trumpet. Propelled by one of the greatest rhythm sections ever assembled, this track is a perfect example of high-level, mainstream bebop that is both exciting and eminently listenable."
+        }
+      ]
+    },
+    {
       "year": 1954,
       "artist": "Art Blakey Quintet",
       "albumTitle": "A Night at Birdland, Vol. 1",
