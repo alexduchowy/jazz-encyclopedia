@@ -165,7 +165,7 @@
       "artist": "The Modern Jazz Quartet",
       "albumTitle": "The Modern Jazz Quartet",
       "cover": "images/modern-jazz-quartet.jpg",
-      "genres": "Cool Jazz, Third Stream",
+      "genres": "Cool Jazz",
       "pivotalTracks": [
         {
           "title": "Vendome",
@@ -197,7 +197,7 @@
       "artist": "The Dave Brubeck Quartet",
       "albumTitle": "Jazz at Oberlin",
       "cover": "images/jazz-at-oberlin.jpg",
-      "genres": "Cool Jazz, West Coast Jazz",
+      "genres": "Cool Jazz",
       "pivotalTracks": [
         {
           "title": "These Foolish Things (Remind Me of You)",
@@ -226,10 +226,10 @@
     },
     {
       "year": 1953,
-      "artist": "Tadd Dameron with Clifford Brown",
-      "albumTitle": "Clifford Brown Memorial",
-      "cover": "images/clifford-brown-memorial-album.jpg",
-      "genres": "Hard Bop, Bebop",
+      "artist": "Clifford Brown",
+      "albumTitle": "Memorial Album",
+      "cover": "images/memorial-album.jpg",
+      "genres": "Hard Bop",
       "pivotalTracks": [
         {
           "title": "Easy Living",
@@ -245,7 +245,7 @@
       "artist": "Clifford Brown",
       "albumTitle": "Clifford Brown in Stockholm",
       "cover": "images/clifford-brown-in-stockholm.jpg",
-      "genres": "Bebop, Hard Bop",
+      "genres": "Hard Bop, Cool Jazz",
       "pivotalTracks": [
         {
           "title": "Stockholm Sweetnin'",
@@ -277,7 +277,7 @@
       "artist": "Stan Getz and Dizzy Gillespie",
       "albumTitle": "Diz and Getz",
       "cover": "images/diz-and-getz.jpg",
-      "genres": "Bebop, Mainstream Jazz",
+      "genres": "Bebop, Cool Jazz",
       "pivotalTracks": [
         {
           "title": "Exactly Like You",
@@ -485,7 +485,7 @@
       "artist": "Herbie Nichols",
       "albumTitle": "Herbie Nichols Trio",
       "cover": "images/herbie-nichols-trio.jpg",
-      "genres": "Hard Bop",
+      "genres": "Bebop, Hard Bop",
       "pivotalTracks": [
         {
           "title": "The Gig",
