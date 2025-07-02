@@ -598,10 +598,10 @@
     <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
              <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
-                <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
-                <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">&times;</button>
-            </div>
-            <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
+                 <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
+                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">&times;</button>
+             </div>
+             <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
     </div>
 
@@ -751,12 +751,31 @@
             const scrollRightBtn = document.getElementById('scroll-right-btn');
             const genreFilterContainer = document.getElementById('genre-filter-container');
             
-            const genreColors = styleMatrixData.genres ? Object.keys(styleMatrixData.genres).reduce((acc, genre) => {
+            // --- [FIX] DYNAMIC GENRE and COLOR MAP CREATION ---
+            // 1. Get all unique genres from the entire album dataset to ensure all are represented.
+            const allAlbumGenres = new Set();
+            albums.forEach(album => {
+                if(album.genres) {
+                    album.genres.split(', ').forEach(genre => allAlbumGenres.add(genre.trim()));
+                }
+            });
+
+            // 2. Create a comprehensive color map, using defaults for genres not in the style matrix.
+            const baseGenreColors = styleMatrixData.genres ? Object.keys(styleMatrixData.genres).reduce((acc, genre) => {
                 acc[genre] = styleMatrixData.genres[genre].color;
                 return acc;
             }, {}) : {};
 
-            // Populate Genre Filters
+            const fullGenreColorMap = {};
+            const sortedGenres = Array.from(allAlbumGenres).sort();
+
+            sortedGenres.forEach(genre => {
+                fullGenreColorMap[genre] = baseGenreColors[genre] || 'var(--genre-default)'; // Use default color if not in matrix
+            });
+
+            // 3. Populate Genre Filters dynamically from the comprehensive list.
+            genreFilterContainer.innerHTML = ''; // Clear any static content.
+
             const allCheckboxLabel = document.createElement('label');
             allCheckboxLabel.className = 'genre-checkbox-label';
             allCheckboxLabel.style.setProperty('--genre-color', 'var(--text-muted)');
@@ -768,10 +787,10 @@
             allCheckboxLabel.append('All');
             genreFilterContainer.appendChild(allCheckboxLabel);
 
-            Object.keys(genreColors).forEach(genre => {
+            Object.keys(fullGenreColorMap).forEach(genre => {
                 const label = document.createElement('label');
                 label.className = 'genre-checkbox-label';
-                label.style.setProperty('--genre-color', genreColors[genre]);
+                label.style.setProperty('--genre-color', fullGenreColorMap[genre]);
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.value = genre;
@@ -781,6 +800,7 @@
                 label.append(genre);
                 genreFilterContainer.appendChild(label);
             });
+            // --- [END FIX] ---
             
             const allGenreCheckboxes = genreFilterContainer.querySelectorAll('input[data-genre]');
             
@@ -916,7 +936,7 @@
                 const firstTrack = album.pivotalTracks[0] || {};
                 
                 const genreTags = album.genres.split(', ').map(genre => {
-                    const colorVar = genreColors[genre] || 'var(--genre-default)';
+                    const colorVar = fullGenreColorMap[genre] || 'var(--genre-default)';
                     return `<span class="genre-tag" style="background-color: ${colorVar}">${genre}</span>`;
                 }).join(' ');
                 
@@ -937,13 +957,13 @@
 
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
                  detailsContainer.innerHTML = `
-                         <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
-                         <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
-                              <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
-                              <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
-                              <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
-                              <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
-                         </div>`;
+                              <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
+                              <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                                   <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                                   <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
+                                   <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
+                                   <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
+                              </div>`;
 
                 const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                 analysisWrapper.innerHTML = ''; // Clear previous content
@@ -954,14 +974,14 @@
                 const pivotalTracksHtml = album.pivotalTracks.map(track => {
                     const songFileName = slugify(track.title) + '.mp3';
                      return `
-                             <div class="mb-8 last:mb-0">
-                                  <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
-                                       <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
-                                       <audio controls class="styled-player w-full sm:w-52" src="songs/${songFileName}" preload="none"></audio>
+                                  <div class="mb-8 last:mb-0">
+                                       <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
+                                            <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                            <audio controls class="styled-player w-full sm:w-52" src="songs/${songFileName}" preload="none"></audio>
+                                       </div>
+                                       <p class="liner-notes-text">${track.analysis}</p>
                                   </div>
-                                  <p class="liner-notes-text">${track.analysis}</p>
-                             </div>
-                         `;
+                             `;
                 }).join('<hr class="border-stone-700 my-8">');
 
                 analysisContainer.innerHTML = pivotalTracksHtml;
@@ -1383,7 +1403,7 @@
 
                 const hoveredGenres = hoveredCard.dataset.genres.split(', ');
                 const primaryHoveredGenre = hoveredGenres[0];
-                const highlightColor = genreColors[primaryHoveredGenre] || 'var(--accent)';
+                const highlightColor = fullGenreColorMap[primaryHoveredGenre] || 'var(--accent)';
                 hoveredCard.style.setProperty('--highlight-color', highlightColor);
 
                 const yearSection = hoveredCard.closest('.timeline-year-section');
