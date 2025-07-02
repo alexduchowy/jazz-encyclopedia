@@ -713,15 +713,37 @@
             
             const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
             
+            // [FIX] More robust date parsing function
             function parseDate(dateString) {
                 if (typeof dateString !== 'string') return null;
-                if (dateString.startsWith('c.')) {
-                    const year = parseInt(dateString.split(' ').pop());
-                    return new Date(year, 11, 31);
+
+                // Handle circa dates like "c. late 1958" or "c. Fall 1965"
+                if (dateString.toLowerCase().startsWith('c.')) {
+                    const yearMatch = dateString.match(/\d{4}/);
+                    if (yearMatch) {
+                        const year = parseInt(yearMatch[0]);
+                        return new Date(year, 11, 31); // Assume end of year
+                    }
                 }
+
                 const parts = dateString.replace(/,/g, '').split(' ');
-                if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
-                return null;
+                
+                // Handle "Month Day, Year" e.g., "August 4, 1952"
+                if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) {
+                    return new Date(parts[2], monthMap[parts[0]], parts[1]);
+                }
+                
+                // Handle "Month Year" e.g., "August 1960"
+                if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) {
+                    return new Date(parts[1], monthMap[parts[0]], 1);
+                }
+
+                // Handle "Year" only e.g., "1958"
+                if (parts.length === 1 && !isNaN(parts[0])) {
+                    return new Date(parts[0], 0, 1);
+                }
+
+                return null; // Return null if no format matches
             }
             
             // Helper to format names for audio file paths
@@ -778,7 +800,6 @@
                 }
             });
 
-            // --- [FIX] Populate Genre Filters with a specific list ---
             const filterableGenres = ['Bebop', 'Hard Bop', 'Cool Jazz', 'Modal Jazz', 'Post-Bop'];
             genreFilterContainer.innerHTML = ''; // Clear any static content.
 
@@ -806,7 +827,6 @@
                 label.append(genre);
                 genreFilterContainer.appendChild(label);
             });
-            // --- [END FIX] ---
             
             const allGenreCheckboxes = genreFilterContainer.querySelectorAll('input[data-genre]');
             
