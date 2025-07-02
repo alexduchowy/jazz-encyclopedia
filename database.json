@@ -162,6 +162,22 @@
     },
     {
       "year": 1952,
+      "artist": "The Modern Jazz Quartet",
+      "albumTitle": "The Modern Jazz Quartet",
+      "cover": "images/modern-jazz-quartet.jpg",
+      "genres": "Cool Jazz, Third Stream",
+      "pivotalTracks": [
+        {
+          "title": "Vendome",
+          "recordingDate": "December 22, 1952",
+          "label": "Prestige",
+          "lineup": "Milt Jackson (vibraphone), John Lewis (piano), Percy Heath (bass), Kenny Clarke (drums)",
+          "analysis": "A quintessential track from one of the most unique and important groups in jazz history. 'Vendome' perfectly encapsulates the MJQ's 'Third Stream' ethos, blending the formal structure of a classical fugue with the improvisation and swing of jazz. John Lewis's composition is elegant and precise, providing the perfect launching pad for Milt Jackson's cool, blues-inflected vibraphone. It's a landmark of chamber jazz, proving that modern jazz could be both sophisticated and deeply swinging."
+        }
+      ]
+    },
+    {
+      "year": 1952,
       "artist": "Charlie Parker",
       "albumTitle": "Now's the Time",
       "cover": "images/nows-the-time.jpg",
@@ -173,6 +189,22 @@
           "label": "Verve",
           "lineup": "Charlie Parker (alto saxophone), Hank Jones (piano), Teddy Kotick (bass), Max Roach (drums)",
           "analysis": "A mature and masterful performance from Charlie Parker. Unlike some of his more frenetic early work, 'Laird Baird' showcases a relaxed confidence. Parker's solo is a marvel of melodic construction, effortlessly weaving complex lines through the chord changes with a deep blues feeling. Backed by a flawless rhythm section featuring Hank Jones and Max Roach, this track reveals the supreme logic and lyricism of Bird at the height of his powers."
+        }
+      ]
+    },
+    {
+      "year": 1953,
+      "artist": "The Dave Brubeck Quartet",
+      "albumTitle": "Jazz at Oberlin",
+      "cover": "images/jazz-at-oberlin.jpg",
+      "genres": "Cool Jazz, West Coast Jazz",
+      "pivotalTracks": [
+        {
+          "title": "These Foolish Things (Remind Me of You)",
+          "recordingDate": "March 2, 1953",
+          "label": "Fantasy",
+          "lineup": "Dave Brubeck (piano), Paul Desmond (alto saxophone), Ron Crotty (bass), Lloyd Davis (drums)",
+          "analysis": "A landmark live recording that captures the energy and invention of arguably the most popular jazz group of the 1950s. The track is a stunning showcase for the near-telepathic interplay between Paul Desmond's famously 'dry martini' toned alto sax and Dave Brubeck's adventurous, blocky piano chords. Desmond's solo is a masterclass in melodic storytelling, and the recording highlights the intellectual yet accessible appeal that made the Brubeck Quartet a sensation on college campuses."
         }
       ]
     },
@@ -241,6 +273,22 @@
       ]
     },
     {
+      "year": 1953,
+      "artist": "Stan Getz and Dizzy Gillespie",
+      "albumTitle": "Diz and Getz",
+      "cover": "images/diz-and-getz.jpg",
+      "genres": "Bebop, Mainstream Jazz",
+      "pivotalTracks": [
+        {
+          "title": "Exactly Like You",
+          "recordingDate": "December 9, 1953",
+          "label": "Norgran",
+          "lineup": "Stan Getz (tenor saxophone), Dizzy Gillespie (trumpet), Oscar Peterson (piano), Herb Ellis (guitar), Ray Brown (bass), Max Roach (drums)",
+          "analysis": "This all-star session brings together two titans of their respective instruments. Stan Getz, 'The Sound,' showcases his effortlessly lyrical and warm tenor tone, a style that defined a generation of saxophonists. His relaxed swing provides a brilliant contrast to Dizzy Gillespie's fiery bebop trumpet. Propelled by one of the greatest rhythm sections ever assembled, this track is a perfect example of high-level, mainstream bebop that is both exciting and eminently listenable."
+        }
+      ]
+    }
+    {
       "year": 1956,
       "artist": "Kenny Burrell",
       "albumTitle": "Introducing Kenny Burrell",
@@ -253,22 +301,6 @@
           "label": "Blue Note",
           "lineup": "Kenny Burrell (guitar), Tommy Flanagan (piano), Paul Chambers (bass), Kenny Clarke (drums), Candido Camero (congas)",
           "analysis": "The debut album from one of the most important and elegant guitarists in jazz history. On this Harold Arlen standard, Kenny Burrell's sound is immediately recognizable: sophisticated, deeply infused with the blues, and impeccably swinging. His single-note lines are clean and logical, and his chord-melody work is lush and intelligent. This track announced the arrival of a major new voice on the guitar, one who would become a cornerstone of the Blue Note sound and a master of Hard Bop and Soul Jazz."
-        }
-      ]
-    },
-    {
-      "year": 1957,
-      "artist": "Dizzy Gillespie, Sonny Stitt, Stan Getz",
-      "albumTitle": "For Musicians Only",
-      "cover": "images/for-musicians-only.jpg",
-      "genres": "Bebop",
-      "pivotalTracks": [
-        {
-          "title": "Bebop",
-          "recordingDate": "October 18, 1956",
-          "label": "Verve",
-          "lineup": "Dizzy Gillespie (trumpet), Sonny Stitt (alto saxophone), Stan Getz (tenor saxophone), John Lewis (piano), Herb Ellis (guitar), Ray Brown (bass), Stan Levey (drums)",
-          "analysis": "The album's title is a mission statement. This is a no-holds-barred jam session on Dizzy Gillespie's notoriously difficult anthem, played at a punishing tempo. It's a thrilling display of virtuosic firepower, with Stitt's fiery Parker-esque alto and Getz's surprisingly aggressive tenor going toe-to-toe with Gillespie's pyrotechnics. It's the epitome of a 'cutting contest,' a high-energy blowing session designed to separate the men from the boys and a pure, uncut dose of high-level bebop."
         }
       ]
     },
@@ -689,18 +721,18 @@
       ]
     },
     {
-      "year": 1956,
-      "artist": "Stan Getz, Dizzy Gillespie, Sonny Stitt",
+      "year": 1957,
+      "artist": "Dizzy Gillespie, Sonny Stitt, Stan Getz",
       "albumTitle": "For Musicians Only",
       "cover": "images/for-musicians-only.jpg",
-      "genres": "Hard Bop",
+      "genres": "Bebop",
       "pivotalTracks": [
         {
-          "title": "Wee (Allen's Alley)",
+          "title": "Bebop",
           "recordingDate": "October 18, 1956",
           "label": "Verve",
-          "lineup": "Stan Getz (tenor saxophone), Dizzy Gillespie (trumpet), Sonny Stitt (tenor saxophone), John Lewis (piano), Herb Ellis (guitar), Ray Brown (bass), Stan Levey (drums)",
-          "analysis": "The album title is a fitting description for this high-speed jam session. The track is a classic 'cutting contest,' a friendly duel between three titans. It's an exhilarating display of virtuosity and competitive spirit, with Dizzy Gillespie's pyrotechnic trumpet leading the charge against the contrasting tenor styles of Stitt and Getz."
+          "lineup": "Dizzy Gillespie (trumpet), Sonny Stitt (alto saxophone), Stan Getz (tenor saxophone), John Lewis (piano), Herb Ellis (guitar), Ray Brown (bass), Stan Levey (drums)",
+          "analysis": "The album's title is a mission statement. This is a no-holds-barred jam session on Dizzy Gillespie's notoriously difficult anthem, played at a punishing tempo. It's a thrilling display of virtuosic firepower, with Stitt's fiery Parker-esque alto and Getz's surprisingly aggressive tenor going toe-to-toe with Gillespie's pyrotechnics. It's the epitome of a 'cutting contest,' a high-energy blowing session designed to separate the men from the boys and a pure, uncut dose of high-level bebop."
         }
       ]
     },
