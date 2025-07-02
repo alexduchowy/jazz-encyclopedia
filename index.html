@@ -401,8 +401,13 @@
             opacity: 1;
             transform: translateY(0);
         }
+        .title-rotate {
+            transform: rotate(-1.5deg);
+            margin-top: 35px;
+        }
         .nav-bar-hidden-behaviour {
             display: flex;
+            transform: rotate(-1.5deg);
         }
         @media (max-width: 640px) {
             .nav-bar-hidden-behaviour {
@@ -428,7 +433,7 @@
                  
                  <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
                  <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
+                     <h1 class="title-rotate text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
                      <div class="nav-bar-hidden-behaviour sm:items-baseline sm:space-x-8">
                          <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
                          <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
