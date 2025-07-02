@@ -2,6 +2,118 @@
   "albums": [
     {
       "year": 1954,
+      "artist": "Thelonious Monk / Sonny Rollins",
+      "albumTitle": "Thelonious Monk and Sonny Rollins",
+      "cover": "images/thelonious-monk-and-sonny-rollins.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "I Want to Be Happy",
+          "recordingDate": "September 22, 1954",
+          "label": "Prestige",
+          "lineup": "Thelonious Monk (piano), Sonny Rollins (tenor saxophone), Tommy Potter (bass), Art Taylor (drums)",
+          "analysis": "This track documents the brilliant, if stylistically contrasting, early partnership between two jazz titans. Rollins's muscular, driving tenor saxophone navigates the standard with bop fluency, while Monk's accompaniment is characteristically sparse, angular, and rhythmically disruptive. The tension and interplay between these two unique voices provide a fascinating listen, showcasing a pivotal moment as hard bop was taking shape."
+        }
+      ]
+    },
+    {
+      "year": 1956,
+      "artist": "Thad Jones",
+      "albumTitle": "The Magnificent Thad Jones",
+      "cover": "images/the-magnificent-thad-jones.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "April in Paris",
+          "recordingDate": "July 9, 1956",
+          "label": "Blue Note",
+          "lineup": "Thad Jones (trumpet), Billy Mitchell (tenor saxophone), Barry Harris (piano), Percy Heath (bass), Max Roach (drums)",
+          "analysis": "While Count Basie's Orchestra had made this tune famous, Thad Jones reclaims it in a quintet setting with his own brilliant arrangement. The track is a perfect vehicle for Jones's sophisticated and fluid trumpet style, full of surprising turns and a warm, flugelhorn-like tone. It showcases his dual genius as both a top-tier hard bop improviser and a forward-thinking arranger, all supported by an impeccable rhythm section led by Max Roach."
+        }
+      ]
+    },
+    {
+      "year": 1957,
+      "artist": "Lee Morgan",
+      "albumTitle": "The Cooker",
+      "cover": "images/the-cooker.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "A Night in Tunisia",
+          "recordingDate": "September 29, 1957",
+          "label": "Blue Note",
+          "lineup": "Lee Morgan (trumpet), Pepper Adams (baritone saxophone), Bobby Timmons (piano), Paul Chambers (bass), Philly Joe Jones (drums)",
+          "analysis": "This performance is a quintessential example of high-energy hard bop, taken at a blistering tempo. The 19-year-old Lee Morgan plays with astonishing fire, technique, and maturity, paying homage to Dizzy Gillespie while asserting his own powerful style. The track is propelled by the explosive drumming of Philly Joe Jones, making it one of the most exciting and virtuosic renditions of the classic tune ever recorded."
+        }
+      ]
+    },
+    {
+      "year": 1958,
+      "artist": "Ornette Coleman",
+      "albumTitle": "Something Else!!!! The Music of Ornette Coleman",
+      "cover": "images/something-else-the-music-of-ornette-coleman.jpg",
+      "genres": "Post-Bop",
+      "pivotalTracks": [
+        {
+          "title": "Jayne",
+          "recordingDate": "February 22, 1958",
+          "label": "Contemporary",
+          "lineup": "Ornette Coleman (alto saxophone), Don Cherry (trumpet), Walter Norris (piano), Don Payne (bass), Billy Higgins (drums)",
+          "analysis": "From his debut album, 'Jayne' serves as a key introduction to Ornette Coleman's revolutionary musical language. While still rooted in bop structures—notably with the inclusion of a piano, which he would soon discard—the track showcases his unique gift for crafting unforgettable, folk-like melodies. Coleman's solo is lyrical and emotionally direct, prefiguring the 'harmolodic' concepts and freer forms that would soon change the course of jazz."
+        }
+      ]
+    },
+    {
+      "year": 1958,
+      "artist": "Dizzy Reece",
+      "albumTitle": "Blues in Trinity",
+      "cover": "images/blues-in-trinity.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Blues in Trinity",
+          "recordingDate": "August 24, 1958",
+          "label": "Blue Note",
+          "lineup": "Dizzy Reece (trumpet), Donald Byrd (trumpet), Tubby Hayes (tenor saxophone), Terry Shannon (piano), Lloyd Andrews (bass), Art Taylor (drums)",
+          "analysis": "The title track is a moody, soulful masterpiece and a highlight of the British jazz scene's contribution to the Blue Note catalog. The piece features a memorable guest appearance by an uncredited Donald Byrd, creating a powerful two-trumpet front line. The tune's slow-burning groove and the raw, blues-drenched solos from Reece, Byrd, and UK tenor giant Tubby Hayes make it a classic transatlantic hard bop statement."
+        }
+      ]
+    },
+    {
+      "year": 1958,
+      "artist": "Bud Powell",
+      "albumTitle": "Time Waits: The Amazing Bud Powell, Vol. 4",
+      "cover": "images/time-waits-the-amazing-bud-powell-vol-4.jpg",
+      "genres": "Hard Bop",
+      "pivotalTracks": [
+        {
+          "title": "Sub City",
+          "recordingDate": "May 28, 1958",
+          "label": "Blue Note",
+          "lineup": "Bud Powell (piano), Sam Jones (bass), Philly Joe Jones (drums)",
+          "analysis": "This track captures the bebop pioneer in a fiery trio setting, his first in several years. Propelled by the famously dynamic and interactive drumming of Philly Joe Jones, Powell delivers a performance that is both intricate and intense. 'Sub City,' a Powell original, showcases his enduring genius for creating complex, rhythmically compelling compositions and proves that even in his later years, his innovative spark was very much alive."
+        }
+      ]
+    },
+    {
+      "year": 1959,
+      "artist": "Jackie McLean",
+      "albumTitle": "New Soil",
+      "cover": "images/new-soil.jpg",
+      "genres": "Post-Bop",
+      "pivotalTracks": [
+        {
+          "title": "Minor Apprehension",
+          "recordingDate": "May 2, 1959",
+          "label": "Blue Note",
+          "lineup": "Jackie McLean (alto saxophone), Donald Byrd (trumpet), Walter Davis Jr. (piano), Paul Chambers (bass), Pete La Roca (drums)",
+          "analysis": "This track marks a crucial turning point for Jackie McLean and a glimpse into the future of jazz. While still grounded in hard bop, the composition by Walter Davis Jr. and McLean's searing, emotionally raw alto solo push against conventional harmony. His sharp, slightly flat intonation and blues-crying intensity signal a move away from bebop orthodoxy toward the freer, more modal territory he would explore throughout the 1960s, making 'New Soil' a key transitional album."
+        }
+      ]
+    },
+    {
+      "year": 1954,
       "artist": "Art Blakey Quintet",
       "albumTitle": "A Night at Birdland, Vol. 1",
       "cover": "images/a-night-at-birdland,-vol.-1.jpg",
