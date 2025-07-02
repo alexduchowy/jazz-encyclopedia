@@ -24,6 +24,7 @@
             --accent-dark: #ea580c; /* orange-600 */
 
             /* Genre Colors */
+            --genre-bebop: #C19A6B; /* Pastel Brown */
             --genre-hard-bop: #d8b4fe; /* purple-300 */
             --genre-cool-jazz: #93c5fd; /* blue-300 */
             --genre-modal-jazz: #a7f3d0; /* emerald-200 */
@@ -323,7 +324,7 @@
             margin-right: 0.5rem;
             cursor: pointer;
             position: relative;
-            transition: background-color 0.2s;
+            transition: background-color: 0.2s;
             border: 2px solid var(--genre-color, var(--text-main));
         }
         .genre-checkbox-label input:checked {
@@ -610,6 +611,15 @@
     {
         "features": ["Harmony", "Rhythm", "Form", "Key Artists"],
         "genres": {
+            "Bebop": {
+                "color": "var(--genre-bebop)",
+                "data": [
+                    "Fast-moving, complex chord progressions (e.g., ii-V-I with substitutions), use of altered chords and extensions.",
+                    "Blistering tempos, virtuosic and rhythmically complex solos, 'dropping bombs' with the bass drum.",
+                    "Often based on standard song forms (like blues and 'I Got Rhythm' changes) but used as vehicles for extended improvisation.",
+                    "Charlie Parker, Dizzy Gillespie, Thelonious Monk, Bud Powell"
+                ]
+            },
             "Hard Bop": {
                 "color": "var(--genre-hard-bop)",
                 "data": [
@@ -751,29 +761,25 @@
             const scrollRightBtn = document.getElementById('scroll-right-btn');
             const genreFilterContainer = document.getElementById('genre-filter-container');
             
-            // --- [FIX] DYNAMIC GENRE and COLOR MAP CREATION ---
-            // 1. Get all unique genres from the entire album dataset to ensure all are represented.
-            const allAlbumGenres = new Set();
-            albums.forEach(album => {
-                if(album.genres) {
-                    album.genres.split(', ').forEach(genre => allAlbumGenres.add(genre.trim()));
-                }
-            });
-
-            // 2. Create a comprehensive color map, using defaults for genres not in the style matrix.
+            // --- DYNAMIC GENRE and COLOR MAP CREATION ---
             const baseGenreColors = styleMatrixData.genres ? Object.keys(styleMatrixData.genres).reduce((acc, genre) => {
                 acc[genre] = styleMatrixData.genres[genre].color;
                 return acc;
             }, {}) : {};
-
-            const fullGenreColorMap = {};
-            const sortedGenres = Array.from(allAlbumGenres).sort();
-
-            sortedGenres.forEach(genre => {
-                fullGenreColorMap[genre] = baseGenreColors[genre] || 'var(--genre-default)'; // Use default color if not in matrix
+            
+            const fullGenreColorMap = { ...baseGenreColors };
+            albums.forEach(album => {
+                if(album.genres) {
+                    album.genres.split(', ').forEach(genre => {
+                        if (!fullGenreColorMap[genre]) {
+                           fullGenreColorMap[genre] = 'var(--genre-default)';
+                        }
+                    });
+                }
             });
 
-            // 3. Populate Genre Filters dynamically from the comprehensive list.
+            // --- [FIX] Populate Genre Filters with a specific list ---
+            const filterableGenres = ['Bebop', 'Hard Bop', 'Cool Jazz', 'Modal Jazz', 'Post-Bop'];
             genreFilterContainer.innerHTML = ''; // Clear any static content.
 
             const allCheckboxLabel = document.createElement('label');
@@ -787,10 +793,10 @@
             allCheckboxLabel.append('All');
             genreFilterContainer.appendChild(allCheckboxLabel);
 
-            Object.keys(fullGenreColorMap).forEach(genre => {
+            filterableGenres.forEach(genre => {
                 const label = document.createElement('label');
                 label.className = 'genre-checkbox-label';
-                label.style.setProperty('--genre-color', fullGenreColorMap[genre]);
+                label.style.setProperty('--genre-color', fullGenreColorMap[genre] || 'var(--genre-default)');
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.value = genre;
@@ -1442,7 +1448,7 @@
                         ctx.beginPath();
                         ctx.moveTo(startX, startY);
                         ctx.lineTo(endX, endY);
-                        ctx.strokeStyle = highlightColor.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(highlightColor.slice(4, -1)) : highlightColor;
+                        ctx.strokeStyle = highlightColor.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(highlightColor.slice(4, -1)) : highlight.slice(4, -1);
                         ctx.globalAlpha = 0.6;
                         ctx.lineWidth = 2;
                         ctx.stroke();
