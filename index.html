@@ -178,7 +178,6 @@
         }
         .timeline-album-card:hover {
             transform: translateY(-5px) rotate(2deg);
-            box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
         }
         .timeline-album-card.dimmed {
             opacity: 0.5;
@@ -465,12 +464,13 @@
 
         <main>
             <!-- Hero Banner Section -->
-            <section id="banner" class="w-full h-64 md:h-80 lg:h-96">
+            <section id="banner" class="relative w-full h-64 md:h-80 lg:h-96">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
 
             <!-- Overview Section -->
-            <section id="overview" class="pt-20 pb-16 sm:pb-20">
+            <section id="overview" class="pt-12 pb-16 sm:pb-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
                         <h2 class="section-header text-5xl">An Encyclopedia of Jazz Evolution</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 italic">Follow the development of modern jazz through the 50s and 60s.</p>
