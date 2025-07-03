@@ -58,12 +58,12 @@
 
         /* Section header styling */
         .section-header {
-             transform: rotate(-1deg);
-             display: inline-block;
-             background-color: var(--accent);
-             color: var(--bg-main);
-             padding: 0.25rem 1rem;
-             margin-bottom: 1rem;
+              transform: rotate(-1deg);
+              display: inline-block;
+              background-color: var(--accent);
+              color: var(--bg-main);
+              padding: 0.25rem 1rem;
+              margin-bottom: 1rem;
         }
 
         /* Timeline year marker styling */
@@ -94,8 +94,8 @@
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
         }
         .modal.opacity-0 .modal-content {
-             opacity: 0;
-             transform: scale(0.95) translateY(10px);
+              opacity: 0;
+              transform: scale(0.95) translateY(10px);
         }
         
         /* Horizontal draggable timeline container */
@@ -225,16 +225,16 @@
             box-shadow: 8px 8px 0px var(--accent) !important; /* Ensure hover always wins */
         }
         .artist-card .artist-photo-container {
-             height: 224px;
-             width: 100%;
+              height: 224px;
+              width: 100%;
         }
         .artist-card img {
-             width: 100%;
-             height: 100%;
-             object-fit: cover;
-             object-position: center;
-             filter: grayscale(100%);
-             transition: filter 0.3s ease;
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              object-position: center;
+              filter: grayscale(100%);
+              transition: filter 0.3s ease;
         }
          .artist-card:hover img {
             filter: grayscale(0%);
@@ -428,31 +428,31 @@
     <div id="page-content" class="content-hidden">
         <!-- HEADER -->
         <div class="sticky top-0 z-50 h-24 mb-[-64px]">
-             <header class="relative container mx-auto h-full">
-                 <!-- This is the crooked background. It is positioned absolutely within the header -->
-                 <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
-                 
-                 <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
-                 <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                     <h1 class="title-rotate text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
-                     <div class="nav-bar-hidden-behaviour sm:items-baseline sm:space-x-8">
-                         <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
-                         <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                         <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
-                         <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
-                         <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                     </div>
-                     <div class="sm:hidden styled-select">
-                         <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
-                             <option value="#overview">Overview</option>
-                             <option value="#timeline">Timeline</option>
-                             <option value="#matrix">Genres</option>
-                             <option value="#artists">Artists</option>
-                             <option value="#legacy">Legacy</option>
-                         </select>
-                     </div>
-                 </nav>
-             </header>
+              <header class="relative container mx-auto h-full">
+                    <!-- This is the crooked background. It is positioned absolutely within the header -->
+                    <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
+                    
+                    <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
+                    <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                        <h1 class="title-rotate text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
+                        <div class="nav-bar-hidden-behaviour sm:items-baseline sm:space-x-8">
+                            <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
+                            <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
+                            <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
+                            <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
+                            <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                        </div>
+                        <div class="sm:hidden styled-select">
+                            <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
+                                <option value="#overview">Overview</option>
+                                <option value="#timeline">Timeline</option>
+                                <option value="#matrix">Genres</option>
+                                <option value="#artists">Artists</option>
+                                <option value="#legacy">Legacy</option>
+                            </select>
+                        </div>
+                    </nav>
+                </header>
         </div>
 
 
@@ -465,7 +465,7 @@
             <!-- Overview Section -->
             <section id="overview" class="pt-20 pb-16 sm:pb-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
-                     <h2 class="section-header text-5xl">An Encyclopedia of Jazz Evolution</h2>
+                        <h2 class="section-header text-5xl">An Encyclopedia of Jazz Evolution</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 italic">Follow the development of modern jazz through the 50s and 60s.</p>
                     <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
                         <p>The period between 1950 and 1969 represents the most accelerated and dynamic evolution in jazz history. The decade began with the virtuosic fire of <strong>Bebop</strong> firmly established as the music's cutting edge. From this complex foundation, the music branched into myriad new forms. Some musicians pursued the soulful, blues-drenched energy of <strong>Hard Bop</strong>, while others explored the harmonically rich, restrained arrangements of <strong>Cool Jazz</strong> and resurgent <strong>Big Bands</strong>.</p>
@@ -514,7 +514,7 @@
             <!-- Key Artists Grid Section -->
             <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                     <h2 class="section-header text-5xl">The Architects</h2>
+                        <h2 class="section-header text-5xl">The Architects</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined the Bop era.</p>
                     
                     <!-- Instrument Filter Dropdown -->
@@ -533,8 +533,8 @@
                         </div>
                    </div>
 
-                   <!-- Artist Pagination Controls -->
-                   <div id="artist-pagination-controls" class="mt-8 flex justify-center items-center gap-4">
+                    <!-- Artist Pagination Controls -->
+                    <div id="artist-pagination-controls" class="mt-8 flex justify-center items-center gap-4">
                         <button id="artist-prev-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous</button>
                         <span id="artist-page-indicator" class="px-4 py-2 text-stone-900 font-bold text-lg"></span>
                         <button id="artist-next-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next</button>
@@ -551,11 +551,11 @@
                         <p>The golden age of acoustic innovation from 1950 to 1969 was a period of intense, shared creativity. However, by the end of the 1960s, the cohesive center began to dissolve. The death of John Coltrane in 1967 removed a spiritual and musical lodestar for the avant-garde. Simultaneously, Miles Davis, ever the innovator, began incorporating electric instruments and rock-influenced rhythms, paving the way for <strong>Jazz Fusion</strong> with albums like *In a Silent Way* and *Bitches Brew*. This seismic shift created a new mainstream that would dominate the 1970s.</p>
                         <p>Yet, the legacy of this entire two-decade period is profound. The harmonic vocabulary of Bebop, the soulful feel of Hard Bop, the arranging concepts of Cool Jazz, and the structural freedom of Post-Bop became a permanent part of the modern jazz language. In the 1980s, the "Young Lions" movement, led by trumpeter Wynton Marsalis, sparked a revival that looked directly back to the acoustic, small-group aesthetic of this era. This cemented the 1950-1969 period as a classic age, and its language remains the primary foundation for much of the acoustic jazz being played today.</p>
                     </div>
-                     <!-- Spotify Playlist -->
-                     <div class="mt-16 text-left">
-                         <h3 class="text-3xl text-stone-900 mb-4">Listen now on Spotify:</h3>
-                         <iframe style="border-radius:0; border: 2px solid #1c1917;" src="https://open.spotify.com/embed/playlist/6JT7jtrtYO7d5FBC3Fhh0p?utm_source=generator&theme=0" width="100%" height="500" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                     </div>
+                      <!-- Spotify Playlist -->
+                      <div class="mt-16 text-left">
+                          <h3 class="text-3xl text-stone-900 mb-4">Listen now on Spotify:</h3>
+                          <iframe style="border-radius:0; border: 2px solid #1c1917;" src="https://open.spotify.com/embed/playlist/6JT7jtrtYO7d5FBC3Fhh0p?utm_source=generator&theme=0" width="100%" height="500" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                      </div>
                 </div>
             </section>
         </main>
@@ -582,7 +582,7 @@
             <div id="modal-body" class="p-6 overflow-y-auto">
                 <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
                     <div id="modal-album-art-container" class="w-full md:w-1/3 flex-shrink-0">
-                         <img id="modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="">
+                        <img id="modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="">
                     </div>
                     <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
@@ -668,7 +668,7 @@
             const styleMatrixDataEl = document.getElementById('styleMatrixData');
             const styleMatrixData = JSON.parse(styleMatrixDataEl.textContent);
 
-            // Fetch the rest of the data
+            // Fetch the rest of the data from the external file
             fetch('database.json')
                 .then(response => {
                     if (!response.ok) {
@@ -984,13 +984,13 @@
 
                 const detailsContainer = albumModal.querySelector('#modal-album-details');
                  detailsContainer.innerHTML = `
-                              <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
-                              <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
-                                   <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
-                                   <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
-                                   <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
-                                   <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
-                              </div>`;
+                                  <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
+                                  <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                                      <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                                      <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
+                                      <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
+                                      <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
+                                  </div>`;
 
                 const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                 analysisWrapper.innerHTML = ''; // Clear previous content
@@ -1001,14 +1001,14 @@
                 const pivotalTracksHtml = album.pivotalTracks.map(track => {
                     const songFileName = slugify(track.title) + '.mp3';
                      return `
-                                  <div class="mb-8 last:mb-0">
-                                       <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
-                                            <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
-                                            <audio controls class="styled-player w-full sm:w-52" src="songs/${songFileName}" preload="none"></audio>
-                                       </div>
-                                       <p class="liner-notes-text">${track.analysis}</p>
-                                  </div>
-                             `;
+                                     <div class="mb-8 last:mb-0">
+                                         <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
+                                             <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                             <audio controls class="styled-player w-full sm:w-52" src="songs/${songFileName}" preload="none"></audio>
+                                         </div>
+                                         <p class="liner-notes-text">${track.analysis}</p>
+                                     </div>
+                                 `;
                 }).join('<hr class="border-stone-700 my-8">');
 
                 analysisContainer.innerHTML = pivotalTracksHtml;
@@ -1469,7 +1469,7 @@
                         ctx.beginPath();
                         ctx.moveTo(startX, startY);
                         ctx.lineTo(endX, endY);
-                        ctx.strokeStyle = highlightColor.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(highlightColor.slice(4, -1)) : highlight.slice(4, -1);
+                        ctx.strokeStyle = highlightColor.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(highlightColor.slice(4, -1)) : highlightColor;
                         ctx.globalAlpha = 0.6;
                         ctx.lineWidth = 2;
                         ctx.stroke();
@@ -1478,16 +1478,43 @@
                 }
             }
             
+            // --- PERFORMANCE OPTIMIZATION: Debounce function ---
+            // This utility prevents a function from being called too frequently.
+            // It will only execute the function after a specified delay has passed without any new calls.
+            function debounce(func, wait) {
+                let timeout;
+                const debounced = function(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+                // Add a method to cancel any pending execution
+                debounced.cancel = () => {
+                    clearTimeout(timeout);
+                };
+                return debounced;
+            }
+
+            // Create a debounced version of the drawConnections function with a 50ms delay
+            const debouncedDrawConnections = debounce(drawConnections, 50);
+
             timelineWrapper.addEventListener('mouseover', (e) => {
                 const card = e.target.closest('.timeline-album-card');
                 if (card && !card.classList.contains('hidden')) {
-                    drawConnections(card);
+                    // Use the debounced function to avoid excessive redraws
+                    debouncedDrawConnections(card);
                 }
             });
 
             timelineWrapper.addEventListener('mouseout', (e) => {
                 const card = e.target.closest('.timeline-album-card');
                 if (card) {
+                    // Cancel any pending draw operation when the mouse leaves
+                    debouncedDrawConnections.cancel();
+                    // Immediately clear the canvas and highlights
                     drawConnections(null);
                 }
             });
