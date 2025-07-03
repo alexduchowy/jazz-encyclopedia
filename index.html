@@ -1469,7 +1469,8 @@
                         ctx.beginPath();
                         ctx.moveTo(startX, startY);
                         ctx.lineTo(endX, endY);
-                        ctx.strokeStyle = highlightColor.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(highlightColor.slice(4, -1)) : highlightColor;
+                        // FIX: Corrected typo from 'highlight' to 'highlightColor' and added trim()
+                        ctx.strokeStyle = highlightColor.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(highlightColor.slice(4, -1).trim()) : highlightColor;
                         ctx.globalAlpha = 0.6;
                         ctx.lineWidth = 2;
                         ctx.stroke();
