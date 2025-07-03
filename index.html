@@ -176,8 +176,6 @@
             opacity: 1;
             /* --highlight-color will be set by JS */
         }
-        /* FIX: Removed box-shadow from the default hover to prevent orange flash.
-           The shadow is now exclusively controlled by the .highlighted class set via JS. */
         .timeline-album-card:hover {
             transform: translateY(-5px) rotate(-2deg);
         }
@@ -189,6 +187,13 @@
             transform: translateY(-5px) rotate(-2deg);
             box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
         }
+        /* Style for the card that is currently selected/clicked */
+        .timeline-album-card.clicked {
+            transform: translateY(-5px) rotate(-2deg) scale(1.05);
+            box-shadow: 8px 8px 0px var(--accent) !important;
+            opacity: 1 !important;
+            z-index: 10;
+        }
         .timeline-album-card img {
             width: 100%;
             height: 200px;
@@ -196,7 +201,7 @@
             filter: grayscale(100%);
             transition: filter 0.3s ease;
         }
-        .timeline-album-card:hover img, .timeline-album-card.highlighted img {
+        .timeline-album-card:hover img, .timeline-album-card.highlighted img, .timeline-album-card.clicked img {
             filter: grayscale(0%);
         }
         .timeline-album-card-info {
@@ -567,7 +572,7 @@
                 <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
                 <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
                 <div class="mt-6 border-t border-stone-700 pt-6">
-                    <p class="text-xs text-stone-400">&copy; 2025 Controlled Freedom. All Rights Reserved.</p>
+                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
                     <p class="text-xs text-stone-500 mt-2">Disclaimer: All music and images are the property of their respective copyright holders. This is a non-profit project for educational purposes only.</p>
                 </div>
             </div>
@@ -952,6 +957,19 @@
 
             function openAlbumModal(album, index) {
                 currentAlbumIndex = index;
+
+                // Highlight Logic for Clicked Card
+                const previouslyClicked = document.querySelector('.timeline-album-card.clicked');
+                if (previouslyClicked) {
+                    previouslyClicked.classList.remove('clicked');
+                }
+                // Escape quotes for the query selector
+                const safeAlbumTitle = album.albumTitle.replace(/"/g, '\\"');
+                const safeArtist = album.artist.replace(/"/g, '\\"');
+                const cardToHighlight = document.querySelector(`.timeline-album-card[data-album-title="${safeAlbumTitle}"][data-artist="${safeArtist}"]`);
+                if (cardToHighlight) {
+                    cardToHighlight.classList.add('clicked');
+                }
                 
                 albumModal.querySelector('#modal-title').textContent = album.albumTitle;
                 
@@ -1047,6 +1065,11 @@
                 albumModalContent.classList.add('scale-95');
                 // Stop all audio players when modal closes
                 albumModal.querySelectorAll('audio').forEach(audio => audio.pause());
+                // Remove highlight from the card
+                const clickedCard = document.querySelector('.timeline-album-card.clicked');
+                if (clickedCard) {
+                    clickedCard.classList.remove('clicked');
+                }
             }
             albumModal.querySelector('#close-modal').addEventListener('click', closeAlbumModal);
             albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') closeAlbumModal(); });
@@ -1576,6 +1599,9 @@
                     sectionObserver.observe(section);
                 }
             });
+
+            // Set footer copyright year dynamically
+            document.getElementById('footer-copyright').textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
         }
     </script>
 </body>
