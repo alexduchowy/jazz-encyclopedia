@@ -178,13 +178,14 @@
         }
         .timeline-album-card:hover {
             transform: translateY(-5px) rotate(2deg);
+            box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
         }
         .timeline-album-card.dimmed {
             opacity: 0.5;
         }
         .timeline-album-card.highlighted {
             opacity: 1;
-            transform: translateY(-5px) rotate(2deg); /* FIX: Added transform to match hover */
+            transform: translateY(-5px) rotate(2deg);
             box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
         }
         /* Style for the card that is currently selected/clicked */
@@ -1506,43 +1507,17 @@
                 }
             }
             
-            // --- PERFORMANCE OPTIMIZATION: Debounce function ---
-            // This utility prevents a function from being called too frequently.
-            // It will only execute the function after a specified delay has passed without any new calls.
-            function debounce(func, wait) {
-                let timeout;
-                const debounced = function(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func(...args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
-                // Add a method to cancel any pending execution
-                debounced.cancel = () => {
-                    clearTimeout(timeout);
-                };
-                return debounced;
-            }
-
-            // Create a debounced version of the drawConnections function with a 50ms delay
-            const debouncedDrawConnections = debounce(drawConnections, 50);
-
+            // Reverted to direct calls for immediate response
             timelineWrapper.addEventListener('mouseover', (e) => {
                 const card = e.target.closest('.timeline-album-card');
                 if (card && !card.classList.contains('hidden')) {
-                    // Use the debounced function to avoid excessive redraws
-                    debouncedDrawConnections(card);
+                    drawConnections(card);
                 }
             });
 
             timelineWrapper.addEventListener('mouseout', (e) => {
                 const card = e.target.closest('.timeline-album-card');
                 if (card) {
-                    // Cancel any pending draw operation when the mouse leaves
-                    debouncedDrawConnections.cancel();
-                    // Immediately clear the canvas and highlights
                     drawConnections(null);
                 }
             });
