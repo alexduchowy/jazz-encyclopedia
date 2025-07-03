@@ -829,7 +829,15 @@
                 }
             });
 
-            const filterableGenres = ['Bebop', 'Hard Bop', 'Cool Jazz', 'Modal Jazz', 'Post-Bop'];
+            // Dynamically create the list of filterable genres from the data
+            const allGenresInDB = new Set();
+            albums.forEach(album => {
+                if (album.genres) {
+                    album.genres.split(', ').forEach(genre => allGenresInDB.add(genre.trim()));
+                }
+            });
+            const filterableGenres = Array.from(allGenresInDB).sort();
+
             genreFilterContainer.innerHTML = ''; // Clear any static content.
 
             const allCheckboxLabel = document.createElement('label');
