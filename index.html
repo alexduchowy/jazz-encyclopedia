@@ -30,7 +30,8 @@
             --genre-modal-jazz: #a7f3d0; /* emerald-200 */
             --genre-post-bop: #fed7aa; /* orange-200 */
             --genre-free-jazz: #fca5a5; /* red-300 */
-            --genre-avant-garde: #bbf7d0; /* green-200 */
+            --genre-avant-garde: #fef08a; /* amber-200 */
+            --genre-jazz-fusion: #a5f3fc; /* cyan-200 */
             --genre-default: #e7e5e4; /* stone-200 */
         }
 
@@ -705,6 +706,15 @@
                     "Open forms, often based on a brief theme or motive, or completely improvised.",
                     "Ornette Coleman, Albert Ayler, Cecil Taylor, Pharoah Sanders"
                 ]
+            },
+            "Jazz Fusion": {
+                "color": "var(--genre-jazz-fusion)",
+                "data": [
+                    "Electric piano (Rhodes, Wurlitzer), synthesizers; post-bop harmony mixed with simpler rock/funk vamps.",
+                    "Driving, straight-eighth rock and funk grooves, complex polyrhythms, high-energy drumming.",
+                    "Extended, often through-composed forms, long open improvisations over vamps.",
+                    "Miles Davis (late), Herbie Hancock, Weather Report, Mahavishnu Orchestra"
+                ]
             }
         }
     }
@@ -843,6 +853,8 @@
             // Manually add colors for specific genres not in the matrix
             fullGenreColorMap['Free Jazz'] = 'var(--genre-free-jazz)';
             fullGenreColorMap['Avant-Garde'] = 'var(--genre-avant-garde)';
+            fullGenreColorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
+
 
             albums.forEach(album => {
                 if(album.genres) {
@@ -863,7 +875,7 @@
             });
             
             // Define genres to exclude from the filter list
-            const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz'];
+            const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz'];
 
             // Create the final list of genres to display in the filter
             const filterableGenres = Array.from(allGenresInDB)
