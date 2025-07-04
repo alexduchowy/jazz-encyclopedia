@@ -29,6 +29,8 @@
             --genre-cool-jazz: #93c5fd; /* blue-300 */
             --genre-modal-jazz: #a7f3d0; /* emerald-200 */
             --genre-post-bop: #fed7aa; /* orange-200 */
+            --genre-free-jazz: #fca5a5; /* red-300 */
+            --genre-avant-garde: #bbf7d0; /* green-200 */
             --genre-default: #e7e5e4; /* stone-200 */
         }
 
@@ -819,6 +821,10 @@
             }, {}) : {};
             
             const fullGenreColorMap = { ...baseGenreColors };
+            // Manually add colors for specific genres not in the matrix
+            fullGenreColorMap['Free Jazz'] = 'var(--genre-free-jazz)';
+            fullGenreColorMap['Avant-Garde'] = 'var(--genre-avant-garde)';
+
             albums.forEach(album => {
                 if(album.genres) {
                     album.genres.split(', ').forEach(genre => {
@@ -836,7 +842,14 @@
                     album.genres.split(', ').forEach(genre => allGenresInDB.add(genre.trim()));
                 }
             });
-            const filterableGenres = Array.from(allGenresInDB).sort();
+            
+            // Define genres to exclude from the filter list
+            const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz'];
+
+            // Create the final list of genres to display in the filter
+            const filterableGenres = Array.from(allGenresInDB)
+                .filter(genre => !excludedGenres.includes(genre))
+                .sort();
 
             genreFilterContainer.innerHTML = ''; // Clear any static content.
 
