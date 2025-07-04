@@ -861,7 +861,7 @@
             const fullGenreColorMap = { ...baseGenreColors };
             // Manually add colors for specific genres not in the matrix
             fullGenreColorMap['Free Jazz'] = 'var(--genre-free-jazz)';
-            fullGenreColorMap['Avant-Garde Jazz'] = 'var(--genre-avant-garde)'; // FIX: Use correct full name
+            fullGenreColorMap['Avant-Garde Jazz'] = 'var(--genre-avant-garde)'; 
             fullGenreColorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
 
 
@@ -1200,7 +1200,11 @@
                     lineupParts.forEach(part => {
                         const match = part.trim().match(/(.+?)\s\((.+)\)/);
                         if (match) {
-                            const name = match[1].trim();
+                            let name = match[1].trim();
+                            // Combine Anthony Williams into Tony Williams
+                            if (name === 'Anthony Williams') {
+                                name = 'Tony Williams';
+                            }
                             const instrumentsString = match[2];
                             if (!artistsMap.has(name)) {
                                 artistsMap.set(name, { 
