@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controlled Freedom: An Interactive Jazz Encyclopedia</title>
+    <title>Controlled Freedom: An Interactive Encyclopedia of Jazz</title>
     
     <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -169,8 +169,8 @@
         .timeline-year-header {
             font-size: 3rem; 
             font-weight: 900;
-            color: var(--accent); /* Changed to accent color */
-            opacity: 0.2; /* Increased opacity for better visibility */
+            color: var(--accent-dark); /* Changed to darker accent color */
+            opacity: 0.4; /* Increased opacity for better visibility */
             margin-bottom: 1.5rem;
             width: 100%;
             text-align: left;
@@ -861,7 +861,7 @@
             const fullGenreColorMap = { ...baseGenreColors };
             // Manually add colors for specific genres not in the matrix
             fullGenreColorMap['Free Jazz'] = 'var(--genre-free-jazz)';
-            fullGenreColorMap['Avant-Garde'] = 'var(--genre-avant-garde)';
+            fullGenreColorMap['Avant-Garde Jazz'] = 'var(--genre-avant-garde)'; // FIX: Use correct full name
             fullGenreColorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
 
 
