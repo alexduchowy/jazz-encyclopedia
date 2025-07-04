@@ -160,19 +160,19 @@
         }
       ]
     },
-   {
-      "year": 1955,
-      "artist": "The Modern Jazz Quartet",
-      "albumTitle": "Concorde",
-      "cover": "images/concorde-mjq.jpg",
-      "genres": "Cool Jazz, Third Stream",
+    {
+      "year": 1952,
+      "artist": "Lou Donaldson Quintet",
+      "albumTitle": "Quartet/Quintet/Sextet",
+      "cover": "images/lou-donaldson-quartet-quintet-sextet.jpg",
+      "genres": "Hard Bop, Bebop",
       "pivotalTracks": [
         {
-          "title": "Softly, As in a Morning Sunrise",
-          "recordingDate": "July 2, 1955",
-          "label": "Prestige",
-          "lineup": "Milt Jackson (vibraphone), John Lewis (piano), Percy Heath (bass), Connie Kay (drums)",
-          "analysis": "This album is historically significant as the first to feature drummer Connie Kay, whose crisp, elegant, and often subtle percussion work would become central to the MJQ's sound. Their take on this classic standard is a perfect example of the group's dynamic range. It begins with a stately, baroque-inspired introduction before launching into an impeccably swinging groove. The track highlights the group's signature balance between John Lewis's coolly structured arrangements and Milt Jackson's warm, blues-drenched vibraphone improvisation."
+          "title": "Lou's Blues",
+          "recordingDate": "November 19, 1952",
+          "label": "Blue Note",
+          "lineup": "Lou Donaldson (alto saxophone), Blue Mitchell (trumpet), Horace Silver (piano), Percy Heath (bass), Art Blakey (drums)",
+          "analysis": "A quintessential early Hard Bop recording that perfectly captures the movement's shift back to its blues and gospel roots. On his own composition, Lou Donaldson's alto sax solo is soulful and drenched in the blues, while still showcasing his bebop fluency. The track is energized by the powerful, shuffling groove laid down by Horace Silver and Art Blakey, a rhythm section that would soon define the sound of the Jazz Messengers and the Blue Note label itself."
         }
       ]
     },
@@ -509,6 +509,22 @@
           "label": "Atlantic",
           "lineup": "Lee Konitz (alto saxophone), Warne Marsh (tenor saxophone), Ronnie Ball (piano), Oscar Pettiford (bass), Kenny Clarke (drums)",
           "analysis": "A quintessential document of the Lennie Tristano school of jazz. This track showcases the intricate, weaving counterpoint between altoist Lee Konitz and tenorist Warne Marsh. Their solos are marvels of linear, melodic construction, deliberately avoiding blues cliches in favor of long, logical, and harmonically advanced lines. Supported by the impeccable swing of Oscar Pettiford and Kenny Clarke, it's a prime example of the cerebral, yet deeply swinging, New York-based Cool Jazz scene."
+        }
+      ]
+    },
+       {
+      "year": 1955,
+      "artist": "The Modern Jazz Quartet",
+      "albumTitle": "Concorde",
+      "cover": "images/concorde-mjq.jpg",
+      "genres": "Cool Jazz, Third Stream",
+      "pivotalTracks": [
+        {
+          "title": "Softly, As in a Morning Sunrise",
+          "recordingDate": "July 2, 1955",
+          "label": "Prestige",
+          "lineup": "Milt Jackson (vibraphone), John Lewis (piano), Percy Heath (bass), Connie Kay (drums)",
+          "analysis": "This album is historically significant as the first to feature drummer Connie Kay, whose crisp, elegant, and often subtle percussion work would become central to the MJQ's sound. Their take on this classic standard is a perfect example of the group's dynamic range. It begins with a stately, baroque-inspired introduction before launching into an impeccably swinging groove. The track highlights the group's signature balance between John Lewis's coolly structured arrangements and Milt Jackson's warm, blues-drenched vibraphone improvisation."
         }
       ]
     },
