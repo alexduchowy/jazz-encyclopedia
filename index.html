@@ -442,6 +442,15 @@
                 display: none;
             }
         }
+
+        /* NEW: Nudge animation for scroll buttons */
+        @keyframes nudge-right {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(8px); }
+        }
+        .nudge-animation {
+            animation: nudge-right 1.5s ease-in-out 3;
+        }
    
     </style>
 </head>
