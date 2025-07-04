@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controlled Freedom: An Interactive Jazz Encyclopedia</title>
+    <title>Controlled Freedom: An Interactive Encyclopedia of Jazz</title>
     
     <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -1688,6 +1688,12 @@
 
             // Set footer copyright year dynamically
             document.getElementById('footer-copyright').textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+
+            // Add nudge animation to scroll button
+            const scrollRightButton = document.getElementById('scroll-right-btn');
+            if (scrollRightButton) {
+                scrollRightButton.classList.add('nudge-animation');
+            }
         }
     </script>
 </body>
