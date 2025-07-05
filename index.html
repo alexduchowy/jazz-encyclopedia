@@ -283,15 +283,24 @@
             color: #a8a29e; /* stone-400 */
         }
         
-        /* Artist Grid Styling */
-        #artist-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns for 2 rows of 3 */
-            gap: 1.5rem;
-            padding-top: 1rem;
+        /* Artist Slider Styling */
+        #artist-slider-container {
+            overflow: hidden;
         }
-        @media (min-width: 768px) { /* Tablet and Web: 6 columns for 2 rows of 6 */
-            #artist-grid {
+        #artist-slider-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .artist-slider-page {
+            width: 100%;
+            flex-shrink: 0;
+            padding: 0 0.5rem; /* Add some padding so cards don't touch edges */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns */
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) { /* Tablet and Web: 6 columns */
+            .artist-slider-page {
                 grid-template-columns: repeat(6, 1fr);
             }
         }
@@ -596,7 +605,7 @@
             <!-- Key Artists Grid Section -->
             <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <h2 class="section-header text-5xl">The Architects</h2>
+                    <h2 class="section-header text-5xl">The Architects</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined the Bop era.</p>
                     
                     <!-- Instrument Filter Dropdown -->
@@ -608,19 +617,23 @@
                         </div>
                     </div>
 
-                    <!-- Artist Grid Container -->
-                    <div id="artist-grid-container" class="min-h-[550px] md:min-h-[580px]">
-                        <div id="artist-grid">
-                            <!-- Artist cards will be injected here by JavaScript -->
+                    <!-- Artist Slider Container -->
+                    <div id="artist-slider-wrapper" class="relative">
+                        <div id="artist-slider-container" class="min-h-[550px] md:min-h-[580px]">
+                            <div id="artist-slider-track">
+                                <!-- Artist pages will be injected here by JavaScript -->
+                            </div>
                         </div>
-                   </div>
-
-                    <!-- Artist Pagination Controls -->
-                    <div id="artist-pagination-controls" class="mt-8 flex justify-center items-center gap-4">
-                        <button id="artist-prev-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous</button>
-                        <span id="artist-page-indicator" class="px-4 py-2 text-stone-900 font-bold text-lg"></span>
-                        <button id="artist-next-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next</button>
-                   </div>
+                         <!-- Artist Pagination Controls -->
+                        <div id="artist-pagination-controls" class="absolute inset-0 flex justify-between items-center pointer-events-none">
+                            <button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed -ml-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                            </button>
+                            <button id="artist-next-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed -mr-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </button>
+                       </div>
+                    </div>
                 </div>
             </section>
             
@@ -1311,6 +1324,7 @@
                 }
             });
 
+            // --- ARTIST SLIDER LOGIC ---
             const allTracks = albums.flatMap(album =>
                 album.pivotalTracks.map(track => ({
                     ...track,
@@ -1324,16 +1338,14 @@
             artistsData = processArtists(allTracks, artistProfiles);
             
             const instrumentFilter = document.getElementById('instrument-filter');
-            const artistGrid = document.getElementById('artist-grid');
+            const artistSliderTrack = document.getElementById('artist-slider-track');
             const artistPrevBtn = document.getElementById('artist-prev-btn');
             const artistNextBtn = document.getElementById('artist-next-btn');
-            const artistPageIndicator = document.getElementById('artist-page-indicator');
             const artistPaginationControls = document.getElementById('artist-pagination-controls');
 
-            let currentArtistPage = 1;
-            let filteredArtists = [];
-            let pageSize = window.innerWidth >= 768 ? 12 : 6;
-            
+            let currentArtistPage = 0;
+            let totalArtistPages = 0;
+
             function processArtists(tracks, profiles) {
                 const artistsMap = new Map();
                 
@@ -1345,9 +1357,7 @@
                         const match = part.trim().match(/(.+?)\s\((.+)\)/);
                         if (match) {
                             let name = match[1].trim();
-                            if (name === 'Anthony Williams') {
-                                name = 'Tony Williams';
-                            }
+                            if (name === 'Anthony Williams') { name = 'Tony Williams'; }
                             const instrumentsString = match[2];
                             if (!artistsMap.has(name)) {
                                 artistsMap.set(name, { 
@@ -1360,12 +1370,8 @@
                                 });
                             }
                             const artistEntry = artistsMap.get(name);
-                            if (track.artist && track.artist.includes(name)) {
-                                artistEntry.isBandleader = true;
-                            }
-                            if (profiles && profiles[name]) {
-                                artistEntry.profile = profiles[name];
-                            }
+                            if (track.artist && track.artist.includes(name)) { artistEntry.isBandleader = true; }
+                            if (profiles && profiles[name]) { artistEntry.profile = profiles[name]; }
                             instrumentsString.split(/, | \/ /).forEach(inst => {
                                 const trimmedInst = inst.trim();
                                 if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
@@ -1386,12 +1392,7 @@
             }
 
             function populateInstrumentFilter(artists) {
-                const relevantInstruments = new Set([
-                    'alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 
-                    'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 
-                    'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'tuba', 'vibraphone', 'congas'
-                ]);
-                
+                const relevantInstruments = new Set(['alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'tuba', 'vibraphone', 'congas']);
                 const instrumentsInDataset = new Set();
                 artists.forEach(artist => {
                     artist.instruments.forEach(instrument => {
@@ -1400,9 +1401,7 @@
                         }
                     });
                 });
-                
                 const sortedInstruments = Array.from(instrumentsInDataset).sort();
-
                 instrumentFilter.innerHTML = '<option value="all">All Instruments</option>';
                 sortedInstruments.forEach(instrument => {
                     const option = document.createElement('option');
@@ -1412,74 +1411,59 @@
                 });
             }
 
-            function renderArtistGridPage(artistsToRender) {
-                artistGrid.innerHTML = ''; 
-
-                if (artistsToRender.length === 0) {
-                    artistGrid.innerHTML = `<div class="w-full text-center p-8 text-stone-500 col-span-full">No artists found.</div>`;
-                    return;
-                }
-                
-                artistsToRender.forEach(artist => {
-                    const card = document.createElement('div');
-                    card.className = 'artist-card';
-                    
-                    if (artist.isBandleader) {
-                        card.style.boxShadow = `4px 4px 0px var(--accent)`;
-                    }
-                    
-                    card.dataset.artistName = artist.name;
-                    
-                    card.innerHTML = `
-                        <div class="h-56 bg-stone-900 artist-photo-container">
-                            <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
-                        </div>
-                        <div class="p-3">
-                            <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
-                        </div>`;
-
-                    card.addEventListener('click', () => openArtistModal(artist));
-                    artistGrid.appendChild(card);
-                });
-            }
-
-            function updateArtistPagination() {
-                pageSize = window.innerWidth >= 768 ? 12 : 6;
-                const totalPages = Math.ceil(filteredArtists.length / pageSize);
-
-                if (currentArtistPage > totalPages) currentArtistPage = totalPages > 0 ? totalPages : 1;
-                if (currentArtistPage < 1) currentArtistPage = 1;
-
-                const startIndex = (currentArtistPage - 1) * pageSize;
-                const endIndex = startIndex + pageSize;
-                const artistsForPage = filteredArtists.slice(startIndex, endIndex);
-
-                renderArtistGridPage(artistsForPage);
-
-                if (totalPages <= 1) {
-                    artistPaginationControls.classList.add('hidden');
-                } else {
-                    artistPaginationControls.classList.remove('hidden');
-                    artistPageIndicator.textContent = `Page ${currentArtistPage} of ${totalPages}`;
-                    artistPrevBtn.disabled = currentArtistPage === 1;
-                    artistNextBtn.disabled = currentArtistPage === totalPages;
-                }
-            }
-
-            function filterAndPaginateArtists() {
-                currentArtistPage = 1;
+            function setupArtistSlider() {
                 const selectedInstrument = instrumentFilter.value;
                 
-                filteredArtists = selectedInstrument === 'all'
+                const filteredArtists = (selectedInstrument === 'all'
                     ? [...artistsData]
-                    : artistsData.filter(artist => artist.instruments.includes(selectedInstrument));
-                
-                filteredArtists.sort((a, b) => {
+                    : artistsData.filter(artist => artist.instruments.includes(selectedInstrument))
+                ).sort((a, b) => {
                     if (a.isBandleader !== b.isBandleader) return a.isBandleader ? -1 : 1;
                     return a.name.localeCompare(b.name);
                 });
 
-                updateArtistPagination();
+                artistSliderTrack.innerHTML = '';
+                const pageSize = window.innerWidth >= 768 ? 12 : 6;
+                totalArtistPages = Math.ceil(filteredArtists.length / pageSize);
+
+                if (totalArtistPages <= 1) {
+                    artistPaginationControls.classList.add('hidden');
+                } else {
+                    artistPaginationControls.classList.remove('hidden');
+                }
+
+                for (let i = 0; i < totalArtistPages; i++) {
+                    const pageDiv = document.createElement('div');
+                    pageDiv.className = 'artist-slider-page';
+                    
+                    const pageArtists = filteredArtists.slice(i * pageSize, (i + 1) * pageSize);
+                    pageArtists.forEach(artist => {
+                        const card = document.createElement('div');
+                        card.className = 'artist-card';
+                        if (artist.isBandleader) {
+                            card.style.boxShadow = `4px 4px 0px var(--accent)`;
+                        }
+                        card.dataset.artistName = artist.name;
+                        card.innerHTML = `
+                            <div class="h-56 bg-stone-900 artist-photo-container">
+                                <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                            </div>
+                            <div class="p-3">
+                                <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
+                            </div>`;
+                        card.addEventListener('click', () => openArtistModal(artist));
+                        pageDiv.appendChild(card);
+                    });
+                    artistSliderTrack.appendChild(pageDiv);
+                }
+                goToArtistPage(0);
+            }
+            
+            function goToArtistPage(pageIndex) {
+                currentArtistPage = Math.max(0, Math.min(pageIndex, totalArtistPages - 1));
+                artistSliderTrack.style.transform = `translateX(-${currentArtistPage * 100}%)`;
+                artistPrevBtn.disabled = currentArtistPage === 0;
+                artistNextBtn.disabled = currentArtistPage >= totalArtistPages - 1;
             }
 
             const artistModal = document.getElementById('artist-modal');
@@ -1559,34 +1543,21 @@
             });
 
             populateInstrumentFilter(artistsData);
-            instrumentFilter.addEventListener('change', filterAndPaginateArtists);
-            
-            artistPrevBtn.addEventListener('click', () => {
-                if (currentArtistPage > 1) {
-                    currentArtistPage--;
-                    updateArtistPagination();
-                }
-            });
-
-            artistNextBtn.addEventListener('click', () => {
-                const totalPages = Math.ceil(filteredArtists.length / pageSize);
-                if (currentArtistPage < totalPages) {
-                    currentArtistPage++;
-                    updateArtistPagination();
-                }
-            });
+            instrumentFilter.addEventListener('change', setupArtistSlider);
+            artistPrevBtn.addEventListener('click', () => goToArtistPage(currentArtistPage - 1));
+            artistNextBtn.addEventListener('click', () => goToArtistPage(currentArtistPage + 1));
             
             let resizeTimeout;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
-                    updateArtistPagination();
+                    setupArtistSlider();
                     resizeCanvas();
-                    updateCustomScrollbar(); // FIX: Update scrollbar on resize
+                    updateCustomScrollbar();
                 }, 200);
             });
             
-            filterAndPaginateArtists();
+            setupArtistSlider();
 
 
             // --- MODIFICATION: Build the new genre matrix ---
