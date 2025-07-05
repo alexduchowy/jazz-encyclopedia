@@ -813,7 +813,8 @@
                 artistProfiles: {},
                 artistsData: [],
                 styleMatrix: {},
-                currentAlbumIndex: -1,
+                visibleAlbums: [],
+                currentVisibleAlbumIndex: -1,
                 currentArtistPage: 0,
                 totalArtistPages: 0,
                 lastKnownYear: '',
@@ -1158,12 +1159,13 @@
                         }
                         if (!card.classList.contains('hidden')) {
                             const { albumTitle, artist } = card.dataset;
-                            const albumIndex = this.state.albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
+                            const albumIndexInVisible = this.state.visibleAlbums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
+                            
                             if (isMobile) {
                                 if (this.state.mobileCardSelectedForModal === card) {
-                                    if (albumIndex !== -1) {
+                                    if (albumIndexInVisible !== -1) {
                                         this.methods.applyHighlights.call(this, null);
-                                        this.methods.openAlbumModal.call(this, this.state.albums[albumIndex], albumIndex);
+                                        this.methods.openAlbumModal.call(this, this.state.visibleAlbums[albumIndexInVisible], albumIndexInVisible);
                                     }
                                     this.state.mobileCardSelectedForModal = null;
                                 } else {
@@ -1171,7 +1173,7 @@
                                     this.state.mobileCardSelectedForModal = card;
                                 }
                             } else {
-                                if (albumIndex !== -1) this.methods.openAlbumModal.call(this, this.state.albums[albumIndex], albumIndex);
+                                if (albumIndexInVisible !== -1) this.methods.openAlbumModal.call(this, this.state.visibleAlbums[albumIndexInVisible], albumIndexInVisible);
                             }
                         }
                     });
@@ -1204,14 +1206,20 @@
                 },
                 
                 setupModals() {
-                    const { albumModal, artistModal, albumModalContent, artistModalContent } = this.elements;
+                    const { albumModal, artistModal } = this.elements;
                     albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeAlbumModal.call(this));
                     albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') this.methods.closeAlbumModal.call(this); });
                     document.getElementById('prev-album-btn').addEventListener('click', () => {
-                        if (this.state.currentAlbumIndex > 0) this.methods.openAlbumModal.call(this, this.state.albums[this.state.currentAlbumIndex - 1], this.state.currentAlbumIndex - 1);
+                        if (this.state.currentVisibleAlbumIndex > 0) {
+                            const newIndex = this.state.currentVisibleAlbumIndex - 1;
+                            this.methods.openAlbumModal.call(this, this.state.visibleAlbums[newIndex], newIndex);
+                        }
                     });
                     document.getElementById('next-album-btn').addEventListener('click', () => {
-                        if (this.state.currentAlbumIndex < this.state.albums.length - 1) this.methods.openAlbumModal.call(this, this.state.albums[this.state.currentAlbumIndex + 1], this.state.currentAlbumIndex + 1);
+                        if (this.state.currentVisibleAlbumIndex < this.state.visibleAlbums.length - 1) {
+                            const newIndex = this.state.currentVisibleAlbumIndex + 1;
+                            this.methods.openAlbumModal.call(this, this.state.visibleAlbums[newIndex], newIndex);
+                        }
                     });
 
                     artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal.call(this));
@@ -1233,10 +1241,11 @@
                     artistModal.addEventListener('click', (e) => {
                         if (e.target.matches('.clickable-link[data-album-title]')) {
                             const { albumTitle, artist } = e.target.dataset;
-                            const albumIndex = this.state.albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
-                            if (albumIndex !== -1) {
+                            const visibleAlbum = this.state.visibleAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
+                            if (visibleAlbum) {
+                                const indexInVisible = this.state.visibleAlbums.indexOf(visibleAlbum);
                                 this.methods.closeArtistModal.call(this);
-                                setTimeout(() => this.methods.openAlbumModal.call(this, this.state.albums[albumIndex], albumIndex), 250);
+                                setTimeout(() => this.methods.openAlbumModal.call(this, visibleAlbum, indexInVisible), 250);
                             }
                         }
                     });
@@ -1370,10 +1379,15 @@
                 
                 filterTimeline() {
                     const selectedGenres = Array.from(this.elements.genreFilterContainer.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
+                    this.state.visibleAlbums = [];
                     document.querySelectorAll('.timeline-album-card').forEach(card => {
                         const cardGenres = card.dataset.genres.split(', ');
                         const isVisible = cardGenres.some(genre => selectedGenres.includes(genre));
                         card.classList.toggle('hidden', !isVisible);
+                        if(isVisible) {
+                            const album = this.state.albums.find(a => a.albumTitle === card.dataset.albumTitle && a.artist === card.dataset.artist);
+                            if (album) this.state.visibleAlbums.push(album);
+                        }
                     });
                     document.querySelectorAll('.timeline-year-section').forEach(yearSection => {
                         const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
@@ -1381,7 +1395,6 @@
                     });
                     this.elements.genreFilterContainer.querySelector('#all-genres-checkbox').checked = selectedGenres.length === this.elements.genreFilterContainer.querySelectorAll('input[data-genre]').length;
                     
-                    // Re-render markers and scrollbar after filtering
                     setTimeout(() => {
                         this.methods.resizeCanvas.call(this);
                         this.methods.renderScrollbarMarkers.call(this);
@@ -1410,8 +1423,8 @@
                     });
                 },
                 
-                openAlbumModal(album, index) {
-                    this.state.currentAlbumIndex = index;
+                openAlbumModal(album, indexInVisibleList) {
+                    this.state.currentVisibleAlbumIndex = indexInVisibleList;
                     const { albumModal, albumModalContent } = this.elements;
                     
                     const previouslyClicked = document.querySelector('.timeline-album-card.clicked');
@@ -1457,8 +1470,8 @@
                         });
                     });
 
-                    document.getElementById('prev-album-btn').disabled = this.state.currentAlbumIndex === 0;
-                    document.getElementById('next-album-btn').disabled = this.state.currentAlbumIndex === this.state.albums.length - 1;
+                    document.getElementById('prev-album-btn').disabled = this.state.currentVisibleAlbumIndex === 0;
+                    document.getElementById('next-album-btn').disabled = this.state.currentVisibleAlbumIndex >= this.state.visibleAlbums.length - 1;
 
                     albumModal.classList.remove('opacity-0', 'pointer-events-none');
                     albumModalContent.classList.remove('scale-95');
