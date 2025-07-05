@@ -1024,35 +1024,30 @@
             });
 
 
-            // --- MODIFICATION START: Stricter Filter Logic ---
+            // --- MODIFICATION START: Corrected Filter Logic ---
             function filterTimeline() {
-                // Get all available genres that have a checkbox
-                const allAvailableGenres = Array.from(allGenreCheckboxes).map(input => input.value);
-                
-                // Get the currently selected genres
                 const selectedGenres = Array.from(genreFilterPanel.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
-
-                // Determine the deselected genres
-                const deselectedGenres = allAvailableGenres.filter(genre => !selectedGenres.includes(genre));
 
                 document.querySelectorAll('.timeline-album-card').forEach(card => {
                     const cardGenres = card.dataset.genres.split(', ');
                     
-                    // A card should be hidden if ANY of its genres are in the deselected list.
-                    const shouldBeHidden = cardGenres.some(genre => deselectedGenres.includes(genre));
+                    // An album is visible if AT LEAST ONE of its genres is in the selected list.
+                    const isVisible = cardGenres.some(genre => selectedGenres.includes(genre));
                     
-                    if (shouldBeHidden) {
-                        card.classList.add('hidden');
-                    } else {
+                    if (isVisible) {
                         card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
                     }
                 });
 
+                // Hide year sections that have no visible cards after filtering
                 document.querySelectorAll('.timeline-year-section').forEach(yearSection => {
                     const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
                     yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
                 });
                 
+                // Update the state of the "All Genres" checkbox
                 const allChecked = selectedGenres.length === allGenreCheckboxes.length;
                 allCheckbox.checked = allChecked;
             }
