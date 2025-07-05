@@ -1252,7 +1252,7 @@
                 },
 
                 setupArtistSlider() {
-                    const { instrumentFilter, artistSliderTrack, artistPrevBtn, artistNextBtn, artistPaginationControls } = this.elements;
+                    const { instrumentFilter, artistSliderTrack, artistPaginationControls } = this.elements;
                     const selectedInstrument = instrumentFilter.value;
                     const filteredArtists = (selectedInstrument === 'all' ? [...this.state.artistsData] : this.state.artistsData.filter(artist => artist.instruments.includes(selectedInstrument)))
                         .sort((a, b) => {
@@ -1288,7 +1288,7 @@
                         });
                         artistSliderTrack.appendChild(pageDiv);
                     }
-                    this.methods.goToArtistPage.call(this, 0);
+                    this.methods.goToArtistPage.call(this, this.state.currentArtistPage);
                 },
 
                 setupMobileMenu() {
