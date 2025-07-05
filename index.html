@@ -167,10 +167,10 @@
         }
         /* Year header styling */
         .timeline-year-header {
-            font-size: 3rem; 
+            font-size: 2.5rem; /* MODIFIED: Reduced size */
             font-weight: 900;
-            color: var(--accent-dark); /* Changed to darker accent color */
-            opacity: 0.4; /* Increased opacity for better visibility */
+            color: var(--accent-dark);
+            opacity: 0.4;
             margin-bottom: 1.5rem;
             width: 100%;
             text-align: left;
@@ -327,13 +327,13 @@
             accent-color: var(--accent);
         }
 
-        /* Genre Filter Styling */
-        #genre-filter-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
+        /* NEW: Genre Filter Dropdown Styling */
+        .genre-dropdown-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            max-height: 250px;
+            overflow-y: auto;
         }
         .genre-checkbox-label {
             display: flex;
@@ -515,11 +515,29 @@
             <section id="timeline" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Timeline Explorer</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Hover or filter by genre to explore a year-by-year breakdown of landmark albums.</p>
-                    <div id="genre-filter-container"></div>
-                    <div class="flex items-center justify-center gap-4 mb-6">
-                        <div id="timeline-nav" class="flex flex-wrap justify-center gap-2"></div>
+                    <p class="text-center text-lg text-stone-600 mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
+                    
+                    <!-- NEW: Redesigned Filter Controls -->
+                    <div id="timeline-controls" class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+                        <!-- Genre Filter Dropdown -->
+                        <div class="relative" id="genre-filter-dropdown-container">
+                            <button id="genre-filter-btn" class="w-60 text-left font-bold px-4 py-2 bg-stone-100 text-stone-900 border-2 border-stone-900 rounded-sm hover:bg-stone-300 transition-colors flex items-center justify-between">
+                                <span>Filter by Genre</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            </button>
+                            <div id="genre-filter-panel" class="hidden absolute top-full left-0 mt-1 w-96 bg-stone-100 border-2 border-stone-900 rounded-sm shadow-lg p-4 z-20">
+                                <!-- Checkboxes will be injected here -->
+                            </div>
+                        </div>
+
+                        <!-- Year Jumper Dropdown -->
+                        <div class="relative styled-select w-60">
+                             <select id="year-jumper" class="w-full font-bold px-4 py-2 bg-stone-100 text-stone-900 border-2 border-stone-900 rounded-sm hover:bg-stone-300 transition-colors">
+                                <!-- Options will be injected here -->
+                            </select>
+                        </div>
                     </div>
+
                     <div class="relative group">
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
                             <canvas id="timeline-canvas"></canvas>
@@ -843,14 +861,12 @@
                 return acc;
             }, {});
 
-            const timelineNav = document.getElementById('timeline-nav');
             const timelineContainer = document.getElementById('horizontal-timeline-container');
             const timelineWrapper = document.getElementById('timeline-wrapper');
             const timelineCanvas = document.getElementById('timeline-canvas');
             const ctx = timelineCanvas.getContext('2d');
             const scrollLeftBtn = document.getElementById('scroll-left-btn');
             const scrollRightBtn = document.getElementById('scroll-right-btn');
-            const genreFilterContainer = document.getElementById('genre-filter-container');
             
             // --- DYNAMIC GENRE and COLOR MAP CREATION ---
             const baseGenreColors = styleMatrixData.genres ? Object.keys(styleMatrixData.genres).reduce((acc, genre) => {
@@ -891,18 +907,27 @@
                 .filter(genre => !excludedGenres.includes(genre))
                 .sort();
 
-            genreFilterContainer.innerHTML = ''; // Clear any static content.
+            
+            // --- MODIFICATION START: Redesigned Filter Logic ---
+
+            const genreFilterBtn = document.getElementById('genre-filter-btn');
+            const genreFilterPanel = document.getElementById('genre-filter-panel');
+            const yearJumper = document.getElementById('year-jumper');
+
+            // Populate Genre Filter Dropdown
+            const genrePanelContent = document.createElement('div');
+            genrePanelContent.className = 'genre-dropdown-panel';
 
             const allCheckboxLabel = document.createElement('label');
-            allCheckboxLabel.className = 'genre-checkbox-label';
+            allCheckboxLabel.className = 'genre-checkbox-label col-span-2'; // Span across two columns
             allCheckboxLabel.style.setProperty('--genre-color', 'var(--text-muted)');
             const allCheckbox = document.createElement('input');
             allCheckbox.type = 'checkbox';
             allCheckbox.id = 'all-genres-checkbox';
-            allCheckbox.checked = true; // Start with all selected
+            allCheckbox.checked = true;
             allCheckboxLabel.appendChild(allCheckbox);
-            allCheckboxLabel.append('All');
-            genreFilterContainer.appendChild(allCheckboxLabel);
+            allCheckboxLabel.append('All Genres');
+            genrePanelContent.appendChild(allCheckboxLabel);
 
             filterableGenres.forEach(genre => {
                 const label = document.createElement('label');
@@ -912,23 +937,95 @@
                 checkbox.type = 'checkbox';
                 checkbox.value = genre;
                 checkbox.dataset.genre = genre;
-                checkbox.checked = true; // Start with all selected
+                checkbox.checked = true;
                 label.appendChild(checkbox);
                 label.append(genre);
-                genreFilterContainer.appendChild(label);
+                genrePanelContent.appendChild(label);
             });
+            genreFilterPanel.appendChild(genrePanelContent);
             
-            const allGenreCheckboxes = genreFilterContainer.querySelectorAll('input[data-genre]');
-            
+            const allGenreCheckboxes = genreFilterPanel.querySelectorAll('input[data-genre]');
+
+            function updateGenreButtonText() {
+                const selectedCount = genreFilterPanel.querySelectorAll('input[data-genre]:checked').length;
+                const buttonSpan = genreFilterBtn.querySelector('span');
+                if (selectedCount === allGenreCheckboxes.length) {
+                    buttonSpan.textContent = 'All Genres Selected';
+                } else if (selectedCount === 0) {
+                    buttonSpan.textContent = 'No Genres Selected';
+                } else {
+                    buttonSpan.textContent = `${selectedCount} Genre(s) Selected`;
+                }
+            }
+
             allCheckbox.addEventListener('change', () => {
                 allGenreCheckboxes.forEach(cb => {
                     cb.checked = allCheckbox.checked;
                 });
                 filterTimeline();
+                updateGenreButtonText();
             });
 
+            genreFilterPanel.addEventListener('change', (e) => {
+                if (e.target.matches('input[type="checkbox"]')) {
+                    if(e.target.id !== 'all-genres-checkbox') {
+                        const allChecked = Array.from(allGenreCheckboxes).every(cb => cb.checked);
+                        allCheckbox.checked = allChecked;
+                    }
+                    filterTimeline();
+                    updateGenreButtonText();
+                }
+            });
+
+            genreFilterBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                genreFilterPanel.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!document.getElementById('genre-filter-dropdown-container').contains(e.target)) {
+                    genreFilterPanel.classList.add('hidden');
+                }
+            });
+
+            // Populate Year Jumper
+            yearJumper.innerHTML = `<option value="">Jump to Year</option>`;
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearJumper.appendChild(option);
+            });
+
+            yearJumper.addEventListener('change', () => {
+                const year = yearJumper.value;
+                if (year) {
+                    const yearSection = document.getElementById(`year-${year}`);
+                    if (yearSection) {
+                        timelineContainer.scrollTo({ left: yearSection.offsetLeft - 30, behavior: 'smooth' });
+                    }
+                }
+            });
+            
+            // Update year jumper on scroll
+            timelineContainer.addEventListener('scroll', () => {
+                let currentYear = '';
+                for (const year of years) {
+                    const section = document.getElementById(`year-${year}`);
+                    if (section.offsetLeft <= timelineContainer.scrollLeft + timelineContainer.offsetWidth / 2) {
+                        currentYear = year;
+                    } else {
+                        break;
+                    }
+                }
+                if (yearJumper.value !== currentYear) {
+                    yearJumper.value = currentYear;
+                }
+            });
+
+
             function filterTimeline() {
-                const selectedGenres = Array.from(genreFilterContainer.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
+                const selectedGenres = Array.from(genreFilterPanel.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
                 
                 document.querySelectorAll('.timeline-album-card').forEach(card => {
                     const cardGenres = card.dataset.genres.split(', ');
@@ -945,16 +1042,12 @@
                     const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
                     yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
                 });
-
-                const allChecked = selectedGenres.length === allGenreCheckboxes.length;
-                allCheckbox.checked = allChecked;
             }
             
-            genreFilterContainer.addEventListener('change', (e) => {
-                if(e.target.id !== 'all-genres-checkbox') {
-                    filterTimeline();
-                }
-            });
+            updateGenreButtonText(); // Initial text
+
+            // --- MODIFICATION END ---
+
 
             // --- Timeline Rendering ---
             timelineWrapper.innerHTML = '';
@@ -993,23 +1086,6 @@
                     timelineWrapper.appendChild(yearSection);
                 });
                 
-                years.forEach(year => {
-                    const yearButton = document.createElement('button');
-                    yearButton.textContent = year;
-                    yearButton.dataset.year = year;
-                    yearButton.className = 'year-marker px-4 py-2 text-sm font-semibold rounded-sm bg-stone-100 text-stone-900';
-                    yearButton.addEventListener('click', () => {
-                        document.querySelectorAll('.year-marker').forEach(btn => btn.classList.remove('active'));
-                        yearButton.classList.add('active');
-                        const yearSection = document.getElementById(`year-${year}`);
-                        if(yearSection) {
-                            timelineContainer.scrollTo({ left: yearSection.offsetLeft, behavior: 'smooth' });
-                        }
-                    });
-                    timelineNav.appendChild(yearButton);
-                });
-                if (timelineNav.firstElementChild) timelineNav.firstElementChild.classList.add('active');
-                
                 // Initial Filter
                 filterTimeline();
             } else {
@@ -1023,8 +1099,6 @@
             const albumModal = document.getElementById('album-modal');
             const albumModalContent = albumModal.querySelector('.modal-content');
             
-            // --- MODIFICATION START: New Timeline Interaction Logic ---
-            
             let mobileCardSelectedForModal = null;
 
             // --- Desktop Hover Effects ---
@@ -1032,7 +1106,6 @@
                 if (window.innerWidth < 768) return; // Desktop only
 
                 const card = e.target.closest('.timeline-album-card');
-                // Do not show hover effects if a modal is open (indicated by a 'clicked' card)
                 if (card && !card.classList.contains('hidden') && !document.querySelector('.timeline-album-card.clicked')) {
                     applyHighlights(card);
                 }
@@ -1042,7 +1115,6 @@
                 if (window.innerWidth < 768) return; // Desktop only
 
                 const card = e.target.closest('.timeline-album-card');
-                 // Do not clear effects if a modal is open
                 if (card && !document.querySelector('.timeline-album-card.clicked')) {
                     applyHighlights(null);
                 }
@@ -1054,7 +1126,6 @@
                 const isMobile = window.innerWidth < 768;
 
                 if (!card) {
-                    // If clicked outside a card on mobile, deselect any card.
                     if (isMobile && mobileCardSelectedForModal) {
                         applyHighlights(null);
                         mobileCardSelectedForModal = null;
@@ -1062,26 +1133,21 @@
                     return;
                 }
 
-                if (!card.classList.contains('hidden')) { // Ensure card is not filtered out
-                    // --- Mobile Click Logic ---
+                if (!card.classList.contains('hidden')) {
                     if (isMobile) {
                         if (mobileCardSelectedForModal === card) {
-                            // SECOND click: open the modal.
                             const { albumTitle, artist } = card.dataset;
                             const albumIndex = albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
                             if (albumIndex !== -1) {
-                                // Clear highlights *before* opening modal
                                 applyHighlights(null);
                                 openAlbumModal(albums[albumIndex], albumIndex);
                             }
-                            mobileCardSelectedForModal = null; // Reset state
+                            mobileCardSelectedForModal = null;
                         } else {
-                            // FIRST click: highlight the card.
                             applyHighlights(card);
                             mobileCardSelectedForModal = card;
                         }
                     } else {
-                        // --- Desktop Click Logic ---
                         const { albumTitle, artist } = card.dataset;
                         const albumIndex = albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
                         if (albumIndex !== -1) {
@@ -1091,18 +1157,14 @@
                 }
             });
 
-            // --- MODIFICATION END ---
-
 
             function openAlbumModal(album, index) {
                 currentAlbumIndex = index;
 
-                // Highlight Logic for Clicked Card
                 const previouslyClicked = document.querySelector('.timeline-album-card.clicked');
                 if (previouslyClicked) {
                     previouslyClicked.classList.remove('clicked');
                 }
-                // Escape quotes for the query selector
                 const safeAlbumTitle = album.albumTitle.replace(/"/g, '\\"');
                 const safeArtist = album.artist.replace(/"/g, '\\"');
                 const cardToHighlight = document.querySelector(`.timeline-album-card[data-album-title="${safeAlbumTitle}"][data-artist="${safeArtist}"]`);
@@ -1112,7 +1174,6 @@
                 
                 albumModal.querySelector('#modal-title').textContent = album.albumTitle;
                 
-                // Make artist name clickable
                 const artistBtn = albumModal.querySelector('#modal-artist');
                 artistBtn.textContent = album.artist;
                 artistBtn.dataset.artistName = album.artist;
@@ -1129,7 +1190,6 @@
                     return `<span class="genre-tag" style="background-color: ${colorVar}">${genre}</span>`;
                 }).join(' ');
                 
-                // Create clickable lineup
                 const lineupHtml = firstTrack.lineup ? firstTrack.lineup.split(/, (?![^()]*\))/).map(personnel => {
                     const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
                     if (match) {
@@ -1140,7 +1200,7 @@
                             return `<span class="clickable-link" data-artist-name="${name}">${name}</span> (${instrument})`;
                         }
                     }
-                    return personnel; // Return as plain text if no match or artist doesn't exist
+                    return personnel;
                 }).join(', ') : 'N/A';
 
 
@@ -1155,7 +1215,7 @@
                                   </div>`;
 
                 const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
-                analysisWrapper.innerHTML = ''; // Clear previous content
+                analysisWrapper.innerHTML = '';
                 
                 const analysisContainer = document.createElement('div');
                 analysisContainer.id = 'modal-analysis-section';
@@ -1176,7 +1236,6 @@
                 analysisContainer.innerHTML = pivotalTracksHtml;
                 analysisWrapper.appendChild(analysisContainer);
                 
-                // Add event listeners to ensure only one audio plays at a time
                 const audioPlayers = analysisContainer.querySelectorAll('audio');
                 audioPlayers.forEach(player => {
                     player.addEventListener('play', () => {
@@ -1188,7 +1247,6 @@
                     });
                 });
 
-                // Update nav buttons
                 const prevBtn = document.getElementById('prev-album-btn');
                 const nextBtn = document.getElementById('next-album-btn');
                 prevBtn.disabled = currentAlbumIndex === 0;
@@ -1196,15 +1254,13 @@
 
                 albumModal.classList.remove('opacity-0', 'pointer-events-none');
                 albumModalContent.classList.remove('scale-95');
-                albumModal.querySelector('#modal-body').scrollTop = 0; // Scroll to top
+                albumModal.querySelector('#modal-body').scrollTop = 0;
             }
             
             function closeAlbumModal() {
                 albumModal.classList.add('opacity-0', 'pointer-events-none');
                 albumModalContent.classList.add('scale-95');
-                // Stop all audio players when modal closes
                 albumModal.querySelectorAll('audio').forEach(audio => audio.pause());
-                // Remove highlight from the card
                 const clickedCard = document.querySelector('.timeline-album-card.clicked');
                 if (clickedCard) {
                     clickedCard.classList.remove('clicked');
@@ -1213,7 +1269,6 @@
             albumModal.querySelector('#close-modal').addEventListener('click', closeAlbumModal);
             albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') closeAlbumModal(); });
 
-            // Set up modal navigation listeners
             document.getElementById('prev-album-btn').addEventListener('click', () => {
                 if (currentAlbumIndex > 0) {
                     openAlbumModal(albums[currentAlbumIndex - 1], currentAlbumIndex - 1);
@@ -1225,8 +1280,6 @@
                 }
             });
 
-
-            // --- ARTISTS SECTION LOGIC (PAGINATION) ---
             const allTracks = albums.flatMap(album =>
                 album.pivotalTracks.map(track => ({
                     ...track,
@@ -1261,7 +1314,6 @@
                         const match = part.trim().match(/(.+?)\s\((.+)\)/);
                         if (match) {
                             let name = match[1].trim();
-                            // Combine Anthony Williams into Tony Williams
                             if (name === 'Anthony Williams') {
                                 name = 'Tony Williams';
                             }
@@ -1442,14 +1494,13 @@
             artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') closeArtistModal(); });
             document.addEventListener('keydown', e => { if (e.key === "Escape") { closeAlbumModal(); closeArtistModal(); } });
             
-            // --- MODAL INTERLINKING EVENT LISTENERS ---
             document.getElementById('modal-artist').addEventListener('click', (e) => {
                 const artistName = e.target.dataset.artistName;
                 if (!artistName) return;
                 const artist = artistsData.find(a => a.name === artistName);
                 if (artist) {
                     closeAlbumModal();
-                    setTimeout(() => openArtistModal(artist), 250); // Timeout for smoother transition
+                    setTimeout(() => openArtistModal(artist), 250);
                 }
             });
 
@@ -1476,7 +1527,6 @@
                 }
             });
 
-            // --- ARTISTS GRID EVENT LISTENERS ---
             populateInstrumentFilter(artistsData);
             instrumentFilter.addEventListener('change', filterAndPaginateArtists);
             
@@ -1504,11 +1554,10 @@
                 }, 200);
             });
             
-            filterAndPaginateArtists(); // Initial population of the artist grid
+            filterAndPaginateArtists();
 
 
-            // --- Build the new, modern genre matrix ---
-            const matrixContainer = document.getElementById('style-matrix-table'); // Revert to original ID
+            const matrixContainer = document.getElementById('style-matrix-table');
             if (styleMatrixData.features && styleMatrixData.genres) {
                 const thead = document.createElement('thead');
                 const headerRow = document.createElement('tr');
@@ -1540,12 +1589,10 @@
                 });
                 matrixContainer.appendChild(tbody);
 
-                // Add cross-hover effect logic
                 const table = document.getElementById('style-matrix-table');
                 if (table) {
                     table.addEventListener('mouseover', (e) => {
                         if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
-                             // Clear previous highlights first
                             table.querySelectorAll('.row-hover, .col-hover').forEach(el => {
                                 el.classList.remove('row-hover', 'col-hover');
                             });
@@ -1554,10 +1601,8 @@
                             const row = cell.parentElement;
                             const cellIndex = cell.cellIndex;
 
-                            // Add row highlight
                             row.classList.add('row-hover');
 
-                            // Add column highlight
                             table.querySelectorAll('tr').forEach(r => {
                                 if (r.cells[cellIndex]) {
                                     r.cells[cellIndex].classList.add('col-hover');
@@ -1581,9 +1626,8 @@
                  const targetId = e.target.value;
                  const targetElement = document.querySelector(targetId);
                  if (targetElement) {
-                     // Using smooth scroll behavior
                      window.scrollTo({
-                         top: targetElement.offsetTop - 80, // Adjust for sticky header height
+                         top: targetElement.offsetTop - 80,
                          behavior: 'smooth'
                      });
                  }
@@ -1613,25 +1657,21 @@
 
             setupDraggable(timelineContainer);
 
-            // --- Timeline Visualization Logic ---
             function resizeCanvas() {
                 timelineCanvas.width = timelineWrapper.scrollWidth;
                 timelineCanvas.height = timelineWrapper.offsetHeight;
             }
 
             function applyHighlights(selectedCard) {
-                // First, reset all cards to their default state
                 document.querySelectorAll('.timeline-album-card').forEach(c => {
                     c.classList.remove('dimmed', 'highlighted');
                     c.style.removeProperty('--highlight-color');
                 });
 
                 if (!selectedCard) {
-                    // If no card is selected, we're done. The reset above is enough.
                     return;
                 }
 
-                // Now, apply the new highlights
                 document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.add('dimmed'));
                 selectedCard.classList.remove('dimmed');
                 selectedCard.classList.add('highlighted');
@@ -1643,7 +1683,6 @@
 
                 const otherCards = Array.from(document.querySelectorAll('.timeline-album-card:not(.hidden)'));
                 
-                // Find and highlight connected cards
                 otherCards.forEach(card => {
                     if (card === selectedCard) return;
 
@@ -1658,11 +1697,9 @@
                 });
             }
             
-            // Initial and resize canvas setup
             resizeCanvas();
             new ResizeObserver(resizeCanvas).observe(timelineWrapper);
             
-            // --- Fade-in animation on scroll ---
             const fadeElements = document.querySelectorAll('.fade-in-element');
             const scrollObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -1675,7 +1712,6 @@
 
             fadeElements.forEach(el => scrollObserver.observe(el));
             
-            // --- Nav Link Active State on Scroll ---
             const sections = document.querySelectorAll('main section[id]');
             const navLinks = document.querySelectorAll('header nav a');
             const mobileNav = document.getElementById('mobile-nav');
@@ -1690,14 +1726,12 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const id = entry.target.getAttribute('id');
-                        // Update desktop nav
                         navLinks.forEach(link => {
                             link.classList.remove('active');
                             if (link.getAttribute('href') === `#${id}`) {
                                 link.classList.add('active');
                             }
                         });
-                        // Update mobile nav
                         if (document.activeElement !== mobileNav) {
                             mobileNav.value = `#${id}`;
                         }
@@ -1706,15 +1740,13 @@
             }, observerOptions);
 
             sections.forEach(section => {
-                if (section.id) { // Only observe sections with an ID
+                if (section.id) {
                     sectionObserver.observe(section);
                 }
             });
 
-            // Set footer copyright year dynamically
             document.getElementById('footer-copyright').textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
 
-            // Add nudge animation to scroll button
             const scrollRightButton = document.getElementById('scroll-right-btn');
             if (scrollRightButton) {
                 scrollRightButton.classList.add('nudge-animation');
