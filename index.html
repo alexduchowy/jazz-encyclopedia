@@ -1643,10 +1643,10 @@
                 const highlightColor = fullGenreColorMap[primaryGenre] || 'var(--accent)';
                 selectedCard.style.setProperty('--highlight-color', highlightColor);
 
-                const yearSection = selectedCard.closest('.timeline-year-section');
-                if (!yearSection) return;
-
-                const otherCards = Array.from(yearSection.querySelectorAll('.timeline-album-card:not(.hidden)'));
+                // --- MODIFICATION START: Search the whole timeline ---
+                const otherCards = Array.from(document.querySelectorAll('.timeline-album-card:not(.hidden)'));
+                // --- MODIFICATION END ---
+                
                 const connections = [];
 
                 otherCards.forEach(card => {
