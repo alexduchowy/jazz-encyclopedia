@@ -69,50 +69,70 @@
               margin-bottom: 1rem;
         }
         
-        /* Genre Card Grid Styling */
-        #genre-card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        .genre-card {
+        /* Compact Matrix Styling */
+        #genre-matrix-container {
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            overflow: auto; /* Enable scrolling */
+            max-height: 70vh; /* Set a max height */
             background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-            border-top-width: 8px;
-            border-radius: 0.25rem;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 5px 5px 0px var(--text-main);
         }
-        .genre-card:hover {
-            transform: translateY(-5px) rotate(1deg);
+        .matrix-table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 900px; /* Ensure horizontal scroll on smaller screens */
         }
-        .genre-card-header {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+        .matrix-table th, .matrix-table td {
+            padding: 1rem;
+            border-bottom: 2px solid var(--bg-secondary);
+            text-align: left;
+            vertical-align: top;
+            transition: background-color 0.1s ease-in-out;
         }
-        .genre-card-profile {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: var(--text-muted);
-            flex-grow: 1; /* Pushes button to the bottom */
-            margin-bottom: 1.5rem;
-        }
-        .genre-read-more-btn {
-            background-color: var(--accent);
+        .matrix-table thead th {
+            background-color: var(--text-main);
             color: var(--bg-main);
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .matrix-table tbody th {
             font-weight: bold;
-            text-align: center;
-            transition: background-color 0.2s;
-            border: 2px solid var(--text-main);
+            font-size: 1.1rem;
+            width: 150px;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+            border-right: 2px solid var(--bg-secondary);
         }
-        .genre-read-more-btn:hover {
-            background-color: var(--accent-dark);
+        .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td {
+            border-bottom: none;
         }
+        .matrix-table td.col-hover, .matrix-table .row-hover > td {
+            background-color: var(--highlight-color, rgba(0,0,0,0.05)) !important;
+        }
+        .genre-header-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-size: inherit;
+            font-weight: inherit;
+            color: inherit;
+        }
+        .genre-header-button .info-icon {
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .genre-header-button:hover .info-icon {
+            opacity: 1;
+        }
+
 
         /* Modal transition styles */
         .modal {
