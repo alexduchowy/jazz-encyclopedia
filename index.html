@@ -908,7 +908,7 @@
                 .sort();
 
             
-            // --- MODIFICATION START: Redesigned Filter Logic ---
+            // --- Redesigned Filter Logic ---
 
             const genreFilterBtn = document.getElementById('genre-filter-btn');
             const genreFilterPanel = document.getElementById('genre-filter-panel');
@@ -1024,17 +1024,27 @@
             });
 
 
+            // --- MODIFICATION START: Stricter Filter Logic ---
             function filterTimeline() {
-                const selectedGenres = Array.from(genreFilterPanel.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
+                // Get all available genres that have a checkbox
+                const allAvailableGenres = Array.from(allGenreCheckboxes).map(input => input.value);
                 
+                // Get the currently selected genres
+                const selectedGenres = Array.from(genreFilterPanel.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
+
+                // Determine the deselected genres
+                const deselectedGenres = allAvailableGenres.filter(genre => !selectedGenres.includes(genre));
+
                 document.querySelectorAll('.timeline-album-card').forEach(card => {
                     const cardGenres = card.dataset.genres.split(', ');
-                    const isVisible = selectedGenres.length === 0 || cardGenres.some(genre => selectedGenres.includes(genre));
                     
-                    if (isVisible) {
-                        card.classList.remove('hidden');
-                    } else {
+                    // A card should be hidden if ANY of its genres are in the deselected list.
+                    const shouldBeHidden = cardGenres.some(genre => deselectedGenres.includes(genre));
+                    
+                    if (shouldBeHidden) {
                         card.classList.add('hidden');
+                    } else {
+                        card.classList.remove('hidden');
                     }
                 });
 
@@ -1042,11 +1052,13 @@
                     const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
                     yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
                 });
+                
+                const allChecked = selectedGenres.length === allGenreCheckboxes.length;
+                allCheckbox.checked = allChecked;
             }
+            // --- MODIFICATION END ---
             
             updateGenreButtonText(); // Initial text
-
-            // --- MODIFICATION END ---
 
 
             // --- Timeline Rendering ---
