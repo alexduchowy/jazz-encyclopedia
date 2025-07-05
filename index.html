@@ -108,12 +108,10 @@
         .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td {
             border-bottom: none;
         }
-        .matrix-table .col-hover, .matrix-table .row-hover > td {
+        .matrix-table td.col-hover, .matrix-table .row-hover > td {
             background-color: var(--highlight-color, rgba(0,0,0,0.05)) !important;
         }
-        .matrix-table .row-hover > th {
-             background-color: var(--highlight-color-dark, var(--bg-secondary)) !important;
-        }
+        /* Removed highlight from row header (th) */
 
 
         /* Modal transition styles */
@@ -1617,7 +1615,7 @@
                 const table = document.getElementById('style-matrix-table');
                 if (table) {
                     table.addEventListener('mouseover', (e) => {
-                        if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
+                        if (e.target.tagName === 'TD') { // MODIFIED: Only trigger on TD
                              // Clear previous highlights first
                             table.querySelectorAll('.row-hover, .col-hover').forEach(el => {
                                 el.classList.remove('row-hover', 'col-hover');
@@ -1638,8 +1636,8 @@
                             // Add row highlight
                             row.classList.add('row-hover');
 
-                            // Add column highlight
-                            table.querySelectorAll('tr').forEach(r => {
+                            // Add column highlight to TDs only
+                            table.querySelectorAll('tbody tr').forEach(r => {
                                 if (r.cells[cellIndex]) {
                                     r.cells[cellIndex].classList.add('col-hover');
                                 }
