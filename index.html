@@ -1023,16 +1023,76 @@
             const albumModal = document.getElementById('album-modal');
             const albumModalContent = albumModal.querySelector('.modal-content');
             
+            // --- MODIFICATION START: New Timeline Interaction Logic ---
+            
+            let mobileCardSelectedForModal = null;
+
+            // --- Desktop Hover Effects ---
+            timelineWrapper.addEventListener('mouseover', (e) => {
+                if (window.innerWidth < 768) return; // Desktop only
+
+                const card = e.target.closest('.timeline-album-card');
+                // Do not show hover effects if a modal is open (indicated by a 'clicked' card)
+                if (card && !card.classList.contains('hidden') && !document.querySelector('.timeline-album-card.clicked')) {
+                    drawConnections(card);
+                }
+            });
+
+            timelineWrapper.addEventListener('mouseout', (e) => {
+                if (window.innerWidth < 768) return; // Desktop only
+
+                const card = e.target.closest('.timeline-album-card');
+                 // Do not clear effects if a modal is open
+                if (card && !document.querySelector('.timeline-album-card.clicked')) {
+                    drawConnections(null);
+                }
+            });
+
+            // --- Unified Click Handler for Mobile and Desktop ---
             timelineWrapper.addEventListener('click', e => {
                 const card = e.target.closest('.timeline-album-card');
-                if (card) {
-                    const { albumTitle, artist } = card.dataset;
-                    const albumIndex = albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
-                    if (albumIndex !== -1) {
-                         openAlbumModal(albums[albumIndex], albumIndex);
+                const isMobile = window.innerWidth < 768;
+
+                if (!card) {
+                    // If clicked outside a card on mobile, deselect any card.
+                    if (isMobile && mobileCardSelectedForModal) {
+                        drawConnections(null);
+                        mobileCardSelectedForModal = null;
+                    }
+                    return;
+                }
+
+                if (!card.classList.contains('hidden')) { // Ensure card is not filtered out
+                    // --- Mobile Click Logic ---
+                    if (isMobile) {
+                        if (mobileCardSelectedForModal === card) {
+                            // SECOND click: open the modal.
+                            const { albumTitle, artist } = card.dataset;
+                            const albumIndex = albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
+                            if (albumIndex !== -1) {
+                                // Clear highlights *before* opening modal
+                                drawConnections(null);
+                                openAlbumModal(albums[albumIndex], albumIndex);
+                            }
+                            mobileCardSelectedForModal = null; // Reset state
+                        } else {
+                            // FIRST click: highlight the card.
+                            drawConnections(card);
+                            mobileCardSelectedForModal = card;
+                        }
+                    } else {
+                        // --- Desktop Click Logic ---
+                        const { albumTitle, artist } = card.dataset;
+                        const albumIndex = albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
+                        if (albumIndex !== -1) {
+                            openAlbumModal(albums[albumIndex], albumIndex);
+                        }
                     }
                 }
             });
+
+            // --- MODIFICATION END ---
+
 
             function openAlbumModal(album, index) {
                 currentAlbumIndex = index;
@@ -1622,21 +1682,6 @@
                 }
             }
             
-            // Reverted to direct calls for immediate response
-            timelineWrapper.addEventListener('mouseover', (e) => {
-                const card = e.target.closest('.timeline-album-card');
-                if (card && !card.classList.contains('hidden')) {
-                    drawConnections(card);
-                }
-            });
-
-            timelineWrapper.addEventListener('mouseout', (e) => {
-                const card = e.target.closest('.timeline-album-card');
-                if (card) {
-                    drawConnections(null);
-                }
-            });
-
             // Initial and resize canvas setup
             resizeCanvas();
             new ResizeObserver(resizeCanvas).observe(timelineWrapper);
