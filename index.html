@@ -1619,35 +1619,41 @@
                 timelineCanvas.height = timelineWrapper.offsetHeight;
             }
 
-            function drawConnections(hoveredCard) {
+            function drawConnections(selectedCard) {
                 ctx.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
-                document.querySelectorAll('.timeline-album-card').forEach(c => c.style.removeProperty('--highlight-color'));
+                
+                // First, reset all cards to their default state
+                document.querySelectorAll('.timeline-album-card').forEach(c => {
+                    c.classList.remove('dimmed', 'highlighted');
+                    c.style.removeProperty('--highlight-color');
+                });
 
-                if (!hoveredCard) {
-                    document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.remove('dimmed', 'highlighted'));
+                if (!selectedCard) {
+                    // If no card is selected, we're done. The reset above is enough.
                     return;
                 }
 
+                // Now, apply the new highlights
                 document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.add('dimmed'));
-                hoveredCard.classList.remove('dimmed');
-                hoveredCard.classList.add('highlighted');
+                selectedCard.classList.remove('dimmed');
+                selectedCard.classList.add('highlighted');
 
-                const hoveredGenres = hoveredCard.dataset.genres.split(', ');
-                const primaryHoveredGenre = hoveredGenres[0];
-                const highlightColor = fullGenreColorMap[primaryHoveredGenre] || 'var(--accent)';
-                hoveredCard.style.setProperty('--highlight-color', highlightColor);
+                const selectedGenres = selectedCard.dataset.genres.split(', ');
+                const primaryGenre = selectedGenres[0];
+                const highlightColor = fullGenreColorMap[primaryGenre] || 'var(--accent)';
+                selectedCard.style.setProperty('--highlight-color', highlightColor);
 
-                const yearSection = hoveredCard.closest('.timeline-year-section');
+                const yearSection = selectedCard.closest('.timeline-year-section');
                 if (!yearSection) return;
 
                 const otherCards = Array.from(yearSection.querySelectorAll('.timeline-album-card:not(.hidden)'));
                 const connections = [];
 
                 otherCards.forEach(card => {
-                    if (card === hoveredCard) return;
+                    if (card === selectedCard) return;
 
                     const cardGenres = card.dataset.genres.split(', ');
-                    const hasConnection = cardGenres.includes(primaryHoveredGenre);
+                    const hasConnection = cardGenres.includes(primaryGenre);
 
                     if (hasConnection) {
                         connections.push(card);
@@ -1655,7 +1661,7 @@
                 });
 
                 if (connections.length > 0) {
-                    const startRect = hoveredCard.getBoundingClientRect();
+                    const startRect = selectedCard.getBoundingClientRect();
                     const containerRect = timelineContainer.getBoundingClientRect();
 
                     const startX = startRect.left - containerRect.left + (startRect.width / 2) + timelineContainer.scrollLeft;
