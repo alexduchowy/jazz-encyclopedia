@@ -246,7 +246,9 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 4px 4px 0px var(--text-main);
             border: 2px solid var(--text-main);
-            transform: translateZ(0); /* FIX: Promotes the element to a new compositing layer to prevent flickering on transform. */
+            transform: translateZ(0); /* Promotes the element to a new compositing layer */
+            -webkit-backface-visibility: hidden; /* Safari fix for flickering */
+            backface-visibility: hidden; /* Standard fix for flickering */
         }
         .artist-card:hover {
             transform: translateY(-5px) rotate(2deg);
