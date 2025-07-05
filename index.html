@@ -246,6 +246,7 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 4px 4px 0px var(--text-main);
             border: 2px solid var(--text-main);
+            transform: translateZ(0); /* FIX: Promotes the element to a new compositing layer to prevent flickering on transform. */
         }
         .artist-card:hover {
             transform: translateY(-5px) rotate(2deg);
@@ -502,7 +503,7 @@
         <main>
             <!-- Hero Banner Section -->
             <section id="banner" class="relative w-full h-56 md:h-72 lg:h-[26rem]">
-                <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
+                <img src="https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/1200x416/1c1917/f5f5f4?text=Banner+Image';">
                 <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
 
@@ -1304,7 +1305,7 @@
             });
              document.getElementById('next-album-btn').addEventListener('click', () => {
                 if (currentAlbumIndex < albums.length - 1) {
-                    openAlbumModal(albums[currentAlbumIndex + 1], currentAlbumIndex + 1);
+                    openAlbumModal(albums[currentAlbumIndex + 1], currentAlbumIndex - 1);
                 }
             });
 
@@ -1429,7 +1430,7 @@
                     
                     card.innerHTML = `
                         <div class="h-56 bg-stone-900 artist-photo-container">
-                            <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                            <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/224x224/1c1917/f5f5f4?text=No+Image';">
                         </div>
                         <div class="p-3">
                             <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
@@ -1495,7 +1496,7 @@
                 body.innerHTML = `
                 <div class="flex flex-col sm:flex-row gap-6">
                     <div class="w-full sm:w-1/3 flex-shrink-0 artist-photo-container">
-                        <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                        <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
                     </div>
                     <div class="w-full sm:w-2/3">
                         <h4 class="text-3xl text-stone-900 mb-3">Details</h4>
@@ -1579,6 +1580,7 @@
                 resizeTimeout = setTimeout(() => {
                     updateArtistPagination();
                     resizeCanvas();
+                    updateCustomScrollbar(); // FIX: Update scrollbar on resize
                 }, 200);
             });
             
@@ -1851,6 +1853,77 @@
             if (scrollRightButton) {
                 scrollRightButton.classList.add('nudge-animation');
             }
+            
+            // --- FIX: Custom Scrollbar Logic ---
+            const customScrollbar = document.getElementById('custom-scrollbar');
+            const customScrollbarThumb = document.getElementById('custom-scrollbar-thumb');
+
+            function updateCustomScrollbar() {
+                if (!timelineContainer || !customScrollbar || !customScrollbarThumb) return;
+                const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
+                if (scrollableWidth <= 0) {
+                    customScrollbar.style.display = 'none';
+                    return;
+                }
+                customScrollbar.style.display = 'block';
+
+                const scrollPercentage = timelineContainer.scrollLeft / scrollableWidth;
+                const thumbWidthPercentage = timelineContainer.clientWidth / timelineContainer.scrollWidth;
+                
+                customScrollbarThumb.style.width = `${thumbWidthPercentage * 100}%`;
+                customScrollbarThumb.style.left = `${scrollPercentage * (100 - thumbWidthPercentage * 100)}%`;
+            }
+
+            timelineContainer.addEventListener('scroll', updateCustomScrollbar);
+
+            let isDraggingThumb = false;
+            let thumbStartX;
+            let thumbStartScrollLeft;
+
+            customScrollbarThumb.addEventListener('mousedown', (e) => {
+                isDraggingThumb = true;
+                thumbStartX = e.clientX;
+                thumbStartScrollLeft = timelineContainer.scrollLeft;
+                customScrollbarThumb.style.cursor = 'grabbing';
+                document.body.style.cursor = 'grabbing';
+                document.body.style.userSelect = 'none';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDraggingThumb) return;
+                e.preventDefault();
+                const dx = e.clientX - thumbStartX;
+                const scrollbarWidth = customScrollbar.clientWidth;
+                const thumbWidth = customScrollbarThumb.clientWidth;
+                const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
+                
+                timelineContainer.scrollLeft = thumbStartScrollLeft + (dx / (scrollbarWidth - thumbWidth)) * scrollableWidth;
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDraggingThumb = false;
+                if (customScrollbarThumb) {
+                   customScrollbarThumb.style.cursor = 'grab';
+                }
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            });
+
+            customScrollbar.addEventListener('click', (e) => {
+                if (e.target === customScrollbar) {
+                    const scrollbarRect = customScrollbar.getBoundingClientRect();
+                    const clickPosition = (e.clientX - scrollbarRect.left) / scrollbarRect.width;
+                    const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
+                    
+                    timelineContainer.scrollTo({ 
+                        left: clickPosition * scrollableWidth, 
+                        behavior: 'smooth' 
+                    });
+                }
+            });
+
+            // Initial update
+            setTimeout(updateCustomScrollbar, 200);
         }
     </script>
 </body>
