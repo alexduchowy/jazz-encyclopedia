@@ -69,16 +69,44 @@
               margin-bottom: 1rem;
         }
         
-        /* MODIFICATION: Tab styling */
-        .genre-tab {
-            transition: all 0.2s ease-out;
+        /* MODIFICATION: Compact Matrix Styling */
+        .matrix-container {
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            overflow-x: auto;
+            background-color: var(--bg-main);
         }
-        .genre-tab.active {
+        .matrix-table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 800px;
+        }
+        .matrix-table th, .matrix-table td {
+            padding: 1rem;
+            border-bottom: 2px solid var(--bg-secondary);
+            text-align: left;
+            vertical-align: top;
+        }
+        .matrix-table thead th {
             background-color: var(--text-main);
             color: var(--bg-main);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
+        .matrix-table tbody th {
+            font-weight: bold;
+            font-size: 1.1rem;
+            width: 150px;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+            border-right: 2px solid var(--bg-secondary);
+        }
+        .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
 
         /* Modal transition styles */
         .modal {
@@ -528,13 +556,15 @@
                 </div>
             </section>
 
-            <!-- MODIFICATION: Genre Accordion Section -->
+            <!-- MODIFICATION: Genre Matrix Section -->
             <section id="matrix" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Genres</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Click a genre to learn more about its characteristics.</p>
-                    <div id="genre-accordion" class="max-w-4xl mx-auto text-left space-y-4">
-                        <!-- Accordion items will be generated here -->
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Compare the characteristics of each major genre.</p>
+                    <div id="genre-matrix-container" class="matrix-container max-w-6xl mx-auto">
+                        <table id="style-matrix-table" class="matrix-table">
+                            <!-- Table content will be generated here -->
+                        </table>
                     </div>
                 </div>
             </section>
@@ -1539,65 +1569,34 @@
             filterAndPaginateArtists();
 
 
-            // --- MODIFICATION: Build the new genre accordion ---
-            const accordionContainer = document.getElementById('genre-accordion');
+            // --- MODIFICATION: Build the new genre matrix ---
+            const matrixContainer = document.getElementById('style-matrix-table');
             if (styleMatrixData.features && styleMatrixData.genres) {
-                accordionContainer.innerHTML = ''; // Clear existing content
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                headerRow.innerHTML = `<th class="p-4 font-bold text-2xl w-48 text-left">Genre</th>`;
+                styleMatrixData.features.forEach(feature => {
+                    headerRow.innerHTML += `<th class="p-4 font-bold text-2xl text-center">${feature}</th>`;
+                });
+                thead.appendChild(headerRow);
+                matrixContainer.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
                 Object.keys(styleMatrixData.genres).forEach(genreName => {
                     const genreData = styleMatrixData.genres[genreName];
-                    const accordionItem = document.createElement('div');
-                    accordionItem.className = 'accordion-item border-2 border-stone-900 rounded-sm overflow-hidden mb-4';
-
-                    const header = document.createElement('button');
-                    header.className = 'accordion-header flex justify-between items-center w-full p-4 font-bold text-2xl text-left transition-colors';
-                    header.style.backgroundColor = genreData.color;
-                    header.style.color = 'var(--text-main)';
-                    header.innerHTML = `
-                        <span>${genreName}</span>
-                        <svg class="accordion-icon w-6 h-6 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    `;
-
-                    const content = document.createElement('div');
-                    content.className = 'accordion-content bg-stone-100';
+                    const row = document.createElement('tr');
                     
-                    let contentHtml = '<div class="space-y-4">';
-                    styleMatrixData.features.forEach((feature, i) => {
-                        contentHtml += `
-                            <div>
-                                <h5 class="font-bold text-stone-900 text-xl">${feature}</h5>
-                                <p class="text-stone-700">${genreData.data[i]}</p>
-                            </div>
-                        `;
+                    let rowHtml = `<th style="background-color:${genreData.color};">${genreName}</th>`;
+                    
+                    genreData.data.forEach(dataPoint => {
+                        rowHtml += `<td>${dataPoint}</td>`;
                     });
-                    contentHtml += '</div>';
-                    content.innerHTML = contentHtml;
-
-                    accordionItem.appendChild(header);
-                    accordionItem.appendChild(content);
-                    accordionContainer.appendChild(accordionItem);
+                    row.innerHTML = rowHtml;
+                    tbody.appendChild(row);
                 });
-
-                document.querySelectorAll('.accordion-header').forEach(header => {
-                    header.addEventListener('click', () => {
-                        const content = header.nextElementSibling;
-                        const icon = header.querySelector('.accordion-icon');
-
-                        // Close all other open items
-                        document.querySelectorAll('.accordion-content.open').forEach(openContent => {
-                            if(openContent !== content) {
-                                openContent.classList.remove('open');
-                                openContent.previousElementSibling.querySelector('.accordion-icon').classList.remove('open');
-                            }
-                        });
-
-                        // Toggle the clicked item
-                        content.classList.toggle('open');
-                        icon.classList.toggle('open');
-                    });
-                });
-
+                matrixContainer.appendChild(tbody);
             } else {
-                accordionContainer.innerHTML = '<p class="text-center p-4 text-stone-500">No genre data available.</p>';
+                document.getElementById('genre-matrix-container').innerHTML = '<p class="text-center p-4 text-stone-500">No genre data available.</p>';
             }
             
             // --- Mobile Menu Logic ---
@@ -1609,7 +1608,6 @@
 
             function openMobileMenu() {
                 mobileMenuOverlay.classList.remove('hidden');
-                // Use a timeout to allow the display property to apply before starting the transition
                 setTimeout(() => {
                     mobileMenuPanel.style.transform = 'translateX(0)';
                 }, 10);
@@ -1617,7 +1615,6 @@
 
             function closeMobileMenu() {
                 mobileMenuPanel.style.transform = 'translateX(100%)';
-                // Hide the overlay after the transition is complete
                 setTimeout(() => {
                     mobileMenuOverlay.classList.add('hidden');
                 }, 300);
