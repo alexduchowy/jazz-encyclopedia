@@ -1436,6 +1436,13 @@
                         yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
                     });
                     this.elements.genreFilterPanel.querySelector('#all-genres-checkbox').checked = selectedGenres.length === this.elements.genreFilterPanel.querySelectorAll('input[data-genre]').length;
+                    
+                    // Re-render markers and scrollbar after filtering
+                    setTimeout(() => {
+                        this.methods.resizeCanvas.call(this);
+                        this.methods.renderScrollbarMarkers.call(this);
+                        this.methods.updateCustomScrollbar.call(this);
+                    }, 0);
                 },
 
                 applyHighlights(selectedCard) {
@@ -1649,7 +1656,7 @@
 
                     years.forEach(year => {
                         const yearSection = document.getElementById(`year-${year}`);
-                        if (yearSection) {
+                        if (yearSection && yearSection.style.display !== 'none') {
                             const position = yearSection.offsetLeft + (yearSection.offsetWidth / 2);
                             const percentage = (position / timelineWrapper.scrollWidth) * 100;
                             
