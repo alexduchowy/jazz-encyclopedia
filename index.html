@@ -431,7 +431,6 @@
         }
         .title-rotate {
             transform: rotate(-1.5deg);
-            margin-top: 35px;
         }
         .nav-bar-hidden-behaviour {
             display: flex;
@@ -470,13 +469,20 @@
                     
                     <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
                     <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                        <a href="#" class="block h-12 w-auto" style="transform: rotate(-1.5deg);">
-                            <svg class="h-full w-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M48.5 15C29.4462 15 14 30.4462 14 49.5C14 68.5538 29.4462 84 48.5 84C59.526 84 69.2483 78.5833 75.3137 70.1863M48.5 15C52.5 15 55 17 58.5 21.5C62.5 26.5 63.3333 31.1667 62.5 34C58.5 35.5 51.1 35.5 48.5 34C45.9 32.5 44.5 29 44.5 21.5C44.5 17 45.5 15 48.5 15Z" stroke="#1C1917" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M75.5 70.5L86 81" stroke="#1C1917" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M45 46H63" stroke="#1C1917" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M45 56H57" stroke="#f97316" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                        <a href="#" class="flex items-center gap-3" style="text-decoration: none;">
+                            <div class="h-12 w-12 flex-shrink-0" style="transform: rotate(-1.5deg);">
+                                <svg class="h-full w-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M48.5 15C29.4462 15 14 30.4462 14 49.5C14 68.5538 29.4462 84 48.5 84C59.526 84 69.2483 78.5833 75.3137 70.1863M48.5 15C52.5 15 55 17 58.5 21.5C62.5 26.5 63.3333 31.1667 62.5 34C58.5 35.5 51.1 35.5 48.5 34C45.9 32.5 44.5 29 44.5 21.5C44.5 17 45.5 15 48.5 15Z" stroke="#1C1917" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M75.5 70.5L86 81" stroke="#1C1917" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M45 46H63" stroke="#1C1917" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M45 56H57" stroke="#f97316" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="title-rotate">
+                                <h1 class="text-xl md:text-2xl font-bold text-stone-900 tracking-tight leading-none">
+                                    CONTROLLED<br>FREEDOM
+                                </h1>
+                            </div>
                         </a>
                         <div class="nav-bar-hidden-behaviour sm:items-baseline sm:space-x-8">
                             <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
