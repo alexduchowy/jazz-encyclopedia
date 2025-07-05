@@ -1620,6 +1620,7 @@
             }
 
             function drawConnections(selectedCard) {
+                // Clear canvas just in case, though it's no longer used for drawing
                 ctx.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
                 
                 // First, reset all cards to their default state
@@ -1643,12 +1644,9 @@
                 const highlightColor = fullGenreColorMap[primaryGenre] || 'var(--accent)';
                 selectedCard.style.setProperty('--highlight-color', highlightColor);
 
-                // --- MODIFICATION START: Search the whole timeline ---
                 const otherCards = Array.from(document.querySelectorAll('.timeline-album-card:not(.hidden)'));
-                // --- MODIFICATION END ---
                 
-                const connections = [];
-
+                // Find and highlight connected cards, but do not draw lines
                 otherCards.forEach(card => {
                     if (card === selectedCard) return;
 
@@ -1656,36 +1654,11 @@
                     const hasConnection = cardGenres.includes(primaryGenre);
 
                     if (hasConnection) {
-                        connections.push(card);
-                    }
-                });
-
-                if (connections.length > 0) {
-                    const startRect = selectedCard.getBoundingClientRect();
-                    const containerRect = timelineContainer.getBoundingClientRect();
-
-                    const startX = startRect.left - containerRect.left + (startRect.width / 2) + timelineContainer.scrollLeft;
-                    const startY = startRect.top - containerRect.top + (startRect.height / 2);
-
-                    connections.forEach(card => {
                         card.classList.remove('dimmed');
                         card.classList.add('highlighted');
                         card.style.setProperty('--highlight-color', highlightColor);
-                        
-                        const endRect = card.getBoundingClientRect();
-                        const endX = endRect.left - containerRect.left + (endRect.width / 2) + timelineContainer.scrollLeft;
-                        const endY = endRect.top - containerRect.top + (endRect.height / 2);
-
-                        ctx.beginPath();
-                        ctx.moveTo(startX, startY);
-                        ctx.lineTo(endX, endY);
-                        ctx.strokeStyle = highlightColor.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(highlightColor.slice(4, -1).trim()) : highlightColor;
-                        ctx.globalAlpha = 0.6;
-                        ctx.lineWidth = 2;
-                        ctx.stroke();
-                        ctx.globalAlpha = 1.0;
-                    });
-                }
+                    }
+                });
             }
             
             // Initial and resize canvas setup
