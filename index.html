@@ -339,7 +339,7 @@
             accent-color: var(--accent);
         }
 
-        /* NEW: Genre Filter Dropdown Styling */
+        /* Genre Filter Dropdown Styling */
         .genre-dropdown-panel {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -378,6 +378,33 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 0.8rem;
+        }
+
+        /* Scrollbar Marker Styling */
+        #custom-scrollbar-markers {
+            position: absolute;
+            top: -5px; /* Position it slightly above the scrollbar track */
+            left: 0;
+            right: 0;
+            height: 10px;
+            pointer-events: none; /* So it doesn't interfere with clicks on the scrollbar */
+        }
+        .scrollbar-marker {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background-color: var(--accent);
+            transform: translateX(-50%); /* Center the marker on its position */
+        }
+        .scrollbar-marker::after {
+            content: attr(data-year);
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--text-muted);
         }
 
         /* Loading indicator styles */
@@ -455,7 +482,7 @@
             }
         }
 
-        /* NEW: Nudge animation for scroll buttons */
+        /* Nudge animation for scroll buttons */
         @keyframes nudge-right {
             0%, 100% { transform: translateX(0); }
             50% { transform: translateX(8px); }
@@ -464,7 +491,7 @@
             animation: nudge-right 1.5s ease-in-out 3;
         }
 
-        /* NEW: Mobile Menu Panel Transition */
+        /* Mobile Menu Panel Transition */
         #mobile-menu-panel {
             transition: transform 0.3s ease-in-out;
         }
@@ -580,16 +607,17 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
                     </div>
-                    <!-- MODIFICATION: Custom Scrollbar -->
+                    <!-- Custom Scrollbar with Markers -->
                     <div class="mt-6">
                         <div id="custom-scrollbar" class="w-full h-3 bg-stone-200 rounded-full cursor-pointer relative">
+                            <div id="custom-scrollbar-markers"></div>
                             <div id="custom-scrollbar-thumb" class="h-full bg-stone-900 rounded-full absolute top-0 cursor-grab"></div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- MODIFICATION: Genre Matrix Section -->
+            <!-- Genre Matrix Section -->
             <section id="matrix" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Genres</h2>
@@ -854,6 +882,7 @@
                     matrixContainer: document.getElementById('style-matrix-table'),
                     customScrollbar: document.getElementById('custom-scrollbar'),
                     customScrollbarThumb: document.getElementById('custom-scrollbar-thumb'),
+                    customScrollbarMarkers: document.getElementById('custom-scrollbar-markers'),
                     mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
@@ -907,6 +936,7 @@
                 this.methods.setupMobileMenu.call(this);
                 this.methods.setupScrollObservers.call(this);
                 this.methods.setupGeneralEventListeners.call(this);
+                this.methods.renderScrollbarMarkers.call(this);
                 this.showPage();
                 setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 0);
             },
@@ -1377,6 +1407,7 @@
                             this.methods.setupArtistSlider.call(this);
                             this.methods.resizeCanvas.call(this);
                             this.methods.updateCustomScrollbar.call(this);
+                            this.methods.renderScrollbarMarkers.call(this);
                         }, 200);
                     });
                     
@@ -1605,6 +1636,30 @@
                         }
                     });
                     setTimeout(() => this.methods.updateCustomScrollbar.call(this), 200);
+                },
+
+                renderScrollbarMarkers() {
+                    const { timelineContainer, timelineWrapper, customScrollbarMarkers } = this.elements;
+                    const years = [...new Set(this.state.albums.map(album => album.year))].sort();
+                    customScrollbarMarkers.innerHTML = ''; // Clear existing markers
+
+                    if (timelineWrapper.scrollWidth <= timelineContainer.clientWidth) {
+                        return; // Don't render if not scrollable
+                    }
+
+                    years.forEach(year => {
+                        const yearSection = document.getElementById(`year-${year}`);
+                        if (yearSection) {
+                            const position = yearSection.offsetLeft + (yearSection.offsetWidth / 2);
+                            const percentage = (position / timelineWrapper.scrollWidth) * 100;
+                            
+                            const marker = document.createElement('div');
+                            marker.className = 'scrollbar-marker';
+                            marker.style.left = `${percentage}%`;
+                            marker.dataset.year = `'${String(year).slice(2)}`;
+                            customScrollbarMarkers.appendChild(marker);
+                        }
+                    });
                 }
             }
         };
