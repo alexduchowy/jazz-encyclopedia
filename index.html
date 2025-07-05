@@ -69,23 +69,25 @@
               margin-bottom: 1rem;
         }
         
-        /* Compact Matrix Styling */
-        .matrix-container {
+        /* MODIFICATION: Compact Matrix Styling */
+        #genre-matrix-container {
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
-            overflow-x: auto;
+            overflow: auto; /* Enable scrolling */
+            max-height: 70vh; /* Set a max height */
             background-color: var(--bg-main);
         }
         .matrix-table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 800px;
+            min-width: 900px; /* Ensure horizontal scroll on smaller screens */
         }
         .matrix-table th, .matrix-table td {
             padding: 1rem;
             border-bottom: 2px solid var(--bg-secondary);
             text-align: left;
             vertical-align: top;
+            transition: background-color 0.1s ease-in-out;
         }
         .matrix-table thead th {
             background-color: var(--text-main);
@@ -105,6 +107,12 @@
         }
         .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td {
             border-bottom: none;
+        }
+        .matrix-table .col-hover, .matrix-table .row-hover > td {
+            background-color: var(--highlight-color, rgba(0,0,0,0.05)) !important;
+        }
+        .matrix-table .row-hover > th {
+             background-color: var(--highlight-color-dark, var(--bg-secondary)) !important;
         }
 
 
@@ -559,7 +567,7 @@
                     </div>
                     <!-- MODIFICATION: Custom Scrollbar -->
                     <div class="mt-6">
-                        <div id="custom-scrollbar" class="w-full h-3 bg-stone-200 rounded-full cursor-pointer relative hidden">
+                        <div id="custom-scrollbar" class="w-full h-3 bg-stone-200 rounded-full cursor-pointer relative">
                             <div id="custom-scrollbar-thumb" class="h-full bg-stone-900 rounded-full absolute top-0 cursor-grab"></div>
                         </div>
                     </div>
@@ -1605,6 +1613,46 @@
                     tbody.appendChild(row);
                 });
                 matrixContainer.appendChild(tbody);
+                 // Add cross-hover effect logic
+                const table = document.getElementById('style-matrix-table');
+                if (table) {
+                    table.addEventListener('mouseover', (e) => {
+                        if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
+                             // Clear previous highlights first
+                            table.querySelectorAll('.row-hover, .col-hover').forEach(el => {
+                                el.classList.remove('row-hover', 'col-hover');
+                            });
+
+                            const cell = e.target;
+                            const row = cell.parentElement;
+                            const cellIndex = cell.cellIndex;
+                            const headerCell = row.querySelector('th');
+                            const baseRgb = window.getComputedStyle(headerCell).backgroundColor;
+                            
+                            const highlightColor = baseRgb.replace('rgb', 'rgba').replace(')', ', 0.2)');
+                            const highlightColorDark = baseRgb.replace('rgb', 'rgba').replace(')', ', 0.4)');
+
+                            table.style.setProperty('--highlight-color', highlightColor);
+                            table.style.setProperty('--highlight-color-dark', highlightColorDark);
+
+                            // Add row highlight
+                            row.classList.add('row-hover');
+
+                            // Add column highlight
+                            table.querySelectorAll('tr').forEach(r => {
+                                if (r.cells[cellIndex]) {
+                                    r.cells[cellIndex].classList.add('col-hover');
+                                }
+                            });
+                        }
+                    });
+
+                    table.addEventListener('mouseleave', () => {
+                        table.querySelectorAll('.row-hover, .col-hover').forEach(el => {
+                            el.classList.remove('row-hover', 'col-hover');
+                        });
+                    });
+                }
             } else {
                 document.getElementById('genre-matrix-container').innerHTML = '<p class="text-center p-4 text-stone-500">No genre data available.</p>';
             }
