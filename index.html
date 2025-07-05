@@ -69,7 +69,7 @@
               margin-bottom: 1rem;
         }
         
-        /* MODIFICATION: Compact Matrix Styling */
+        /* Compact Matrix Styling */
         #genre-matrix-container {
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
@@ -111,7 +111,6 @@
         .matrix-table td.col-hover, .matrix-table .row-hover > td {
             background-color: var(--highlight-color, rgba(0,0,0,0.05)) !important;
         }
-        /* Removed highlight from row header (th) */
 
 
         /* Modal transition styles */
@@ -198,9 +197,9 @@
             border: 2px solid var(--text-main);
             overflow: hidden;
             opacity: 1;
-            /* --highlight-color will be set by JS */
         }
-        .timeline-album-card:hover {
+        /* MODIFICATION: Hover effect is now a dedicated class */
+        .timeline-album-card.hover-effect {
             transform: translateY(-5px) rotate(2deg);
         }
         .timeline-album-card.dimmed {
@@ -208,7 +207,6 @@
         }
         .timeline-album-card.highlighted {
             opacity: 1;
-            transform: translateY(-5px) rotate(2deg);
             box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
         }
         /* Style for the card that is currently selected/clicked */
@@ -1628,10 +1626,8 @@
                             const baseRgb = window.getComputedStyle(headerCell).backgroundColor;
                             
                             const highlightColor = baseRgb.replace('rgb', 'rgba').replace(')', ', 0.2)');
-                            const highlightColorDark = baseRgb.replace('rgb', 'rgba').replace(')', ', 0.4)');
-
+                            
                             table.style.setProperty('--highlight-color', highlightColor);
-                            table.style.setProperty('--highlight-color-dark', highlightColorDark);
 
                             // Add row highlight
                             row.classList.add('row-hover');
@@ -1727,29 +1723,30 @@
             }
 
             function applyHighlights(selectedCard) {
+                // Reset all cards from previous JS states
                 document.querySelectorAll('.timeline-album-card').forEach(c => {
-                    c.classList.remove('dimmed', 'highlighted');
+                    c.classList.remove('dimmed', 'highlighted', 'hover-effect');
                     c.style.removeProperty('--highlight-color');
                 });
 
                 if (!selectedCard) {
-                    return;
+                    return; // Exit if no card is selected (mouseout)
                 }
 
+                // Dim all cards
                 document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.add('dimmed'));
-                selectedCard.classList.remove('dimmed');
-                selectedCard.classList.add('highlighted');
+                
+                // Apply hover effect ONLY to the selected card
+                selectedCard.classList.add('hover-effect');
 
                 const selectedGenres = selectedCard.dataset.genres.split(', ');
                 const primaryGenre = selectedGenres[0];
                 const highlightColor = fullGenreColorMap[primaryGenre] || 'var(--accent)';
-                selectedCard.style.setProperty('--highlight-color', highlightColor);
-
-                const otherCards = Array.from(document.querySelectorAll('.timeline-album-card:not(.hidden)'));
                 
-                otherCards.forEach(card => {
-                    if (card === selectedCard) return;
-
+                // Find all related cards
+                const allCards = Array.from(document.querySelectorAll('.timeline-album-card:not(.hidden)'));
+                
+                allCards.forEach(card => {
                     const cardGenres = card.dataset.genres.split(', ');
                     const hasConnection = cardGenres.includes(primaryGenre);
 
