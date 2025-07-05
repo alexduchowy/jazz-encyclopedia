@@ -608,10 +608,10 @@
                         <p>The golden age of acoustic innovation from 1950 to 1969 was a period of intense, shared creativity. However, by the end of the 1960s, the cohesive center began to dissolve. The death of John Coltrane in 1967 removed a spiritual and musical lodestar for the avant-garde. Simultaneously, Miles Davis, ever the innovator, began incorporating electric instruments and rock-influenced rhythms, paving the way for <strong>Jazz Fusion</strong> with albums like *In a Silent Way* and *Bitches Brew*. This seismic shift created a new mainstream that would dominate the 1970s.</p>
                         <p>Yet, the legacy of this entire two-decade period is profound. The harmonic vocabulary of Bebop, the soulful feel of Hard Bop, the arranging concepts of Cool Jazz, and the structural freedom of Post-Bop became a permanent part of the modern jazz language. In the 1980s, the "Young Lions" movement, led by trumpeter Wynton Marsalis, sparked a revival that looked directly back to the acoustic, small-group aesthetic of this era. This cemented the 1950-1969 period as a classic age, and its language remains the primary foundation for much of the acoustic jazz being played today.</p>
                     </div>
-                      <!-- Spotify Playlist -->
+                      <!-- MODIFICATION: Updated Spotify Playlist -->
                       <div class="mt-16 text-left">
                           <h3 class="text-3xl text-stone-900 mb-4">Listen now on Spotify:</h3>
-                          <iframe style="border-radius:0; border: 2px solid #1c1917;" src="https://open.spotify.com/embed/playlist/6JT7jtrtYO7d5FBC3Fhh0p?utm_source=generator&theme=0" width="100%" height="500" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                          <iframe style="border-radius:0; border: 2px solid #1c1917;" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="500" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                       </div>
                 </div>
             </section>
@@ -638,7 +638,7 @@
                     <h3 id="modal-title" class="text-4xl text-orange-500"></h3>
                     <button id="modal-artist" class="text-xl text-stone-600 bg-transparent border-none p-0"></button>
                 </div>
-                <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">&times;</button>
+                <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
             </div>
             <div id="modal-body" class="p-6 overflow-y-auto">
                 <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
@@ -662,7 +662,7 @@
         <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
              <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
                  <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
-                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">&times;</button>
+                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
              </div>
              <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
@@ -1415,7 +1415,7 @@
                     
                     card.innerHTML = `
                         <div class="h-56 bg-stone-900 artist-photo-container">
-                            <img src="${artist.photo || ''}" alt="Photo of ${artist.name}" loading="lazy" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                            <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                         </div>
                         <div class="p-3">
                             <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
@@ -1481,7 +1481,7 @@
                 body.innerHTML = `
                 <div class="flex flex-col sm:flex-row gap-6">
                     <div class="w-full sm:w-1/3 flex-shrink-0 artist-photo-container">
-                        <img src="${artist.photo || ''}" class="w-full h-auto rounded-sm border-2 border-stone-900" loading="lazy" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                        <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                     </div>
                     <div class="w-full sm:w-2/3">
                         <h4 class="text-3xl text-stone-900 mb-3">Details</h4>
