@@ -129,9 +129,6 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        #horizontal-timeline-container::-webkit-scrollbar {
-            display: none;
-        }
         #horizontal-timeline-container:active {
             cursor: grabbing;
         }
@@ -151,6 +148,7 @@
             display: inline-flex;
             align-items: flex-start;
             padding: 2rem 1rem;
+            padding-top: 5rem; /* MODIFIED: Make space for sticky header */
             z-index: 2; /* Ensure cards are above the canvas */
         }
         /* Styling for each year's section in the timeline */
@@ -167,13 +165,7 @@
         }
         /* Year header styling */
         .timeline-year-header {
-            font-size: 2.5rem; /* MODIFIED: Reduced size */
-            font-weight: 900;
-            color: var(--accent-dark);
-            opacity: 0.4;
-            margin-bottom: 1.5rem;
-            width: 100%;
-            text-align: left;
+           display: none; /* MODIFIED: Hide the inline headers */
         }
         /* Grid for album cards within a year */
         .timeline-album-list {
@@ -517,7 +509,7 @@
                     <h2 class="section-header text-5xl">Timeline Explorer</h2>
                     <p class="text-center text-lg text-stone-600 mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
                     
-                    <!-- NEW: Redesigned Filter Controls -->
+                    <!-- Redesigned Filter Controls -->
                     <div id="timeline-controls" class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
                         <!-- Genre Filter Dropdown -->
                         <div class="relative" id="genre-filter-dropdown-container">
@@ -539,14 +531,17 @@
                     </div>
 
                     <div class="relative group">
+                        <!-- MODIFICATION: Sticky Year Display -->
+                        <div id="sticky-year-display" class="absolute top-0 left-1 sm:left-4 font-black text-stone-900/30 text-6xl transition-opacity duration-200 pointer-events-none z-10"></div>
+
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
                             <canvas id="timeline-canvas"></canvas>
                             <div id="timeline-wrapper"></div>
                         </div>
-                        <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
+                        <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                         </button>
-                        <button id="scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
+                        <button id="scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
                     </div>
@@ -913,6 +908,7 @@
             const genreFilterBtn = document.getElementById('genre-filter-btn');
             const genreFilterPanel = document.getElementById('genre-filter-panel');
             const yearJumper = document.getElementById('year-jumper');
+            const stickyYearDisplay = document.getElementById('sticky-year-display');
 
             // Populate Genre Filter Dropdown
             const genrePanelContent = document.createElement('div');
@@ -1007,23 +1003,6 @@
                 }
             });
             
-            // Update year jumper on scroll
-            timelineContainer.addEventListener('scroll', () => {
-                let currentYear = '';
-                for (const year of years) {
-                    const section = document.getElementById(`year-${year}`);
-                    if (section.offsetLeft <= timelineContainer.scrollLeft + timelineContainer.offsetWidth / 2) {
-                        currentYear = year;
-                    } else {
-                        break;
-                    }
-                }
-                if (yearJumper.value !== currentYear) {
-                    yearJumper.value = currentYear;
-                }
-            });
-
-
             // --- MODIFICATION START: Corrected Filter Logic ---
             function filterTimeline() {
                 const selectedGenres = Array.from(genreFilterPanel.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
@@ -1702,6 +1681,44 @@
                         card.style.setProperty('--highlight-color', highlightColor);
                     }
                 });
+            }
+
+            // MODIFICATION: Sticky Header Scroll Logic
+            let lastKnownYear = '';
+            timelineContainer.addEventListener('scroll', () => {
+                let currentYear = '';
+                const scrollLeft = timelineContainer.scrollLeft;
+                const containerWidth = timelineContainer.offsetWidth;
+
+                // Find the current year based on what's visible
+                for (const year of years) {
+                    const section = document.getElementById(`year-${year}`);
+                    if (section && section.style.display !== 'none') {
+                         if (section.offsetLeft <= scrollLeft + 60) { // 60px offset
+                            currentYear = year;
+                        }
+                    }
+                }
+                
+                if (currentYear && currentYear !== lastKnownYear) {
+                    lastKnownYear = currentYear;
+                    
+                    stickyYearDisplay.style.opacity = '0';
+                    setTimeout(() => {
+                        stickyYearDisplay.textContent = currentYear;
+                        stickyYearDisplay.style.opacity = '0.3';
+                    }, 150);
+                }
+
+                if(yearJumper.value !== currentYear) {
+                    yearJumper.value = currentYear;
+                }
+            });
+
+            // Set initial sticky year
+            if (years.length > 0) {
+                stickyYearDisplay.textContent = years[0];
+                lastKnownYear = years[0];
             }
             
             resizeCanvas();
