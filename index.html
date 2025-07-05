@@ -111,6 +111,28 @@
         .matrix-table td.col-hover, .matrix-table .row-hover > td {
             background-color: var(--highlight-color, rgba(0,0,0,0.05)) !important;
         }
+        /* Genre header button styling */
+        .genre-header-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-size: inherit;
+            font-weight: inherit;
+            color: inherit;
+        }
+        .genre-header-button .info-icon {
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .genre-header-button:hover .info-icon {
+            opacity: 1;
+        }
 
 
         /* Modal transition styles */
@@ -700,6 +722,15 @@
              <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
     </div>
+    <div id="genre-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+                 <h3 id="genre-modal-title" class="text-4xl"></h3>
+                 <button id="close-genre-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+             </div>
+             <div id="genre-modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
 
     <!-- MODIFICATION: Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
@@ -845,6 +876,7 @@
                     albumModalContent: document.getElementById('album-modal').querySelector('.modal-content'),
                     artistModal: document.getElementById('artist-modal'),
                     artistModalContent: document.getElementById('artist-modal').querySelector('.modal-content'),
+                    genreModal: document.getElementById('genre-modal'),
                     instrumentFilter: document.getElementById('instrument-filter'),
                     artistSliderTrack: document.getElementById('artist-slider-track'),
                     artistPrevBtn: document.getElementById('artist-prev-btn'),
@@ -1115,7 +1147,12 @@
                         Object.keys(styleMatrix.genres).forEach(genreName => {
                             const genreData = styleMatrix.genres[genreName];
                             const row = document.createElement('tr');
-                            row.innerHTML = `<th style="background-color:${genreData.color};">${genreName}</th>` + genreData.data.map(dp => `<td>${dp}</td>`).join('');
+                            row.innerHTML = `<th style="background-color:${genreData.color};">
+                                <button class="genre-header-button" data-genre-name="${genreName}">
+                                    <span>${genreName}</span>
+                                    <svg class="info-icon w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                                </button>
+                            </th>` + genreData.data.map(dp => `<td>${dp}</td>`).join('');
                             tbody.appendChild(row);
                         });
                         matrixContainer.appendChild(tbody);
@@ -1206,7 +1243,7 @@
                 },
                 
                 setupModals() {
-                    const { albumModal, artistModal } = this.elements;
+                    const { albumModal, artistModal, genreModal, matrixContainer } = this.elements;
                     albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeAlbumModal.call(this));
                     albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') this.methods.closeAlbumModal.call(this); });
                     document.getElementById('prev-album-btn').addEventListener('click', () => {
@@ -1225,7 +1262,10 @@
                     artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal.call(this));
                     artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') this.methods.closeArtistModal.call(this); });
                     
-                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal.call(this); this.methods.closeArtistModal.call(this); } });
+                    genreModal.querySelector('#close-genre-modal').addEventListener('click', () => this.methods.closeGenreModal.call(this));
+                    genreModal.addEventListener('click', e => { if (e.target.id === 'genre-modal') this.methods.closeGenreModal.call(this); });
+                    
+                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal.call(this); this.methods.closeArtistModal.call(this); this.methods.closeGenreModal.call(this); } });
 
                     albumModal.addEventListener('click', (e) => {
                         if (e.target.matches('.clickable-link[data-artist-name]')) {
@@ -1247,6 +1287,14 @@
                                 this.methods.closeArtistModal.call(this);
                                 setTimeout(() => this.methods.openAlbumModal.call(this, visibleAlbum, indexInVisible), 250);
                             }
+                        }
+                    });
+
+                    matrixContainer.addEventListener('click', (e) => {
+                        const button = e.target.closest('.genre-header-button');
+                        if(button) {
+                            const genreName = button.dataset.genreName;
+                            this.methods.openGenreModal.call(this, genreName);
                         }
                     });
                 },
@@ -1349,7 +1397,10 @@
                 },
 
                 setupGeneralEventListeners() {
-                    this.elements.instrumentFilter.addEventListener('change', this.methods.setupArtistSlider.bind(this));
+                    this.elements.instrumentFilter.addEventListener('change', () => {
+                        this.state.currentArtistPage = 0; // Reset page on filter change
+                        this.methods.setupArtistSlider.call(this);
+                    });
                     this.elements.artistPrevBtn.addEventListener('click', () => this.methods.goToArtistPage.call(this, this.state.currentArtistPage - 1));
                     this.elements.artistNextBtn.addEventListener('click', () => this.methods.goToArtistPage.call(this, this.state.currentArtistPage + 1));
                     
@@ -1505,6 +1556,36 @@
                     const { artistModal, artistModalContent } = this.elements;
                     artistModal.classList.add('opacity-0', 'pointer-events-none');
                     artistModalContent.classList.add('scale-95');
+                },
+                
+                openGenreModal(genreName) {
+                    const { genreModal } = this.elements;
+                    const genreData = this.state.styleMatrix.genres[genreName];
+                    if (!genreData) return;
+
+                    const titleEl = genreModal.querySelector('#genre-modal-title');
+                    titleEl.textContent = genreName;
+                    titleEl.style.color = genreData.color.startsWith('var') ? `var(--accent)` : genreData.color;
+
+                    const bodyEl = genreModal.querySelector('#genre-modal-body');
+                    let bodyHtml = '<div class="space-y-4">';
+                    this.state.styleMatrix.features.forEach((feature, index) => {
+                        bodyHtml += `<div>
+                            <h4 class="text-2xl font-bold text-stone-900 mb-1">${feature}</h4>
+                            <p class="text-base text-stone-700 leading-relaxed">${genreData.data[index]}</p>
+                        </div>`;
+                    });
+                    bodyHtml += '</div>';
+                    bodyEl.innerHTML = bodyHtml;
+
+                    genreModal.classList.remove('opacity-0', 'pointer-events-none');
+                    genreModal.querySelector('.modal-content').classList.remove('scale-95');
+                },
+
+                closeGenreModal() {
+                    const { genreModal } = this.elements;
+                    genreModal.classList.add('opacity-0', 'pointer-events-none');
+                    genreModal.querySelector('.modal-content').classList.add('scale-95');
                 },
                 
                 populateInstrumentFilter(artists) {
