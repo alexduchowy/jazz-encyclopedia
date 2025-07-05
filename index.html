@@ -494,7 +494,7 @@
 
         <main>
             <!-- Hero Banner Section -->
-            <section id="banner" class="relative w-full h-80 md:h-96 lg:h-[32rem]">
+            <section id="banner" class="relative w-full h-56 md:h-72 lg:h-[26rem]">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
                 <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
@@ -1034,7 +1034,7 @@
                 const card = e.target.closest('.timeline-album-card');
                 // Do not show hover effects if a modal is open (indicated by a 'clicked' card)
                 if (card && !card.classList.contains('hidden') && !document.querySelector('.timeline-album-card.clicked')) {
-                    drawConnections(card);
+                    applyHighlights(card);
                 }
             });
 
@@ -1044,7 +1044,7 @@
                 const card = e.target.closest('.timeline-album-card');
                  // Do not clear effects if a modal is open
                 if (card && !document.querySelector('.timeline-album-card.clicked')) {
-                    drawConnections(null);
+                    applyHighlights(null);
                 }
             });
 
@@ -1056,7 +1056,7 @@
                 if (!card) {
                     // If clicked outside a card on mobile, deselect any card.
                     if (isMobile && mobileCardSelectedForModal) {
-                        drawConnections(null);
+                        applyHighlights(null);
                         mobileCardSelectedForModal = null;
                     }
                     return;
@@ -1071,13 +1071,13 @@
                             const albumIndex = albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
                             if (albumIndex !== -1) {
                                 // Clear highlights *before* opening modal
-                                drawConnections(null);
+                                applyHighlights(null);
                                 openAlbumModal(albums[albumIndex], albumIndex);
                             }
                             mobileCardSelectedForModal = null; // Reset state
                         } else {
                             // FIRST click: highlight the card.
-                            drawConnections(card);
+                            applyHighlights(card);
                             mobileCardSelectedForModal = card;
                         }
                     } else {
@@ -1619,10 +1619,7 @@
                 timelineCanvas.height = timelineWrapper.offsetHeight;
             }
 
-            function drawConnections(selectedCard) {
-                // Clear canvas just in case, though it's no longer used for drawing
-                ctx.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
-                
+            function applyHighlights(selectedCard) {
                 // First, reset all cards to their default state
                 document.querySelectorAll('.timeline-album-card').forEach(c => {
                     c.classList.remove('dimmed', 'highlighted');
@@ -1646,7 +1643,7 @@
 
                 const otherCards = Array.from(document.querySelectorAll('.timeline-album-card:not(.hidden)'));
                 
-                // Find and highlight connected cards, but do not draw lines
+                // Find and highlight connected cards
                 otherCards.forEach(card => {
                     if (card === selectedCard) return;
 
