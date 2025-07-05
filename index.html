@@ -198,8 +198,8 @@
             overflow: hidden;
             opacity: 1;
         }
-        /* MODIFICATION: Hover effect is now a dedicated class */
-        .timeline-album-card.hover-effect {
+        /* MODIFICATION: Hover effect is now a standard CSS pseudo-class */
+        .timeline-album-card:hover {
             transform: translateY(-5px) rotate(2deg);
         }
         .timeline-album-card.dimmed {
@@ -1725,7 +1725,7 @@
             function applyHighlights(selectedCard) {
                 // Reset all cards from previous JS states
                 document.querySelectorAll('.timeline-album-card').forEach(c => {
-                    c.classList.remove('dimmed', 'highlighted', 'hover-effect');
+                    c.classList.remove('dimmed', 'highlighted');
                     c.style.removeProperty('--highlight-color');
                 });
 
@@ -1736,9 +1736,6 @@
                 // Dim all cards
                 document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.add('dimmed'));
                 
-                // Apply hover effect ONLY to the selected card
-                selectedCard.classList.add('hover-effect');
-
                 const selectedGenres = selectedCard.dataset.genres.split(', ');
                 const primaryGenre = selectedGenres[0];
                 const highlightColor = fullGenreColorMap[primaryGenre] || 'var(--accent)';
