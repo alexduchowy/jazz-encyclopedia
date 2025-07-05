@@ -373,4 +373,1332 @@
             position: fixed;
             inset: 0;
             background-color: var(--bg-main);
-            displ
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .content-hidden {
+            display: none;
+        }
+        
+        .genre-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            border: 2px solid var(--text-main);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Style for clickable links in modals */
+        .clickable-link {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-color: var(--accent);
+            transition: color 0.2s;
+        }
+        .clickable-link:hover {
+            color: var(--accent);
+        }
+
+        /* Animation for fade-in on scroll */
+        .fade-in-element {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .fade-in-element.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .title-rotate {
+            transform: rotate(-1.5deg);
+            margin-top: 35px;
+        }
+        .nav-bar-hidden-behaviour {
+            display: flex;
+            transform: rotate(-1.5deg);
+        }
+        @media (max-width: 640px) {
+            .nav-bar-hidden-behaviour {
+                display: none;
+            }
+        }
+
+        /* NEW: Nudge animation for scroll buttons */
+        @keyframes nudge-right {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(8px); }
+        }
+        .nudge-animation {
+            animation: nudge-right 1.5s ease-in-out 3;
+        }
+   
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-900">
+
+    <!-- Full-screen loader -->
+    <div id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <div id="page-content" class="content-hidden">
+        <!-- HEADER -->
+        <div class="sticky top-0 z-50 h-24 mb-[-64px]">
+              <header class="relative container mx-auto h-full">
+                    <!-- This is the crooked background. It is positioned absolutely within the header -->
+                    <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
+                    
+                    <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
+                    <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                        <h1 class="title-rotate text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Controlled Freedom</h1>
+                        <div class="nav-bar-hidden-behaviour sm:items-baseline sm:space-x-8">
+                            <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
+                            <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
+                            <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
+                            <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
+                            <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                        </div>
+                        <div class="sm:hidden styled-select">
+                            <select id="mobile-nav" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500">
+                                <option value="#overview">Overview</option>
+                                <option value="#timeline">Timeline</option>
+                                <option value="#matrix">Genres</option>
+                                <option value="#artists">Artists</option>
+                                <option value="#legacy">Legacy</option>
+                            </select>
+                        </div>
+                    </nav>
+                </header>
+        </div>
+
+
+        <main>
+            <!-- Hero Banner Section -->
+            <section id="banner" class="relative w-full h-80 md:h-96 lg:h-[32rem]">
+                <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
+                <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-stone-100 to-transparent"></div>
+            </section>
+
+            <!-- Overview Section -->
+            <section id="overview" class="pt-12 pb-16 sm:pb-20">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
+                        <h2 class="section-header text-5xl">An Encyclopedia of Jazz Evolution</h2>
+                    <p class="text-center text-lg text-stone-600 mb-12 italic">Follow the development of modern jazz through the 50s and 60s.</p>
+                    <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
+                        <p>The period between 1950 and 1969 represents the most accelerated and dynamic evolution in jazz history. The decade began with the virtuosic fire of <strong>Bebop</strong> firmly established as the music's cutting edge. From this complex foundation, the music branched into myriad new forms. Some musicians pursued the soulful, blues-drenched energy of <strong>Hard Bop</strong>, while others explored the harmonically rich, restrained arrangements of <strong>Cool Jazz</strong> and resurgent <strong>Big Bands</strong>.</p>
+                        <p>At the heart of this era lies the central theme of <strong>"controlled freedom."</strong> This was the philosophy of <strong>Post-Bop</strong>, a movement that sought a middle ground between the dense structures of bebop and the radical abandon of the burgeoning <strong>Free Jazz</strong> and <strong>Avant-Garde</strong> scenes. Musicians began to stretch and deconstruct standard forms, introducing new harmonic ambiguity and rhythmic complexity without completely discarding form and melody. This application provides an interactive journey through this dense, interconnected history, making the evolution of modern jazz accessible and engaging.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Timeline Section -->
+            <section id="timeline" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 class="section-header text-5xl">Timeline Explorer</h2>
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Hover or filter by genre to explore a year-by-year breakdown of landmark albums.</p>
+                    <div id="genre-filter-container"></div>
+                    <div class="flex items-center justify-center gap-4 mb-6">
+                        <div id="timeline-nav" class="flex flex-wrap justify-center gap-2"></div>
+                    </div>
+                    <div class="relative group">
+                        <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
+                            <canvas id="timeline-canvas"></canvas>
+                            <div id="timeline-wrapper"></div>
+                        </div>
+                        <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Genre Comparison Matrix Section -->
+            <section id="matrix" class="py-16 sm:py-20">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 class="section-header text-5xl">The Genres</h2>
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Hover over a cell to highlight the genre and characteristic.</p>
+                    <div class="overflow-x-auto border-2 border-stone-900">
+                        <table id="style-matrix-table" class="matrix-table w-full min-w-[800px] border-collapse text-left">
+                            <!-- Table content will be generated by JavaScript -->
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Key Artists Grid Section -->
+            <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <h2 class="section-header text-5xl">The Architects</h2>
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined the Bop era.</p>
+                    
+                    <!-- Instrument Filter Dropdown -->
+                    <div class="flex justify-center mb-8">
+                        <div class="w-full max-w-xs styled-select">
+                            <label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label>
+                            <select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Artist Grid Container -->
+                    <div id="artist-grid-container" class="min-h-[550px] md:min-h-[580px]">
+                        <div id="artist-grid">
+                            <!-- Artist cards will be injected here by JavaScript -->
+                        </div>
+                   </div>
+
+                    <!-- Artist Pagination Controls -->
+                    <div id="artist-pagination-controls" class="mt-8 flex justify-center items-center gap-4">
+                        <button id="artist-prev-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous</button>
+                        <span id="artist-page-indicator" class="px-4 py-2 text-stone-900 font-bold text-lg"></span>
+                        <button id="artist-next-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next</button>
+                   </div>
+                </div>
+            </section>
+            
+            <!-- Legacy Section -->
+            <section id="legacy" class="py-16 sm:py-20">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
+                    <h2 class="section-header text-5xl">Legacy</h2>
+                    <p class="text-center text-lg text-stone-600 mb-12 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
+                    <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
+                        <p>The golden age of acoustic innovation from 1950 to 1969 was a period of intense, shared creativity. However, by the end of the 1960s, the cohesive center began to dissolve. The death of John Coltrane in 1967 removed a spiritual and musical lodestar for the avant-garde. Simultaneously, Miles Davis, ever the innovator, began incorporating electric instruments and rock-influenced rhythms, paving the way for <strong>Jazz Fusion</strong> with albums like *In a Silent Way* and *Bitches Brew*. This seismic shift created a new mainstream that would dominate the 1970s.</p>
+                        <p>Yet, the legacy of this entire two-decade period is profound. The harmonic vocabulary of Bebop, the soulful feel of Hard Bop, the arranging concepts of Cool Jazz, and the structural freedom of Post-Bop became a permanent part of the modern jazz language. In the 1980s, the "Young Lions" movement, led by trumpeter Wynton Marsalis, sparked a revival that looked directly back to the acoustic, small-group aesthetic of this era. This cemented the 1950-1969 period as a classic age, and its language remains the primary foundation for much of the acoustic jazz being played today.</p>
+                    </div>
+                      <!-- Spotify Playlist -->
+                      <div class="mt-16 text-left">
+                          <h3 class="text-3xl text-stone-900 mb-4">Listen now on Spotify:</h3>
+                          <iframe style="border-radius:0; border: 2px solid #1c1917;" src="https://open.spotify.com/embed/playlist/6JT7jtrtYO7d5FBC3Fhh0p?utm_source=generator&theme=0" width="100%" height="500" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                      </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-stone-900 text-stone-200 py-8">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
+                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
+                <div class="mt-6 border-t border-stone-700 pt-6">
+                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
+                    <p class="text-xs text-stone-500 mt-2">Disclaimer: All music and images are the property of their respective copyright holders. This is a non-profit project for educational purposes only.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Modals -->
+    <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+                <div>
+                    <h3 id="modal-title" class="text-4xl text-orange-500"></h3>
+                    <button id="modal-artist" class="text-xl text-stone-600 bg-transparent border-none p-0"></button>
+                </div>
+                <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">&times;</button>
+            </div>
+            <div id="modal-body" class="p-6 overflow-y-auto">
+                <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
+                    <div id="modal-album-art-container" class="w-full md:w-1/3 flex-shrink-0">
+                        <img id="modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="">
+                    </div>
+                    <div id="modal-album-details" class="w-full md:w-2/3"></div>
+                </div>
+                <div id="analysis-wrapper" class="relative mt-4">
+                    <!-- Content injected by JS -->
+                </div>
+            </div>
+             <!-- Modal Navigation Footer -->
+            <div id="modal-nav-footer" class="flex justify-between items-center p-4 border-t-2 border-stone-900 flex-shrink-0 bg-stone-200">
+                <button id="prev-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous Album</button>
+                <button id="next-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next Album</button>
+            </div>
+        </div>
+    </div>
+    <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+                 <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
+                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">&times;</button>
+             </div>
+             <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Embedded Genre Matrix Data -->
+    <script id="styleMatrixData" type="application/json">
+    {
+        "features": ["Harmony", "Rhythm", "Form", "Key Artists"],
+        "genres": {
+            "Bebop": {
+                "color": "var(--genre-bebop)",
+                "data": [
+                    "Fast-moving, complex chord progressions (e.g., ii-V-I with substitutions), use of altered chords and extensions.",
+                    "Blistering tempos, virtuosic and rhythmically complex solos, 'dropping bombs' with the bass drum.",
+                    "Often based on standard song forms (like blues and 'I Got Rhythm' changes) but used as vehicles for extended improvisation.",
+                    "Charlie Parker, Dizzy Gillespie, Thelonious Monk, Bud Powell"
+                ]
+            },
+            "Hard Bop": {
+                "color": "var(--genre-hard-bop)",
+                "data": [
+                    "Functional (ii-V-I), blues-based, gospel influences",
+                    "Strong, driving swing feel, prominent drumming, danceable grooves",
+                    "Standard forms (AABA, 12-bar blues), often with catchy, memorable heads",
+                    "Art Blakey, Horace Silver, Clifford Brown, Lee Morgan"
+                ]
+            },
+            "Cool Jazz": {
+                "color": "var(--genre-cool-jazz)",
+                "data": [
+                    "More complex, often drawing from classical harmony, less blues-centric",
+                    "Relaxed, subtle pulse, lighter drumming, focus on understatement",
+                    "Often employed complex, contrapuntal arrangements and non-standard forms",
+                    "Miles Davis (early), Dave Brubeck, Stan Getz, Gerry Mulligan"
+                ]
+            },
+            "Modal Jazz": {
+                "color": "var(--genre-modal-jazz)",
+                "data": [
+                    "Static harmony, based on modes/scales rather than chord progressions",
+                    "Floating, ambiguous pulse, less aggressive swing, focus on texture",
+                    "Open-ended, simple structures, often just a single mode or vamp",
+                    "Miles Davis ('Kind of Blue'), John Coltrane ('My Favorite Things'), Bill Evans"
+                ]
+            },
+            "Post-Bop": {
+                "color": "var(--genre-post-bop)",
+                "data": [
+                    "Expanded functional harmony, non-functional chords, controlled dissonance",
+                    "Highly interactive, fluid time, polyrhythms, elastic sense of swing",
+                    "Modified standard forms, original compositions with complex, unique structures",
+                    "Miles Davis's 2nd Quintet, Wayne Shorter, Herbie Hancock, Andrew Hill"
+                ]
+            },
+            "Avant-Garde": {
+                "color": "var(--genre-avant-garde)",
+                "data": [
+                    "Can include complex, atonal composed sections alongside free improvisation.",
+                    "Ranges from free, pulseless textures to complex, composed rhythmic cycles.",
+                    "Often features through-composed suites, blending written material with free improvisation.",
+                    "Eric Dolphy, Andrew Hill, Grachan Moncur III, Sun Ra"
+                ]
+            },
+            "Free Jazz": {
+                "color": "var(--genre-free-jazz)",
+                "data": [
+                    "Abandons conventional chord progressions; focuses on texture and collective improvisation.",
+                    "Often abandons a steady pulse; uses 'energy playing' and textural drumming.",
+                    "Open forms, often based on a brief theme or motive, or completely improvised.",
+                    "Ornette Coleman, Albert Ayler, Cecil Taylor, Pharoah Sanders"
+                ]
+            },
+            "Jazz Fusion": {
+                "color": "var(--genre-jazz-fusion)",
+                "data": [
+                    "Electric piano (Rhodes, Wurlitzer), synthesizers; post-bop harmony mixed with simpler rock/funk vamps.",
+                    "Driving, straight-eighth rock and funk grooves, complex polyrhythms, high-energy drumming.",
+                    "Extended, often through-composed forms, long open improvisations over vamps.",
+                    "Miles Davis (late), Herbie Hancock, Weather Report, Mahavishnu Orchestra"
+                ]
+            }
+        }
+    }
+    </script>
+    
+    <!-- Main Application Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get genre matrix data from the embedded script tag
+            const styleMatrixDataEl = document.getElementById('styleMatrixData');
+            const styleMatrixData = JSON.parse(styleMatrixDataEl.textContent);
+
+            // Fetch the rest of the data from the external file
+            fetch('database.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(dbData => {
+                    // Initialize the application with both data sources
+                    initializeAppUI({ ...dbData, styleMatrix: styleMatrixData });
+                    
+                    // Show the page and hide loader
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('page-content').classList.remove('content-hidden');
+                    
+                    // FIX: Ensure timeline starts at the beginning after rendering
+                    setTimeout(() => {
+                        document.getElementById('horizontal-timeline-container').scrollLeft = 0;
+                    }, 0);
+                })
+                .catch(error => {
+                    console.error('Error fetching or parsing database.json:', error);
+                    // Display an informative error message to the user on the page
+                    const pageContent = document.getElementById('page-content');
+                    pageContent.innerHTML = `<div class="text-center p-8">
+                        <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
+                        <p class="text-stone-600 mt-2">Could not fetch album/artist data. Please ensure 'database.json' is available.</p>
+                        <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
+                    </div>`;
+                    document.getElementById('loader').style.display = 'none';
+                    pageContent.classList.remove('content-hidden');
+                });
+        });
+
+        function initializeAppUI(data) {
+            
+            // Destructure data from the fetched JSON
+            let { albums, styleMatrix: styleMatrixData, artistProfiles } = data;
+            let artistsData = []; // Will be populated by processArtists
+
+            // Global state for album navigation
+            let currentAlbumIndex = -1;
+            
+            const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
+            
+            // [FIX] More robust date parsing function
+            function parseDate(dateString) {
+                if (typeof dateString !== 'string') return null;
+
+                // Handle circa dates like "c. late 1958" or "c. Fall 1965"
+                if (dateString.toLowerCase().startsWith('c.')) {
+                    const yearMatch = dateString.match(/\d{4}/);
+                    if (yearMatch) {
+                        const year = parseInt(yearMatch[0]);
+                        return new Date(year, 11, 31); // Assume end of year
+                    }
+                }
+
+                const parts = dateString.replace(/,/g, '').split(' ');
+                
+                // Handle "Month Day, Year" e.g., "August 4, 1952"
+                if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) {
+                    return new Date(parts[2], monthMap[parts[0]], parts[1]);
+                }
+                
+                // Handle "Month Year" e.g., "August 1960"
+                if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) {
+                    return new Date(parts[1], monthMap[parts[0]], 1);
+                }
+
+                // Handle "Year" only e.g., "1958"
+                if (parts.length === 1 && !isNaN(parts[0])) {
+                    return new Date(parts[0], 0, 1);
+                }
+
+                return null; // Return null if no format matches
+            }
+            
+            // Helper to format names for audio file paths
+            const slugify = (name) => {
+                if (!name) return '';
+                return name.toLowerCase()
+                    .replace(/\s+/g, '-') // Replace spaces with -
+                    .replace(/[^\w-]+/g, '') // Remove all non-word chars
+                    .replace(/--+/g, '-') // Replace multiple - with single -
+                    .replace(/^-+/, '') // Trim - from start of text
+                    .replace(/-+$/, ''); // Trim - from end of text
+            }
+
+            // Sort albums by their first recording date
+            albums.forEach(album => {
+                if (album.pivotalTracks && album.pivotalTracks.length > 0) {
+                    // Sort tracks within the album first
+                    album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
+                    // Assign the first date to the album for sorting
+                    album.firstRecordingDate = album.pivotalTracks[0].recordingDate;
+                }
+            });
+            albums.sort((a,b) => parseDate(a.firstRecordingDate) - parseDate(b.firstRecordingDate));
+            
+            const years = [...new Set(albums.map(album => album.year))].sort();
+            const groupedByYear = years.reduce((acc, year) => {
+                acc[year] = albums.filter(d => d.year === year);
+                return acc;
+            }, {});
+
+            const timelineNav = document.getElementById('timeline-nav');
+            const timelineContainer = document.getElementById('horizontal-timeline-container');
+            const timelineWrapper = document.getElementById('timeline-wrapper');
+            const timelineCanvas = document.getElementById('timeline-canvas');
+            const ctx = timelineCanvas.getContext('2d');
+            const scrollLeftBtn = document.getElementById('scroll-left-btn');
+            const scrollRightBtn = document.getElementById('scroll-right-btn');
+            const genreFilterContainer = document.getElementById('genre-filter-container');
+            
+            // --- DYNAMIC GENRE and COLOR MAP CREATION ---
+            const baseGenreColors = styleMatrixData.genres ? Object.keys(styleMatrixData.genres).reduce((acc, genre) => {
+                acc[genre] = styleMatrixData.genres[genre].color;
+                return acc;
+            }, {}) : {};
+            
+            const fullGenreColorMap = { ...baseGenreColors };
+            // Manually add colors for specific genres not in the matrix
+            fullGenreColorMap['Free Jazz'] = 'var(--genre-free-jazz)';
+            fullGenreColorMap['Avant-Garde Jazz'] = 'var(--genre-avant-garde)'; 
+            fullGenreColorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
+
+
+            albums.forEach(album => {
+                if(album.genres) {
+                    album.genres.split(', ').forEach(genre => {
+                        if (!fullGenreColorMap[genre]) {
+                           fullGenreColorMap[genre] = 'var(--genre-default)';
+                        }
+                    });
+                }
+            });
+
+            // Dynamically create the list of filterable genres from the data
+            const allGenresInDB = new Set();
+            albums.forEach(album => {
+                if (album.genres) {
+                    album.genres.split(', ').forEach(genre => allGenresInDB.add(genre.trim()));
+                }
+            });
+            
+            // Define genres to exclude from the filter list
+            const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz'];
+
+            // Create the final list of genres to display in the filter
+            const filterableGenres = Array.from(allGenresInDB)
+                .filter(genre => !excludedGenres.includes(genre))
+                .sort();
+
+            genreFilterContainer.innerHTML = ''; // Clear any static content.
+
+            const allCheckboxLabel = document.createElement('label');
+            allCheckboxLabel.className = 'genre-checkbox-label';
+            allCheckboxLabel.style.setProperty('--genre-color', 'var(--text-muted)');
+            const allCheckbox = document.createElement('input');
+            allCheckbox.type = 'checkbox';
+            allCheckbox.id = 'all-genres-checkbox';
+            allCheckbox.checked = true; // Start with all selected
+            allCheckboxLabel.appendChild(allCheckbox);
+            allCheckboxLabel.append('All');
+            genreFilterContainer.appendChild(allCheckboxLabel);
+
+            filterableGenres.forEach(genre => {
+                const label = document.createElement('label');
+                label.className = 'genre-checkbox-label';
+                label.style.setProperty('--genre-color', fullGenreColorMap[genre] || 'var(--genre-default)');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = genre;
+                checkbox.dataset.genre = genre;
+                checkbox.checked = true; // Start with all selected
+                label.appendChild(checkbox);
+                label.append(genre);
+                genreFilterContainer.appendChild(label);
+            });
+            
+            const allGenreCheckboxes = genreFilterContainer.querySelectorAll('input[data-genre]');
+            
+            allCheckbox.addEventListener('change', () => {
+                allGenreCheckboxes.forEach(cb => {
+                    cb.checked = allCheckbox.checked;
+                });
+                filterTimeline();
+            });
+
+            function filterTimeline() {
+                const selectedGenres = Array.from(genreFilterContainer.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
+                
+                document.querySelectorAll('.timeline-album-card').forEach(card => {
+                    const cardGenres = card.dataset.genres.split(', ');
+                    const isVisible = selectedGenres.length === 0 || cardGenres.some(genre => selectedGenres.includes(genre));
+                    
+                    if (isVisible) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                document.querySelectorAll('.timeline-year-section').forEach(yearSection => {
+                    const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
+                    yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
+                });
+
+                const allChecked = selectedGenres.length === allGenreCheckboxes.length;
+                allCheckbox.checked = allChecked;
+            }
+            
+            genreFilterContainer.addEventListener('change', (e) => {
+                if(e.target.id !== 'all-genres-checkbox') {
+                    filterTimeline();
+                }
+            });
+
+            // --- Timeline Rendering ---
+            timelineWrapper.innerHTML = '';
+            if (years.length > 0) {
+                // Add a spacer element to create a visual buffer on the left
+                const spacer = document.createElement('div');
+                spacer.style.width = '1px'; 
+                spacer.style.flexShrink = '0';
+                timelineWrapper.appendChild(spacer);
+                
+                years.forEach(year => {
+                    const yearSection = document.createElement('div');
+                    yearSection.className = 'timeline-year-section';
+                    yearSection.id = `year-${year}`;
+                    
+                    const yearHeader = document.createElement('div');
+                    yearHeader.className = 'timeline-year-header';
+                    yearHeader.textContent = year;
+                    yearSection.appendChild(yearHeader);
+                    
+                    const albumList = document.createElement('div');
+                    albumList.className = 'timeline-album-list';
+                    albumList.id = `album-list-${year}`;
+                    
+                    groupedByYear[year].forEach(album => {
+                        const card = document.createElement('div');
+                        card.className = 'timeline-album-card fade-in-element';
+                        card.dataset.albumTitle = album.albumTitle;
+                        card.dataset.artist = album.artist;
+                        card.dataset.genres = album.genres;
+                        card.innerHTML = `<img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
+                        albumList.appendChild(card);
+                    });
+
+                    yearSection.appendChild(albumList);
+                    timelineWrapper.appendChild(yearSection);
+                });
+                
+                years.forEach(year => {
+                    const yearButton = document.createElement('button');
+                    yearButton.textContent = year;
+                    yearButton.dataset.year = year;
+                    yearButton.className = 'year-marker px-4 py-2 text-sm font-semibold rounded-sm bg-stone-100 text-stone-900';
+                    yearButton.addEventListener('click', () => {
+                        document.querySelectorAll('.year-marker').forEach(btn => btn.classList.remove('active'));
+                        yearButton.classList.add('active');
+                        const yearSection = document.getElementById(`year-${year}`);
+                        if(yearSection) {
+                            timelineContainer.scrollTo({ left: yearSection.offsetLeft, behavior: 'smooth' });
+                        }
+                    });
+                    timelineNav.appendChild(yearButton);
+                });
+                if (timelineNav.firstElementChild) timelineNav.firstElementChild.classList.add('active');
+                
+                // Initial Filter
+                filterTimeline();
+            } else {
+                 timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
+            }
+
+            const scrollAmount = 400;
+            scrollLeftBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
+            scrollRightBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
+
+            const albumModal = document.getElementById('album-modal');
+            const albumModalContent = albumModal.querySelector('.modal-content');
+            
+            timelineWrapper.addEventListener('click', e => {
+                const card = e.target.closest('.timeline-album-card');
+                if (card) {
+                    const { albumTitle, artist } = card.dataset;
+                    const albumIndex = albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
+                    if (albumIndex !== -1) {
+                         openAlbumModal(albums[albumIndex], albumIndex);
+                    }
+                }
+            });
+
+            function openAlbumModal(album, index) {
+                currentAlbumIndex = index;
+
+                // Highlight Logic for Clicked Card
+                const previouslyClicked = document.querySelector('.timeline-album-card.clicked');
+                if (previouslyClicked) {
+                    previouslyClicked.classList.remove('clicked');
+                }
+                // Escape quotes for the query selector
+                const safeAlbumTitle = album.albumTitle.replace(/"/g, '\\"');
+                const safeArtist = album.artist.replace(/"/g, '\\"');
+                const cardToHighlight = document.querySelector(`.timeline-album-card[data-album-title="${safeAlbumTitle}"][data-artist="${safeArtist}"]`);
+                if (cardToHighlight) {
+                    cardToHighlight.classList.add('clicked');
+                }
+                
+                albumModal.querySelector('#modal-title').textContent = album.albumTitle;
+                
+                // Make artist name clickable
+                const artistBtn = albumModal.querySelector('#modal-artist');
+                artistBtn.textContent = album.artist;
+                artistBtn.dataset.artistName = album.artist;
+                artistBtn.className = 'text-xl text-stone-600 bg-transparent border-none p-0 clickable-link';
+
+                const modalImg = albumModal.querySelector('#modal-album-art');
+                modalImg.src = album.cover || '';
+                modalImg.alt = `Cover for ${album.albumTitle}`;
+                modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
+                const firstTrack = album.pivotalTracks[0] || {};
+                
+                const genreTags = album.genres.split(', ').map(genre => {
+                    const colorVar = fullGenreColorMap[genre] || 'var(--genre-default)';
+                    return `<span class="genre-tag" style="background-color: ${colorVar}">${genre}</span>`;
+                }).join(' ');
+                
+                // Create clickable lineup
+                const lineupHtml = firstTrack.lineup ? firstTrack.lineup.split(/, (?![^()]*\))/).map(personnel => {
+                    const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
+                    if (match) {
+                        const name = match[1].trim();
+                        const instrument = match[2];
+                        const artistExists = artistsData.some(a => a.name === name);
+                        if (artistExists) {
+                            return `<span class="clickable-link" data-artist-name="${name}">${name}</span> (${instrument})`;
+                        }
+                    }
+                    return personnel; // Return as plain text if no match or artist doesn't exist
+                }).join(', ') : 'N/A';
+
+
+                const detailsContainer = albumModal.querySelector('#modal-album-details');
+                 detailsContainer.innerHTML = `
+                                  <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
+                                  <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                                      <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                                      <strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span>
+                                      <strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span>
+                                      <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
+                                  </div>`;
+
+                const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
+                analysisWrapper.innerHTML = ''; // Clear previous content
+                
+                const analysisContainer = document.createElement('div');
+                analysisContainer.id = 'modal-analysis-section';
+                
+                const pivotalTracksHtml = album.pivotalTracks.map(track => {
+                    const songFileName = slugify(track.title) + '.mp3';
+                     return `
+                                     <div class="mb-8 last:mb-0">
+                                         <div class="flex justify-between items-center gap-4 mb-4 flex-wrap">
+                                             <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                             <audio controls class="styled-player w-full sm:w-52" src="songs/${songFileName}" preload="none"></audio>
+                                         </div>
+                                         <p class="liner-notes-text">${track.analysis}</p>
+                                     </div>
+                                 `;
+                }).join('<hr class="border-stone-700 my-8">');
+
+                analysisContainer.innerHTML = pivotalTracksHtml;
+                analysisWrapper.appendChild(analysisContainer);
+                
+                // Add event listeners to ensure only one audio plays at a time
+                const audioPlayers = analysisContainer.querySelectorAll('audio');
+                audioPlayers.forEach(player => {
+                    player.addEventListener('play', () => {
+                        audioPlayers.forEach(otherPlayer => {
+                            if (otherPlayer !== player) {
+                                otherPlayer.pause();
+                            }
+                        });
+                    });
+                });
+
+                // Update nav buttons
+                const prevBtn = document.getElementById('prev-album-btn');
+                const nextBtn = document.getElementById('next-album-btn');
+                prevBtn.disabled = currentAlbumIndex === 0;
+                nextBtn.disabled = currentAlbumIndex === albums.length - 1;
+
+                albumModal.classList.remove('opacity-0', 'pointer-events-none');
+                albumModalContent.classList.remove('scale-95');
+                albumModal.querySelector('#modal-body').scrollTop = 0; // Scroll to top
+            }
+            
+            function closeAlbumModal() {
+                albumModal.classList.add('opacity-0', 'pointer-events-none');
+                albumModalContent.classList.add('scale-95');
+                // Stop all audio players when modal closes
+                albumModal.querySelectorAll('audio').forEach(audio => audio.pause());
+                // Remove highlight from the card
+                const clickedCard = document.querySelector('.timeline-album-card.clicked');
+                if (clickedCard) {
+                    clickedCard.classList.remove('clicked');
+                }
+            }
+            albumModal.querySelector('#close-modal').addEventListener('click', closeAlbumModal);
+            albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') closeAlbumModal(); });
+
+            // Set up modal navigation listeners
+            document.getElementById('prev-album-btn').addEventListener('click', () => {
+                if (currentAlbumIndex > 0) {
+                    openAlbumModal(albums[currentAlbumIndex - 1], currentAlbumIndex - 1);
+                }
+            });
+             document.getElementById('next-album-btn').addEventListener('click', () => {
+                if (currentAlbumIndex < albums.length - 1) {
+                    openAlbumModal(albums[currentAlbumIndex + 1], currentAlbumIndex + 1);
+                }
+            });
+
+
+            // --- ARTISTS SECTION LOGIC (PAGINATION) ---
+            const allTracks = albums.flatMap(album =>
+                album.pivotalTracks.map(track => ({
+                    ...track,
+                    year: album.year,
+                    artist: album.artist,
+                    album: album.albumTitle,
+                    cover: album.cover,
+                    genre: album.genres
+                }))
+            );
+            artistsData = processArtists(allTracks, artistProfiles);
+            
+            const instrumentFilter = document.getElementById('instrument-filter');
+            const artistGrid = document.getElementById('artist-grid');
+            const artistPrevBtn = document.getElementById('artist-prev-btn');
+            const artistNextBtn = document.getElementById('artist-next-btn');
+            const artistPageIndicator = document.getElementById('artist-page-indicator');
+            const artistPaginationControls = document.getElementById('artist-pagination-controls');
+
+            let currentArtistPage = 1;
+            let filteredArtists = [];
+            let pageSize = window.innerWidth >= 768 ? 12 : 6;
+            
+            function processArtists(tracks, profiles) {
+                const artistsMap = new Map();
+                
+                tracks.forEach(track => {
+                    if (!track.lineup) return;
+                    const lineupParts = track.lineup.split(/,(?![^()]*\))/);
+
+                    lineupParts.forEach(part => {
+                        const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                        if (match) {
+                            let name = match[1].trim();
+                            // Combine Anthony Williams into Tony Williams
+                            if (name === 'Anthony Williams') {
+                                name = 'Tony Williams';
+                            }
+                            const instrumentsString = match[2];
+                            if (!artistsMap.has(name)) {
+                                artistsMap.set(name, { 
+                                    name: name, 
+                                    instruments: new Set(), 
+                                    albums: new Set(), 
+                                    photo: `images/${slugify(name)}.jpg`,
+                                    isBandleader: false,
+                                    profile: ''
+                                });
+                            }
+                            const artistEntry = artistsMap.get(name);
+                            if (track.artist && track.artist.includes(name)) {
+                                artistEntry.isBandleader = true;
+                            }
+                            if (profiles && profiles[name]) {
+                                artistEntry.profile = profiles[name];
+                            }
+                            instrumentsString.split(/, | \/ /).forEach(inst => {
+                                const trimmedInst = inst.trim();
+                                if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
+                                    artistEntry.instruments.add(trimmedInst);
+                                }
+                            });
+                            artistEntry.albums.add(track.album);
+                        }
+                    });
+                });
+                
+                const artistsArray = Array.from(artistsMap.values());
+                artistsArray.forEach(artist => {
+                    artist.instruments = Array.from(artist.instruments);
+                    artist.albums = Array.from(artist.albums);
+                });
+                return artistsArray;
+            }
+
+            function populateInstrumentFilter(artists) {
+                const relevantInstruments = new Set([
+                    'alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 
+                    'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 
+                    'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'tuba', 'vibraphone', 'congas'
+                ]);
+                
+                const instrumentsInDataset = new Set();
+                artists.forEach(artist => {
+                    artist.instruments.forEach(instrument => {
+                        if (relevantInstruments.has(instrument)) {
+                           instrumentsInDataset.add(instrument);
+                        }
+                    });
+                });
+                
+                const sortedInstruments = Array.from(instrumentsInDataset).sort();
+
+                instrumentFilter.innerHTML = '<option value="all">All Instruments</option>';
+                sortedInstruments.forEach(instrument => {
+                    const option = document.createElement('option');
+                    option.value = instrument;
+                    option.textContent = instrument.charAt(0).toUpperCase() + instrument.slice(1);
+                    instrumentFilter.appendChild(option);
+                });
+            }
+
+            function renderArtistGridPage(artistsToRender) {
+                artistGrid.innerHTML = ''; 
+
+                if (artistsToRender.length === 0) {
+                    artistGrid.innerHTML = `<div class="w-full text-center p-8 text-stone-500 col-span-full">No artists found.</div>`;
+                    return;
+                }
+                
+                artistsToRender.forEach(artist => {
+                    const card = document.createElement('div');
+                    card.className = 'artist-card';
+                    
+                    if (artist.isBandleader) {
+                        card.style.boxShadow = `4px 4px 0px var(--accent)`;
+                    }
+                    
+                    card.dataset.artistName = artist.name;
+                    
+                    card.innerHTML = `
+                        <div class="h-56 bg-stone-900 artist-photo-container">
+                            <img src="${artist.photo || ''}" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                        </div>
+                        <div class="p-3">
+                            <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
+                        </div>`;
+
+                    card.addEventListener('click', () => openArtistModal(artist));
+                    artistGrid.appendChild(card);
+                });
+            }
+
+            function updateArtistPagination() {
+                pageSize = window.innerWidth >= 768 ? 12 : 6;
+                const totalPages = Math.ceil(filteredArtists.length / pageSize);
+
+                if (currentArtistPage > totalPages) currentArtistPage = totalPages > 0 ? totalPages : 1;
+                if (currentArtistPage < 1) currentArtistPage = 1;
+
+                const startIndex = (currentArtistPage - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+                const artistsForPage = filteredArtists.slice(startIndex, endIndex);
+
+                renderArtistGridPage(artistsForPage);
+
+                if (totalPages <= 1) {
+                    artistPaginationControls.classList.add('hidden');
+                } else {
+                    artistPaginationControls.classList.remove('hidden');
+                    artistPageIndicator.textContent = `Page ${currentArtistPage} of ${totalPages}`;
+                    artistPrevBtn.disabled = currentArtistPage === 1;
+                    artistNextBtn.disabled = currentArtistPage === totalPages;
+                }
+            }
+
+            function filterAndPaginateArtists() {
+                currentArtistPage = 1;
+                const selectedInstrument = instrumentFilter.value;
+                
+                filteredArtists = selectedInstrument === 'all'
+                    ? [...artistsData]
+                    : artistsData.filter(artist => artist.instruments.includes(selectedInstrument));
+                
+                filteredArtists.sort((a, b) => {
+                    if (a.isBandleader !== b.isBandleader) return a.isBandleader ? -1 : 1;
+                    return a.name.localeCompare(b.name);
+                });
+
+                updateArtistPagination();
+            }
+
+            const artistModal = document.getElementById('artist-modal');
+            const artistModalContent = artistModal.querySelector('.modal-content');
+            
+            function openArtistModal(artist) {
+                artistModal.querySelector('#artist-modal-title').textContent = artist.name;
+                const body = artistModal.querySelector('#artist-modal-body');
+                
+                const albumListHtml = artist.albums.map(albumTitle => {
+                    const albumData = albums.find(a => a.albumTitle === albumTitle);
+                    if (!albumData) return `<li>${albumTitle}</li>`; // Fallback if album not found
+                    return `<li class="clickable-link" data-album-title="${albumData.albumTitle}" data-artist="${albumData.artist}">${albumTitle}</li>`;
+                }).join('');
+
+                body.innerHTML = `
+                <div class="flex flex-col sm:flex-row gap-6">
+                    <div class="w-full sm:w-1/3 flex-shrink-0 artist-photo-container">
+                        <img src="${artist.photo || ''}" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                    </div>
+                    <div class="w-full sm:w-2/3">
+                        <h4 class="text-3xl text-stone-900 mb-3">Details</h4>
+                        <p class="mb-4 text-stone-900"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
+                        <h4 class="text-3xl text-stone-900 mb-3">Album Appearances</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1 text-stone-900 h-32 overflow-y-auto">${albumListHtml}</ul>
+                    </div>
+                </div>
+                ${artist.profile ? `<div class="mt-6 pt-4 border-t-2 border-stone-200">
+                        <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
+                        <p class="text-base text-stone-700 leading-relaxed">${artist.profile}</p>
+                    </div>` : ''}
+                `;
+                artistModal.classList.remove('opacity-0', 'pointer-events-none');
+                artistModalContent.classList.remove('scale-95');
+            }
+
+            function closeArtistModal() {
+                artistModal.classList.add('opacity-0', 'pointer-events-none');
+                artistModalContent.classList.add('scale-95');
+            }
+            
+            artistModal.querySelector('#close-artist-modal').addEventListener('click', closeArtistModal);
+            artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') closeArtistModal(); });
+            document.addEventListener('keydown', e => { if (e.key === "Escape") { closeAlbumModal(); closeArtistModal(); } });
+            
+            // --- MODAL INTERLINKING EVENT LISTENERS ---
+            document.getElementById('modal-artist').addEventListener('click', (e) => {
+                const artistName = e.target.dataset.artistName;
+                if (!artistName) return;
+                const artist = artistsData.find(a => a.name === artistName);
+                if (artist) {
+                    closeAlbumModal();
+                    setTimeout(() => openArtistModal(artist), 250); // Timeout for smoother transition
+                }
+            });
+
+            document.getElementById('artist-modal-body').addEventListener('click', (e) => {
+                if (e.target.matches('.clickable-link[data-album-title]')) {
+                    const albumTitle = e.target.dataset.albumTitle;
+                    const artistName = e.target.dataset.artist;
+                    const albumIndex = albums.findIndex(a => a.albumTitle === albumTitle && a.artist === artistName);
+                    if (albumIndex !== -1) {
+                        closeArtistModal();
+                        setTimeout(() => openAlbumModal(albums[albumIndex], albumIndex), 250);
+                    }
+                }
+            });
+            
+            document.getElementById('modal-album-details').addEventListener('click', (e) => {
+                if (e.target.matches('.clickable-link[data-artist-name]')) {
+                    const artistName = e.target.dataset.artistName;
+                    const artist = artistsData.find(a => a.name === artistName);
+                    if (artist) {
+                        closeAlbumModal();
+                        setTimeout(() => openArtistModal(artist), 250);
+                    }
+                }
+            });
+
+            // --- ARTISTS GRID EVENT LISTENERS ---
+            populateInstrumentFilter(artistsData);
+            instrumentFilter.addEventListener('change', filterAndPaginateArtists);
+            
+            artistPrevBtn.addEventListener('click', () => {
+                if (currentArtistPage > 1) {
+                    currentArtistPage--;
+                    updateArtistPagination();
+                }
+            });
+
+            artistNextBtn.addEventListener('click', () => {
+                const totalPages = Math.ceil(filteredArtists.length / pageSize);
+                if (currentArtistPage < totalPages) {
+                    currentArtistPage++;
+                    updateArtistPagination();
+                }
+            });
+            
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    updateArtistPagination();
+                    resizeCanvas();
+                }, 200);
+            });
+            
+            filterAndPaginateArtists(); // Initial population of the artist grid
+
+
+            // --- Build the new, modern genre matrix ---
+            const matrixContainer = document.getElementById('style-matrix-table'); // Revert to original ID
+            if (styleMatrixData.features && styleMatrixData.genres) {
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                headerRow.className = 'bg-stone-900 text-stone-100';
+                
+                headerRow.innerHTML = `<th class="p-4 border-b-2 border-stone-900 font-bold text-2xl w-48">Genre</th>`;
+                
+                styleMatrixData.features.forEach(feature => {
+                    headerRow.innerHTML += `<th class="p-4 border-b-2 border-stone-900 font-bold text-2xl text-center">${feature}</th>`;
+                });
+                thead.appendChild(headerRow);
+                matrixContainer.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
+                Object.keys(styleMatrixData.genres).forEach(genreName => {
+                    const genreData = styleMatrixData.genres[genreName];
+                    const row = document.createElement('tr');
+                    row.className = 'border-b-2 border-stone-200';
+                    
+                    row.style.setProperty('--highlight-color', genreData.color);
+
+                    let rowHtml = `<th class="p-4 font-bold text-lg w-48 align-top" style="background-color:${genreData.color}; color: var(--text-main);">${genreName}</th>`;
+                    
+                    genreData.data.forEach(dataPoint => {
+                        rowHtml += `<td class="p-4">${dataPoint}</td>`;
+                    });
+                    row.innerHTML = rowHtml;
+                    tbody.appendChild(row);
+                });
+                matrixContainer.appendChild(tbody);
+
+                // Add cross-hover effect logic
+                const table = document.getElementById('style-matrix-table');
+                if (table) {
+                    table.addEventListener('mouseover', (e) => {
+                        if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
+                             // Clear previous highlights first
+                            table.querySelectorAll('.row-hover, .col-hover').forEach(el => {
+                                el.classList.remove('row-hover', 'col-hover');
+                            });
+
+                            const cell = e.target;
+                            const row = cell.parentElement;
+                            const cellIndex = cell.cellIndex;
+
+                            // Add row highlight
+                            row.classList.add('row-hover');
+
+                            // Add column highlight
+                            table.querySelectorAll('tr').forEach(r => {
+                                if (r.cells[cellIndex]) {
+                                    r.cells[cellIndex].classList.add('col-hover');
+                                }
+                            });
+                        }
+                    });
+
+                    table.addEventListener('mouseleave', () => {
+                        table.querySelectorAll('.row-hover, .col-hover').forEach(el => {
+                            el.classList.remove('row-hover', 'col-hover');
+                        });
+                    });
+                }
+
+            } else {
+                matrixContainer.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-stone-500">No genre data available.</td></tr>';
+            }
+            
+            document.getElementById('mobile-nav').addEventListener('change', e => {
+                 const targetId = e.target.value;
+                 const targetElement = document.querySelector(targetId);
+                 if (targetElement) {
+                     // Using smooth scroll behavior
+                     window.scrollTo({
+                         top: targetElement.offsetTop - 80, // Adjust for sticky header height
+                         behavior: 'smooth'
+                     });
+                 }
+            });
+            
+            function setupDraggable(container) {
+                if (!container) return;
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+                container.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    container.style.cursor = 'grabbing';
+                    startX = e.pageX - container.offsetLeft;
+                    scrollLeft = container.scrollLeft;
+                });
+                container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
+                container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
+                container.addEventListener('mousemove', (e) => {
+                    if(!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - container.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    container.scrollLeft = scrollLeft - walk;
+                });
+            }
+
+            setupDraggable(timelineContainer);
+
+            // --- Timeline Visualization Logic ---
+            function resizeCanvas() {
+                timelineCanvas.width = timelineWrapper.scrollWidth;
+                timelineCanvas.height = timelineWrapper.offsetHeight;
+            }
+
+            function drawConnections(hoveredCard) {
+                ctx.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
+                document.querySelectorAll('.timeline-album-card').forEach(c => c.style.removeProperty('--highlight-color'));
+
+                if (!hoveredCard) {
+                    document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.remove('dimmed', 'highlighted'));
+                    return;
+                }
+
+                document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.add('dimmed'));
+                hoveredCard.classList.remove('dimmed');
+                hoveredCard.classList.add('highlighted');
+
+                const hoveredGenres = hoveredCard.dataset.genres.split(', ');
+                const primaryHoveredGenre = hoveredGenres[0];
+                const highlightColor = fullGenreColorMap[primaryHoveredGenre] || 'var(--accent)';
+                hoveredCard.style.setProperty('--highlight-color', highlightColor);
+
+                const yearSection = hoveredCard.closest('.timeline-year-section');
+                if (!yearSection) return;
+
+                const otherCards = Array.from(yearSection.querySelectorAll('.timeline-album-card:not(.hidden)'));
+                const connections = [];
+
+                otherCards.forEach(card => {
+                    if (card === hoveredCard) return;
+
+                    const cardGenres = card.dataset.genres.split(', ');
+                    const hasConnection = cardGenres.includes(primaryHoveredGenre);
+
+                    if (hasConnection) {
+                        connections.push(card);
+                    }
+                });
+
+                if (connections.length > 0) {
+                    const startRect = hoveredCard.getBoundingClientRect();
+                    const containerRect = timelineContainer.getBoundingClientRect();
+
+                    const startX = startRect.left - containerRect.left + (startRect.width / 2) + timelineContainer.scrollLeft;
+                    const startY = startRect.top - containerRect.top + (startRect.height / 2);
+
+                    connections.forEach(card => {
+                        card.classList.remove('dimmed');
+                        card.classList.add('highlighted');
+                        card.style.setProperty('--highlight-color', highlightColor);
+                        
+                        const endRect = card.getBoundingClientRect();
+                        const endX = endRect.left - containerRect.left + (endRect.width / 2) + timelineContainer.scrollLeft;
+                        const endY = endRect.top - containerRect.top + (endRect.height / 2);
+
+                        ctx.beginPath();
+                        ctx.moveTo(startX, startY);
+                        ctx.lineTo(endX, endY);
+                        ctx.strokeStyle = highlightColor.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(highlightColor.slice(4, -1).trim()) : highlightColor;
+                        ctx.globalAlpha = 0.6;
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        ctx.globalAlpha = 1.0;
+                    });
+                }
+            }
+            
+            // Reverted to direct calls for immediate response
+            timelineWrapper.addEventListener('mouseover', (e) => {
+                const card = e.target.closest('.timeline-album-card');
+                if (card && !card.classList.contains('hidden')) {
+                    drawConnections(card);
+                }
+            });
+
+            timelineWrapper.addEventListener('mouseout', (e) => {
+                const card = e.target.closest('.timeline-album-card');
+                if (card) {
+                    drawConnections(null);
+                }
+            });
+
+            // Initial and resize canvas setup
+            resizeCanvas();
+            new ResizeObserver(resizeCanvas).observe(timelineWrapper);
+            
+            // --- Fade-in animation on scroll ---
+            const fadeElements = document.querySelectorAll('.fade-in-element');
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        scrollObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            fadeElements.forEach(el => scrollObserver.observe(el));
+            
+            // --- Nav Link Active State on Scroll ---
+            const sections = document.querySelectorAll('main section[id]');
+            const navLinks = document.querySelectorAll('header nav a');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -50% 0px', 
+                threshold: 0
+            };
+
+            const sectionObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        // Update desktop nav
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                        // Update mobile nav
+                        if (document.activeElement !== mobileNav) {
+                            mobileNav.value = `#${id}`;
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                if (section.id) { // Only observe sections with an ID
+                    sectionObserver.observe(section);
+                }
+            });
+
+            // Set footer copyright year dynamically
+            document.getElementById('footer-copyright').textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+
+            // Add nudge animation to scroll button
+            const scrollRightButton = document.getElementById('scroll-right-btn');
+            if (scrollRightButton) {
+                scrollRightButton.classList.add('nudge-animation');
+            }
+        }
+    </script>
+</body>
+</html>
