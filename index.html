@@ -111,6 +111,7 @@
         .matrix-table td.col-hover, .matrix-table .row-hover > td {
             background-color: var(--highlight-color, rgba(0,0,0,0.05)) !important;
         }
+        /* Genre header button styling */
         .genre-header-button {
             display: flex;
             align-items: center;
@@ -614,9 +615,11 @@
             <section id="matrix" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Genres</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the characteristics of each major genre.</p>
-                    <div id="genre-card-grid" class="max-w-7xl mx-auto">
-                        <!-- Genre cards will be injected here by JavaScript -->
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Compare the characteristics of each major genre.</p>
+                    <div id="genre-matrix-container" class="matrix-container max-w-6xl mx-auto">
+                        <table id="style-matrix-table" class="matrix-table">
+                            <!-- Table content will be generated here -->
+                        </table>
                     </div>
                 </div>
             </section>
@@ -885,7 +888,7 @@
                     artistPrevBtn: document.getElementById('artist-prev-btn'),
                     artistNextBtn: document.getElementById('artist-next-btn'),
                     artistPaginationControls: document.getElementById('artist-pagination-controls'),
-                    genreCardGrid: document.getElementById('genre-card-grid'),
+                    matrixContainer: document.getElementById('style-matrix-table'),
                     customScrollbar: document.getElementById('custom-scrollbar'),
                     customScrollbarThumb: document.getElementById('custom-scrollbar-thumb'),
                     customScrollbarMarkers: document.getElementById('custom-scrollbar-markers'),
@@ -938,7 +941,7 @@
                 this.methods.setupTimelineInteraction.call(this);
                 this.methods.setupModals.call(this);
                 this.methods.setupArtistSlider.call(this);
-                this.methods.buildGenreGrid.call(this);
+                this.methods.buildGenreMatrix.call(this);
                 this.methods.setupMobileMenu.call(this);
                 this.methods.setupScrollObservers.call(this);
                 this.methods.setupGeneralEventListeners.call(this);
@@ -1133,27 +1136,34 @@
                     }
                 },
                 
-                buildGenreGrid() {
-                    const { genreCardGrid } = this.elements;
+                buildGenreMatrix() {
+                    const { matrixContainer } = this.elements;
                     const { styleMatrix } = this.state;
-                    genreCardGrid.innerHTML = '';
+                    if (styleMatrix.features && styleMatrix.genres) {
+                        const thead = document.createElement('thead');
+                        const headerRow = document.createElement('tr');
+                        headerRow.innerHTML = `<th class="p-4 font-bold text-2xl w-48 text-left">Genre</th>`;
+                        styleMatrix.features.forEach(feature => {
+                            headerRow.innerHTML += `<th class="p-4 font-bold text-2xl text-center">${feature}</th>`;
+                        });
+                        thead.appendChild(headerRow);
+                        matrixContainer.appendChild(thead);
 
-                    if (styleMatrix.genres) {
+                        const tbody = document.createElement('tbody');
                         Object.keys(styleMatrix.genres).forEach(genreName => {
                             const genreData = styleMatrix.genres[genreName];
-                            const card = document.createElement('div');
-                            card.className = 'genre-card';
-                            card.style.borderColor = genreData.color;
-
-                            card.innerHTML = `
-                                <h5 class="genre-card-header" style="color: ${genreData.color};">${genreName}</h5>
-                                <p class="genre-card-profile">${genreData.profile}</p>
-                                <button class="genre-read-more-btn" data-genre-name="${genreName}">Read More</button>
-                            `;
-                            genreCardGrid.appendChild(card);
+                            const row = document.createElement('tr');
+                            row.innerHTML = `<th style="background-color:${genreData.color};">
+                                <button class="genre-header-button" data-genre-name="${genreName}">
+                                    <span>${genreName}</span>
+                                    <svg class="info-icon w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                                </button>
+                            </th>` + genreData.data.map(dp => `<td>${dp}</td>`).join('');
+                            tbody.appendChild(row);
                         });
+                        matrixContainer.appendChild(tbody);
                     } else {
-                        genreCardGrid.innerHTML = '<p class="text-center p-4 text-stone-500">No genre data available.</p>';
+                        matrixContainer.parentElement.innerHTML = '<p class="text-center p-4 text-stone-500">No genre data available.</p>';
                     }
                 },
                 
@@ -1239,7 +1249,7 @@
                 },
                 
                 setupModals() {
-                    const { albumModal, artistModal, genreModal, genreCardGrid } = this.elements;
+                    const { albumModal, artistModal, genreModal, matrixContainer } = this.elements;
                     albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeAlbumModal.call(this));
                     albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') this.methods.closeAlbumModal.call(this); });
                     document.getElementById('prev-album-btn').addEventListener('click', () => {
@@ -1286,8 +1296,8 @@
                         }
                     });
 
-                    genreCardGrid.addEventListener('click', (e) => {
-                        const button = e.target.closest('.genre-read-more-btn');
+                    matrixContainer.addEventListener('click', (e) => {
+                        const button = e.target.closest('.genre-header-button');
                         if(button) {
                             const genreName = button.dataset.genreName;
                             this.methods.openGenreModal.call(this, genreName);
