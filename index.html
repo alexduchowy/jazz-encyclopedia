@@ -1636,9 +1636,10 @@
                     const initialArtists = new Set(genreData.artists.split(', ').map(name => name.trim()));
                     landmarkAlbums.forEach(album => initialArtists.add(album.artist.trim()));
                     
-                    const keyArtistsHtml = Array.from(initialArtists).sort().map(name => 
-                        `<span class="clickable-link" data-artist-name="${name}">${name}</span>`
-                    ).join(', ');
+                    const keyArtistsHtml = Array.from(initialArtists).sort()
+                        .filter(name => this.state.artistsData.some(a => a.name === name))
+                        .map(name => `<span class="clickable-link" data-artist-name="${name}">${name}</span>`)
+                        .join(', ');
 
                     const landmarkAlbumsHtml = landmarkAlbums.map(album => 
                         `<li><span class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</span></li>`
