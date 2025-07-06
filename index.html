@@ -1628,18 +1628,16 @@
                     titleEl.style.color = genreData.color.startsWith('var') ? `var(--accent)` : genreData.color;
 
                     const bodyEl = genreModal.querySelector('#genre-modal-body');
-
-                    // Find landmark albums
+                    
                     const landmarkAlbums = (genreData.landmarkAlbums || []).map(title => {
                         return this.state.albums.find(a => a.albumTitle.toLowerCase() === title.toLowerCase());
-                    }).filter(Boolean); // Filter out any not found
+                    }).filter(Boolean);
                     
-                    const landmarkAlbumsHtml = landmarkAlbums.map(album => 
-                        `<li><span class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</span> by ${album.artist}</li>`
-                    ).join('');
+                    const initialArtists = new Set(genreData.artists.split(', ').map(name => name.trim()));
+                    landmarkAlbums.forEach(album => initialArtists.add(album.artist.trim()));
                     
-                    const keyArtistsHtml = genreData.artists.split(', ').map(name => 
-                        `<span class="clickable-link" data-artist-name="${name.trim()}">${name.trim()}</span>`
+                    const keyArtistsHtml = Array.from(initialArtists).sort().map(name => 
+                        `<span class="clickable-link" data-artist-name="${name}">${name}</span>`
                     ).join(', ');
 
                     let bodyHtml = `<div class="space-y-6">
@@ -1659,11 +1657,6 @@
                             <h4 class="text-2xl font-bold text-stone-900 mb-2">Key Artists</h4>
                             <p class="text-base text-stone-700 leading-relaxed">${keyArtistsHtml}</p>
                         </div>
-                        ${landmarkAlbums.length > 0 ? `
-                        <div>
-                            <h4 class="text-2xl font-bold text-stone-900 mb-2">Landmark Albums</h4>
-                            <ul class="list-disc list-inside space-y-1 text-stone-700">${landmarkAlbumsHtml}</ul>
-                        </div>` : ''}
                     </div>`;
                     
                     bodyEl.innerHTML = bodyHtml;
