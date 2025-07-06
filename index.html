@@ -884,6 +884,7 @@
                 totalArtistPages: 0,
                 lastKnownYear: '',
                 mobileCardSelectedForModal: null,
+                lastHoveredGenre: null,
             },
 
             // DOM Elements
@@ -1237,18 +1238,16 @@
                     scrollRightBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
 
                     timelineWrapper.addEventListener('mouseover', (e) => {
-                        if (window.innerWidth < 768) return;
+                        if (window.innerWidth < 768) return; // Desktop only
                         const card = e.target.closest('.timeline-album-card');
-                        if (card && !card.classList.contains('hidden') && !document.querySelector('.timeline-album-card.clicked')) {
-                            this.methods.applyHighlights(card);
-                        }
-                    });
 
-                    timelineWrapper.addEventListener('mouseout', (e) => {
-                        if (window.innerWidth < 768) return;
-                        const card = e.target.closest('.timeline-album-card');
-                        if (card && !document.querySelector('.timeline-album-card.clicked')) {
-                            this.methods.applyHighlights(null);
+                        if (card && !card.classList.contains('hidden') && !document.querySelector('.timeline-album-card.clicked')) {
+                            const primaryGenre = card.dataset.genres.split(', ')[0];
+                            if (primaryGenre === this.state.lastHoveredGenre) {
+                                return; // Same genre, do nothing
+                            }
+                            this.state.lastHoveredGenre = primaryGenre;
+                            this.methods.applyHighlights(card);
                         }
                     });
 
@@ -1269,7 +1268,6 @@
                             if (isMobile) {
                                 if (this.state.mobileCardSelectedForModal === card) {
                                     if (albumIndexInVisible !== -1) {
-                                        this.methods.applyHighlights(null);
                                         this.methods.openAlbumModal(this.state.visibleAlbums[albumIndexInVisible], albumIndexInVisible);
                                     }
                                     this.state.mobileCardSelectedForModal = null;
@@ -1587,6 +1585,9 @@
                     this.state.currentVisibleAlbumIndex = indexInVisibleList;
                     const { albumModal } = this.elements;
                     
+                    this.methods.applyHighlights(null);
+                    this.state.lastHoveredGenre = null;
+
                     const previouslyClicked = document.querySelector('.timeline-album-card.clicked');
                     if (previouslyClicked) previouslyClicked.classList.remove('clicked');
                     const safeAlbumTitle = album.albumTitle.replace(/"/g, '\\"');
@@ -1645,6 +1646,8 @@
                     albumModal.querySelectorAll('audio').forEach(audio => audio.pause());
                     const clickedCard = document.querySelector('.timeline-album-card.clicked');
                     if (clickedCard) clickedCard.classList.remove('clicked');
+                    this.methods.applyHighlights(null);
+                    this.state.lastHoveredGenre = null;
                     if (typeof callback === 'function') setTimeout(callback, 300);
                 },
 
