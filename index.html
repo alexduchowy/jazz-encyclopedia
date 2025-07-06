@@ -1321,14 +1321,12 @@
                             const artistName = target.dataset.artistName;
                             const artist = this.state.artistsData.find(a => a.name === artistName);
                             if (artist) {
-                                this.methods.closeAlbumModal();
-                                setTimeout(() => this.methods.openArtistModal(artist), 250);
+                                this.methods.closeAlbumModal(() => this.methods.openArtistModal(artist));
                             }
                         } else if (target.matches('.clickable-link[data-genre-name]')) {
                             const genreName = target.dataset.genreName;
                             if (this.state.styleMatrix.genres[genreName]) {
-                                this.methods.closeAlbumModal();
-                                setTimeout(() => this.methods.openGenreModal(genreName), 250);
+                                this.methods.closeAlbumModal(() => this.methods.openGenreModal(genreName));
                             }
                         }
                     });
@@ -1360,8 +1358,7 @@
                             const visibleAlbum = this.state.visibleAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
                             if (visibleAlbum) {
                                 const indexInVisible = this.state.visibleAlbums.indexOf(visibleAlbum);
-                                this.methods.closeArtistModal();
-                                setTimeout(() => this.methods.openAlbumModal(visibleAlbum, indexInVisible), 250);
+                                this.methods.closeArtistModal(() => this.methods.openAlbumModal(visibleAlbum, indexInVisible));
                             }
                         }
                     });
@@ -1375,21 +1372,21 @@
                     });
                     
                     genreModal.addEventListener('click', (e) => {
-                        const target = e.target;
-                        if (target.matches('.clickable-link[data-artist-name]')) {
+                        const target = e.target.closest('.clickable-link');
+                        if (!target) return;
+
+                        if (target.dataset.artistName) {
                             const artistName = target.dataset.artistName;
                             const artist = this.state.artistsData.find(a => a.name === artistName);
                             if (artist) {
-                                this.methods.closeGenreModal();
-                                setTimeout(() => this.methods.openArtistModal(artist), 250);
+                                this.methods.closeGenreModal(() => this.methods.openArtistModal(artist));
                             }
-                        } else if (target.matches('.clickable-link[data-album-title]')) {
+                        } else if (target.dataset.albumTitle) {
                             const { albumTitle, artist } = target.dataset;
                             const visibleAlbum = this.state.visibleAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
                              if (visibleAlbum) {
                                 const indexInVisible = this.state.visibleAlbums.indexOf(visibleAlbum);
-                                this.methods.closeGenreModal();
-                                setTimeout(() => this.methods.openAlbumModal(visibleAlbum, indexInVisible), 250);
+                                this.methods.closeGenreModal(() => this.methods.openAlbumModal(visibleAlbum, indexInVisible));
                             }
                         }
                     });
@@ -1428,7 +1425,6 @@
                                 <div class="p-3">
                                     <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
                                 </div>`;
-                            card.addEventListener('click', () => this.methods.openArtistModal(artist));
                             pageDiv.appendChild(card);
                         });
                         artistSliderTrack.appendChild(pageDiv);
@@ -1642,13 +1638,14 @@
                     albumModal.querySelector('#modal-body').scrollTop = 0;
                 },
 
-                closeAlbumModal() {
+                closeAlbumModal(callback) {
                     const { albumModal } = this.elements;
                     albumModal.classList.add('opacity-0', 'pointer-events-none');
                     albumModal.querySelector('.modal-content').classList.add('scale-95');
                     albumModal.querySelectorAll('audio').forEach(audio => audio.pause());
                     const clickedCard = document.querySelector('.timeline-album-card.clicked');
                     if (clickedCard) clickedCard.classList.remove('clicked');
+                    if (typeof callback === 'function') setTimeout(callback, 300);
                 },
 
                 openArtistModal(artist) {
@@ -1665,10 +1662,11 @@
                     artistModal.querySelector('.modal-content').classList.remove('scale-95');
                 },
 
-                closeGenreModal() {
-                    const { genreModal } = this.elements;
-                    genreModal.classList.add('opacity-0', 'pointer-events-none');
-                    genreModal.querySelector('.modal-content').classList.add('scale-95');
+                closeArtistModal(callback) {
+                    const { artistModal } = this.elements;
+                    artistModal.classList.add('opacity-0', 'pointer-events-none');
+                    artistModal.querySelector('.modal-content').classList.add('scale-95');
+                    if (typeof callback === 'function') setTimeout(callback, 300);
                 },
                 
                 openGenreModal(genreName) {
@@ -1728,10 +1726,11 @@
                     genreModal.querySelector('.modal-content').classList.remove('scale-95');
                 },
 
-                closeGenreModal() {
+                closeGenreModal(callback) {
                     const { genreModal } = this.elements;
                     genreModal.classList.add('opacity-0', 'pointer-events-none');
                     genreModal.querySelector('.modal-content').classList.add('scale-95');
+                    if (typeof callback === 'function') setTimeout(callback, 300);
                 },
                 
                 populateInstrumentFilter(artists) {
