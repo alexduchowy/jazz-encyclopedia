@@ -237,6 +237,16 @@
             opacity: 1 !important;
             z-index: 10;
         }
+        .timeline-album-card.landmark-album {
+            border-width: 4px;
+            border-color: var(--landmark-color, var(--accent));
+            box-shadow: 0 0 15px 0px var(--landmark-color, var(--accent));
+            animation: pulse-landmark 2s infinite ease-in-out;
+        }
+        @keyframes pulse-landmark {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
         .timeline-album-card img {
             width: 100%;
             height: 200px;
@@ -1146,6 +1156,25 @@
                                 card.dataset.albumTitle = album.albumTitle;
                                 card.dataset.artist = album.artist;
                                 card.dataset.genres = album.genres;
+
+                                const albumGenres = album.genres.split(', ');
+                                let isLandmark = false;
+                                let landmarkColor = null;
+
+                                for (const genreName of albumGenres) {
+                                    const genreData = this.state.styleMatrix.genres[genreName];
+                                    if (genreData && genreData.landmarkAlbums && genreData.landmarkAlbums.some(title => title.toLowerCase() === album.albumTitle.toLowerCase())) {
+                                        isLandmark = true;
+                                        landmarkColor = genreData.color;
+                                        break; 
+                                    }
+                                }
+
+                                if (isLandmark) {
+                                    card.classList.add('landmark-album');
+                                    card.style.setProperty('--landmark-color', landmarkColor);
+                                }
+
                                 card.innerHTML = `<img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
                                 albumList.appendChild(card);
                             });
