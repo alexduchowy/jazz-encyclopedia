@@ -892,6 +892,12 @@
             // Initialization
             init() {
                 this.cacheDOMElements();
+                // Bind all methods to the JazzApp context once
+                for (const key in this.methods) {
+                    if (typeof this.methods[key] === 'function') {
+                        this.methods[key] = this.methods[key].bind(this);
+                    }
+                }
                 this.fetchData();
             },
             
@@ -960,18 +966,18 @@
             },
 
             initializeAppUI() {
-                this.methods.processAndSortData.call(this);
-                this.methods.buildGenreColorMap.call(this);
-                this.methods.setupFilters.call(this);
-                this.methods.renderTimeline.call(this);
-                this.methods.setupTimelineInteraction.call(this);
-                this.methods.setupModals.call(this);
-                this.methods.setupArtistSlider.call(this);
-                this.methods.buildGenreMatrix.call(this);
-                this.methods.setupMobileMenu.call(this);
-                this.methods.setupScrollObservers.call(this);
-                this.methods.setupGeneralEventListeners.call(this);
-                this.methods.renderScrollbarMarkers.call(this);
+                this.methods.processAndSortData();
+                this.methods.buildGenreColorMap();
+                this.methods.setupFilters();
+                this.methods.renderTimeline();
+                this.methods.setupTimelineInteraction();
+                this.methods.setupModals();
+                this.methods.setupArtistSlider();
+                this.methods.buildGenreMatrix();
+                this.methods.setupMobileMenu();
+                this.methods.setupScrollObservers();
+                this.methods.setupGeneralEventListeners();
+                this.methods.renderScrollbarMarkers();
                 this.showPage();
                 setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 0);
             },
@@ -1006,7 +1012,7 @@
                     const allTracks = this.state.albums.flatMap(album =>
                         album.pivotalTracks.map(track => ({ ...track, year: album.year, artist: album.artist, album: album.albumTitle, cover: album.cover, genre: album.genres }))
                     );
-                    this.state.artistsData = this.methods.processArtists.call(this, allTracks, this.state.artistProfiles);
+                    this.state.artistsData = this.methods.processArtists(allTracks, this.state.artistProfiles);
                 },
 
                 processArtists(tracks, profiles) {
@@ -1112,7 +1118,7 @@
                     
                     allCheckbox.addEventListener('change', () => {
                         allGenreCheckboxes.forEach(cb => { cb.checked = allCheckbox.checked; });
-                        this.methods.filterTimeline.call(this);
+                        this.methods.filterTimeline();
                     });
 
                     genreFilterContainer.addEventListener('change', (e) => {
@@ -1120,11 +1126,11 @@
                             if(e.target.id !== 'all-genres-checkbox') {
                                 allCheckbox.checked = Array.from(allGenreCheckboxes).every(cb => cb.checked);
                             }
-                            this.methods.filterTimeline.call(this);
+                            this.methods.filterTimeline();
                         }
                     });
                     
-                    this.methods.populateInstrumentFilter.call(this, this.state.artistsData);
+                    this.methods.populateInstrumentFilter(this.state.artistsData);
                 },
 
                 renderTimeline() {
@@ -1165,7 +1171,7 @@
                                 let landmarkColor = null;
 
                                 for (const genreName of albumGenres) {
-                                    const normalizedGenre = this.methods.normalizeGenreName.call(this, genreName);
+                                    const normalizedGenre = this.methods.normalizeGenreName(genreName);
                                     const genreData = this.state.styleMatrix.genres[normalizedGenre];
                                     if (genreData && genreData.landmarkAlbums && genreData.landmarkAlbums.some(title => title.toLowerCase() === album.albumTitle.toLowerCase())) {
                                         isLandmark = true;
@@ -1185,7 +1191,7 @@
                             yearSection.appendChild(albumList);
                             timelineWrapper.appendChild(yearSection);
                         });
-                        this.methods.filterTimeline.call(this);
+                        this.methods.filterTimeline();
                     } else {
                          timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
                     }
@@ -1234,7 +1240,7 @@
                         if (window.innerWidth < 768) return;
                         const card = e.target.closest('.timeline-album-card');
                         if (card && !card.classList.contains('hidden') && !document.querySelector('.timeline-album-card.clicked')) {
-                            this.methods.applyHighlights.call(this, card);
+                            this.methods.applyHighlights(card);
                         }
                     });
 
@@ -1242,7 +1248,7 @@
                         if (window.innerWidth < 768) return;
                         const card = e.target.closest('.timeline-album-card');
                         if (card && !document.querySelector('.timeline-album-card.clicked')) {
-                            this.methods.applyHighlights.call(this, null);
+                            this.methods.applyHighlights(null);
                         }
                     });
 
@@ -1251,7 +1257,7 @@
                         const isMobile = window.innerWidth < 768;
                         if (!card) {
                             if (isMobile && this.state.mobileCardSelectedForModal) {
-                                this.methods.applyHighlights.call(this, null);
+                                this.methods.applyHighlights(null);
                                 this.state.mobileCardSelectedForModal = null;
                             }
                             return;
@@ -1263,16 +1269,16 @@
                             if (isMobile) {
                                 if (this.state.mobileCardSelectedForModal === card) {
                                     if (albumIndexInVisible !== -1) {
-                                        this.methods.applyHighlights.call(this, null);
-                                        this.methods.openAlbumModal.call(this, this.state.visibleAlbums[albumIndexInVisible], albumIndexInVisible);
+                                        this.methods.applyHighlights(null);
+                                        this.methods.openAlbumModal(this.state.visibleAlbums[albumIndexInVisible], albumIndexInVisible);
                                     }
                                     this.state.mobileCardSelectedForModal = null;
                                 } else {
-                                    this.methods.applyHighlights.call(this, card);
+                                    this.methods.applyHighlights(card);
                                     this.state.mobileCardSelectedForModal = card;
                                 }
                             } else {
-                                if (albumIndexInVisible !== -1) this.methods.openAlbumModal.call(this, this.state.visibleAlbums[albumIndexInVisible], albumIndexInVisible);
+                                if (albumIndexInVisible !== -1) this.methods.openAlbumModal(this.state.visibleAlbums[albumIndexInVisible], albumIndexInVisible);
                             }
                         }
                     });
@@ -1294,7 +1300,7 @@
                                 stickyYearDisplay.style.opacity = '1';
                             }, 150);
                         }
-                        this.methods.updateCustomScrollbar.call(this);
+                        this.methods.updateCustomScrollbar();
                     });
 
                     const firstYear = [...new Set(this.state.albums.map(album => album.year))].sort()[0];
@@ -1306,46 +1312,46 @@
                 
                 setupModals() {
                     const { albumModal, artistModal, genreModal, matrixContainer } = this.elements;
-                    albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeAlbumModal.call(this));
+                    albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeAlbumModal());
                     albumModal.addEventListener('click', e => { 
-                        if (e.target.id === 'album-modal') this.methods.closeAlbumModal.call(this);
+                        if (e.target.id === 'album-modal') this.methods.closeAlbumModal();
                         
                         const target = e.target;
                         if (target.matches('.clickable-link[data-artist-name]')) {
                             const artistName = target.dataset.artistName;
                             const artist = this.state.artistsData.find(a => a.name === artistName);
                             if (artist) {
-                                this.methods.closeAlbumModal.call(this);
-                                setTimeout(() => this.methods.openArtistModal.call(this, artist), 250);
+                                this.methods.closeAlbumModal();
+                                setTimeout(() => this.methods.openArtistModal(artist), 250);
                             }
                         } else if (target.matches('.clickable-link[data-genre-name]')) {
                             const genreName = target.dataset.genreName;
                             if (this.state.styleMatrix.genres[genreName]) {
-                                this.methods.closeAlbumModal.call(this);
-                                setTimeout(() => this.methods.openGenreModal.call(this, genreName), 250);
+                                this.methods.closeAlbumModal();
+                                setTimeout(() => this.methods.openGenreModal(genreName), 250);
                             }
                         }
                     });
                     document.getElementById('prev-album-btn').addEventListener('click', () => {
                         if (this.state.currentVisibleAlbumIndex > 0) {
                             const newIndex = this.state.currentVisibleAlbumIndex - 1;
-                            this.methods.openAlbumModal.call(this, this.state.visibleAlbums[newIndex], newIndex);
+                            this.methods.openAlbumModal(this.state.visibleAlbums[newIndex], newIndex);
                         }
                     });
                     document.getElementById('next-album-btn').addEventListener('click', () => {
                         if (this.state.currentVisibleAlbumIndex < this.state.visibleAlbums.length - 1) {
                             const newIndex = this.state.currentVisibleAlbumIndex + 1;
-                            this.methods.openAlbumModal.call(this, this.state.visibleAlbums[newIndex], newIndex);
+                            this.methods.openAlbumModal(this.state.visibleAlbums[newIndex], newIndex);
                         }
                     });
 
-                    artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal.call(this));
-                    artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') this.methods.closeArtistModal.call(this); });
+                    artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
+                    artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') this.methods.closeArtistModal(); });
                     
-                    genreModal.querySelector('#close-genre-modal').addEventListener('click', () => this.methods.closeGenreModal.call(this));
-                    genreModal.addEventListener('click', e => { if (e.target.id === 'genre-modal') this.methods.closeGenreModal.call(this); });
+                    genreModal.querySelector('#close-genre-modal').addEventListener('click', () => this.methods.closeGenreModal());
+                    genreModal.addEventListener('click', e => { if (e.target.id === 'genre-modal') this.methods.closeGenreModal(); });
                     
-                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal.call(this); this.methods.closeArtistModal.call(this); this.methods.closeGenreModal.call(this); } });
+                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal(); this.methods.closeArtistModal(); this.methods.closeGenreModal(); } });
 
                     
                     artistModal.addEventListener('click', (e) => {
@@ -1354,8 +1360,8 @@
                             const visibleAlbum = this.state.visibleAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
                             if (visibleAlbum) {
                                 const indexInVisible = this.state.visibleAlbums.indexOf(visibleAlbum);
-                                this.methods.closeArtistModal.call(this);
-                                setTimeout(() => this.methods.openAlbumModal.call(this, visibleAlbum, indexInVisible), 250);
+                                this.methods.closeArtistModal();
+                                setTimeout(() => this.methods.openAlbumModal(visibleAlbum, indexInVisible), 250);
                             }
                         }
                     });
@@ -1364,7 +1370,7 @@
                         const button = e.target.closest('.genre-header-button');
                         if(button) {
                             const genreName = button.dataset.genreName;
-                            this.methods.openGenreModal.call(this, genreName);
+                            this.methods.openGenreModal(genreName);
                         }
                     });
                     
@@ -1374,16 +1380,16 @@
                             const artistName = target.dataset.artistName;
                             const artist = this.state.artistsData.find(a => a.name === artistName);
                             if (artist) {
-                                this.methods.closeGenreModal.call(this);
-                                setTimeout(() => this.methods.openArtistModal.call(this, artist), 250);
+                                this.methods.closeGenreModal();
+                                setTimeout(() => this.methods.openArtistModal(artist), 250);
                             }
                         } else if (target.matches('.clickable-link[data-album-title]')) {
                             const { albumTitle, artist } = target.dataset;
                             const visibleAlbum = this.state.visibleAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
                              if (visibleAlbum) {
                                 const indexInVisible = this.state.visibleAlbums.indexOf(visibleAlbum);
-                                this.methods.closeGenreModal.call(this);
-                                setTimeout(() => this.methods.openAlbumModal.call(this, visibleAlbum, indexInVisible), 250);
+                                this.methods.closeGenreModal();
+                                setTimeout(() => this.methods.openAlbumModal(visibleAlbum, indexInVisible), 250);
                             }
                         }
                     });
@@ -1422,12 +1428,12 @@
                                 <div class="p-3">
                                     <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
                                 </div>`;
-                            card.addEventListener('click', () => this.methods.openArtistModal.call(this, artist));
+                            card.addEventListener('click', () => this.methods.openArtistModal(artist));
                             pageDiv.appendChild(card);
                         });
                         artistSliderTrack.appendChild(pageDiv);
                     }
-                    this.methods.goToArtistPage.call(this, this.state.currentArtistPage);
+                    this.methods.goToArtistPage(this.state.currentArtistPage);
                 },
 
                 setupMobileMenu() {
@@ -1490,29 +1496,38 @@
                 setupGeneralEventListeners() {
                     this.elements.instrumentFilter.addEventListener('change', () => {
                         this.state.currentArtistPage = 0; // Reset page on filter change
-                        this.methods.setupArtistSlider.call(this);
+                        this.methods.setupArtistSlider();
                     });
-                    this.elements.artistPrevBtn.addEventListener('click', () => this.methods.goToArtistPage.call(this, this.state.currentArtistPage - 1));
-                    this.elements.artistNextBtn.addEventListener('click', () => this.methods.goToArtistPage.call(this, this.state.currentArtistPage + 1));
+                    
+                    this.elements.artistSliderTrack.addEventListener('click', (e) => {
+                        const card = e.target.closest('.artist-card');
+                        if (card && card.dataset.artistName) {
+                            const artist = this.state.artistsData.find(a => a.name === card.dataset.artistName);
+                            if (artist) this.methods.openArtistModal(artist);
+                        }
+                    });
+
+                    this.elements.artistPrevBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage - 1));
+                    this.elements.artistNextBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage + 1));
                     
                     let resizeTimeout;
                     window.addEventListener('resize', () => {
                         clearTimeout(resizeTimeout);
                         resizeTimeout = setTimeout(() => {
                             const currentPage = this.state.currentArtistPage;
-                            this.methods.setupArtistSlider.call(this);
-                            this.methods.goToArtistPage.call(this, currentPage); // Restore current page
-                            this.methods.resizeCanvas.call(this);
-                            this.methods.updateCustomScrollbar.call(this);
-                            this.methods.renderScrollbarMarkers.call(this);
+                            this.methods.setupArtistSlider();
+                            this.methods.goToArtistPage(currentPage); // Restore current page
+                            this.methods.resizeCanvas();
+                            this.methods.updateCustomScrollbar();
+                            this.methods.renderScrollbarMarkers();
                         }, 200);
                     });
                     
                     this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
                     if (this.elements.scrollRightBtn) this.elements.scrollRightBtn.classList.add('nudge-animation');
                     
-                    this.methods.setupDraggable.call(this, this.elements.timelineContainer);
-                    this.methods.setupCustomScrollbarInteraction.call(this);
+                    this.methods.setupDraggable(this.elements.timelineContainer);
+                    this.methods.setupCustomScrollbarInteraction();
                 },
                 
                 // --- HELPER METHODS ---
@@ -1521,6 +1536,11 @@
                     return name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
                 },
                 
+                normalizeGenreName(genreName) {
+                    if (genreName === "Avant-Garde Jazz") return "Avant-Garde";
+                    return genreName;
+                },
+
                 filterTimeline() {
                     const selectedGenres = Array.from(this.elements.genreFilterContainer.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
                     this.state.visibleAlbums = [];
@@ -1540,9 +1560,9 @@
                     this.elements.genreFilterContainer.querySelector('#all-genres-checkbox').checked = selectedGenres.length === this.elements.genreFilterContainer.querySelectorAll('input[data-genre]').length;
                     
                     setTimeout(() => {
-                        this.methods.resizeCanvas.call(this);
-                        this.methods.renderScrollbarMarkers.call(this);
-                        this.methods.updateCustomScrollbar.call(this);
+                        this.methods.resizeCanvas();
+                        this.methods.renderScrollbarMarkers();
+                        this.methods.updateCustomScrollbar();
                     }, 0);
                 },
 
