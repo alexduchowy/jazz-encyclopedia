@@ -1251,7 +1251,25 @@
                 setupModals() {
                     const { albumModal, artistModal, genreModal, matrixContainer } = this.elements;
                     albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeAlbumModal.call(this));
-                    albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') this.methods.closeAlbumModal.call(this); });
+                    albumModal.addEventListener('click', e => { 
+                        if (e.target.id === 'album-modal') this.methods.closeAlbumModal.call(this);
+                        
+                        const target = e.target;
+                        if (target.matches('.clickable-link[data-artist-name]')) {
+                            const artistName = target.dataset.artistName;
+                            const artist = this.state.artistsData.find(a => a.name === artistName);
+                            if (artist) {
+                                this.methods.closeAlbumModal.call(this);
+                                setTimeout(() => this.methods.openArtistModal.call(this, artist), 250);
+                            }
+                        } else if (target.matches('.clickable-link[data-genre-name]')) {
+                            const genreName = target.dataset.genreName;
+                            if (this.state.styleMatrix.genres[genreName]) {
+                                this.methods.closeAlbumModal.call(this);
+                                setTimeout(() => this.methods.openGenreModal.call(this, genreName), 250);
+                            }
+                        }
+                    });
                     document.getElementById('prev-album-btn').addEventListener('click', () => {
                         if (this.state.currentVisibleAlbumIndex > 0) {
                             const newIndex = this.state.currentVisibleAlbumIndex - 1;
@@ -1273,16 +1291,6 @@
                     
                     document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal.call(this); this.methods.closeArtistModal.call(this); this.methods.closeGenreModal.call(this); } });
 
-                    albumModal.addEventListener('click', (e) => {
-                        if (e.target.matches('.clickable-link[data-artist-name]')) {
-                            const artistName = e.target.dataset.artistName;
-                            const artist = this.state.artistsData.find(a => a.name === artistName);
-                            if (artist) {
-                                this.methods.closeAlbumModal.call(this);
-                                setTimeout(() => this.methods.openArtistModal.call(this, artist), 250);
-                            }
-                        }
-                    });
                     
                     artistModal.addEventListener('click', (e) => {
                         if (e.target.matches('.clickable-link[data-album-title]')) {
@@ -1524,7 +1532,7 @@
                     modalImg.alt = `Cover for ${album.albumTitle}`;
                     modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
                     const firstTrack = album.pivotalTracks[0] || {};
-                    const genreTags = album.genres.split(', ').map(genre => `<span class="genre-tag" style="background-color: ${this.state.fullGenreColorMap[genre] || 'var(--genre-default)'}">${genre}</span>`).join(' ');
+                    const genreTags = album.genres.split(', ').map(genre => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[genre] || 'var(--genre-default)'}" data-genre-name="${genre}">${genre}</span>`).join(' ');
                     const lineupHtml = firstTrack.lineup ? firstTrack.lineup.split(/, (?![^()]*\))/).map(personnel => {
                         const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
                         if (match && this.state.artistsData.some(a => a.name === match[1].trim())) {
