@@ -2,17 +2,49 @@
   "albums": [
     {
       "year": 1950,
-      "artist": "Miles Davis Nonet",
+      "artist": "Miles Davis",
       "albumTitle": "Birth of the Cool",
       "cover": "images/birth-of-the-cool.jpg",
-      "genres": "Cool Jazz",
+      "genres": "Cool Jazz, Bebop",
       "pivotalTracks": [
         {
           "title": "Jeru",
-          "recordingDate": "April 22, 1949",
+          "recordingDate": "March 9, 1950",
           "label": "Capitol",
-          "lineup": "Miles Davis (trumpet), J. J. Johnson (trombone), Sandy Siegelstein (french horn), Bill Barber (tuba), Lee Konitz (alto saxophone), Gerry Mulligan (baritone saxophone), John Lewis (piano), Nelson Boyd (bass), Kenny Clarke (drums)",
-          "analysis": "Composed by Gerry Mulligan, 'Jeru' is a defining track from the 'Birth of the Cool' sessions and a perfect encapsulation of the emerging cool jazz aesthetic. The relaxed tempo, intricate but subtle arrangement, and the soft textures of the horns (including french horn and tuba) create a sound far removed from bebop's frenetic energy. Mulligan's own baritone solo is a model of melodic grace, prefiguring the sound that would make his pianoless quartet a sensation on the West Coast."
+          "lineup": "Miles Davis (trumpet), J. J. Johnson (trombone), Sandy Siegelstein (French horn), Bill Barber (tuba), Lee Konitz (alto saxophone), Gerry Mulligan (baritone saxophone), John Lewis (piano), Nelson Boyd (bass), Kenny Clarke (drums)",
+          "analysis": "Composed by Gerry Mulligan, 'Jeru' is a quintessential track from the legendary Birth of the Cool sessions. It perfectly captures the project's revolutionary sound, which moved away from bebop's frantic energy toward a more relaxed, textured, and lyrical approach. The unique nonet instrumentation, with its lush harmonies and interwoven lines, creates a sound that is both sophisticated and subdued, effectively launching the Cool Jazz movement."
+        }
+      ]
+    },
+       {
+      "year": 1950,
+      "artist": "Lee Konitz",
+      "albumTitle": "Subconscious-Lee",
+      "cover": "images/subconscious-lee.jpg",
+      "genres": "Cool Jazz, Bebop",
+      "pivotalTracks": [
+        {
+          "title": "Subconscious-Lee",
+          "recordingDate": "April 7, 1950",
+          "label": "Prestige",
+          "lineup": "Lee Konitz (alto saxophone), Warne Marsh (tenor saxophone), Lennie Tristano (piano), Billy Bauer (guitar), Arnold Fishkind (bass), Shelly Manne (drums)",
+          "analysis": "A cornerstone of the 'Tristano School' of jazz, this track is a cerebral contrafact written by Lee Konitz over the chords of 'What Is This Thing Called Love?'. The performance is a textbook example of this intellectual branch of Cool Jazz, emphasizing long, weaving melodic lines, intricate counterpoint between the saxophones, and a dry, restrained tone. It represented a clear alternative to the fiery emotionalism of bebop, influencing generations of musicians with its harmonic and rhythmic sophistication."
+        }
+      ]
+    },
+  {
+      "year": 1950,
+      "artist": "Stan Getz Quartet",
+      "albumTitle": "Conception",
+      "cover": "images/conception.jpg",
+      "genres": "Cool Jazz",
+      "pivotalTracks": [
+        {
+          "title": "Intoit",
+          "recordingDate": "April 14, 1950",
+          "label": "Prestige",
+          "lineup": "Stan Getz (tenor saxophone), Al Haig (piano), Tommy Potter (bass), Roy Haynes (drums)",
+          "analysis": "A superb Al Haig composition, 'Intoit' is a prime example of Stan Getz's early quartet work which helped define the sound of Cool Jazz. Getz's playing is the epitome of lyricism and melodic grace, his warm, breathy tone floating effortlessly over the swinging bebop foundation laid by a masterful rhythm section. This track captures the relaxed elegance and sophisticated harmony that made Getz one of the most distinctive and influential tenor saxophonists of his generation."
         }
       ]
     },
@@ -29,22 +61,6 @@
           "label": "Mercury",
           "lineup": "Charlie Parker (alto saxophone), Dizzy Gillespie (trumpet), Thelonious Monk (piano), Curly Russell (bass), Buddy Rich (drums)",
           "analysis": "A landmark session that reunited the two primary architects of bebop, Charlie Parker and Dizzy Gillespie, for the only time in a studio setting with fellow innovator Thelonious Monk. 'Bloomdido' is a quintessential bebop blues, a high-energy vehicle for spectacular improvisational flights. Parker's solo is a torrent of brilliant ideas, while Gillespie's is fiery and rhythmically daring. The track is a masterclass in bebop performance, capturing the exhilarating chemistry of five giants of the genre."
-        }
-      ]
-    },
-    {
-      "year": 1951,
-      "artist": "Lee Konitz Sextet",
-      "albumTitle": "Conception",
-      "cover": "images/conception.jpg",
-      "genres": "Cool Jazz",
-      "pivotalTracks": [
-        {
-          "title": "Hi-Beck",
-          "recordingDate": "March 8, 1951",
-          "label": "Prestige",
-          "lineup": "Lee Konitz (alto saxophone), Miles Davis (trumpet), Sal Mosca (piano), Billy Bauer (guitar), Arnold Fishkin (bass), Max Roach (drums)",
-          "analysis": "A fascinating document of the \"Tristano School\" of cool. Konitz, Lennie Tristano's star pupil, showcases a sound entirely distinct from Charlie Parker. His alto is dry, his lines are long and winding, and his improvisations prioritize melodic logic and harmonic sophistication over blues-inflected fire. On \"Hi-Beck,\" his intricate contrapuntal interplay with fellow Tristano-ite Billy Bauer and the harmonically advanced piano of Sal Mosca creates a cerebral yet swinging atmosphere. The presence of Miles Davis, who championed Konitz, bridges the gap between the \"Birth of the Cool\" sessions and this more academic, yet equally innovative, strain of cool jazz."
         }
       ]
     },
@@ -77,6 +93,22 @@
           "label": "Blue Note",
           "lineup": "Thelonious Monk (piano), Sahib Shihab (alto saxophone), Milt Jackson (vibraphone), Al McKibbon (bass), Art Blakey (drums)",
           "analysis": "This is the original recording of one of Monk's most famous compositions and a cornerstone of the jazz repertoire. Built on a 12-bar blues structure, the tune is transformed by Monk's signature melody, which is full of rhythmic twists, dissonant intervals, and surprising accents. This debut performance perfectly captures its lopsided genius, with Milt Jackson's cool-toned vibraphone offering a wonderfully fluid counterpoint to Monk's jagged, percussive piano. It's a masterclass in making the familiar sound completely new."
+        }
+      ]
+    },
+        {
+      "year": 1952,
+      "artist": "Milt Jackson Quartet",
+      "albumTitle": "Milt Jackson Quartet",
+      "cover": "images/milt-jackson-quartet.jpg",
+      "genres": "Bebop, Cool Jazz",
+      "pivotalTracks": [
+        {
+          "title": "Lillie",
+          "recordingDate": "August 24, 1951",
+          "label": "Prestige",
+          "lineup": "Milt Jackson (vibraphone), John Lewis (piano), Percy Heath (bass), Kenny Clarke (drums)",
+          "analysis": "This track is a foundational recording of the ensemble that would become the Modern Jazz Quartet, the quintessential 'cool jazz' chamber group. Written by Milt Jackson, 'Lillie' showcases the group's unique sound: a sublime balance of bebop's harmonic language with classical elegance and restraint. John Lewis's sparse, contrapuntal piano and Milt Jackson's warm, blues-inflected vibraphone create a sophisticated yet deeply swinging dialogue. This session was pivotal in establishing a cooler, more structured approach to small group jazz that would prove enormously influential."
         }
       ]
     },
