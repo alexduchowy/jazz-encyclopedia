@@ -22,6 +22,7 @@
             --text-muted: #57534e; /* stone-600 */
             --accent: #f97316; /* orange-500 */
             --accent-dark: #ea580c; /* orange-600 */
+            --yellow-accent: #facc15; /* yellow-400 */
 
             /* Genre Colors */
             --genre-bebop: #C19A6B; /* Pastel Brown */
@@ -274,6 +275,12 @@
         .artist-card:hover {
             transform: translateY(-5px) rotate(2deg);
             box-shadow: 8px 8px 0px var(--accent) !important; /* Ensure hover always wins */
+        }
+        .artist-card.bandleader {
+            box-shadow: 4px 4px 0px var(--accent);
+        }
+        .artist-card.influential-sideman {
+            box-shadow: 4px 4px 0px var(--yellow-accent);
         }
         .artist-card .artist-photo-container {
               height: 224px;
@@ -766,7 +773,8 @@
                     "Blistering tempos, virtuosic and rhythmically complex solos, 'dropping bombs' with the bass drum.",
                     "Often based on standard song forms (like blues and 'I Got Rhythm' changes) but used as vehicles for extended improvisation."
                 ],
-                "artists": "Charlie Parker, Dizzy Gillespie, Thelonious Monk, Bud Powell"
+                "artists": "Charlie Parker, Dizzy Gillespie, Thelonious Monk, Bud Powell",
+                "landmarkAlbums": ["Bird and Diz", "Sonny Side Up", "The Amazing Bud Powell", "With The Oscar Peterson Trio", "Jazz At Massey Hall"]
             },
             "Hard Bop": {
                 "profile": "Evolving from bebop in the mid-1950s, Hard Bop re-injected the music with the earthy, soulful, and danceable influences of blues and gospel. With its strong backbeat, memorable melodies, and fiery solos, it became one of the most popular and enduring styles of the era.",
@@ -776,7 +784,8 @@
                     "Strong, driving swing feel, prominent drumming, danceable grooves",
                     "Standard forms (AABA, 12-bar blues), often with catchy, memorable heads"
                 ],
-                "artists": "Art Blakey, Horace Silver, Clifford Brown, Lee Morgan"
+                "artists": "Art Blakey, Horace Silver, Clifford Brown, Lee Morgan",
+                "landmarkAlbums": ["Moanin'", "Study in Brown", "Saxophone Colossus", "Monk's Music", "Blue Train"]
             },
             "Cool Jazz": {
                 "profile": "A reaction to the frenetic energy of bebop, Cool Jazz emerged in the late 1940s and 50s with a more relaxed, subdued, and lyrical approach. It often featured more complex, written arrangements, softer tones, and influences from classical music, creating a sound of understated elegance.",
@@ -786,7 +795,8 @@
                     "Relaxed, subtle pulse, lighter drumming, focus on understatement",
                     "Often employed complex, contrapuntal arrangements and non-standard forms"
                 ],
-                 "artists": "Miles Davis (early), Dave Brubeck, Stan Getz, Gerry Mulligan"
+                 "artists": "Miles Davis (early), Dave Brubeck, Stan Getz, Gerry Mulligan",
+                 "landmarkAlbums": ["Birth of the Cool", "Dexter Blows Hot and Cool", "Portrait in Jazz", "Time Out", "Somethin' Else"]
             },
             "Modal Jazz": {
                 "profile": "A revolutionary approach pioneered in the late 1950s, Modal Jazz liberated improvisers by focusing on static scales (or modes) for long stretches, rather than rapidly changing chord progressions. This created a more spacious, meditative, and harmonically open soundscape, famously explored on Miles Davis's 'Kind of Blue'.",
@@ -796,7 +806,8 @@
                     "Floating, ambiguous pulse, less aggressive swing, focus on texture",
                     "Open-ended, simple structures, often just a single mode or vamp"
                 ],
-                "artists": "Miles Davis, John Coltrane, Bill Evans"
+                "artists": "Miles Davis, John Coltrane, Bill Evans",
+                "landmarkAlbums": ["Kind of Blue", "My Favorite Things", "Maiden Voyage", "Waltz for Debby", "Idle Moments"]
             },
             "Post-Bop": {
                 "profile": "The adventurous middle ground of the 1960s, Post-Bop took the harmonic complexity of bebop and the freedom of modal jazz and fused them with elements of the avant-garde. It's defined by its intricate original compositions, highly interactive rhythm sections, and 'controlled freedom,' where musicians stretch the boundaries of harmony and form without abandoning them completely.",
@@ -806,7 +817,8 @@
                     "Highly interactive, fluid time, polyrhythms, elastic sense of swing",
                     "Modified standard forms, original compositions with complex, unique structures"
                 ],
-                "artists": "Miles Davis's 2nd Quintet, Wayne Shorter, Herbie Hancock, Andrew Hill"
+                "artists": "Miles Davis's 2nd Quintet, Wayne Shorter, Herbie Hancock, Andrew Hill",
+                "landmarkAlbums": ["Mingus Ah Um", "Astigmatic", "Destination… Out!", "Free For All", "Speak No Evil"]
             },
             "Avant-Garde": {
                  "profile": "The 'Avant-Garde' describes a forward-thinking movement where musicians sought to challenge and expand the conventions of jazz. This often involved complex, unconventional compositions, unusual instrumentation, and a blend of structured sections with free improvisation, pushing the music into uncharted intellectual and textural territory.",
@@ -816,7 +828,8 @@
                     "Ranges from free, pulseless textures to complex, composed rhythmic cycles.",
                     "Often features through-composed suites, blending written material with free improvisation."
                 ],
-                "artists": "Eric Dolphy, Andrew Hill, Grachan Moncur III, Sun Ra"
+                "artists": "Eric Dolphy, Andrew Hill, Grachan Moncur III, Sun Ra",
+                "landmarkAlbums": ["The Black Saint and the Sinner Lady", "Out to Lunch!", "The Shape of Jazz to Come", "Point of Departure", "A Love Supreme"]
             },
             "Free Jazz": {
                 "profile": "The most radical departure of the era, Free Jazz, pioneered by artists like Ornette Coleman, often abandoned preset chord changes, tempos, and forms altogether. The focus shifted to collective, spontaneous improvisation, prioritizing raw energy, texture, and pure sonic expression over traditional musical rules.",
@@ -826,7 +839,8 @@
                     "Often abandons a steady pulse; uses 'energy playing' and textural drumming.",
                     "Open forms, often based on a brief theme or motive, or completely improvised."
                 ],
-                "artists": "Ornette Coleman, Albert Ayler, Cecil Taylor, Pharoah Sanders"
+                "artists": "Ornette Coleman, Albert Ayler, Cecil Taylor, Pharoah Sanders",
+                "landmarkAlbums": ["Ascension", "Free Jazz", "Spiritual Unity", "Conquistador!", "Eternal Rhythm"]
             },
             "Jazz Fusion": {
                 "profile": "Emerging in the late 1960s, Jazz Fusion plugged jazz into the amplifier, incorporating the powerful rhythms of rock and funk, and the new textures of electric instruments like the Fender Rhodes piano and electric guitar. Led by Miles Davis, this movement created a dynamic, high-energy sound that would define the next decade of jazz.",
@@ -1009,10 +1023,19 @@
                             }
                         });
                     });
+                    
                     const artistsArray = Array.from(artistsMap.values());
                     artistsArray.forEach(artist => {
                         artist.instruments = Array.from(artist.instruments);
                         artist.albums = Array.from(artist.albums);
+                        // Assign tier
+                        if (artist.isBandleader) {
+                            artist.tier = 1;
+                        } else if (artist.albums.length >= 4) {
+                            artist.tier = 2;
+                        } else {
+                            artist.tier = 3;
+                        }
                     });
                     return artistsArray;
                 },
@@ -1338,7 +1361,7 @@
                     const selectedInstrument = instrumentFilter.value;
                     const filteredArtists = (selectedInstrument === 'all' ? [...this.state.artistsData] : this.state.artistsData.filter(artist => artist.instruments.includes(selectedInstrument)))
                         .sort((a, b) => {
-                            if (a.isBandleader !== b.isBandleader) return a.isBandleader ? -1 : 1;
+                            if (a.tier !== b.tier) return a.tier - b.tier;
                             return a.name.localeCompare(b.name);
                         });
 
@@ -1356,7 +1379,8 @@
                         pageArtists.forEach(artist => {
                             const card = document.createElement('div');
                             card.className = 'artist-card';
-                            if (artist.isBandleader) card.style.boxShadow = `4px 4px 0px var(--accent)`;
+                            if (artist.tier === 1) card.classList.add('bandleader');
+                            if (artist.tier === 2) card.classList.add('influential-sideman');
                             card.dataset.artistName = artist.name;
                             card.innerHTML = `
                                 <div class="h-56 bg-stone-900 artist-photo-container">
@@ -1606,9 +1630,9 @@
                     const bodyEl = genreModal.querySelector('#genre-modal-body');
 
                     // Find landmark albums
-                    const landmarkAlbums = this.state.albums
-                        .filter(album => album.genres.includes(genreName))
-                        .slice(0, 5); // Get first 5 as examples
+                    const landmarkAlbums = (genreData.landmarkAlbums || []).map(title => {
+                        return this.state.albums.find(a => a.albumTitle.toLowerCase() === title.toLowerCase());
+                    }).filter(Boolean); // Filter out any not found
                     
                     const landmarkAlbumsHtml = landmarkAlbums.map(album => 
                         `<li><span class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</span> by ${album.artist}</li>`
