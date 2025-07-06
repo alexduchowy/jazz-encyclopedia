@@ -530,6 +530,34 @@
             gap: 0.5rem 1rem;
             list-style-position: inside;
         }
+
+        /* Artist Modal Timeline Styles */
+        .artist-modal-timeline {
+            list-style: none;
+            padding-left: 1rem;
+            border-left: 2px solid var(--bg-secondary);
+        }
+        .artist-modal-timeline-item {
+            position: relative;
+            padding-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        .artist-modal-timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.4rem;
+            top: 0.25rem;
+            width: 0.65rem;
+            height: 0.65rem;
+            border-radius: 9999px;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+        }
+        .landmark-star {
+            color: var(--yellow-accent);
+            font-size: 1.1em;
+            margin-left: 0.25rem;
+        }
    
     </style>
 </head>
@@ -1667,15 +1695,57 @@
                     const { artistModal } = this.elements;
                     artistModal.querySelector('#artist-modal-title').textContent = artist.name;
                     const body = artistModal.querySelector('#artist-modal-body');
-                    const albumListHtml = artist.albums.map(albumTitle => {
-                        const albumData = this.state.albums.find(a => a.albumTitle === albumTitle);
-                        if (!albumData) return `<li>${albumTitle}</li>`;
-                        return `<li class="clickable-link" data-album-title="${albumData.albumTitle}" data-artist="${albumData.artist}">${albumTitle}</li>`;
+
+                    // Create a sorted list of the artist's albums with their years
+                    const artistAlbumsWithYear = artist.albums
+                        .map(albumTitle => this.state.albums.find(a => a.albumTitle === albumTitle))
+                        .filter(Boolean) // Filter out any albums not found in the main list
+                        .sort((a, b) => a.year - b.year);
+                    
+                    // Check if an album is a landmark album
+                    const isLandmark = (albumTitle) => {
+                        for (const genreName in this.state.styleMatrix.genres) {
+                            const genreData = this.state.styleMatrix.genres[genreName];
+                            if (genreData.landmarkAlbums && genreData.landmarkAlbums.some(title => title.toLowerCase() === albumTitle.toLowerCase())) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    };
+
+                    const albumTimelineHtml = artistAlbumsWithYear.map(album => {
+                        const landmarkIcon = isLandmark(album.albumTitle) ? '<span class="landmark-star">★</span>' : '';
+                        return `<li class="artist-modal-timeline-item">
+                                    <strong class="text-stone-600">${album.year}:</strong> 
+                                    <span class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">
+                                        ${album.albumTitle}
+                                    </span>
+                                    ${landmarkIcon}
+                                </li>`;
                     }).join('');
-                    body.innerHTML = `<div class="flex flex-col sm:flex-row gap-6"><div class="w-full sm:w-1/3 flex-shrink-0 artist-photo-container"><img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';"></div><div class="w-full sm:w-2/3"><h4 class="text-3xl text-stone-900 mb-3">Details</h4><p class="mb-4 text-stone-900"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p><h4 class="text-3xl text-stone-900 mb-3">Album Appearances</h4><ul class="list-disc list-inside text-sm space-y-1 text-stone-900 h-32 overflow-y-auto">${albumListHtml}</ul></div></div>${artist.profile ? `<div class="mt-6 pt-4 border-t-2 border-stone-200"><h4 class="text-2xl text-stone-900 mb-2">Profile</h4><p class="text-base text-stone-700 leading-relaxed">${artist.profile}</p></div>` : ''}`;
+
+                    body.innerHTML = `
+                        <div class="flex flex-col sm:flex-row gap-6">
+                            <div class="w-full sm:w-1/3 flex-shrink-0">
+                                <div class="artist-photo-container">
+                                    <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                </div>
+                                <p class="mt-4 text-stone-900 text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
+                            </div>
+                            <div class="w-full sm:w-2/3">
+                                ${artist.profile ? `
+                                    <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
+                                    <p class="text-base text-stone-700 leading-relaxed mb-4">${artist.profile}</p>
+                                ` : ''}
+                                <h4 class="text-2xl text-stone-900 mb-3">Album Appearances</h4>
+                                <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml}</ul>
+                            </div>
+                        </div>`;
+                    
                     artistModal.classList.remove('opacity-0', 'pointer-events-none');
                     artistModal.querySelector('.modal-content').classList.remove('scale-95');
                 },
+
 
                 closeArtistModal(callback) {
                     const { artistModal } = this.elements;
