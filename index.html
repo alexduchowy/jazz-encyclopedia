@@ -1165,7 +1165,8 @@
                                 let landmarkColor = null;
 
                                 for (const genreName of albumGenres) {
-                                    const genreData = this.state.styleMatrix.genres[genreName];
+                                    const normalizedGenre = this.methods.normalizeGenreName.call(this, genreName);
+                                    const genreData = this.state.styleMatrix.genres[normalizedGenre];
                                     if (genreData && genreData.landmarkAlbums && genreData.landmarkAlbums.some(title => title.toLowerCase() === album.albumTitle.toLowerCase())) {
                                         isLandmark = true;
                                         landmarkColor = genreData.color;
