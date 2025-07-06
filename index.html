@@ -98,8 +98,8 @@
             z-index: 10;
         }
         .matrix-table tbody th {
-            font-weight: bold;
-            font-size: 1.1rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.25rem;
             width: 150px;
             position: sticky;
             left: 0;
@@ -639,7 +639,7 @@
             <section id="matrix" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Genres</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Compare the defining traits of each major style.</p>
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Compare the main aspects of each style.</p>
                     <div id="genre-matrix-container" class="matrix-container max-w-6xl mx-auto">
                         <table id="style-matrix-table" class="matrix-table">
                             <!-- Table content will be generated here -->
@@ -1411,8 +1411,11 @@
                     const pageSize = window.innerWidth >= 768 ? 12 : 6;
                     this.state.totalArtistPages = Math.ceil(filteredArtists.length / pageSize);
 
-                    if (this.state.totalArtistPages <= 1) artistPaginationControls.classList.add('hidden');
-                    else artistPaginationControls.classList.remove('hidden');
+                    if (this.state.totalArtistPages <= 1) {
+                        artistPaginationControls.classList.add('hidden');
+                    } else {
+                        artistPaginationControls.classList.remove('hidden');
+                    }
 
                     for (let i = 0; i < this.state.totalArtistPages; i++) {
                         const pageDiv = document.createElement('div');
