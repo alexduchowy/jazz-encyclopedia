@@ -575,7 +575,7 @@
             <section id="overview" class="pt-12 pb-16 sm:pb-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="text-center mb-12">
-                        <h2 class="section-header text-5xl">A Jazz Evolution Encyclopedia</h2>
+                        <h2 class="section-header text-5xl">An Interactive History of Modern Jazz</h2>
                         <p class="text-center text-lg text-stone-600 mt-4 italic">Follow the development of modern jazz through the 50s and 60s.</p>
                     </div>
                     <div class="grid md:grid-cols-5 gap-12 items-start">
@@ -595,7 +595,7 @@
             <section id="timeline" class="py-16 sm:py-20 bg-stone-300 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Timeline Explorer</h2>
-                    <p class="text-center text-lg text-stone-600 mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
+                    <p class="text-center text-lg text-stone-600 mb-8 max-w-3xl mx-auto italic">Filter landmark albums by genre.</p>
                     
                     <!-- Timeline Filter Controls -->
                     <div id="timeline-controls" class="flex flex-col items-center justify-center gap-4 mb-8">
@@ -646,7 +646,7 @@
             <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Architects</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined the Bop era.</p>
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined an era.</p>
                     
                     <!-- Instrument Filter Dropdown -->
                     <div class="flex justify-center mb-8">
@@ -669,6 +669,7 @@
                             <button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed -ml-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                             </button>
+                            <span id="artist-page-indicator" class="font-bold text-lg text-stone-900 pointer-events-auto"></span>
                             <button id="artist-next-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed -mr-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                             </button>
@@ -1391,7 +1392,7 @@
                 },
 
                 setupArtistSlider() {
-                    const { instrumentFilter, artistSliderTrack, artistPaginationControls } = this.elements;
+                    const { instrumentFilter, artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
                     const selectedInstrument = instrumentFilter.value;
                     const filteredArtists = (selectedInstrument === 'all' ? [...this.state.artistsData] : this.state.artistsData.filter(artist => artist.instruments.includes(selectedInstrument)))
                         .sort((a, b) => {
@@ -1751,11 +1752,16 @@
                 },
                 
                 goToArtistPage(pageIndex) {
-                    const { artistSliderTrack, artistPrevBtn, artistNextBtn } = this.elements;
+                    const { artistSliderTrack, artistPrevBtn, artistNextBtn, artistPageIndicator } = this.elements;
                     this.state.currentArtistPage = Math.max(0, Math.min(pageIndex, this.state.totalArtistPages - 1));
                     artistSliderTrack.style.transform = `translateX(-${this.state.currentArtistPage * 100}%)`;
                     artistPrevBtn.disabled = this.state.currentArtistPage === 0;
                     artistNextBtn.disabled = this.state.currentArtistPage >= this.state.totalArtistPages - 1;
+                    if (this.state.totalArtistPages > 0) {
+                        artistPageIndicator.textContent = `${this.state.currentArtistPage + 1} / ${this.state.totalArtistPages}`;
+                    } else {
+                        artistPageIndicator.textContent = '';
+                    }
                 },
                 
                 resizeCanvas() {
@@ -1828,7 +1834,7 @@
                             timelineContainer.scrollTo({ left: clickPosition * scrollableWidth, behavior: 'smooth' });
                         }
                     });
-                    setTimeout(() => this.methods.updateCustomScrollbar.call(this), 200);
+                    setTimeout(() => this.methods.updateCustomScrollbar(), 200);
                 },
 
                 renderScrollbarMarkers() {
