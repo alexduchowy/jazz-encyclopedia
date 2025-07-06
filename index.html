@@ -241,11 +241,6 @@
             border-width: 4px;
             border-color: var(--landmark-color, var(--accent));
             box-shadow: 0 0 15px 0px var(--landmark-color, var(--accent));
-            animation: pulse-landmark 2s infinite ease-in-out;
-        }
-        @keyframes pulse-landmark {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
         }
         .timeline-album-card img {
             width: 100%;
@@ -522,6 +517,13 @@
         #mobile-menu-overlay.hidden #mobile-menu-panel {
             transform: translateX(100%);
         }
+        
+        .landmark-album-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem 1rem;
+            list-style-position: inside;
+        }
    
     </style>
 </head>
@@ -784,7 +786,7 @@
                     "Often based on standard song forms (like blues and 'I Got Rhythm' changes) but used as vehicles for extended improvisation."
                 ],
                 "artists": "Charlie Parker, Dizzy Gillespie, Thelonious Monk, Bud Powell",
-                "landmarkAlbums": ["Bird and Diz", "Sonny Side Up", "The Amazing Bud Powell, Vol. 1", "Lester Young with the Oscar Peterson Trio", "Jazz At Massey Hall"]
+                "landmarkAlbums": ["Bird and Diz", "Sonny Side Up", "The Amazing Bud Powell, Vol. 1", "Lester Young with the Oscar Peterson Trio", "Jazz At Massey Hall", "For Musicians Only"]
             },
             "Hard Bop": {
                 "profile": "Evolving from bebop in the mid-1950s, Hard Bop re-injected the music with the earthy, soulful, and danceable influences of blues and gospel. With its strong backbeat, memorable melodies, and fiery solos, it became one of the most popular and enduring styles of the era.",
@@ -860,7 +862,8 @@
                     "Driving, straight-eighth rock and funk grooves, complex polyrhythms, high-energy drumming.",
                     "Extended, often through-composed forms, long open improvisations over vamps."
                 ],
-                "artists": "Miles Davis, Herbie Hancock, Weather Report, Mahavishnu Orchestra"
+                "artists": "Miles Davis, Herbie Hancock, Weather Report, Mahavishnu Orchestra",
+                 "landmarkAlbums": ["In a Silent Way", "Bitches Brew"]
             }
         }
     }
@@ -1641,10 +1644,10 @@
                     artistModal.querySelector('.modal-content').classList.remove('scale-95');
                 },
 
-                closeArtistModal() {
-                    const { artistModal } = this.elements;
-                    artistModal.classList.add('opacity-0', 'pointer-events-none');
-                    artistModal.querySelector('.modal-content').classList.add('scale-95');
+                closeGenreModal() {
+                    const { genreModal } = this.elements;
+                    genreModal.classList.add('opacity-0', 'pointer-events-none');
+                    genreModal.querySelector('.modal-content').classList.add('scale-95');
                 },
                 
                 openGenreModal(genreName) {
@@ -1694,7 +1697,7 @@
                         ${landmarkAlbums.length > 0 ? `
                         <div>
                             <h4 class="text-2xl font-bold text-stone-900 mb-2">Landmark Albums</h4>
-                            <ul class="list-disc list-inside space-y-1 text-stone-700">${landmarkAlbumsHtml}</ul>
+                            <ul class="list-disc list-inside space-y-1 landmark-album-list">${landmarkAlbumsHtml}</ul>
                         </div>` : ''}
                     </div>`;
                     
