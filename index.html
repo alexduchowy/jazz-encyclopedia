@@ -433,7 +433,7 @@
         }
 
         /* Loading indicator styles */
-        #loader {
+        #loader, #timeline-loader {
             position: fixed;
             inset: 0;
             background-color: var(--bg-main);
@@ -449,6 +449,11 @@
             width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
+        }
+        #timeline-loader {
+            position: absolute;
+            width: 100px;
+            background: none;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -616,7 +621,9 @@
 
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
                             <canvas id="timeline-canvas"></canvas>
-                            <div id="timeline-wrapper"></div>
+                            <div id="timeline-wrapper">
+                                <!-- Timeline content is now loaded dynamically -->
+                            </div>
                         </div>
                         <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -882,7 +889,8 @@
         const JazzApp = {
             // Application State
             state: {
-                albums: [],
+                allAlbums: [], // Holds the entire dataset
+                albums: [], // Holds the currently displayed albums
                 artistProfiles: {},
                 artistsData: [],
                 styleMatrix: {},
@@ -893,6 +901,9 @@
                 lastKnownYear: '',
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
+                lastYearLoaded: 1955, // Track the last year loaded
+                yearsPerLoad: 5, // How many years to load at a time
+                isLoadingMore: false, // Flag to prevent multiple loads
             },
 
             // DOM Elements
@@ -955,7 +966,7 @@
                         return response.json();
                     })
                     .then(dbData => {
-                        this.state.albums = dbData.albums;
+                        this.state.allAlbums = dbData.albums;
                         this.state.artistProfiles = dbData.artistProfiles;
                         this.initializeAppUI();
                     })
@@ -976,10 +987,14 @@
             },
 
             initializeAppUI() {
-                this.methods.processAndSortData();
+                this.methods.processAndSortData(); // Process all data first
                 this.methods.buildGenreColorMap();
                 this.methods.setupFilters();
+                
+                // Initial render with a subset of data
+                this.state.albums = this.state.allAlbums.filter(album => album.year <= this.state.lastYearLoaded);
                 this.methods.renderTimeline();
+
                 this.methods.setupTimelineInteraction();
                 this.methods.setupModals();
                 this.methods.setupArtistSlider();
@@ -1011,15 +1026,15 @@
                         return null;
                     };
 
-                    this.state.albums.forEach(album => {
+                    this.state.allAlbums.forEach(album => {
                         if (album.pivotalTracks && album.pivotalTracks.length > 0) {
                             album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
                             album.firstRecordingDate = album.pivotalTracks[0].recordingDate;
                         }
                     });
-                    this.state.albums.sort((a,b) => parseDate(a.firstRecordingDate) - parseDate(b.firstRecordingDate));
+                    this.state.allAlbums.sort((a,b) => parseDate(a.firstRecordingDate) - parseDate(b.firstRecordingDate));
                     
-                    const allTracks = this.state.albums.flatMap(album =>
+                    const allTracks = this.state.allAlbums.flatMap(album =>
                         album.pivotalTracks.map(track => ({ ...track, year: album.year, artist: album.artist, album: album.albumTitle, cover: album.cover, genre: album.genres }))
                     );
                     this.state.artistsData = this.methods.processArtists(allTracks, this.state.artistProfiles);
@@ -1078,7 +1093,7 @@
                     this.state.fullGenreColorMap['Free Jazz'] = 'var(--genre-free-jazz)';
                     this.state.fullGenreColorMap['Avant-Garde Jazz'] = 'var(--genre-avant-garde)'; 
                     this.state.fullGenreColorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
-                    this.state.albums.forEach(album => {
+                    this.state.allAlbums.forEach(album => {
                         if(album.genres) {
                             album.genres.split(', ').forEach(genre => {
                                 if (!this.state.fullGenreColorMap[genre]) this.state.fullGenreColorMap[genre] = 'var(--genre-default)';
@@ -1091,7 +1106,7 @@
                 setupFilters() {
                     const { genreFilterContainer, instrumentFilter } = this.elements;
                     const allGenresInDB = new Set();
-                    this.state.albums.forEach(album => {
+                    this.state.allAlbums.forEach(album => {
                         if (album.genres) album.genres.split(', ').forEach(genre => allGenresInDB.add(genre.trim()));
                     });
                     const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz'];
@@ -1145,65 +1160,82 @@
 
                 renderTimeline() {
                     const { timelineWrapper } = this.elements;
-                    const years = [...new Set(this.state.albums.map(album => album.year))].sort();
-                    const groupedByYear = years.reduce((acc, year) => {
+                    timelineWrapper.innerHTML = ''; // Clear existing content
+                    
+                    const yearsToRender = [...new Set(this.state.albums.map(album => album.year))].sort();
+                    const groupedByYear = yearsToRender.reduce((acc, year) => {
                         acc[year] = this.state.albums.filter(d => d.year === year);
                         return acc;
                     }, {});
 
-                    timelineWrapper.innerHTML = '';
-                    if (years.length > 0) {
+                    if (yearsToRender.length > 0) {
                         const spacer = document.createElement('div');
                         spacer.style.width = '1px'; 
                         spacer.style.flexShrink = '0';
                         timelineWrapper.appendChild(spacer);
                         
-                        years.forEach(year => {
-                            const yearSection = document.createElement('div');
-                            yearSection.className = 'timeline-year-section';
-                            yearSection.id = `year-${year}`;
-                            const yearHeader = document.createElement('div');
-                            yearHeader.className = 'timeline-year-header';
-                            yearHeader.textContent = year;
-                            yearSection.appendChild(yearHeader);
-                            const albumList = document.createElement('div');
-                            albumList.className = 'timeline-album-list';
-                            albumList.id = `album-list-${year}`;
-                            groupedByYear[year].forEach(album => {
-                                const card = document.createElement('div');
-                                card.className = 'timeline-album-card fade-in-element';
-                                card.dataset.albumTitle = album.albumTitle;
-                                card.dataset.artist = album.artist;
-                                card.dataset.genres = album.genres;
-
-                                const albumGenres = album.genres.split(', ');
-                                let isLandmark = false;
-                                let landmarkColor = null;
-
-                                for (const genreName of albumGenres) {
-                                    const normalizedGenre = this.methods.normalizeGenreName(genreName);
-                                    const genreData = this.state.styleMatrix.genres[normalizedGenre];
-                                    if (genreData && genreData.landmarkAlbums && genreData.landmarkAlbums.some(title => title.toLowerCase() === album.albumTitle.toLowerCase())) {
-                                        isLandmark = true;
-                                        landmarkColor = genreData.color;
-                                        break; 
-                                    }
-                                }
-
-                                if (isLandmark) {
-                                    card.classList.add('landmark-album');
-                                    card.style.setProperty('--landmark-color', landmarkColor);
-                                }
-
-                                card.innerHTML = `<img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
-                                albumList.appendChild(card);
-                            });
-                            yearSection.appendChild(albumList);
-                            timelineWrapper.appendChild(yearSection);
+                        yearsToRender.forEach(year => {
+                            this.methods.appendYearToTimeline(year, groupedByYear[year]);
                         });
+                        
                         this.methods.filterTimeline();
                     } else {
                          timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
+                    }
+                },
+
+                appendYearToTimeline(year, albumsForYear) {
+                    const { timelineWrapper } = this.elements;
+                    const yearSection = document.createElement('div');
+                    yearSection.className = 'timeline-year-section';
+                    yearSection.id = `year-${year}`;
+                    
+                    const yearHeader = document.createElement('div');
+                    yearHeader.className = 'timeline-year-header';
+                    yearHeader.textContent = year;
+                    yearSection.appendChild(yearHeader);
+
+                    const albumList = document.createElement('div');
+                    albumList.className = 'timeline-album-list';
+                    albumList.id = `album-list-${year}`;
+
+                    albumsForYear.forEach(album => {
+                        const card = document.createElement('div');
+                        card.className = 'timeline-album-card fade-in-element';
+                        card.dataset.albumTitle = album.albumTitle;
+                        card.dataset.artist = album.artist;
+                        card.dataset.genres = album.genres;
+
+                        const albumGenres = album.genres.split(', ');
+                        let isLandmark = false;
+                        let landmarkColor = null;
+
+                        for (const genreName of albumGenres) {
+                            const normalizedGenre = this.methods.normalizeGenreName(genreName);
+                            const genreData = this.state.styleMatrix.genres[normalizedGenre];
+                            if (genreData && genreData.landmarkAlbums && genreData.landmarkAlbums.some(title => title.toLowerCase() === album.albumTitle.toLowerCase())) {
+                                isLandmark = true;
+                                landmarkColor = genreData.color;
+                                break; 
+                            }
+                        }
+
+                        if (isLandmark) {
+                            card.classList.add('landmark-album');
+                            card.style.setProperty('--landmark-color', landmarkColor);
+                        }
+
+                        card.innerHTML = `<img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
+                        albumList.appendChild(card);
+                    });
+                    yearSection.appendChild(albumList);
+
+                    // If a timeline loader exists, insert before it. Otherwise, append.
+                    const loader = timelineWrapper.querySelector('#timeline-loader');
+                    if(loader) {
+                        timelineWrapper.insertBefore(yearSection, loader);
+                    } else {
+                        timelineWrapper.appendChild(yearSection);
                     }
                 },
                 
@@ -1308,6 +1340,12 @@
                             }, 150);
                         }
                         this.methods.updateCustomScrollbar();
+
+                        // Infinite scroll trigger
+                        const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
+                        if (timelineContainer.scrollLeft >= scrollableWidth - 200) {
+                            this.methods.loadMoreYears();
+                        }
                     });
 
                     const firstYear = [...new Set(this.state.albums.map(album => album.year))].sort()[0];
@@ -1852,7 +1890,7 @@
 
                 renderScrollbarMarkers() {
                     const { timelineContainer, timelineWrapper, customScrollbarMarkers } = this.elements;
-                    const years = [...new Set(this.state.albums.map(album => album.year))].sort();
+                    const years = [...new Set(this.state.allAlbums.map(album => album.year))].sort();
                     customScrollbarMarkers.innerHTML = ''; // Clear existing markers
 
                     if (timelineWrapper.scrollWidth <= timelineContainer.clientWidth) {
@@ -1861,9 +1899,11 @@
 
                     years.forEach(year => {
                         const yearSection = document.getElementById(`year-${year}`);
-                        if (yearSection && yearSection.style.display !== 'none') {
-                            const position = yearSection.offsetLeft + (yearSection.offsetWidth / 2);
-                            const percentage = (position / timelineWrapper.scrollWidth) * 100;
+                        if (yearSection) { // It might not be rendered yet, but we can estimate
+                             const allYearSections = Array.from(timelineWrapper.children).filter(el => el.classList.contains('timeline-year-section'));
+                             const totalWidth = allYearSections.reduce((sum, el) => sum + el.offsetWidth, 0);
+                             const position = yearSection.offsetLeft + (yearSection.offsetWidth / 2);
+                             const percentage = (position / totalWidth) * 100;
                             
                             const marker = document.createElement('div');
                             marker.className = 'scrollbar-marker';
@@ -1872,6 +1912,47 @@
                             customScrollbarMarkers.appendChild(marker);
                         }
                     });
+                },
+
+                loadMoreYears() {
+                    if (this.state.isLoadingMore || this.state.lastYearLoaded >= 1969) {
+                        return;
+                    }
+                    this.state.isLoadingMore = true;
+
+                    const loader = document.createElement('div');
+                    loader.id = 'timeline-loader';
+                    loader.innerHTML = '<div class="loader-spinner"></div>';
+                    this.elements.timelineWrapper.appendChild(loader);
+
+                    setTimeout(() => { // Simulate network delay
+                        const nextYearToLoad = this.state.lastYearToLoad + 1;
+                        const endYear = Math.min(this.state.lastYearLoaded + this.state.yearsPerLoad, 1969);
+                        
+                        const newAlbums = this.state.allAlbums.filter(album => album.year > this.state.lastYearLoaded && album.year <= endYear);
+                        const newYears = [...new Set(newAlbums.map(a => a.year))].sort();
+
+                        if (newYears.length > 0) {
+                            const groupedByYear = newYears.reduce((acc, year) => {
+                                acc[year] = newAlbums.filter(d => d.year === year);
+                                return acc;
+                            }, {});
+
+                            newYears.forEach(year => {
+                                this.methods.appendYearToTimeline(year, groupedByYear[year]);
+                            });
+
+                            this.state.albums.push(...newAlbums);
+                            this.state.lastYearLoaded = endYear;
+
+                            // Re-apply filters and update UI
+                            this.methods.filterTimeline();
+                        }
+                        
+                        const loaderEl = document.getElementById('timeline-loader');
+                        if(loaderEl) loaderEl.remove();
+                        this.state.isLoadingMore = false;
+                    }, 500);
                 }
             }
         };
