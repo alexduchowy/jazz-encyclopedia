@@ -189,7 +189,7 @@
             flex-shrink: 0;
             flex-direction: column;
             align-items: center; /* Center pagination controls */
-            border-left: 4px dotted #a8a29e; /* MODIFIED: Darker dotted line (stone-400) */
+            border-left: 4px dotted white; 
             padding: 0 2rem;
         }
         .timeline-year-section:first-child {
@@ -569,12 +569,12 @@
         .era-title {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2.5rem;
-            color: var(--text-main);
+            color: white;
             writing-mode: vertical-rl;
             transform: rotate(180deg);
             padding: 1.5rem 0.5rem;
             text-align: center;
-            border-right: 4px dotted #a8a29e;
+            border-right: 4px dotted white;
             margin-right: 1rem;
             letter-spacing: 0.1em;
             flex-shrink: 0;
@@ -1206,12 +1206,12 @@
                 renderTimeline() {
                     const { timelineWrapper } = this.elements;
                     const eras = [
-                        { title: "Birth of the Cool", startYear: 1950, endYear: 1953, color: '#dbeafe' },
-                        { title: "Hard Bop Landing", startYear: 1954, endYear: 1956, color: '#e9d5ff' },
-                        { title: "Hard Bop Apex", startYear: 1957, endYear: 1958, color: '#fecaca' },
-                        { title: "The Modal Shift & Post-Bop", startYear: 1959, endYear: 1963, color: '#d1fae5' },
-                        { title: "Spiritual & Free", startYear: 1964, endYear: 1968, color: '#fed7aa' },
-                        { title: "Dawn of Fusion", startYear: 1969, endYear: 1969, color: '#a5f3fc' }
+                        { title: "Birth of the Cool", startYear: 1950, endYear: 1953, color: '#3b82f6' },
+                        { title: "Hard Bop Landing", startYear: 1954, endYear: 1956, color: '#8b5cf6' },
+                        { title: "Hard Bop Apex", startYear: 1957, endYear: 1958, color: '#ef4444' },
+                        { title: "Modal Shift", startYear: 1959, endYear: 1963, color: '#10b981' },
+                        { title: "Spiritual Vanguard", startYear: 1964, endYear: 1968, color: '#f97316' },
+                        { title: "Dawn of Fusion", startYear: 1969, endYear: 1969, color: '#06b6d4' }
                     ];
 
                     timelineWrapper.innerHTML = '';
