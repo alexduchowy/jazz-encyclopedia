@@ -670,8 +670,8 @@
                     <div class="relative group">
                         <!-- Sticky Year and Era Title Display -->
                         <div id="sticky-header-display" class="absolute top-4 left-1 sm:left-4 flex items-end gap-x-4 pointer-events-none z-10">
-                            <div id="sticky-year-display" class="font-black text-orange-500 text-7xl leading-none transition-opacity duration-150"></div>
-                            <h3 id="sticky-era-title" class="font-black text-stone-500 text-4xl leading-none pb-1 transition-opacity duration-300"></h3>
+                            <div id="sticky-year-display" class="font-black text-orange-500 text-6xl leading-none transition-opacity duration-150"></div>
+                            <h3 id="sticky-era-title" class="font-black text-orange-500 text-6xl leading-none transition-opacity duration-300"></h3>
                         </div>
 
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
@@ -1403,7 +1403,7 @@
                                 this.state.lastKnownEraTitle = currentEra.title;
                                 stickyEraTitle.style.opacity = '0';
                                 setTimeout(() => {
-                                    stickyEraTitle.textContent = `— ${currentEra.title}`;
+                                    stickyEraTitle.textContent = currentEra.title;
                                     stickyEraTitle.style.opacity = '1';
                                 }, 150);
                             }
@@ -1419,7 +1419,7 @@
                         this.state.lastKnownYear = firstYear;
                         const firstEra = this.state.eras.find(era => firstYear >= era.startYear && firstYear <= era.endYear);
                         if (firstEra) {
-                            stickyEraTitle.textContent = `— ${firstEra.title}`;
+                            stickyEraTitle.textContent = firstEra.title;
                             this.state.lastKnownEraTitle = firstEra.title;
                         }
                     }
