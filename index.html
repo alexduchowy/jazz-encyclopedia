@@ -178,7 +178,7 @@
         #timeline-wrapper {
             position: relative;
             display: inline-flex;
-            align-items: flex-start;
+            align-items: stretch;
             padding: 2rem 1rem;
             padding-top: 5rem; /* MODIFIED: Make space for sticky header */
             z-index: 2; /* Ensure cards are above the canvas */
@@ -557,14 +557,15 @@
             font-size: 1.1em;
             margin-left: 0.25rem;
         }
-
+        
         /* Era Styling */
         .era-section {
             padding-top: 1.5rem;
             padding-bottom: 2rem;
             border-left: 4px solid var(--text-main);
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            align-items: stretch;
         }
         .era-title {
             font-family: 'Bebas Neue', sans-serif;
@@ -577,6 +578,7 @@
             border-right: 4px dotted #a8a29e;
             margin-right: 1rem;
             letter-spacing: 0.1em;
+            flex-shrink: 0;
         }
         .era-content {
             display: flex;
@@ -625,17 +627,17 @@
 
         <main>
             <!-- Hero Banner Section -->
-            <section id="banner" class="relative w-full h-56 md:h-72 lg:h-[26rem]">
+            <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
-                <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 via-stone-100 to-transparent z-0"></div>
+                <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
 
             <!-- Overview Section -->
-            <section id="overview" class="relative z-10 pt-0 -mt-40 pb-16 sm:pb-20">
+            <section id="overview" class="pt-12 pb-16 sm:pb-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="grid md:grid-cols-5 gap-12 items-start">
                         <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
-                            <div class="mb-8 pt-24">
+                            <div class="mb-8">
                                 <h2 class="section-header text-5xl">A Jazz Evolution Encyclopedia</h2>
                                 <p class="text-lg text-stone-600 mt-4 italic">Follow the development of modern jazz through the 50s and 60s.</p>
                             </div>
@@ -643,7 +645,7 @@
                             <p>At the heart of this era lies the central theme of <strong style="color: var(--accent);">"controlled freedom."</strong> The philosophy of <strong>Post-Bop</strong> sought a middle ground between dense structures and the radical abandon of the burgeoning <strong>Free Jazz</strong> and <strong>Avant-Garde</strong> scenes, introducing new harmonic and rhythmic complexity while still retaining elements of form and melody.</p>
                             <p>This application provides an interactive journey through this interconnected history, ordered by recording date—not release date—to understand the influence exercised between all these musicians and <strong>reveal the authentic path of jazz evolution as it happened.</strong></p>
                         </div>
-                        <div class="md:col-span-2 mt-8 md:mt-0 pt-24">
+                        <div class="md:col-span-2 mt-8 md:mt-0">
                              <!-- "ON THIS DAY" FEATURE -->
                             <div id="on-this-day" class="mb-8">
                                 <!-- Content will be injected by JavaScript -->
@@ -1204,20 +1206,45 @@
 
                 renderTimeline() {
                     const { timelineWrapper } = this.elements;
-                    const years = [...new Set(this.state.albums.map(album => album.year))].sort();
-                    const groupedByYear = years.reduce((acc, year) => {
-                        acc[year] = this.state.albums.filter(d => d.year === year);
-                        return acc;
-                    }, {});
+                    const eras = [
+                        { title: "Birth of the Cool & The West Coast Sound", startYear: 1950, endYear: 1953, color: '#dbeafe' },
+                        { title: "The Hard Bop Explosion", startYear: 1953, endYear: 1957, color: '#e9d5ff' },
+                        { title: "Giants of Hard Bop", startYear: 1957, endYear: 1959, color: '#fecaca' },
+                        { title: "The Shape of Jazz to Come", startYear: 1959, endYear: 1963, color: '#d1fae5' },
+                        { title: "Post-Bop Refinement", startYear: 1963, endYear: 1964, color: '#fed7aa' },
+                        { title: "Free & Unleashed", startYear: 1965, endYear: 1968, color: '#fecdd3' },
+                        { title: "Dawn of Fusion & The New Thing", startYear: 1969, endYear: 1969, color: '#a5f3fc' }
+                    ];
 
                     timelineWrapper.innerHTML = '';
-                    if (years.length > 0) {
-                        const spacer = document.createElement('div');
-                        spacer.style.width = '1px'; 
-                        spacer.style.flexShrink = '0';
-                        timelineWrapper.appendChild(spacer);
-                        
-                        years.forEach(year => {
+                    const spacer = document.createElement('div');
+                    spacer.style.width = '1px'; 
+                    spacer.style.flexShrink = '0';
+                    timelineWrapper.appendChild(spacer);
+
+                    eras.forEach(era => {
+                        const eraAlbums = this.state.albums.filter(album => album.year >= era.startYear && album.year <= era.endYear);
+                        if (eraAlbums.length === 0) return;
+
+                        const eraSection = document.createElement('div');
+                        eraSection.className = 'era-section';
+                        eraSection.style.backgroundColor = era.color;
+
+                        const eraTitle = document.createElement('h3');
+                        eraTitle.className = 'era-title';
+                        eraTitle.textContent = era.title;
+                        eraSection.appendChild(eraTitle);
+
+                        const eraContent = document.createElement('div');
+                        eraContent.className = 'era-content';
+
+                        const yearsInEra = [...new Set(eraAlbums.map(album => album.year))].sort();
+                        const groupedByYear = yearsInEra.reduce((acc, year) => {
+                            acc[year] = eraAlbums.filter(d => d.year === year);
+                            return acc;
+                        }, {});
+
+                        yearsInEra.forEach(year => {
                             const yearSection = document.createElement('div');
                             yearSection.className = 'timeline-year-section';
                             yearSection.id = `year-${year}`;
@@ -1258,12 +1285,13 @@
                                 albumList.appendChild(card);
                             });
                             yearSection.appendChild(albumList);
-                            timelineWrapper.appendChild(yearSection);
+                            eraContent.appendChild(yearSection);
                         });
-                        this.methods.filterTimeline();
-                    } else {
-                         timelineWrapper.innerHTML = '<p class="text-stone-500">No timeline data available.</p>';
-                    }
+                        eraSection.appendChild(eraContent);
+                        timelineWrapper.appendChild(eraSection);
+                    });
+
+                    this.methods.filterTimeline();
                 },
                 
                 buildGenreMatrix() {
@@ -1622,6 +1650,11 @@
                         const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
                         yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
                     });
+                    document.querySelectorAll('.era-section').forEach(eraSection => {
+                        const visibleYears = eraSection.querySelectorAll('.timeline-year-section:not([style*="display: none"])');
+                        eraSection.style.display = visibleYears.length > 0 ? 'flex' : 'none';
+                    });
+
                     this.elements.genreFilterContainer.querySelector('#all-genres-checkbox').checked = selectedGenres.length === this.elements.genreFilterContainer.querySelectorAll('input[data-genre]').length;
                     
                     setTimeout(() => {
