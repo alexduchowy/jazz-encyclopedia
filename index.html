@@ -164,7 +164,7 @@
             display: none;
         }
 
-        /* NEW: Era Background Container */
+        /* MODIFIED: Era Background Container */
         #era-background-container {
             position: absolute;
             top: 0;
@@ -174,7 +174,7 @@
             z-index: 0;
             pointer-events: none;
         }
-        /* NEW: Vertical Era Segment Styling */
+        /* MODIFIED: Vertical Era Segment Styling */
         .era-background-segment {
             height: 100%;
             display: flex;
@@ -186,9 +186,9 @@
             font-size: 4rem;
             letter-spacing: -0.1em;
             font-family: 'Bebas Neue', sans-serif;
-            opacity: 0.08;
-            color: var(--text-muted);
-            border-right: 4px dotted #d6d3d1; /* stone-300 */
+            color: rgba(0, 0, 0, 0.2); /* Darker, slightly transparent text */
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5); /* Subtle shadow for lift */
+            border-right: 4px dotted #d6d3d1;
             padding: 2rem 0;
             white-space: nowrap;
         }
@@ -426,14 +426,14 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        /* Scrollbar Marker Styling */
+        /* MODIFIED: Scrollbar Marker Styling */
         #custom-scrollbar {
             height: 2rem;
             background-color: #e7e5e4;
             border: 2px solid #57534e;
             padding-top: 1rem; /* Space for year labels */
         }
-        /* NEW: Scrollbar Year Markers */
+        /* MODIFIED: Scrollbar Year Markers */
         #scrollbar-year-marker-container {
             position: absolute;
             top: 0;
@@ -680,7 +680,7 @@
 
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
                              <!-- NEW: Container for vertical era backgrounds -->
-                            <div id="era-background-container" class="absolute inset-0 z-0"></div>
+                            <div id="era-background-container"></div>
                             <div id="timeline-wrapper"></div>
                         </div>
                         <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
@@ -998,8 +998,8 @@
                     matrixContainer: document.getElementById('style-matrix-table'),
                     customScrollbar: document.getElementById('custom-scrollbar'),
                     customScrollbarThumb: document.getElementById('custom-scrollbar-thumb'),
-                    eraBackgroundContainer: document.getElementById('era-background-container'), // NEW
-                    scrollbarYearMarkerContainer: document.getElementById('scrollbar-year-marker-container'), // NEW
+                    eraBackgroundContainer: document.getElementById('era-background-container'), 
+                    scrollbarYearMarkerContainer: document.getElementById('scrollbar-year-marker-container'), 
                     mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
@@ -1047,7 +1047,7 @@
                 this.methods.buildGenreColorMap();
                 this.methods.setupFilters();
                 this.methods.renderTimeline();
-                this.methods.renderScrollbarMarkers(); // MODIFIED
+                this.methods.renderScrollbarMarkers(); 
                 this.methods.setupTimelineInteraction();
                 this.methods.setupModals();
                 this.methods.setupArtistSlider();
@@ -1634,7 +1634,7 @@
                     });
                     
                     setTimeout(() => {
-                        this.methods.renderEraDividers(); // NEW: Render vertical era dividers
+                        this.methods.renderEraDividers(); 
                         this.methods.updateCustomScrollbar();
                     }, 0);
                 },
@@ -1978,19 +1978,19 @@
                     setTimeout(() => this.methods.updateCustomScrollbar(), 200);
                 },
 
-                // NEW: Renders vertical era dividers in the timeline background
+                // MODIFIED: Renders vertical era dividers in the timeline background
                 renderEraDividers() {
                     const { eraBackgroundContainer } = this.elements;
                     if (!eraBackgroundContainer) return;
 
                     const eras = [
-                        { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953 },
-                        { title: "Hard Bop Rising", startYear: 1954, endYear: 1956 },
-                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958 },
-                        { title: "Modal & Structural Expansion", startYear: 1959, endYear: 1961 },
-                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963 },
-                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968 },
-                        { title: "Fusion Genesis", startYear: 1969, endYear: 1969 }
+                        { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'rgba(165, 180, 252, 0.3)' },
+                        { title: "Hard Bop Rising", startYear: 1954, endYear: 1956, color: 'rgba(196, 181, 253, 0.3)' },
+                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: 'rgba(252, 165, 165, 0.3)' },
+                        { title: "Modal & Structural Expansion", startYear: 1959, endYear: 1961, color: 'rgba(110, 231, 183, 0.3)' },
+                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: 'rgba(253, 186, 116, 0.3)' },
+                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: 'rgba(253, 224, 71, 0.3)' },
+                        { title: "Fusion Genesis", startYear: 1969, endYear: 1969, color: 'rgba(103, 232, 249, 0.3)' }
                     ];
 
                     eraBackgroundContainer.innerHTML = '';
@@ -2011,12 +2011,13 @@
                             segment.className = 'era-background-segment';
                             segment.style.minWidth = `${eraWidth}px`;
                             segment.textContent = era.title;
+                            segment.style.backgroundColor = era.color;
                             eraBackgroundContainer.appendChild(segment);
                         }
                     });
                 },
 
-                // NEW: Renders year markers on the custom scrollbar
+                // MODIFIED: Renders year markers on the custom scrollbar
                 renderScrollbarMarkers() {
                     const { scrollbarYearMarkerContainer } = this.elements;
                     if (!scrollbarYearMarkerContainer) return;
