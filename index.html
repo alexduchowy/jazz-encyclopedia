@@ -960,6 +960,8 @@
                 lastKnownYear: '',
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
+                timelineUpdateScheduled: null, // MODIFIED: For debouncing timeline updates
+                yearPositions: [], // MODIFIED: For accurate scrollbar clicking
             },
 
             // DOM Elements
@@ -1059,13 +1061,8 @@
                 this.methods.setupOnThisDayFeature();
                 this.showPage();
                 // MODIFIED: Defer initial rendering of dynamic elements
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        this.elements.timelineContainer.scrollLeft = 0;
-                        this.methods.renderEraDividers();
-                        this.methods.updateCustomScrollbar();
-                    });
-                });
+                this.methods.scheduleTimelineUpdate();
+                setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 100);
             },
 
             // Methods Object
@@ -1601,7 +1598,6 @@
                             this.methods.setupArtistSlider();
                             this.methods.goToArtistPage(currentPage); // Restore current page
                             this.methods.filterTimeline(); // Recalculate era dividers on resize
-                            this.methods.updateCustomScrollbar();
                             this.methods.renderScrollbarMarkers();
                         }, 200);
                     });
@@ -1624,6 +1620,18 @@
                     return genreName;
                 },
 
+                // MODIFIED: Centralized function to schedule timeline visual updates
+                scheduleTimelineUpdate() {
+                    if (this.state.timelineUpdateScheduled) {
+                        cancelAnimationFrame(this.state.timelineUpdateScheduled);
+                    }
+                    this.state.timelineUpdateScheduled = requestAnimationFrame(() => {
+                        this.methods.renderEraDividers();
+                        this.methods.updateCustomScrollbar();
+                        this.state.timelineUpdateScheduled = null;
+                    });
+                },
+
                 filterTimeline() {
                     const selectedGenres = Array.from(this.elements.genreFilterContainer.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
                     this.state.visibleAlbums = [];
@@ -1641,13 +1649,7 @@
                         yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
                     });
                     
-                    // MODIFIED: Defer rendering of dividers to ensure correct dimensions
-                    requestAnimationFrame(() => {
-                        requestAnimationFrame(() => {
-                            this.methods.renderEraDividers(); 
-                            this.methods.updateCustomScrollbar();
-                        });
-                    });
+                    this.methods.scheduleTimelineUpdate();
                 },
 
                 applyHighlights(selectedCard) {
@@ -2016,9 +2018,8 @@
                         
                         yearSections.forEach(section => {
                             const year = parseInt(section.dataset.year);
-                            // MODIFIED: Check if the section is visible (not display:none) and within the current era
                             if (year >= era.startYear && year <= era.endYear && section.style.display !== 'none') {
-                                eraWidth += section.offsetWidth;
+                                eraWidth += section.getBoundingClientRect().width;
                             }
                         });
 
