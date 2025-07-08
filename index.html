@@ -562,7 +562,7 @@
         .era-section {
             padding-top: 1.5rem;
             padding-bottom: 2rem;
-            border-left: 4px solid var(--text-main);
+            border-left: 4px solid white;
             display: flex;
             flex-direction: row;
         }
@@ -656,10 +656,10 @@
             </section>
 
             <!-- Interactive Timeline Section -->
-            <section id="timeline" class="py-16 sm:py-20 bg-stone-300 border-y-4 border-stone-900">
+            <section id="timeline" class="py-16 sm:py-20 bg-stone-900 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Timeline Explorer</h2>
-                    <p class="text-center text-lg text-stone-600 mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
+                    <p class="text-center text-lg text-stone-300 mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
                     
                     <!-- Timeline Filter Controls -->
                     <div id="timeline-controls" class="flex flex-col items-center justify-center gap-4 mb-8">
@@ -670,24 +670,24 @@
 
                     <div class="relative group">
                         <!-- Sticky Year Display -->
-                        <div id="sticky-year-display" class="absolute top-0 left-1 sm:left-4 font-black text-orange-600 text-6xl transition-opacity duration-200 pointer-events-none z-10"></div>
+                        <div id="sticky-year-display" class="absolute top-0 left-1 sm:left-4 font-black text-orange-500 text-6xl transition-opacity duration-200 pointer-events-none z-10"></div>
 
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
                             <canvas id="timeline-canvas"></canvas>
                             <div id="timeline-wrapper"></div>
                         </div>
-                        <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
+                        <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-100 text-stone-900 hover:bg-orange-500 transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                         </button>
-                        <button id="scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
+                        <button id="scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-100 text-stone-900 hover:bg-orange-500 transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
                     </div>
                     <!-- Custom Scrollbar with Markers -->
                     <div class="mt-6">
-                        <div id="custom-scrollbar" class="w-full h-3 bg-stone-200 rounded-full cursor-pointer relative">
+                        <div id="custom-scrollbar" class="w-full h-3 bg-stone-700 rounded-full cursor-pointer relative">
                             <div id="custom-scrollbar-markers"></div>
-                            <div id="custom-scrollbar-thumb" class="h-full bg-stone-900 rounded-full absolute top-0 cursor-grab"></div>
+                            <div id="custom-scrollbar-thumb" class="h-full bg-stone-100 rounded-full absolute top-0 cursor-grab"></div>
                         </div>
                     </div>
                 </div>
