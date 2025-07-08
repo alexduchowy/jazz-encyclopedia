@@ -164,32 +164,53 @@
             display: none;
         }
 
-        /* Canvas for drawing connection lines */
-        #timeline-canvas {
+        /* NEW: Era Background Container */
+        #era-background-container {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
             height: 100%;
-            pointer-events: none; /* Allows clicks to pass through to the cards */
-            z-index: 1;
+            display: flex;
+            z-index: 0;
+            pointer-events: none;
         }
+        /* NEW: Vertical Era Segment Styling */
+        .era-background-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            font-size: 4rem;
+            letter-spacing: -0.1em;
+            font-family: 'Bebas Neue', sans-serif;
+            opacity: 0.08;
+            color: var(--text-muted);
+            border-right: 4px dotted #d6d3d1; /* stone-300 */
+            padding: 2rem 0;
+            white-space: nowrap;
+        }
+        .era-background-segment:last-child {
+            border-right: none;
+        }
+
         /* Wrapper for all timeline content */
         #timeline-wrapper {
             position: relative;
             display: inline-flex;
             align-items: flex-start;
             padding: 2rem 1rem;
-            padding-top: 5rem; /* MODIFIED: Make space for sticky header */
-            z-index: 2; /* Ensure cards are above the canvas */
+            padding-top: 5rem; 
+            z-index: 2; /* Ensure cards are above the eras */
         }
         /* Styling for each year's section in the timeline */
         .timeline-year-section {
             display: flex;
             flex-shrink: 0;
             flex-direction: column;
-            align-items: center; /* Center pagination controls */
-            border-left: 4px dotted #a8a29e; /* MODIFIED: Darker dotted line (stone-400) */
+            align-items: center;
             padding: 0 2rem;
         }
         .timeline-year-section:first-child {
@@ -197,7 +218,7 @@
         }
         /* Year header styling */
         .timeline-year-header {
-           display: none; /* MODIFIED: Hide the inline headers */
+           display: none;
         }
         /* Grid for album cards within a year */
         .timeline-album-list {
@@ -205,7 +226,7 @@
             grid-template-rows: repeat(2, 1fr);
             grid-auto-flow: column;
             gap: 1.5rem;
-            min-height: 560px; /* MODIFIED: Adjust height to fit two rows of cards + gap, matching slider */
+            min-height: 560px;
         }
         /* Individual album card styling */
         .timeline-album-card {
@@ -407,36 +428,39 @@
 
         /* Scrollbar Marker Styling */
         #custom-scrollbar {
-            height: 2rem; /* MODIFIED: Adjusted height */
-            background-color: #e7e5e4; /* MODIFIED: Lighter gray background */
+            height: 2rem;
+            background-color: #e7e5e4;
             border: 2px solid #57534e;
+            padding-top: 1rem; /* Space for year labels */
         }
-        #era-segments-container {
+        /* NEW: Scrollbar Year Markers */
+        #scrollbar-year-marker-container {
             position: absolute;
-            inset: 0;
-            display: flex;
-            z-index: 5;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
-        .era-segment {
+        .scrollbar-year-marker {
+            position: absolute;
+            bottom: 0;
+            width: 2px;
+            background-color: #a8a29e; /* stone-400 */
+            height: 50%;
+        }
+        .scrollbar-year-marker.major {
             height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+        }
+        .scrollbar-year-label {
+            position: absolute;
+            top: -1rem;
+            transform: translateX(-50%);
             font-size: 10px;
-            font-weight: bold;
-            text-align: center;
-            padding: 0 0.5rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            border-right: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-muted);
         }
-        .era-segment:last-child {
-            border-right: none;
-        }
+
         #custom-scrollbar-thumb {
-            background-color: rgba(0,0,0,0.3); /* MODIFIED: Darker, more subtle thumb */
+            background-color: rgba(0,0,0,0.3);
             border: 2px solid var(--text-main);
             z-index: 10;
         }
@@ -655,7 +679,8 @@
                         <div id="sticky-year-display" class="absolute top-0 left-1 sm:left-4 font-black text-orange-500 text-6xl transition-opacity duration-200 pointer-events-none z-10"></div>
 
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
-                            <canvas id="timeline-canvas"></canvas>
+                             <!-- NEW: Container for vertical era backgrounds -->
+                            <div id="era-background-container" class="absolute inset-0 z-0"></div>
                             <div id="timeline-wrapper"></div>
                         </div>
                         <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
@@ -668,7 +693,8 @@
                     <!-- Custom Scrollbar with Markers -->
                     <div class="mt-6">
                         <div id="custom-scrollbar" class="w-full h-8 bg-gray-200 rounded-full cursor-pointer relative border-2 border-stone-600">
-                            <div id="era-segments-container" class="absolute inset-0 flex overflow-hidden rounded-full"></div>
+                            <!-- NEW: Container for year markers on scrollbar -->
+                            <div id="scrollbar-year-marker-container" class="absolute inset-0"></div>
                             <div id="custom-scrollbar-thumb" class="h-full bg-stone-900/40 border-2 border-stone-900 rounded-full absolute top-0 cursor-grab z-10"></div>
                         </div>
                     </div>
@@ -956,7 +982,6 @@
                     pageContent: document.getElementById('page-content'),
                     timelineContainer: document.getElementById('horizontal-timeline-container'),
                     timelineWrapper: document.getElementById('timeline-wrapper'),
-                    timelineCanvas: document.getElementById('timeline-canvas'),
                     scrollLeftBtn: document.getElementById('scroll-left-btn'),
                     scrollRightBtn: document.getElementById('scroll-right-btn'),
                     genreFilterContainer: document.getElementById('genre-filter-container'),
@@ -973,7 +998,8 @@
                     matrixContainer: document.getElementById('style-matrix-table'),
                     customScrollbar: document.getElementById('custom-scrollbar'),
                     customScrollbarThumb: document.getElementById('custom-scrollbar-thumb'),
-                    eraSegmentsContainer: document.getElementById('era-segments-container'),
+                    eraBackgroundContainer: document.getElementById('era-background-container'), // NEW
+                    scrollbarYearMarkerContainer: document.getElementById('scrollbar-year-marker-container'), // NEW
                     mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
@@ -1021,7 +1047,7 @@
                 this.methods.buildGenreColorMap();
                 this.methods.setupFilters();
                 this.methods.renderTimeline();
-                this.methods.renderEraScrollbar();
+                this.methods.renderScrollbarMarkers(); // MODIFIED
                 this.methods.setupTimelineInteraction();
                 this.methods.setupModals();
                 this.methods.setupArtistSlider();
@@ -1204,6 +1230,7 @@
                             const yearSection = document.createElement('div');
                             yearSection.className = 'timeline-year-section';
                             yearSection.id = `year-${year}`;
+                            yearSection.dataset.year = year;
                             const yearHeader = document.createElement('div');
                             yearHeader.className = 'timeline-year-header';
                             yearHeader.textContent = year;
@@ -1565,9 +1592,9 @@
                             const currentPage = this.state.currentArtistPage;
                             this.methods.setupArtistSlider();
                             this.methods.goToArtistPage(currentPage); // Restore current page
-                            this.methods.resizeCanvas();
+                            this.methods.filterTimeline(); // Recalculate era dividers on resize
                             this.methods.updateCustomScrollbar();
-                            this.methods.renderEraScrollbar();
+                            this.methods.renderScrollbarMarkers();
                         }, 200);
                     });
                     
@@ -1607,8 +1634,7 @@
                     });
                     
                     setTimeout(() => {
-                        this.methods.resizeCanvas();
-                        this.methods.renderEraScrollbar();
+                        this.methods.renderEraDividers(); // NEW: Render vertical era dividers
                         this.methods.updateCustomScrollbar();
                     }, 0);
                 },
@@ -1885,12 +1911,6 @@
                     }
                 },
                 
-                resizeCanvas() {
-                    const { timelineCanvas, timelineWrapper } = this.elements;
-                    timelineCanvas.width = timelineWrapper.scrollWidth;
-                    timelineCanvas.height = timelineWrapper.offsetHeight;
-                },
-                
                 setupDraggable(container) {
                     if (!container) return;
                     let isDown = false, startX, scrollLeft;
@@ -1958,35 +1978,71 @@
                     setTimeout(() => this.methods.updateCustomScrollbar(), 200);
                 },
 
-                renderEraScrollbar() {
-                    const { eraSegmentsContainer } = this.elements;
-                    if (!eraSegmentsContainer) return;
+                // NEW: Renders vertical era dividers in the timeline background
+                renderEraDividers() {
+                    const { eraBackgroundContainer } = this.elements;
+                    if (!eraBackgroundContainer) return;
 
-                    // MODIFIED: Updated eras with new names, years, and subtle colors
                     const eras = [
-                        { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: '#a3b8c7' },
-                        { title: "Hard Bop Rising", startYear: 1954, endYear: 1956, color: '#c0b6d1' },
-                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: '#d1b6b6' },
-                        { title: "Modal & Structural Expansion", startYear: 1959, endYear: 1961, color: '#a7c4b6' },
-                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: '#d9c3a5' },
-                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: '#d9c8a5' },
-                        { title: "Fusion Genesis", startYear: 1969, endYear: 1969, color: '#a5b4d9' }
+                        { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953 },
+                        { title: "Hard Bop Rising", startYear: 1954, endYear: 1956 },
+                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958 },
+                        { title: "Modal & Structural Expansion", startYear: 1959, endYear: 1961 },
+                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963 },
+                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968 },
+                        { title: "Fusion Genesis", startYear: 1969, endYear: 1969 }
                     ];
-                    
-                    const totalYears = 1969 - 1950;
 
-                    eraSegmentsContainer.innerHTML = '';
+                    eraBackgroundContainer.innerHTML = '';
+                    
                     eras.forEach(era => {
-                        const eraDuration = (era.endYear - era.startYear) + 1;
-                        const widthPercentage = (eraDuration / totalYears) * 100;
+                        let eraWidth = 0;
+                        const yearSectionsInEra = document.querySelectorAll('.timeline-year-section');
                         
-                        const segment = document.createElement('div');
-                        segment.className = 'era-segment';
-                        segment.style.width = `${widthPercentage}%`;
-                        segment.style.backgroundColor = era.color;
-                        segment.textContent = era.title;
-                        eraSegmentsContainer.appendChild(segment);
+                        yearSectionsInEra.forEach(section => {
+                            const year = parseInt(section.dataset.year);
+                            if (year >= era.startYear && year <= era.endYear && section.style.display !== 'none') {
+                                eraWidth += section.offsetWidth;
+                            }
+                        });
+
+                        if (eraWidth > 0) {
+                            const segment = document.createElement('div');
+                            segment.className = 'era-background-segment';
+                            segment.style.minWidth = `${eraWidth}px`;
+                            segment.textContent = era.title;
+                            eraBackgroundContainer.appendChild(segment);
+                        }
                     });
+                },
+
+                // NEW: Renders year markers on the custom scrollbar
+                renderScrollbarMarkers() {
+                    const { scrollbarYearMarkerContainer } = this.elements;
+                    if (!scrollbarYearMarkerContainer) return;
+                    
+                    scrollbarYearMarkerContainer.innerHTML = '';
+                    const startYear = 1950;
+                    const endYear = 1969;
+                    const totalDuration = endYear - startYear;
+
+                    for (let year = startYear; year <= endYear; year++) {
+                        const isMajorTick = (year % 5 === 0) || year === startYear || year === endYear;
+                        const leftPercentage = ((year - startYear) / totalDuration) * 100;
+                        
+                        const marker = document.createElement('div');
+                        marker.className = 'scrollbar-year-marker';
+                        if (isMajorTick) {
+                            marker.classList.add('major');
+                            const label = document.createElement('span');
+                            label.className = 'scrollbar-year-label';
+                            label.textContent = year;
+                            label.style.left = `${leftPercentage}%`;
+                            scrollbarYearMarkerContainer.appendChild(label);
+                        }
+                        marker.style.left = `${leftPercentage}%`;
+                        scrollbarYearMarkerContainer.appendChild(marker);
+                    }
                 },
 
                 setupOnThisDayFeature() {
@@ -2033,10 +2089,8 @@
                             if (albumIndex !== -1) {
                                 this.methods.openAlbumModal(this.state.visibleAlbums[albumIndex], albumIndex);
                             } else {
-                                // If not visible, we can still open it by finding it in the main list
                                 const mainIndex = this.state.albums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
                                 if (mainIndex !== -1) {
-                                    // This is a simplified open, as it won't have next/prev context
                                      this.methods.openAlbumModal(this.state.albums[mainIndex], -1);
                                 }
                             }
