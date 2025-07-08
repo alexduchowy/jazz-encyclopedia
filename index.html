@@ -576,17 +576,7 @@
             flex-direction: row;
         }
         .era-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 2.5rem;
-            color: var(--text-main);
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            padding: 1.5rem 0.5rem;
-            text-align: center;
-            border-right: 4px dotted var(--text-main);
-            margin-right: 1rem;
-            letter-spacing: 0.1em;
-            flex-shrink: 0;
+            display: none; /* Hide the old vertical titles */
         }
         .era-content {
             display: flex;
@@ -678,8 +668,11 @@
                     </div>
 
                     <div class="relative group">
-                        <!-- Sticky Year Display -->
-                        <div id="sticky-year-display" class="absolute top-0 left-1 sm:left-4 font-black text-orange-500 text-6xl transition-opacity duration-200 pointer-events-none z-10"></div>
+                        <!-- Sticky Year and Era Title Display -->
+                        <div id="sticky-header-display" class="absolute top-4 left-1 sm:left-4 flex items-end gap-x-4 pointer-events-none z-10">
+                            <div id="sticky-year-display" class="font-black text-orange-500 text-7xl leading-none transition-opacity duration-150"></div>
+                            <h3 id="sticky-era-title" class="font-black text-stone-500 text-4xl leading-none pb-1 transition-opacity duration-300"></h3>
+                        </div>
 
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
                             <canvas id="timeline-canvas"></canvas>
@@ -954,10 +947,20 @@
                 artistsData: [],
                 styleMatrix: {},
                 visibleAlbums: [],
+                eras: [
+                    { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'var(--era-cool-light)' },
+                    { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: 'var(--era-hard-bop-light)' },
+                    { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: 'var(--era-bebop-light)' },
+                    { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: 'var(--era-modal-light)' },
+                    { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: 'var(--era-post-bop-light)' },
+                    { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: 'var(--era-free-jazz-light)' },
+                    { title: "Fusion Genesis", startYear: 1969, endYear: 1969, color: 'var(--era-fusion-light)' }
+                ],
                 currentVisibleAlbumIndex: -1,
                 currentArtistPage: 0,
                 totalArtistPages: 0,
                 lastKnownYear: '',
+                lastKnownEraTitle: '',
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
             },
@@ -988,6 +991,7 @@
                     scrollRightBtn: document.getElementById('scroll-right-btn'),
                     genreFilterContainer: document.getElementById('genre-filter-container'),
                     stickyYearDisplay: document.getElementById('sticky-year-display'),
+                    stickyEraTitle: document.getElementById('sticky-era-title'),
                     albumModal: document.getElementById('album-modal'),
                     artistModal: document.getElementById('artist-modal'),
                     genreModal: document.getElementById('genre-modal'),
@@ -1056,7 +1060,7 @@
                 this.methods.setupScrollObservers();
                 this.methods.setupGeneralEventListeners();
                 this.methods.renderScrollbarMarkers();
-                this.methods.setupOnThisDayFeature(); // New function call
+                this.methods.setupOnThisDayFeature();
                 this.showPage();
                 setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 0);
             },
@@ -1214,15 +1218,7 @@
 
                 renderTimeline() {
                     const { timelineWrapper } = this.elements;
-                    const eras = [
-                        { title: "Birth of the Cool", startYear: 1950, endYear: 1953, color: 'var(--era-cool-light)' },
-                        { title: "Hard Bop Landing", startYear: 1954, endYear: 1956, color: 'var(--era-hard-bop-light)' },
-                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: 'var(--era-bebop-light)' },
-                        { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: 'var(--era-modal-light)' },
-                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: 'var(--era-post-bop-light)' },
-                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: 'var(--era-free-jazz-light)' },
-                        { title: "Dawn of Fusion", startYear: 1969, endYear: 1969, color: 'var(--era-fusion-light)' }
-                    ];
+                    const eras = this.state.eras;
 
                     timelineWrapper.innerHTML = '';
                     const spacer = document.createElement('div');
@@ -1336,7 +1332,7 @@
                 
                 // --- EVENT LISTENERS & INTERACTIONS ---
                 setupTimelineInteraction() {
-                    const { timelineContainer, timelineWrapper, scrollLeftBtn, scrollRightBtn, stickyYearDisplay } = this.elements;
+                    const { timelineContainer, timelineWrapper, scrollLeftBtn, scrollRightBtn, stickyYearDisplay, stickyEraTitle } = this.elements;
                     const scrollAmount = 400;
                     scrollLeftBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
                     scrollRightBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
@@ -1387,13 +1383,13 @@
                     
                     timelineContainer.addEventListener('scroll', () => {
                         let currentYear = '';
-                        const years = [...new Set(this.state.albums.map(album => album.year))].sort();
-                        for (const year of years) {
-                            const section = document.getElementById(`year-${year}`);
-                            if (section && section.style.display !== 'none' && section.offsetLeft <= timelineContainer.scrollLeft + 60) {
-                                currentYear = year;
+                        const yearSections = timelineWrapper.querySelectorAll('.timeline-year-section');
+                        for (const section of yearSections) {
+                            if (section.style.display !== 'none' && section.offsetLeft <= timelineContainer.scrollLeft + 60) {
+                                currentYear = section.id.replace('year-', '');
                             }
                         }
+
                         if (currentYear && currentYear !== this.state.lastKnownYear) {
                             this.state.lastKnownYear = currentYear;
                             stickyYearDisplay.style.opacity = '0';
@@ -1401,14 +1397,31 @@
                                 stickyYearDisplay.textContent = currentYear;
                                 stickyYearDisplay.style.opacity = '1';
                             }, 150);
+
+                            const currentEra = this.state.eras.find(era => currentYear >= era.startYear && currentYear <= era.endYear);
+                            if (currentEra && currentEra.title !== this.state.lastKnownEraTitle) {
+                                this.state.lastKnownEraTitle = currentEra.title;
+                                stickyEraTitle.style.opacity = '0';
+                                setTimeout(() => {
+                                    stickyEraTitle.textContent = `— ${currentEra.title}`;
+                                    stickyEraTitle.style.opacity = '1';
+                                }, 150);
+                            }
                         }
                         this.methods.updateCustomScrollbar();
                     });
 
-                    const firstYear = [...new Set(this.state.albums.map(album => album.year))].sort()[0];
-                    if(firstYear) {
+                    // Set initial state
+                    const firstYearSection = timelineWrapper.querySelector('.timeline-year-section:not([style*="display: none"])');
+                    if (firstYearSection) {
+                        const firstYear = firstYearSection.id.replace('year-', '');
                         stickyYearDisplay.textContent = firstYear;
                         this.state.lastKnownYear = firstYear;
+                        const firstEra = this.state.eras.find(era => firstYear >= era.startYear && firstYear <= era.endYear);
+                        if (firstEra) {
+                            stickyEraTitle.textContent = `— ${firstEra.title}`;
+                            this.state.lastKnownEraTitle = firstEra.title;
+                        }
                     }
                 },
                 
