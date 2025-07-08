@@ -178,7 +178,7 @@
         #timeline-wrapper {
             position: relative;
             display: inline-flex;
-            align-items: stretch;
+            align-items: flex-start;
             padding: 2rem 1rem;
             padding-top: 5rem; /* MODIFIED: Make space for sticky header */
             z-index: 2; /* Ensure cards are above the canvas */
@@ -1207,10 +1207,10 @@
                 renderTimeline() {
                     const { timelineWrapper } = this.elements;
                     const eras = [
-                        { title: "Birth of the Cool & The West Coast Sound", startYear: 1950, endYear: 1953, color: '#dbeafe' },
-                        { title: "The Hard Bop Explosion", startYear: 1953, endYear: 1957, color: '#e9d5ff' },
+                        { title: "Birth of the Cool & The West Coast Sound", startYear: 1950, endYear: 1953, color: '#bfdbfe' },
+                        { title: "The Hard Bop Explosion", startYear: 1953, endYear: 1957, color: '#ddd6fe' },
                         { title: "Giants of Hard Bop", startYear: 1957, endYear: 1959, color: '#fecaca' },
-                        { title: "The Shape of Jazz to Come", startYear: 1959, endYear: 1963, color: '#d1fae5' },
+                        { title: "The Shape of Jazz to Come", startYear: 1959, endYear: 1963, color: '#bbf7d0' },
                         { title: "Post-Bop Refinement", startYear: 1963, endYear: 1964, color: '#fed7aa' },
                         { title: "Free & Unleashed", startYear: 1965, endYear: 1968, color: '#fecdd3' },
                         { title: "Dawn of Fusion & The New Thing", startYear: 1969, endYear: 1969, color: '#a5f3fc' }
