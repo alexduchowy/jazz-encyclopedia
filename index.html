@@ -183,12 +183,12 @@
             writing-mode: vertical-rl;
             text-orientation: mixed;
             transform: rotate(180deg);
-            font-size: 4.5rem;
+            font-size: 5rem;
             letter-spacing: -0.1em;
             font-family: 'Bebas Neue', sans-serif;
-            color: rgba(0, 0, 0, 0.15);
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
-            border-right: 2px dotted #d6d3d1;
+            color: rgba(0, 0, 0, 0.25);
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.7);
+            border-right: 2px dotted #c7c4c1;
             padding: 2rem 0;
             white-space: nowrap;
             background-color: var(--era-bg-color);
@@ -1048,8 +1048,6 @@
                 this.methods.buildGenreColorMap();
                 this.methods.setupFilters();
                 this.methods.renderTimeline();
-                // MODIFIED: Call renderEraDividers immediately after renderTimeline
-                this.methods.renderEraDividers(); 
                 this.methods.renderScrollbarMarkers(); 
                 this.methods.setupTimelineInteraction();
                 this.methods.setupModals();
@@ -1060,7 +1058,12 @@
                 this.methods.setupGeneralEventListeners();
                 this.methods.setupOnThisDayFeature();
                 this.showPage();
-                setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 0);
+                // MODIFIED: Defer initial rendering of dynamic elements
+                setTimeout(() => {
+                    this.elements.timelineContainer.scrollLeft = 0;
+                    this.methods.renderEraDividers();
+                    this.methods.updateCustomScrollbar();
+                }, 100); // A small delay to ensure DOM is ready
             },
 
             // Methods Object
@@ -1636,8 +1639,8 @@
                         yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
                     });
                     
+                    // MODIFIED: Defer rendering of dividers to ensure correct dimensions
                     setTimeout(() => {
-                        // MODIFIED: Recalculate era dividers after filtering to adjust their widths
                         this.methods.renderEraDividers(); 
                         this.methods.updateCustomScrollbar();
                     }, 0);
@@ -1976,18 +1979,12 @@
                         if (e.target === customScrollbarThumb) return; // Ignore clicks on the thumb itself
                         const rect = customScrollbar.getBoundingClientRect();
                         const clickPosition = (e.clientX - rect.left) / rect.width;
-                        const startYear = 1950;
-                        const endYear = 1969;
-                        const totalDuration = endYear - startYear;
-                        const targetYear = Math.round(startYear + (clickPosition * totalDuration));
+                        const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
                         
-                        const yearSection = document.getElementById(`year-${targetYear}`);
-                        if (yearSection) {
-                            timelineContainer.scrollTo({
-                                left: yearSection.offsetLeft - (timelineContainer.clientWidth / 2) + (yearSection.clientWidth / 2),
-                                behavior: 'smooth'
-                            });
-                        }
+                        timelineContainer.scrollTo({
+                            left: clickPosition * scrollableWidth,
+                            behavior: 'smooth'
+                        });
                     });
                     setTimeout(() => this.methods.updateCustomScrollbar(), 200);
                 },
@@ -1998,27 +1995,28 @@
                     if (!eraBackgroundContainer) return;
 
                     const eras = [
-                        { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'rgba(147, 197, 253, 0.1)' },
-                        { title: "Hard Bop Rising", startYear: 1954, endYear: 1956, color: 'rgba(216, 180, 254, 0.1)' },
-                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: 'rgba(252, 165, 165, 0.1)' },
-                        { title: "Modal & Structural Expansion", startYear: 1959, endYear: 1961, color: 'rgba(167, 243, 208, 0.1)' },
-                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: 'rgba(254, 215, 170, 0.1)' },
-                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: 'rgba(253, 230, 138, 0.1)' },
-                        { title: "Fusion Genesis", startYear: 1969, endYear: 1969, color: 'rgba(165, 243, 252, 0.1)' }
+                        { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'rgba(147, 197, 253, 0.15)' },
+                        { title: "Hard Bop Rising", startYear: 1954, endYear: 1956, color: 'rgba(216, 180, 254, 0.15)' },
+                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: 'rgba(252, 165, 165, 0.15)' },
+                        { title: "Modal & Structural Expansion", startYear: 1959, endYear: 1961, color: 'rgba(167, 243, 208, 0.15)' },
+                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: 'rgba(254, 215, 170, 0.15)' },
+                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: 'rgba(253, 230, 138, 0.15)' },
+                        { title: "Fusion Genesis", startYear: 1969, endYear: 1969, color: 'rgba(165, 243, 252, 0.15)' }
                     ];
 
                     eraBackgroundContainer.innerHTML = '';
                     
                     eras.forEach(era => {
                         let eraWidth = 0;
-                        // MODIFIED: Calculate width based on ALL potential years, not just visible ones
                         const yearSections = document.querySelectorAll('.timeline-year-section');
-                        const firstYearSection = yearSections[0];
-                        if (!firstYearSection) return; // Exit if no year sections are rendered
-                        const singleYearWidth = firstYearSection.offsetWidth;
-
-                        const yearsInEra = (era.endYear - era.startYear) + 1;
-                        eraWidth = yearsInEra * singleYearWidth;
+                        
+                        yearSections.forEach(section => {
+                            const year = parseInt(section.dataset.year);
+                            // MODIFIED: Check if the section is visible (not display:none) and within the current era
+                            if (year >= era.startYear && year <= era.endYear && section.style.display !== 'none') {
+                                eraWidth += section.offsetWidth;
+                            }
+                        });
 
                         if (eraWidth > 0) {
                             const segment = document.createElement('div');
