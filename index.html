@@ -633,7 +633,7 @@
             </section>
 
             <!-- Interactive Timeline Section -->
-            <section id="timeline" class="py-16 sm:py-20 bg-stone-300 border-y-4 border-stone-900">
+            <section id="timeline" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Timeline Explorer</h2>
                     <p class="text-center text-lg text-stone-600 mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
@@ -1562,7 +1562,7 @@
                             this.methods.goToArtistPage(currentPage); // Restore current page
                             this.methods.resizeCanvas();
                             this.methods.updateCustomScrollbar();
-                            this.methods.renderScrollbarMarkers();
+                            this.methods.renderEraScrollbar();
                         }, 200);
                     });
                     
@@ -1600,16 +1600,10 @@
                         const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
                         yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
                     });
-                    document.querySelectorAll('.era-section').forEach(eraSection => {
-                        const visibleYears = eraSection.querySelectorAll('.timeline-year-section:not([style*="display: none"])');
-                        eraSection.style.display = visibleYears.length > 0 ? 'flex' : 'none';
-                    });
-
-                    this.elements.genreFilterContainer.querySelector('#all-genres-checkbox').checked = selectedGenres.length === this.elements.genreFilterContainer.querySelectorAll('input[data-genre]').length;
                     
                     setTimeout(() => {
                         this.methods.resizeCanvas();
-                        this.methods.renderScrollbarMarkers();
+                        this.methods.renderEraScrollbar();
                         this.methods.updateCustomScrollbar();
                     }, 0);
                 },
