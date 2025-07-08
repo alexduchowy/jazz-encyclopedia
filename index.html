@@ -34,6 +34,15 @@
             --genre-avant-garde: #fecdd3; /* rose-200 */
             --genre-jazz-fusion: #a5f3fc; /* cyan-200 */
             --genre-default: #e7e5e4; /* stone-200 */
+
+            /* Lighter Era Colors for Timeline Background */
+            --era-cool-light: #dbeafe; /* blue-100 */
+            --era-hard-bop-light: #f3e8ff; /* purple-100 */
+            --era-bebop-light: #EADDCA; /* Lighter Pastel Brown */
+            --era-modal-light: #d1fae5; /* emerald-100 */
+            --era-post-bop-light: #ffedd5; /* orange-100 */
+            --era-free-jazz-light: #fee2e2; /* red-100 */
+            --era-fusion-light: #cffafe; /* cyan-100 */
         }
 
         /* Base body styling */
@@ -1206,13 +1215,13 @@
                 renderTimeline() {
                     const { timelineWrapper } = this.elements;
                     const eras = [
-                        { title: "Birth of the Cool", startYear: 1950, endYear: 1953, color: 'var(--genre-cool-jazz)' },
-                        { title: "Hard Bop Landing", startYear: 1954, endYear: 1956, color: 'var(--genre-hard-bop)' },
-                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: 'var(--genre-bebop)' },
-                        { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: 'var(--genre-modal-jazz)' },
-                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: 'var(--genre-post-bop)' },
-                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: 'var(--genre-free-jazz)' },
-                        { title: "Dawn of Fusion", startYear: 1969, endYear: 1969, color: 'var(--genre-jazz-fusion)' }
+                        { title: "Birth of the Cool", startYear: 1950, endYear: 1953, color: 'var(--era-cool-light)' },
+                        { title: "Hard Bop Landing", startYear: 1954, endYear: 1956, color: 'var(--era-hard-bop-light)' },
+                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: 'var(--era-bebop-light)' },
+                        { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: 'var(--era-modal-light)' },
+                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: 'var(--era-post-bop-light)' },
+                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: 'var(--era-free-jazz-light)' },
+                        { title: "Dawn of Fusion", startYear: 1969, endYear: 1969, color: 'var(--era-fusion-light)' }
                     ];
 
                     timelineWrapper.innerHTML = '';
