@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controlled Freedom: An Interactive Jazz Encyclopedia</title>
     
+    <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
+    <!-- Custom CSS Styling -->
     <style>
         /* Define custom color properties for easy theme management */
         :root {
@@ -564,15 +566,19 @@
 </head>
 <body class="bg-stone-100 text-stone-900">
 
+    <!-- Full-screen loader -->
     <div id="loader">
         <div class="loader-spinner"></div>
     </div>
 
     <div id="page-content" class="content-hidden">
+        <!-- HEADER -->
         <div class="sticky top-0 z-50 h-24 mb-[-64px]">
               <header class="relative container mx-auto h-full">
+                    <!-- This is the crooked background. It is positioned absolutely within the header -->
                     <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
                     
+                    <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
                     <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                         <h1 class="title-rotate text-3xl md:text-4xl font-bold text-stone-900 tracking-tight mt-12 md:mt-9">Controlled Freedom</h1>
                         <div class="nav-bar-hidden-behaviour sm:items-baseline sm:space-x-8">
@@ -582,6 +588,7 @@
                             <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
                             <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         </div>
+                        <!-- MODIFICATION: Hamburger Menu Button -->
                         <div class="sm:hidden">
                             <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
                                 <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -595,11 +602,13 @@
 
 
         <main>
+            <!-- Hero Banner Section -->
             <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
                 <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
 
+            <!-- Overview Section -->
             <section id="overview" class="pt-12 pb-16 sm:pb-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="grid md:grid-cols-5 gap-12 items-start">
@@ -613,25 +622,31 @@
                             <p>This application provides an interactive journey through this interconnected history, ordered by recording date—not release date—to understand the influence exercised between all these musicians and <strong>reveal the authentic path of jazz evolution as it happened.</strong></p>
                         </div>
                         <div class="md:col-span-2 mt-8 md:mt-0">
-                             <div id="on-this-day" class="mb-8">
-                                </div>
+                             <!-- "ON THIS DAY" FEATURE -->
+                            <div id="on-this-day" class="mb-8">
+                                <!-- Content will be injected by JavaScript -->
+                            </div>
                             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
             </section>
 
+            <!-- Interactive Timeline Section -->
             <section id="timeline" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Timeline Explorer</h2>
                     <p class="text-center text-lg text-stone-600 mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
                     
+                    <!-- Timeline Filter Controls -->
                     <div id="timeline-controls" class="flex flex-col items-center justify-center gap-4 mb-8">
                         <div id="genre-filter-container" class="flex flex-wrap justify-center gap-x-4 gap-y-3">
-                           </div>
+                           <!-- Checkboxes will be injected here by JavaScript -->
+                        </div>
                     </div>
 
                     <div class="relative group">
+                        <!-- Sticky Year Display -->
                         <div id="sticky-year-display" class="absolute top-0 left-1 sm:left-4 font-black text-orange-500 text-6xl transition-opacity duration-200 pointer-events-none z-10"></div>
 
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
@@ -645,6 +660,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
                     </div>
+                    <!-- Custom Scrollbar with Markers -->
                     <div class="mt-6">
                         <div id="custom-scrollbar" class="w-full h-10 bg-gray-800 rounded-full cursor-pointer relative">
                             <div id="era-segments-container" class="absolute inset-0 flex overflow-hidden rounded-full"></div>
@@ -654,22 +670,26 @@
                 </div>
             </section>
 
+            <!-- Genre Matrix Section -->
             <section id="matrix" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Genres</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Compare the main aspects of each style.</p>
                     <div id="genre-matrix-container" class="matrix-container max-w-6xl mx-auto">
                         <table id="style-matrix-table" class="matrix-table">
-                            </table>
+                            <!-- Table content will be generated here -->
+                        </table>
                     </div>
                 </div>
             </section>
 
+            <!-- Key Artists Grid Section -->
             <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Architects</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined an era.</p>
                     
+                    <!-- Instrument Filter Dropdown -->
                     <div class="flex justify-center mb-8">
                         <div class="w-full max-w-xs styled-select">
                             <label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label>
@@ -678,12 +698,15 @@
                         </div>
                     </div>
 
+                    <!-- Artist Slider Container -->
                     <div id="artist-slider-wrapper" class="relative">
                         <div id="artist-slider-container" class="min-h-[550px] md:min-h-[580px]">
                             <div id="artist-slider-track">
-                                </div>
+                                <!-- Artist pages will be injected here by JavaScript -->
+                            </div>
                         </div>
-                         <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4">
+                         <!-- Artist Pagination Controls -->
+                        <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4">
                             <button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                             </button>
@@ -696,6 +719,7 @@
                 </div>
             </section>
             
+            <!-- Legacy Section -->
             <section id="legacy" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
                     <h2 class="section-header text-5xl">Legacy</h2>
@@ -709,6 +733,7 @@
             </section>
         </main>
 
+        <!-- Footer -->
         <footer class="bg-stone-900 text-stone-200 py-8">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
@@ -721,6 +746,7 @@
         </footer>
     </div>
     
+    <!-- Modals -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
@@ -738,9 +764,11 @@
                     <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
                 <div id="analysis-wrapper" class="relative mt-4">
-                    </div>
+                    <!-- Content injected by JS -->
+                </div>
             </div>
-             <div id="modal-nav-footer" class="flex justify-between items-center p-4 border-t-2 border-stone-900 flex-shrink-0 bg-stone-200">
+             <!-- Modal Navigation Footer -->
+            <div id="modal-nav-footer" class="flex justify-between items-center p-4 border-t-2 border-stone-900 flex-shrink-0 bg-stone-200">
                 <button id="prev-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous Album</button>
                 <button id="next-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next Album</button>
             </div>
@@ -765,6 +793,7 @@
         </div>
     </div>
 
+    <!-- MODIFICATION: Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
@@ -786,6 +815,7 @@
     </div>
 
 
+    <!-- Embedded Genre Matrix Data -->
     <script id="styleMatrixData" type="application/json">
     {
         "features": ["Harmony", "Rhythm", "Form"],
@@ -882,6 +912,7 @@
     }
     </script>
     
+    <!-- Main Application Script -->
     <script>
         const JazzApp = {
             // Application State
@@ -1927,12 +1958,12 @@
                     if (!eraSegmentsContainer) return;
 
                     const eras = [
-                        { title: "Birth of the Cool", startYear: 1950, endYear: 1953, color: '#3b82f6' },
-                        { title: "Hard Bop Landing", startYear: 1954, endYear: 1956, color: '#8b5cf6' },
-                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: '#ef4444' },
-                        { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: '#10b981' },
-                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: '#f97316' },
-                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: '#b45309' },
+                        { title: "Birth of the Cool", startYear: 1950, endYear: 1953, color: '#1e40af' },
+                        { title: "Hard Bop Landing", startYear: 1954, endYear: 1956, color: '#5b21b6' },
+                        { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: '#991b1b' },
+                        { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: '#065f46' },
+                        { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: '#b45309' },
+                        { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: '#f97316' },
                         { title: "Dawn of Fusion", startYear: 1969, endYear: 1969, color: '#155e75' }
                     ];
                     
