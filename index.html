@@ -42,6 +42,7 @@
             --era-modal-light: #d1fae5; /* emerald-100 */
             --era-post-bop-light: #ffedd5; /* orange-100 */
             --era-free-jazz-light: #fee2e2; /* red-100 */
+            --era-roots-light: #fef9c3; /* yellow-100 */
             --era-fusion-light: #cffafe; /* cyan-100 */
         }
 
@@ -671,7 +672,7 @@
                         <!-- Sticky Year and Era Title Display -->
                         <div id="sticky-header-display" class="absolute top-4 left-1 sm:left-4 flex items-end gap-x-3 pointer-events-none z-10">
                             <div id="sticky-year-display" class="font-black text-orange-500 text-5xl leading-none transition-opacity duration-150"></div>
-                            <h3 id="sticky-era-title" class="font-black text-stone-500 text-4xl leading-tight pb-1 transition-opacity duration-300"></h3>
+                            <h3 id="sticky-era-title" class="font-black text-stone-500 text-3xl leading-tight pb-1 transition-opacity duration-300"></h3>
                         </div>
 
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
@@ -950,11 +951,12 @@
                 eras: [
                     { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'var(--era-cool-light)' },
                     { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: 'var(--era-hard-bop-light)' },
-                    { title: "Hard Bop Zenith", startYear: 1957, endYear: 1958, color: 'var(--era-bebop-light)' },
+                    { title: "Peak of Hard Bop", startYear: 1957, endYear: 1958, color: 'var(--era-bebop-light)' },
                     { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: 'var(--era-modal-light)' },
                     { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: 'var(--era-post-bop-light)' },
-                    { title: "Spiritual Awakening", startYear: 1964, endYear: 1968, color: 'var(--era-free-jazz-light)' },
-                    { title: "Fusion Genesis", startYear: 1969, endYear: 1969, color: 'var(--era-fusion-light)' }
+                    { title: "Spiritual Awakening", startYear: 1964, endYear: 1966, color: 'var(--era-free-jazz-light)' },
+                    { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: 'var(--era-roots-light)' },
+                    { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: 'var(--era-fusion-light)' }
                 ],
                 currentVisibleAlbumIndex: -1,
                 currentArtistPage: 0,
@@ -1403,7 +1405,7 @@
                                 this.state.lastKnownEraTitle = currentEra.title;
                                 stickyEraTitle.style.opacity = '0';
                                 setTimeout(() => {
-                                    stickyEraTitle.textContent = currentEra.title;
+                                    stickyEraTitle.textContent = `— ${currentEra.title}`;
                                     stickyEraTitle.style.opacity = '1';
                                 }, 150);
                             }
@@ -1419,7 +1421,7 @@
                         this.state.lastKnownYear = firstYear;
                         const firstEra = this.state.eras.find(era => firstYear >= era.startYear && firstYear <= era.endYear);
                         if (firstEra) {
-                            stickyEraTitle.textContent = firstEra.title;
+                            stickyEraTitle.textContent = `— ${firstEra.title}`;
                             this.state.lastKnownEraTitle = firstEra.title;
                         }
                     }
