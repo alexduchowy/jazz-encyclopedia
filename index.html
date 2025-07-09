@@ -596,7 +596,7 @@
 
     <div id="page-content" class="content-hidden">
         <!-- HEADER -->
-        <div class="sticky top-0 z-50 h-24 mb-[-6rem]">
+        <div class="sticky top-0 z-50 h-24">
               <header class="relative container mx-auto h-full">
                     <!-- This is the crooked background. It is positioned absolutely within the header -->
                     <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
@@ -624,15 +624,15 @@
         </div>
 
 
-        <main>
+        <main class="-mt-24">
             <!-- Hero Banner Section -->
-            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 -mt-24">
+            <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
                 <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
 
             <!-- Overview Section -->
-            <section id="overview" class="pt-12 pb-16 sm:pb-20">
+            <section id="overview" class="pt-12 pb-16 sm:pb-20 bg-stone-100">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="grid md:grid-cols-5 gap-12 items-start">
                         <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
@@ -1169,7 +1169,7 @@
                     this.state.albums.forEach(album => {
                         if (album.genres) album.genres.split(', ').forEach(genre => allGenresInDB.add(genre.trim()));
                     });
-                    const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz'];
+                    const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack'];
                     const filterableGenres = Array.from(allGenresInDB).filter(genre => !excludedGenres.includes(genre)).sort();
                     
                     genreFilterContainer.innerHTML = ''; // Clear previous
