@@ -584,6 +584,16 @@
             flex-direction: row;
             align-items: flex-start;
         }
+
+        /* NEW: Artist Connection Web Styling */
+        .collaborator-card {
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        .collaborator-card:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
    
     </style>
 </head>
@@ -1461,7 +1471,18 @@
                     });
 
                     artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
-                    artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') this.methods.closeArtistModal(); });
+                    artistModal.addEventListener('click', e => { 
+                        if (e.target.id === 'artist-modal') this.methods.closeArtistModal(); 
+                        
+                        const collaboratorCard = e.target.closest('.collaborator-card');
+                        if (collaboratorCard && collaboratorCard.dataset.artistName) {
+                            const collaboratorName = collaboratorCard.dataset.artistName;
+                            const collaborator = this.state.artistsData.find(a => a.name === collaboratorName);
+                            if (collaborator) {
+                                this.methods.closeArtistModal(() => this.methods.openArtistModal(collaborator));
+                            }
+                        }
+                    });
                     
                     genreModal.querySelector('#close-genre-modal').addEventListener('click', () => this.methods.closeGenreModal());
                     genreModal.addEventListener('click', e => { if (e.target.id === 'genre-modal') this.methods.closeGenreModal(); });
@@ -1836,6 +1857,30 @@
                                 </li>`;
                     }).join('');
 
+                    const topCollaborators = this.methods.getTopCollaborators(artist.name);
+                    let collaboratorsHtml = '';
+                    if (topCollaborators.length > 0) {
+                        const collaboratorCards = topCollaborators.map(name => {
+                            const collaborator = this.state.artistsData.find(a => a.name === name);
+                            if (!collaborator) return '';
+                            return `
+                                <div class="collaborator-card text-center" data-artist-name="${collaborator.name}">
+                                    <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 shadow-md" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                    <p class="mt-2 text-sm font-bold text-stone-700">${collaborator.name}</p>
+                                </div>
+                            `;
+                        }).join('');
+
+                        collaboratorsHtml = `
+                            <div class="mt-6 pt-4 border-t-2 border-stone-200">
+                                <h4 class="text-2xl text-stone-900 mb-4 text-center">Top Collaborators</h4>
+                                <div class="grid grid-cols-3 gap-4">
+                                    ${collaboratorCards}
+                                </div>
+                            </div>
+                        `;
+                    }
+
                     body.innerHTML = `
                         <div class="flex flex-col sm:flex-row gap-6">
                             <div class="w-full sm:w-1/3 flex-shrink-0">
@@ -1852,10 +1897,44 @@
                                 <h4 class="text-2xl text-stone-900 mb-3">Album Appearances</h4>
                                 <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml}</ul>
                             </div>
-                        </div>`;
+                        </div>
+                        ${collaboratorsHtml}
+                    `;
                     
                     artistModal.classList.remove('opacity-0', 'pointer-events-none');
                     artistModal.querySelector('.modal-content').classList.remove('scale-95');
+                },
+
+                getTopCollaborators(artistName) {
+                    const collaborations = new Map();
+                    this.state.albums.forEach(album => {
+                        const isOnAlbum = album.pivotalTracks.some(track =>
+                            track.lineup && track.lineup.includes(artistName)
+                        );
+
+                        if (isOnAlbum) {
+                            album.pivotalTracks.forEach(track => {
+                                if (track.lineup && track.lineup.includes(artistName)) {
+                                    const lineupParts = track.lineup.split(/,(?![^()]*\))/);
+                                    lineupParts.forEach(part => {
+                                        const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                                        if (match) {
+                                            let collaboratorName = match[1].trim();
+                                            if (collaboratorName === 'Anthony Williams') collaboratorName = 'Tony Williams';
+                                            if (collaboratorName !== artistName) {
+                                                collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    return Array.from(collaborations.entries())
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 3)
+                        .map(entry => entry[0]);
                 },
 
 
