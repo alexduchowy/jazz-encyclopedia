@@ -626,7 +626,7 @@
 
         <main class="-mt-24">
             <!-- Hero Banner Section -->
-            <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64">
+            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
                 <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
@@ -1169,7 +1169,7 @@
                     this.state.albums.forEach(album => {
                         if (album.genres) album.genres.split(', ').forEach(genre => allGenresInDB.add(genre.trim()));
                     });
-                    const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack'];
+                    const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock'];
                     const filterableGenres = Array.from(allGenresInDB).filter(genre => !excludedGenres.includes(genre)).sort();
                     
                     genreFilterContainer.innerHTML = ''; // Clear previous
