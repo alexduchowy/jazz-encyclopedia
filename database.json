@@ -1,12 +1,19 @@
 {
   "albums": [
-    {
-      "year": 1950,
+   {
+      "year": 1949,
       "artist": "Miles Davis",
       "albumTitle": "Birth of the Cool",
       "cover": "images/birth-of-the-cool.jpg",
       "genres": "Cool Jazz, Bebop",
       "pivotalTracks": [
+        {
+          "title": "Move",
+          "recordingDate": "January 21, 1949",
+          "label": "Capitol",
+          "lineup": "Miles Davis (trumpet), Kai Winding (trombone), Junior Collins (French horn), Bill Barber (tuba), Lee Konitz (alto saxophone), Gerry Mulligan (baritone saxophone), Al Haig (piano), Joe Shulman (bass), Max Roach (drums)",
+          "analysis": "A Denzil Best composition arranged by John Lewis, 'Move' was part of the very first session for the Birth of the Cool nonet. In contrast to the album's more subdued pieces, this track is an up-tempo, bop-inflected number that showcases the ensemble's ability to swing with precision and fire. The performance demonstrates how the group applied its unique, arranged textures and complex harmonies to a driving composition, proving that 'cool' did not mean a lack of energy."
+        },
         {
           "title": "Jeru",
           "recordingDate": "March 9, 1950",
@@ -240,7 +247,7 @@
         }
       ]
     },
-    {
+   {
       "year": 1952,
       "artist": "Charlie Parker",
       "albumTitle": "Now's the Time",
@@ -253,6 +260,13 @@
           "label": "Verve",
           "lineup": "Charlie Parker (alto saxophone), Hank Jones (piano), Teddy Kotick (bass), Max Roach (drums)",
           "analysis": "A mature and masterful performance from Charlie Parker. Unlike some of his more frenetic early work, 'Laird Baird' showcases a relaxed confidence. Parker's solo is a marvel of melodic construction, effortlessly weaving complex lines through the chord changes with a deep blues feeling. Backed by a flawless rhythm section featuring Hank Jones and Max Roach, this track reveals the supreme logic and lyricism of Bird at the height of his powers."
+        },
+        {
+          "title": "Now's The Time",
+          "recordingDate": "July 30, 1953",
+          "label": "Verve",
+          "lineup": "Charlie Parker (alto saxophone), Al Haig (piano), Percy Heath (bass), Max Roach (drums)",
+          "analysis": "This is a later recording of one of Charlie Parker's most famous and historically significant compositions—a 12-bar blues that became a bebop anthem and a direct precursor to rock and roll. This version is notable for its relaxed, swinging groove, a testament to the masterful rhythm section featuring Al Haig and Max Roach. Parker's solo is a masterclass in blues vocabulary and bebop invention, demonstrating the deep, foundational connection between the two forms. It's a quintessential performance from the master."
         }
       ]
     },
@@ -290,7 +304,7 @@
     },
     {
       "year": 1953,
-      "artist": "Parker/Gillespie/Powell/Mingus/Roach",
+      "artist": "The Quintet",
       "albumTitle": "Jazz at Massey Hall",
       "cover": "images/jazz-at-massey-hall.jpg",
       "genres": "Bebop",
@@ -301,6 +315,13 @@
           "label": "Debut",
           "lineup": "Charlie Parker (alto saxophone), Dizzy Gillespie (trumpet), Bud Powell (piano), Charles Mingus (bass), Max Roach (drums)",
           "analysis": "A Tadd Dameron composition that became a bebop anthem, this version from the legendary Massey Hall concert is arguably its most famous. The unison theme, played with breathtaking precision by Parker and Gillespie at a blistering tempo, gives way to one of the most celebrated improvisational exchanges in jazz history. Parker's solo is a torrent of melodic genius, immediately followed by Gillespie's equally brilliant and fiery response. It is a thrilling, essential document of bebop's two greatest masters sharing a stage."
+        },
+        {
+          "title": "Perdido",
+          "recordingDate": "May 15, 1953",
+          "label": "Debut",
+          "lineup": "Charlie Parker (alto saxophone), Dizzy Gillespie (trumpet), Bud Powell (piano), Charles Mingus (bass), Max Roach (drums)",
+          "analysis": "This performance of the Juan Tizol standard is the quintessential bebop jam session, a true 'battle of the giants.' Each member of the legendary quintet takes a turn in the spotlight, from the virtuosic solos of Dizzy Gillespie and Charlie Parker to the incredible dexterity of Bud Powell's piano feature. The track famously culminates in an explosive, extended drum solo by Max Roach, showcasing his revolutionary approach to the instrument. It perfectly captures the spontaneous and competitive energy of bebop's masters together on one stage."
         }
       ]
     },
