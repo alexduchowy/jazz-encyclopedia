@@ -604,7 +604,6 @@
             box-shadow: 2px 2px 0px var(--text-main);
             transform: rotate(-2deg);
             display: inline-block;
-            margin-top: 1rem;
             font-family: 'Inter', sans-serif;
             font-weight: 600;
             font-size: 0.9rem;
@@ -1912,7 +1911,7 @@
                                     <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
                                 <p class="mt-4 text-stone-900 text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
-                                ${artistProfile.knownFor ? `<div class="mt-4"><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
+                                ${artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-stone-900 mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
                             </div>
                             <div class="w-full sm:w-2/3">
                                 ${artistProfile.profile && artistProfile.profile !== 'No profile available.' ? `<h4 class="text-2xl text-stone-900 mb-2">Profile</h4><p class="text-base text-stone-700 leading-relaxed mb-4">${artistProfile.profile}</p>` : ''}
