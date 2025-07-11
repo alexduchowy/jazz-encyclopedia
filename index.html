@@ -585,7 +585,7 @@
             align-items: flex-start;
         }
 
-        /* NEW: Artist Connection Web Styling */
+        /* Artist Connection Web Styling */
         .collaborator-card {
             cursor: pointer;
             transition: transform 0.2s ease, opacity 0.2s ease;
@@ -593,6 +593,21 @@
         .collaborator-card:hover {
             transform: scale(1.05);
             opacity: 0.9;
+        }
+
+        /* NEW: Known For Box Styling */
+        .known-for-box {
+            background-color: var(--yellow-accent);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--text-main);
+            box-shadow: 2px 2px 0px var(--text-main);
+            transform: rotate(-2deg);
+            display: inline-block;
+            margin-top: 1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
    
     </style>
@@ -1896,9 +1911,8 @@
                                 <div class="artist-photo-container">
                                     <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
-                                <p class="mt-4 text-stone-900 text-sm"><strong class="font-bold">Instruments:</strong> ${(artistProfile.instruments || artist.instruments).join(', ')}</p>
-                                ${artistProfile.lifespan ? `<p class="mt-2 text-stone-900 text-sm"><strong class="font-bold">Born-Died:</strong> ${artistProfile.lifespan}</p>` : ''}
-                                ${artistProfile.knownFor ? `<div class="mt-2"><span class="inline-block bg-orange-200 text-orange-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">${artistProfile.knownFor}</span></div>` : ''}
+                                <p class="mt-4 text-stone-900 text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
+                                ${artistProfile.knownFor ? `<div class="mt-4"><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
                             </div>
                             <div class="w-full sm:w-2/3">
                                 ${artistProfile.profile && artistProfile.profile !== 'No profile available.' ? `<h4 class="text-2xl text-stone-900 mb-2">Profile</h4><p class="text-base text-stone-700 leading-relaxed mb-4">${artistProfile.profile}</p>` : ''}
