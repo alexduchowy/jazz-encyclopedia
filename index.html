@@ -1033,25 +1033,24 @@
                 const styleMatrixDataEl = document.getElementById('styleMatrixData');
                 this.state.styleMatrix = JSON.parse(styleMatrixDataEl.textContent);
 
-                fetch('database.json')
-                    .then(response => {
-                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                        return response.json();
-                    })
-                    .then(dbData => {
-                        this.state.albums = dbData.albums;
-                        this.state.artistProfiles = dbData.artistProfiles;
-                        this.initializeAppUI();
-                    })
-                    .catch(error => {
-                        console.error('Error fetching or parsing database.json:', error);
-                        this.elements.pageContent.innerHTML = `<div class="text-center p-8">
-                            <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
-                            <p class="text-stone-600 mt-2">Could not fetch album/artist data. Please ensure 'database.json' is available.</p>
-                            <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
-                        </div>`;
-                        this.showPage();
-                    });
+                Promise.all([
+                    fetch('database.json').then(res => res.json()),
+                    fetch('artists.json').then(res => res.json())
+                ])
+                .then(([dbData, artistProfileData]) => {
+                    this.state.albums = dbData.albums;
+                    this.state.artistProfiles = artistProfileData;
+                    this.initializeAppUI();
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    this.elements.pageContent.innerHTML = `<div class="text-center p-8">
+                        <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
+                        <p class="text-stone-600 mt-2">Could not fetch database files. Please ensure 'database.json' and 'artists.json' are available.</p>
+                        <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
+                    </div>`;
+                    this.showPage();
+                });
             },
             
             showPage() {
@@ -1116,20 +1115,21 @@
 
                     tracks.forEach(track => {
                         if (!track.lineup) return;
-                        const lineupParts = track.lineup.split(/,(?![^()]*\))/);
+                        let lineup = track.lineup.replace(/Roland Kirk/g, 'Rahsaan Roland Kirk');
+                        const lineupParts = lineup.split(/,(?![^()]*\))/);
                         lineupParts.forEach(part => {
                             const match = part.trim().match(/(.+?)\s\((.+)\)/);
                             if (match) {
                                 let name = match[1].trim();
                                 if (name === 'Anthony Williams') name = 'Tony Williams';
-                                if (name === 'Roland Kirk') name = 'Rahsaan Roland Kirk';
+                                
                                 const instrumentsString = match[2];
                                 if (!artistsMap.has(name)) {
-                                    artistsMap.set(name, { name: name, instruments: new Set(), albums: new Set(), photo: `images/${slugify(name)}.jpg`, isBandleader: false, profile: '' });
+                                    artistsMap.set(name, { name: name, instruments: new Set(), albums: new Set(), photo: `images/${slugify(name)}.jpg`, isBandleader: false, profile: profiles[name] || { name: name, profile: 'No profile available.'} });
                                 }
                                 const artistEntry = artistsMap.get(name);
                                 if (track.artist && track.artist.includes(name)) artistEntry.isBandleader = true;
-                                if (profiles && profiles[name]) artistEntry.profile = profiles[name];
+                                
                                 instrumentsString.split(/, | \/ /).forEach(inst => {
                                     const trimmedInst = inst.trim();
                                     if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) artistEntry.instruments.add(trimmedInst);
@@ -1832,6 +1832,7 @@
 
                 openArtistModal(artist) {
                     const { artistModal } = this.elements;
+                    const artistProfile = artist.profile || {};
                     artistModal.querySelector('#artist-modal-title').textContent = artist.name;
                     const body = artistModal.querySelector('#artist-modal-body');
 
@@ -1893,13 +1894,12 @@
                                 <div class="artist-photo-container">
                                     <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
-                                <p class="mt-4 text-stone-900 text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
+                                <p class="mt-4 text-stone-900 text-sm"><strong class="font-bold">Instruments:</strong> ${(artistProfile.instruments || artist.instruments).join(', ')}</p>
+                                ${artistProfile.lifespan ? `<p class="mt-2 text-stone-900 text-sm"><strong class="font-bold">Born-Died:</strong> ${artistProfile.lifespan}</p>` : ''}
                             </div>
                             <div class="w-full sm:w-2/3">
-                                ${artist.profile ? `
-                                    <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
-                                    <p class="text-base text-stone-700 leading-relaxed mb-4">${artist.profile}</p>
-                                ` : ''}
+                                ${artistProfile.profile ? `<h4 class="text-2xl text-stone-900 mb-2">Profile</h4><p class="text-base text-stone-700 leading-relaxed mb-4">${artistProfile.profile}</p>` : ''}
+                                ${artistProfile.knownFor ? `<h4 class="text-2xl text-stone-900 mb-2">Known For</h4><p class="text-base text-stone-700 leading-relaxed mb-4">${artistProfile.knownFor}</p>` : ''}
                                 <h4 class="text-2xl text-stone-900 mb-3">Album Appearances</h4>
                                 <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml}</ul>
                             </div>
@@ -1914,25 +1914,19 @@
                 getTopCollaborators(artistName) {
                     const collaborations = new Map();
                     this.state.albums.forEach(album => {
-                        const isOnAlbum = album.pivotalTracks.some(track =>
-                            track.lineup && track.lineup.includes(artistName)
-                        );
+                        let lineup = album.pivotalTracks.map(t => t.lineup).join(',');
+                        lineup = lineup.replace(/Roland Kirk/g, 'Rahsaan Roland Kirk');
 
-                        if (isOnAlbum) {
-                            album.pivotalTracks.forEach(track => {
-                                if (track.lineup && track.lineup.includes(artistName)) {
-                                    const lineupParts = track.lineup.split(/,(?![^()]*\))/);
-                                    lineupParts.forEach(part => {
-                                        const match = part.trim().match(/(.+?)\s\((.+)\)/);
-                                        if (match) {
-                                            let collaboratorName = match[1].trim();
-                                            if (collaboratorName === 'Anthony Williams') collaboratorName = 'Tony Williams';
-                                            if (collaboratorName === 'Roland Kirk') collaboratorName = 'Rahsaan Roland Kirk';
-                                            if (collaboratorName !== artistName) {
-                                                collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
-                                            }
-                                        }
-                                    });
+                        if (lineup.includes(artistName)) {
+                            const lineupParts = lineup.split(/,(?![^()]*\))/);
+                            lineupParts.forEach(part => {
+                                const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                                if (match) {
+                                    let collaboratorName = match[1].trim();
+                                    if (collaboratorName === 'Anthony Williams') collaboratorName = 'Tony Williams';
+                                    if (collaboratorName !== artistName) {
+                                        collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
+                                    }
                                 }
                             });
                         }
