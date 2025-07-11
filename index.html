@@ -1122,6 +1122,7 @@
                             if (match) {
                                 let name = match[1].trim();
                                 if (name === 'Anthony Williams') name = 'Tony Williams';
+                                if (name === 'Roland Kirk') name = 'Rahsaan Roland Kirk';
                                 const instrumentsString = match[2];
                                 if (!artistsMap.has(name)) {
                                     artistsMap.set(name, { name: name, instruments: new Set(), albums: new Set(), photo: `images/${slugify(name)}.jpg`, isBandleader: false, profile: '' });
@@ -1755,7 +1756,12 @@
                     modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
                     const firstTrack = album.pivotalTracks[0] || {};
                     const genreTags = album.genres.split(', ').map(genre => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[genre] || 'var(--genre-default)'}" data-genre-name="${genre}">${genre}</span>`).join(' ');
-                    const lineupHtml = firstTrack.lineup ? firstTrack.lineup.split(/, (?![^()]*\))/).map(personnel => {
+                    
+                    let lineupString = firstTrack.lineup || 'N/A';
+                    if (lineupString !== 'N/A') {
+                        lineupString = lineupString.replace(/Roland Kirk/g, 'Rahsaan Roland Kirk');
+                    }
+                    const lineupHtml = lineupString !== 'N/A' ? lineupString.split(/, (?![^()]*\))/).map(personnel => {
                         const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
                         if (match && this.state.artistsData.some(a => a.name === match[1].trim())) {
                             return `<span class="clickable-link" data-artist-name="${match[1].trim()}">${match[1].trim()}</span> (${match[2]})`;
@@ -1921,6 +1927,7 @@
                                         if (match) {
                                             let collaboratorName = match[1].trim();
                                             if (collaboratorName === 'Anthony Williams') collaboratorName = 'Tony Williams';
+                                            if (collaboratorName === 'Roland Kirk') collaboratorName = 'Rahsaan Roland Kirk';
                                             if (collaboratorName !== artistName) {
                                                 collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
                                             }
