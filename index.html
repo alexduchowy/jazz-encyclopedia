@@ -1128,27 +1128,46 @@
                 processArtists(tracks, profiles) {
                     const artistsMap = new Map();
                     const slugify = this.methods.slugify;
+                    
+                    const getCanonicalName = (name) => {
+                        if (name === 'Roland Kirk') return 'Rahsaan Roland Kirk';
+                        if (name === 'Anthony Williams') return 'Tony Williams';
+                        return name;
+                    };
 
                     tracks.forEach(track => {
                         if (!track.lineup) return;
-                        let lineup = track.lineup.replace(/Roland Kirk/g, 'Rahsaan Roland Kirk');
-                        const lineupParts = lineup.split(/,(?![^()]*\))/);
+                        
+                        const trackArtist = getCanonicalName(track.artist);
+
+                        const lineupParts = track.lineup.split(/,(?![^()]*\))/);
                         lineupParts.forEach(part => {
                             const match = part.trim().match(/(.+?)\s\((.+)\)/);
                             if (match) {
-                                let name = match[1].trim();
-                                if (name === 'Anthony Williams') name = 'Tony Williams';
-                                
+                                let name = getCanonicalName(match[1].trim());
                                 const instrumentsString = match[2];
+
                                 if (!artistsMap.has(name)) {
-                                    artistsMap.set(name, { name: name, instruments: new Set(), albums: new Set(), photo: `images/${slugify(name)}.jpg`, isBandleader: false, profile: profiles[name] || { name: name, profile: 'No profile available.'} });
+                                    artistsMap.set(name, { 
+                                        name: name, 
+                                        instruments: new Set(), 
+                                        albums: new Set(), 
+                                        photo: `images/${slugify(name)}.jpg`, 
+                                        isBandleader: false, 
+                                        profile: profiles[name] || { name: name, profile: 'No profile available.'} 
+                                    });
                                 }
                                 const artistEntry = artistsMap.get(name);
-                                if (track.artist && track.artist.includes(name)) artistEntry.isBandleader = true;
+                                
+                                if (trackArtist === name) {
+                                    artistEntry.isBandleader = true;
+                                }
                                 
                                 instrumentsString.split(/, | \/ /).forEach(inst => {
                                     const trimmedInst = inst.trim();
-                                    if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) artistEntry.instruments.add(trimmedInst);
+                                    if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
+                                        artistEntry.instruments.add(trimmedInst);
+                                    }
                                 });
                                 artistEntry.albums.add(track.album);
                             }
@@ -1928,20 +1947,23 @@
 
                 getTopCollaborators(artistName) {
                     const collaborations = new Map();
-                    this.state.albums.forEach(album => {
-                        let lineup = album.pivotalTracks.map(t => t.lineup).join(',');
-                        lineup = lineup.replace(/Roland Kirk/g, 'Rahsaan Roland Kirk');
+                    const getCanonicalName = (name) => {
+                        if (name === 'Roland Kirk') return 'Rahsaan Roland Kirk';
+                        if (name === 'Anthony Williams') return 'Tony Williams';
+                        return name;
+                    };
 
-                        if (lineup.includes(artistName)) {
-                            const lineupParts = lineup.split(/,(?![^()]*\))/);
-                            lineupParts.forEach(part => {
-                                const match = part.trim().match(/(.+?)\s\((.+)\)/);
-                                if (match) {
-                                    let collaboratorName = match[1].trim();
-                                    if (collaboratorName === 'Anthony Williams') collaboratorName = 'Tony Williams';
-                                    if (collaboratorName !== artistName) {
-                                        collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
-                                    }
+                    this.state.albums.forEach(album => {
+                        const albumArtists = album.pivotalTracks.flatMap(track => track.lineup ? track.lineup.split(/,(?![^()]*\))/) : [])
+                                                               .map(part => {
+                                                                    const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                                                                    return match ? getCanonicalName(match[1].trim()) : null;
+                                                                }).filter(Boolean);
+
+                        if (albumArtists.includes(artistName)) {
+                            albumArtists.forEach(collaboratorName => {
+                                if (collaboratorName !== artistName) {
+                                    collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
                                 }
                             });
                         }
