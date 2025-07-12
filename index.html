@@ -595,7 +595,7 @@
             opacity: 0.9;
         }
 
-        /* NEW: Known For Box Styling */
+        /* Known For Box Styling */
         .known-for-box {
             background-color: var(--accent);
             color: var(--bg-main);
@@ -1095,6 +1095,14 @@
             // Methods Object
             methods: {
                 // --- DATA PROCESSING ---
+                getCanonicalName(name) {
+                    if (!name) return '';
+                    const trimmedName = name.trim();
+                    if (trimmedName === 'Roland Kirk') return 'Rahsaan Roland Kirk';
+                    if (trimmedName === 'Anthony Williams') return 'Tony Williams';
+                    return trimmedName;
+                },
+
                 processAndSortData() {
                     const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
                     
@@ -1128,12 +1136,7 @@
                 processArtists(tracks, profiles) {
                     const artistsMap = new Map();
                     const slugify = this.methods.slugify;
-                    
-                    const getCanonicalName = (name) => {
-                        if (name === 'Roland Kirk') return 'Rahsaan Roland Kirk';
-                        if (name === 'Anthony Williams') return 'Tony Williams';
-                        return name;
-                    };
+                    const getCanonicalName = this.methods.getCanonicalName;
 
                     tracks.forEach(track => {
                         if (!track.lineup) return;
@@ -1159,7 +1162,7 @@
                                 }
                                 const artistEntry = artistsMap.get(name);
                                 
-                                if (trackArtist === name) {
+                                if (trackArtist.includes(name)) {
                                     artistEntry.isBandleader = true;
                                 }
                                 
@@ -1947,26 +1950,27 @@
 
                 getTopCollaborators(artistName) {
                     const collaborations = new Map();
-                    const getCanonicalName = (name) => {
-                        if (name === 'Roland Kirk') return 'Rahsaan Roland Kirk';
-                        if (name === 'Anthony Williams') return 'Tony Williams';
-                        return name;
-                    };
+                    const getCanonicalName = this.methods.getCanonicalName;
+                    const canonicalArtistName = getCanonicalName(artistName);
 
                     this.state.albums.forEach(album => {
-                        const albumArtists = album.pivotalTracks.flatMap(track => track.lineup ? track.lineup.split(/,(?![^()]*\))/) : [])
-                                                               .map(part => {
-                                                                    const match = part.trim().match(/(.+?)\s\((.+)\)/);
-                                                                    return match ? getCanonicalName(match[1].trim()) : null;
-                                                                }).filter(Boolean);
+                        album.pivotalTracks.forEach(track => {
+                            if (!track.lineup) return;
 
-                        if (albumArtists.includes(artistName)) {
-                            albumArtists.forEach(collaboratorName => {
-                                if (collaboratorName !== artistName) {
-                                    collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
-                                }
-                            });
-                        }
+                            const lineupParts = track.lineup.split(/,(?![^()]*\))/);
+                            const trackArtists = lineupParts.map(part => {
+                                const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                                return match ? getCanonicalName(match[1].trim()) : null;
+                            }).filter(Boolean);
+
+                            if (trackArtists.includes(canonicalArtistName)) {
+                                trackArtists.forEach(collaboratorName => {
+                                    if (collaboratorName !== canonicalArtistName) {
+                                        collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
+                                    }
+                                });
+                            }
+                        });
                     });
 
                     return Array.from(collaborations.entries())
