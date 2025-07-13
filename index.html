@@ -608,6 +608,77 @@
             font-weight: 600;
             font-size: 0.9rem;
         }
+        
+        /* NEW STYLES FOR LEGACY SECTION */
+        #influence-web-container {
+            user-select: none;
+            min-height: 450px;
+        }
+        .influence-node {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: default;
+            transition: transform 0.2s ease;
+            z-index: 10;
+        }
+        .influence-node:hover {
+            transform: scale(1.1);
+            z-index: 20;
+        }
+        .influence-node .node-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--text-main);
+            object-fit: cover;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background-color: var(--bg-dark);
+        }
+        .influence-node .node-label {
+            margin-top: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            background-color: rgba(245, 245, 244, 0.8); /* bg-main with transparency */
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .influence-node .node-info {
+            display: none;
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px;
+            background-color: var(--bg-dark);
+            color: var(--bg-main);
+            padding: 1rem;
+            border-radius: 0.25rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-size: 0.85rem;
+            line-height: 1.4;
+            z-index: 30;
+            pointer-events: none;
+        }
+        .influence-node:hover .node-info {
+            display: block;
+        }
+        #influence-web-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        #influence-web-svg line {
+            stroke: var(--text-muted);
+            stroke-width: 2;
+            stroke-dasharray: 4 4;
+        }
    
     </style>
 </head>
@@ -628,7 +699,7 @@
                     <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
                     <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                         <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10">
-                            <img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20">
+                            <a href="#"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
                         </div>
                         <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
                             <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
@@ -637,7 +708,7 @@
                             <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
                             <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         </div>
-                        <!-- MODIFICATION: Hamburger Menu Button -->
+                        <!-- Hamburger Menu Button -->
                         <div class="sm:hidden">
                             <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
                                 <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -771,15 +842,50 @@
                 </div>
             </section>
             
-            <!-- Legacy Section -->
+            <!-- NEW/IMPROVED Legacy Section -->
             <section id="legacy" class="py-16 sm:py-20">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
-                    <h2 class="section-header text-5xl">Legacy</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
-                    <div class="space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
-                        <p>The golden age of acoustic innovation, from 1950 to 1969, was the crucible in which the modern jazz lexicon was forged. It was a period of intense, shared creativity where a cohesive musical language was established. However, by the late 1960s, this center began to splinter as the music’s evolution bifurcated. The death of John Coltrane in 1967 left a profound spiritual and musical void for the avant-garde, decentralizing its forward momentum. Simultaneously, Miles Davis, the music's restless visionary, pivoted toward electric instruments and funk-rock rhythms. With albums like In a Silent Way and Bitches Brew, he abandoned the acoustic mainstream and single-handedly created a new, electrified one that would define the sound of the 1970s.</p>
-                        <p>Yet, the legacy of the preceding two decades proved indelible. The harmonic sophistication of Bebop, the soulful grammar of Hard Bop, the textural subtlety of Cool Jazz, and the expansive freedom of Modal and Post-Bop were codified into a shared musical playbook. This inheritance was most explicitly reclaimed in the 1980s by the "Young Lions" movement, led by trumpeter Wynton Marsalis, which re-centered the jazz narrative on the acoustic, small-group aesthetic of this era.</p>
-                        <p>This revival cemented the 1950-1969 period as the music's "classical" age, establishing a foundation that remains paramount. Its language is now the bedrock for contemporary acoustic jazz education and performance worldwide. Today’s musicians internalize this vocabulary not as a historical artifact, but as a living tradition—a rich syntax to be honored, deconstructed, or fused with other genres to forge the future of the art form.</p>
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
+                    <h2 class="section-header text-5xl">The Great Splintering</h2>
+                    <p class="text-center text-lg text-stone-600 mb-16 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
+
+                    <!-- Part 1: The two paths -->
+                    <div class="grid md:grid-cols-2 gap-x-12 gap-y-8 items-start text-left mb-16">
+                        <!-- The Electric Path -->
+                        <div class="fade-in-element">
+                            <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-jazz-fusion);">The Electric Path</h3>
+                            <div class="flex gap-4 items-start">
+                                <img src="images/bitches-brew.jpg" class="w-32 h-32 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
+                                <p class="text-stone-700 leading-relaxed">Simultaneously, <strong class="clickable-link" data-artist-name="Miles Davis">Miles Davis</strong>, the music's restless visionary, pivoted toward electric instruments and funk-rock rhythms. With albums like <em>In a Silent Way</em> and <em>Bitches Brew</em>, he abandoned the acoustic mainstream and single-handedly created a new, electrified one that would define the sound of the 1970s.</p>
+                            </div>
+                        </div>
+                        <!-- The Spiritual Path -->
+                        <div class="fade-in-element">
+                            <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-free-jazz);">The Spiritual Path</h3>
+                            <div class="flex gap-4 items-start">
+                                 <img src="images/a-love-supreme.jpg" class="w-32 h-32 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
+                                <p class="text-stone-700 leading-relaxed">The death of <strong class="clickable-link" data-artist-name="John Coltrane">John Coltrane</strong> in 1967 left a profound spiritual and musical void. His late-career explorations into the avant-garde and cosmic spirituality decentralized its forward momentum, inspiring a generation of players to pursue music as a form of transcendence.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Part 2: The Interactive Web -->
+                    <div class="text-left mb-20 fade-in-element">
+                        <h3 class="text-3xl font-bold mb-2 text-center">A Living Tradition</h3>
+                        <p class="text-center text-stone-600 mb-8 max-w-3xl mx-auto">The harmonic sophistication of Bebop, the soulful grammar of Hard Bop, and the expansive freedom of Modal and Post-Bop were codified into a shared musical playbook. This legacy remains the bedrock for contemporary jazz education and performance worldwide. Hover over the nodes below to see the connections.</p>
+                        <div id="influence-web-container" class="relative bg-stone-200 border-2 border-stone-900 rounded-sm p-4 shadow-inner">
+                            <!-- SVG for lines and Nodes will be injected by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Part 3: The Reclamation -->
+                    <div class="grid md:grid-cols-5 gap-8 items-center text-left fade-in-element">
+                        <div class="md:col-span-2">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Wynton_Marsalis_at_Jazz_Ascona_2008.jpg/800px-Wynton_Marsalis_at_Jazz_Ascona_2008.jpg" class="w-full h-auto object-cover rounded-sm border-2 border-stone-900 shadow-lg transform -rotate-2" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1c1917/f5f5f4?text=Wynton+Marsalis';">
+                        </div>
+                        <div class="md:col-span-3">
+                            <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-cool-jazz);">The Acoustic Reclamation</h3>
+                            <p class="text-stone-700 leading-relaxed">This inheritance was most explicitly reclaimed in the 1980s by the "Young Lions" movement, led by trumpeter <strong class="clickable-link" data-artist-name="Wynton Marsalis">Wynton Marsalis</strong>, which re-centered the jazz narrative on the acoustic, small-group aesthetic of the 1950-1969 period. This revival cemented the era as the music's "classical" age, establishing a foundation that remains paramount for today’s musicians.</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -845,7 +951,7 @@
         </div>
     </div>
 
-    <!-- MODIFICATION: Mobile Menu Overlay -->
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
@@ -1085,6 +1191,7 @@
                 this.methods.setupModals();
                 this.methods.setupArtistSlider();
                 this.methods.buildGenreMatrix();
+                this.methods.renderInfluenceWeb(); // New method call
                 this.methods.setupMobileMenu();
                 this.methods.setupScrollObservers();
                 this.methods.setupGeneralEventListeners();
@@ -1613,7 +1720,7 @@
                     }
                     this.methods.goToArtistPage(this.state.currentArtistPage);
                 },
-
+                
                 setupMobileMenu() {
                     const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton, mobileNavLinks } = this.elements;
                     const openMenu = () => {
@@ -1646,7 +1753,6 @@
                         entries.forEach(entry => {
                             if (entry.isIntersecting) {
                                 entry.target.classList.add('is-visible');
-                                scrollObserver.unobserve(entry.target);
                             }
                         });
                     }, { threshold: 0.1 });
@@ -1698,6 +1804,7 @@
                             this.methods.resizeCanvas();
                             this.methods.updateCustomScrollbar();
                             this.methods.renderScrollbarMarkers();
+                            this.methods.renderInfluenceWeb(); // Re-render the web on resize
                         }, 200);
                     });
                     
@@ -1706,6 +1813,18 @@
                     
                     this.methods.setupDraggable(this.elements.timelineContainer);
                     this.methods.setupCustomScrollbarInteraction();
+
+                    // Add a global click listener for clickable links
+                    document.body.addEventListener('click', e => {
+                        const target = e.target;
+                        if (target.matches('.clickable-link[data-artist-name]')) {
+                            const artistName = target.dataset.artistName;
+                            const artist = this.state.artistsData.find(a => a.name === artistName);
+                            if (artist) {
+                                this.methods.openArtistModal(artist);
+                            }
+                        }
+                    });
                 },
                 
                 // --- HELPER METHODS ---
@@ -2239,6 +2358,67 @@
                             </div>
                         `;
                     }
+                },
+
+                // NEW METHOD FOR LEGACY SECTION
+                renderInfluenceWeb() {
+                    const container = document.getElementById('influence-web-container');
+                    if (!container) return;
+                    container.innerHTML = ''; // Clear previous content
+
+                    const slugify = this.methods.slugify;
+                    const nodes = {
+                        center: { id: 'center', label: 'Post-Bop Language (1950-69)', info: 'The "classical" vocabulary of modern jazz, blending bebop harmony, blues feeling, and modal freedom.', img: 'images/logo.svg', pos: { x: 50, y: 50 } },
+                        miles: { id: 'miles', label: 'Miles Davis', info: 'Pioneered jazz fusion by incorporating electric instruments and rock/funk rhythms.', img: `images/${slugify('Miles Davis')}.jpg`, pos: { x: 20, y: 25 } },
+                        herbie: { id: 'herbie', label: 'Herbie Hancock', info: 'Expanded on fusion with his funk-oriented band, Head Hunters.', img: `images/${slugify('Herbie Hancock')}.jpg`, pos: { x: 10, y: 50 } },
+                        mahavishnu: { id: 'mahavishnu', label: 'Mahavishnu Orchestra', info: 'Led by John McLaughlin, combined virtuosic jazz with the power and volume of rock.', img: `images/${slugify('John McLaughlin')}.jpg`, pos: { x: 20, y: 75 } },
+                        coltrane: { id: 'coltrane', label: 'John Coltrane', info: 'His spiritual quest pushed jazz into the avant-garde, inspiring a generation of players.', img: `images/${slugify('John Coltrane')}.jpg`, pos: { x: 80, y: 25 } },
+                        pharoah: { id: 'pharoah', label: 'Pharoah Sanders', info: 'A key disciple of Coltrane, known for his intense, spiritual "energy music".', img: `images/${slugify('Pharoah Sanders')}.jpg`, pos: { x: 90, y: 50 } },
+                        alice: { id: 'alice', label: 'Alice Coltrane', info: 'Pioneered spiritual jazz with her use of the harp and cosmic, meditative compositions.', img: `images/${slugify('Alice Coltrane')}.jpg`, pos: { x: 80, y: 75 } },
+                        wynton: { id: 'wynton', label: 'Wynton Marsalis', info: 'Led the "Young Lions" movement in the 1980s, reviving the acoustic tradition.', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Wynton_Marsalis_at_Jazz_Ascona_2008.jpg/220px-Wynton_Marsalis_at_Jazz_Ascona_2008.jpg', pos: { x: 50, y: 90 } }
+                    };
+
+                    const connections = [
+                        ['center', 'miles'], ['center', 'coltrane'], ['center', 'wynton'],
+                        ['miles', 'herbie'], ['miles', 'mahavishnu'],
+                        ['coltrane', 'pharoah'], ['coltrane', 'alice']
+                    ];
+
+                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.id = 'influence-web-svg';
+                    container.appendChild(svg);
+
+                    Object.values(nodes).forEach(node => {
+                        const nodeEl = document.createElement('div');
+                        nodeEl.className = 'influence-node';
+                        nodeEl.id = `node-${node.id}`;
+                        nodeEl.style.left = `${node.pos.x}%`;
+                        nodeEl.style.top = `${node.pos.y}%`;
+                        nodeEl.style.transform = 'translate(-50%, -50%)';
+                        nodeEl.innerHTML = `
+                            <img src="${node.img}" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">
+                            <span class="node-label">${node.label}</span>
+                            <div class="node-info">${node.info}</div>
+                        `;
+                        container.appendChild(nodeEl);
+                    });
+
+                    setTimeout(() => {
+                        svg.innerHTML = ''; // Clear previous lines
+                        connections.forEach(conn => {
+                            const el1 = document.getElementById(`node-${conn[0]}`);
+                            const el2 = document.getElementById(`node-${conn[1]}`);
+                            if (el1 && el2) {
+                                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                                // Use offsetLeft/Top as they are relative to the container
+                                line.setAttribute('x1', el1.offsetLeft + el1.offsetWidth / 2);
+                                line.setAttribute('y1', el1.offsetTop + el1.offsetHeight / 2);
+                                line.setAttribute('x2', el2.offsetLeft + el2.offsetWidth / 2);
+                                line.setAttribute('y2', el2.offsetTop + el2.offsetHeight / 2);
+                                svg.appendChild(line);
+                            }
+                        });
+                    }, 100);
                 }
             }
         };
