@@ -609,10 +609,21 @@
             font-size: 0.9rem;
         }
         
-        /* NEW STYLES FOR LEGACY SECTION */
+        /* UPDATED STYLES FOR LEGACY SECTION */
         #influence-web-container {
-            user-select: none;
-            min-height: 500px;
+            position: relative;
+            height: 700px; /* Increased height */
+            overflow: hidden; /* Hide overflow for pan/zoom canvas */
+            cursor: grab;
+        }
+        #influence-web-container:active {
+            cursor: grabbing;
+        }
+        #influence-web-canvas {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-origin: 0 0; /* Set origin for scaling */
         }
         .influence-node {
             position: absolute;
@@ -673,6 +684,7 @@
             width: 100%;
             height: 100%;
             z-index: 1;
+            pointer-events: none; /* Let clicks pass through */
         }
         #influence-web-svg line {
             stroke: var(--text-muted);
@@ -878,29 +890,21 @@
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-cool-jazz);">The Melodic Path</h3>
                             <div class="flex gap-4 items-start">
-                                 <img src="images/getz-gilberto.jpg" class="w-32 h-32 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
+                                 <img src="https://i.scdn.co/image/ab67616d0000b2730c8f6144ab22306786883138" class="w-32 h-32 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
                                 <p class="text-stone-700 leading-relaxed">Continuing the tradition of Cool Jazz and Bossa Nova, artists like <strong class="clickable-link" data-artist-name="Stan Getz">Stan Getz</strong> focused on lyrical beauty and accessibility, creating a commercially successful sound that would evolve into the Smooth Jazz of later decades.</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Part 2: The Interactive Web -->
-                    <div class="text-left mb-20 fade-in-element">
+                    <div class="text-left mb-16 fade-in-element">
                         <h3 class="text-3xl font-bold mb-2 text-center">A Living Tradition</h3>
-                        <p class="text-center text-stone-600 mb-8 max-w-3xl mx-auto">The harmonic sophistication of Bebop, the soulful grammar of Hard Bop, and the expansive freedom of Modal and Post-Bop were codified into a shared musical playbook. This legacy remains the bedrock for contemporary jazz education and performance worldwide. Hover over the nodes below to see the connections.</p>
+                        <p class="text-center text-stone-600 mb-8 max-w-3xl mx-auto">The harmonic sophistication of Bebop, the soulful grammar of Hard Bop, and the expansive freedom of Modal and Post-Bop were codified into a shared musical playbook. This legacy remains the bedrock for contemporary jazz education and performance worldwide. Hover over the nodes below to see the connections. Use your mouse wheel to zoom and drag to pan.</p>
                         <div id="influence-web-container" class="relative bg-stone-200 border-2 border-stone-900 rounded-sm p-4 shadow-inner">
-                            <!-- SVG for lines and Nodes will be injected by JavaScript -->
-                        </div>
-                    </div>
-
-                    <!-- Part 3: The Reclamation -->
-                    <div class="grid md:grid-cols-5 gap-8 items-center text-left fade-in-element">
-                        <div class="md:col-span-2">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Wynton_Marsalis_at_Jazz_Ascona_2008.jpg/800px-Wynton_Marsalis_at_Jazz_Ascona_2008.jpg" class="w-full h-auto object-cover rounded-sm border-2 border-stone-900 shadow-lg transform -rotate-2" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1c1917/f5f5f4?text=Wynton+Marsalis';">
-                        </div>
-                        <div class="md:col-span-3">
-                            <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-hard-bop);">The Acoustic Reclamation</h3>
-                            <p class="text-stone-700 leading-relaxed">This inheritance was most explicitly reclaimed in the 1980s by the "Young Lions" movement, led by trumpeter <strong class="clickable-link" data-artist-name="Wynton Marsalis">Wynton Marsalis</strong>, which re-centered the jazz narrative on the acoustic, small-group aesthetic of the 1950-1969 period. This revival cemented the era as the music's "classical" age, establishing a foundation that remains paramount for today’s musicians.</p>
+                            <div id="influence-web-canvas">
+                               <svg id="influence-web-svg"></svg>
+                               <!-- Nodes will be injected here by JavaScript -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1113,6 +1117,13 @@
                 lastKnownEraTitle: '',
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
+                influenceWebState: {
+                    scale: 1,
+                    panX: 0,
+                    panY: 0,
+                    isPanning: false,
+                    startPos: { x: 0, y: 0 }
+                }
             },
 
             // DOM Elements
@@ -1164,6 +1175,8 @@
                     navLinks: document.querySelectorAll('header nav a'),
                     footerCopyright: document.getElementById('footer-copyright'),
                     onThisDayContainer: document.getElementById('on-this-day'),
+                    influenceWebContainer: document.getElementById('influence-web-container'),
+                    influenceWebCanvas: document.getElementById('influence-web-canvas'),
                 };
             },
 
@@ -1207,7 +1220,8 @@
                 this.methods.setupModals();
                 this.methods.setupArtistSlider();
                 this.methods.buildGenreMatrix();
-                this.methods.renderInfluenceWeb(); // New method call
+                this.methods.renderInfluenceWeb(); 
+                this.methods.setupPanAndZoom(); // Setup pan/zoom listeners
                 this.methods.setupMobileMenu();
                 this.methods.setupScrollObservers();
                 this.methods.setupGeneralEventListeners();
@@ -2378,27 +2392,46 @@
 
                 // UPDATED METHOD FOR LEGACY SECTION
                 renderInfluenceWeb() {
-                    const container = document.getElementById('influence-web-container');
-                    if (!container) return;
-                    container.innerHTML = ''; // Clear previous content
+                    const canvas = document.getElementById('influence-web-canvas');
+                    if (!canvas) return;
+                    canvas.innerHTML = ''; // Clear previous content
+                    
+                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.id = 'influence-web-svg';
+                    canvas.appendChild(svg);
 
                     const slugify = this.methods.slugify;
                     const nodes = {
-                        center: { id: 'center', label: 'Post-Bop Language (1950-69)', info: 'The "classical" vocabulary of modern jazz, blending bebop harmony, blues feeling, and modal freedom.', img: 'images/logo.svg', pos: { x: 50, y: 50 } },
-                        miles: { id: 'miles', label: 'Electric Fusion', info: 'Pioneered by Miles Davis, this path incorporated electric instruments and rock/funk rhythms.', img: `images/${slugify('Miles Davis')}.jpg`, pos: { x: 20, y: 20 } },
-                        coltrane: { id: 'coltrane', label: 'Spiritual Jazz', info: 'Following John Coltrane\'s quest, this path used music for transcendence and spiritual expression.', img: `images/${slugify('John Coltrane')}.jpg`, pos: { x: 80, y: 20 } },
-                        ornette: { id: 'ornette', label: 'Avant-Garde', info: 'Led by Ornette Coleman, this path deconstructed rules, focusing on pure melody and texture.', img: `images/${slugify('Ornette Coleman')}.jpg`, pos: { x: 20, y: 80 } },
-                        getz: { id: 'getz', label: 'Melodic & Bossa', info: 'Championed by Stan Getz, this path focused on lyrical beauty, leading to Smooth Jazz.', img: `images/${slugify('Stan Getz')}.jpg`, pos: { x: 80, y: 80 } },
-                        wynton: { id: 'wynton', label: 'Acoustic Reclamation', info: 'In the 80s, Wynton Marsalis led a revival of the classic acoustic small-group sound.', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Wynton_Marsalis_at_Jazz_Ascona_2008.jpg/220px-Wynton_Marsalis_at_Jazz_Ascona_2008.jpg', pos: { x: 50, y: 10 } }
+                        center: { id: 'center', label: 'Post-Bop (1959-69)', info: 'The common language of the 60s, blending harmonic complexity with modal freedom.', img: 'images/logo.svg', pos: { x: 50, y: 50 } },
+                        
+                        // Primary Branches
+                        jazzFusion: { id: 'jazzFusion', label: 'Jazz Fusion', info: 'Pioneered by Miles Davis, this path incorporated electric instruments and rock/funk rhythms.', img: `images/${slugify('Miles Davis')}.jpg`, pos: { x: 50, y: 15 } },
+                        spiritual: { id: 'spiritual', label: 'Spiritual Jazz', info: 'Following John Coltrane\'s quest, this path used music for transcendence and spiritual expression.', img: `images/${slugify('John Coltrane')}.jpg`, pos: { x: 85, y: 50 } },
+                        avantGarde: { id: 'avantGarde', label: 'Avant-Garde', info: 'Led by Ornette Coleman, this path deconstructed rules, focusing on pure melody and texture.', img: `images/${slugify('Ornette Coleman')}.jpg`, pos: { x: 50, y: 85 } },
+                        cool: { id: 'cool', label: 'Cool & Bossa', info: 'Championed by Stan Getz, this path focused on lyrical beauty, leading to Smooth Jazz.', img: 'https://i.scdn.co/image/ab67616d0000b2730c8f6144ab22306786883138', pos: { x: 15, y: 50 } },
+
+                        // Future Branches
+                        spiritualAvantGarde: { id: 'spiritualAvantGarde', label: 'Spiritual + Avant-Garde', info: 'Combines the intensity of free improvisation with a deep, meditative quality.', img: 'https://e.snmc.io/i/600/s/17238a356248ab22323533458694f7a3/2836261', pos: { x: 95, y: 25 } },
+                        afroJazz: { id: 'afroJazz', label: 'Afro-Jazz', info: 'Fuses jazz improvisation with traditional African rhythms and instrumentation.', img: 'https://e.snmc.io/i/600/s/a3554e20cf9321c82823b1853b75486e/10103755', pos: { x: 95, y: 75 } },
+                        
+                        fusionAvantGarde: { id: 'fusionAvantGarde', label: 'Fusion + Avant-Garde', info: 'The raw energy of free jazz meets the volume and electricity of rock.', img: 'https://e.snmc.io/i/600/s/e5716e37e33529322b8514539224d4e3/50531', pos: { x: 75, y: 5 } },
+                        fusionRock: { id: 'fusionRock', label: 'Jazz-Rock', info: 'Emphasizes virtuosic soloing over powerful, complex rock grooves.', img: 'https://e.snmc.io/i/600/s/5b35835d0643714f3f4e13e4f3a763d5/71003', pos: { x: 50, y: -5 } },
+                        fusionECM: { id: 'fusionECM', label: 'Fusion + ECM Style', info: 'A more atmospheric and spacious approach to fusion, typical of the ECM label.', img: 'https://e.snmc.io/i/600/s/f8b19a1618693867c29e7f81f8f39e31/81180', pos: { x: 25, y: 5 } },
+                        
+                        modernCreative: { id: 'modernCreative', label: 'Modern Creative', info: 'A contemporary extension of the avant-garde, often blending composition and free play.', img: 'https://e.snmc.io/i/600/s/4c2642a8b9e663d2e94a89a0dc1181da/4785420', pos: { x: 75, y: 95 } },
+                        loftJazz: { id: 'loftJazz', label: 'Loft Jazz', info: 'A gritty, bluesy, and funky take on the avant-garde that emerged from New York lofts.', img: 'https://e.snmc.io/i/600/s/2d69427f0f62d73359d9978181f727c9/50699', pos: { x: 25, y: 95 } },
+
+                        ecmStyle: { id: 'ecmStyle', label: 'ECM Style Jazz', info: 'Known for pristine production and a blend of modal jazz with folk and classical influences.', img: 'https://e.snmc.io/i/600/s/c354a42b15163155716b5e02d1d45923/81188', pos: { x: 5, y: 25 } },
+                        postBopFusion: { id: 'postBopFusion', label: 'Post-Bop + Fusion', info: 'Features acoustic post-bop musicians incorporating electric instruments and funk.', img: 'https://e.snmc.io/i/600/s/f01229302633a69a4892c55d0132b318/50567', pos: { x: 5, y: 75 } },
                     };
 
                     const connections = [
-                        ['center', 'miles'], ['center', 'coltrane'], ['center', 'ornette'], ['center', 'getz'], ['center', 'wynton']
+                        ['center', 'jazzFusion'], ['center', 'spiritual'], ['center', 'avantGarde'], ['center', 'cool'],
+                        ['spiritual', 'spiritualAvantGarde'], ['spiritual', 'afroJazz'],
+                        ['jazzFusion', 'fusionAvantGarde'], ['jazzFusion', 'fusionRock'], ['jazzFusion', 'fusionECM'],
+                        ['avantGarde', 'modernCreative'], ['avantGarde', 'loftJazz'],
+                        ['cool', 'ecmStyle'], ['cool', 'postBopFusion'],
                     ];
-
-                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                    svg.id = 'influence-web-svg';
-                    container.appendChild(svg);
 
                     Object.values(nodes).forEach(node => {
                         const nodeEl = document.createElement('div');
@@ -2412,24 +2445,96 @@
                             <span class="node-label">${node.label}</span>
                             <div class="node-info">${node.info}</div>
                         `;
-                        container.appendChild(nodeEl);
+                        canvas.appendChild(nodeEl);
                     });
 
-                    setTimeout(() => {
-                        svg.innerHTML = ''; // Clear previous lines
-                        connections.forEach(conn => {
-                            const el1 = document.getElementById(`node-${conn[0]}`);
-                            const el2 = document.getElementById(`node-${conn[1]}`);
-                            if (el1 && el2) {
-                                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                                line.setAttribute('x1', el1.offsetLeft + el1.offsetWidth / 2);
-                                line.setAttribute('y1', el1.offsetTop + el1.offsetHeight / 2);
-                                line.setAttribute('x2', el2.offsetLeft + el2.offsetWidth / 2);
-                                line.setAttribute('y2', el2.offsetTop + el2.offsetHeight / 2);
-                                svg.appendChild(line);
-                            }
-                        });
-                    }, 100);
+                    setTimeout(() => this.methods.drawInfluenceLines(), 50);
+                },
+
+                drawInfluenceLines() {
+                    const canvas = document.getElementById('influence-web-canvas');
+                    const svg = document.getElementById('influence-web-svg');
+                    if (!canvas || !svg) return;
+                    
+                    svg.innerHTML = ''; // Clear previous lines
+                    
+                    const connections = [
+                        ['center', 'jazzFusion'], ['center', 'spiritual'], ['center', 'avantGarde'], ['center', 'cool'],
+                        ['spiritual', 'spiritualAvantGarde'], ['spiritual', 'afroJazz'],
+                        ['jazzFusion', 'fusionAvantGarde'], ['jazzFusion', 'fusionRock'], ['jazzFusion', 'fusionECM'],
+                        ['avantGarde', 'modernCreative'], ['avantGarde', 'loftJazz'],
+                        ['cool', 'ecmStyle'], ['cool', 'postBopFusion'],
+                    ];
+
+                    connections.forEach(conn => {
+                        const el1 = document.getElementById(`node-${conn[0]}`);
+                        const el2 = document.getElementById(`node-${conn[1]}`);
+                        if (el1 && el2) {
+                            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                            line.setAttribute('x1', el1.offsetLeft + el1.offsetWidth / 2);
+                            line.setAttribute('y1', el1.offsetTop + el1.offsetHeight / 2);
+                            line.setAttribute('x2', el2.offsetLeft + el2.offsetWidth / 2);
+                            line.setAttribute('y2', el2.offsetTop + el2.offsetHeight / 2);
+                            svg.appendChild(line);
+                        }
+                    });
+                },
+                
+                setupPanAndZoom() {
+                    const container = this.elements.influenceWebContainer;
+                    const canvas = this.elements.influenceWebCanvas;
+                    if (!container || !canvas) return;
+
+                    const state = this.state.influenceWebState;
+
+                    const applyTransform = () => {
+                        canvas.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.scale})`;
+                    };
+
+                    container.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        state.isPanning = true;
+                        state.startPos = { x: e.clientX - state.panX, y: e.clientY - state.panY };
+                        container.style.cursor = 'grabbing';
+                    });
+
+                    container.addEventListener('mousemove', (e) => {
+                        if (!state.isPanning) return;
+                        e.preventDefault();
+                        state.panX = e.clientX - state.startPos.x;
+                        state.panY = e.clientY - state.startPos.y;
+                        applyTransform();
+                    });
+
+                    container.addEventListener('mouseup', () => {
+                        state.isPanning = false;
+                        container.style.cursor = 'grab';
+                    });
+                    
+                    container.addEventListener('mouseleave', () => {
+                        state.isPanning = false;
+                        container.style.cursor = 'grab';
+                    });
+
+                    container.addEventListener('wheel', (e) => {
+                        e.preventDefault();
+                        const rect = container.getBoundingClientRect();
+                        const mouseX = e.clientX - rect.left;
+                        const mouseY = e.clientY - rect.top;
+                        const zoomFactor = 1.1;
+                        const oldScale = state.scale;
+
+                        if (e.deltaY < 0) { // Zoom in
+                            state.scale = Math.min(3, state.scale * zoomFactor);
+                        } else { // Zoom out
+                            state.scale = Math.max(0.5, state.scale / zoomFactor);
+                        }
+                        
+                        state.panX = mouseX - (mouseX - state.panX) * (state.scale / oldScale);
+                        state.panY = mouseY - (mouseY - state.panY) * (state.scale / oldScale);
+
+                        applyTransform();
+                    });
                 }
             }
         };
