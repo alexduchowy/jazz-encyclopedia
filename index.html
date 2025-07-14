@@ -611,37 +611,28 @@
         }
         
         /* UPDATED STYLES FOR LEGACY SECTION */
-        #paths-selector {
-            overflow: hidden;
-        }
-        #paths-selector-track {
-            display: flex;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .path-card {
-            width: 100%;
-            flex-shrink: 0;
-            background-color: var(--bg-secondary);
-            border: 2px solid var(--text-main);
-            border-radius: 0.5rem;
-            box-shadow: 4px 4px 0px var(--text-main);
+        .path-title-button {
+            background: none;
+            border: none;
+            padding: 0;
+            font: inherit;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: left;
+            transition: color 0.2s;
         }
-        .path-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 8px 8px 0px var(--accent);
-        }
-        #legacy-slider-title {
-            color: white;
-        }
-        #legacy-slider-wrapper {
-            transition: background-color 0.5s ease;
+        .path-title-button:hover {
+            color: var(--accent) !important;
         }
         #legacy-slider-track {
             display: flex;
             gap: 1.5rem;
-            padding: 1rem 0;
+            padding-bottom: 1rem;
+        }
+        #legacy-slider-title {
+            color: var(--text-main);
+        }
+        #legacy-slider-wrapper {
+            transition: background-color 0.5s ease;
         }
    
     </style>
@@ -812,22 +803,13 @@
                     <h2 class="section-header text-5xl">Legacy</h2>
                     <p class="text-center text-lg text-stone-600 mb-16 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
 
-                    <!-- Part 1: The Path Selector -->
-                    <div id="path-selector-container" class="relative mb-12">
-                        <h3 class="text-3xl font-bold mb-4 text-center">Choose a Path</h3>
-                        <div id="paths-selector" class="overflow-hidden">
-                            <div id="paths-selector-track" class="flex transition-transform duration-500 ease-in-out">
-                                <!-- Path selector cards will be injected here -->
-                            </div>
+                    <!-- Part 1: The Six Paths Selector -->
+                    <div id="paths-selector" class="relative mb-12">
+                        <div id="paths-selector-track" class="flex items-center justify-center space-x-4">
+                           <!-- Path selector cards will be injected here -->
                         </div>
-                        <button id="path-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                        </button>
-                        <button id="path-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                        </button>
                     </div>
-
+                    
                     <!-- Part 2: The Legacy Album Slider -->
                     <div id="legacy-slider-wrapper" class="hidden mt-12 p-6 rounded-lg transition-colors duration-500">
                         <h3 id="legacy-slider-title" class="text-3xl font-bold mb-8 text-center text-white"></h3>
@@ -836,6 +818,12 @@
                                 <div id="legacy-slider-track" class="flex transition-transform duration-500 ease-in-out">
                                     <!-- Album cards will be injected here -->
                                 </div>
+                                <button id="legacy-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                </button>
+                                <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1049,7 +1037,6 @@
                 legacyData: {},
                 visibleAlbums: [],
                 currentLegacySlide: 0,
-                currentPathIndex: 0,
                 eras: [
                     { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'var(--era-cool-light)' },
                     { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: 'var(--era-hard-bop-light)' },
@@ -1119,13 +1106,10 @@
                     navLinks: document.querySelectorAll('header nav a'),
                     footerCopyright: document.getElementById('footer-copyright'),
                     onThisDayContainer: document.getElementById('on-this-day'),
-                    pathsSelectorTrack: document.getElementById('paths-selector-track'),
-                    pathPrevBtn: document.getElementById('path-prev-btn'),
-                    pathNextBtn: document.getElementById('path-next-btn'),
+                    pathsContainer: document.getElementById('paths-selector-track'),
                     legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
                     legacySliderTrack: document.getElementById('legacy-slider-track'),
                     legacySliderTitle: document.getElementById('legacy-slider-title'),
-                    legacyAlbumSliderContainer: document.getElementById('legacy-album-slider-container'),
                     legacyPrevBtn: document.getElementById('legacy-prev-btn'),
                     legacyNextBtn: document.getElementById('legacy-next-btn'),
                 };
@@ -1173,9 +1157,8 @@
                 this.methods.setupModals();
                 this.methods.setupArtistSlider();
                 this.methods.buildGenreMatrix();
-                this.methods.renderPathSelector();
-                this.methods.setupPathSelectorSlider();
-                this.methods.setupLegacyAlbumSlider();
+                this.methods.renderPaths();
+                this.methods.setupLegacySlider();
                 this.methods.setupMobileMenu();
                 this.methods.setupScrollObservers();
                 this.methods.setupGeneralEventListeners();
@@ -1184,7 +1167,7 @@
                 this.showPage();
                 setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 0);
                 // Predetermined start
-                this.methods.renderLegacySlider(Object.keys(this.state.legacyData)[0]);
+                this.methods.renderLegacySlider("The Electric Path");
             },
 
             // Methods Object
@@ -1799,7 +1782,6 @@
                     if (this.elements.scrollRightBtn) this.elements.scrollRightBtn.classList.add('nudge-animation');
                     
                     this.methods.setupDraggable(this.elements.timelineContainer);
-                    this.methods.setupDraggable(this.elements.legacyAlbumSliderContainer);
                     this.methods.setupCustomScrollbarInteraction();
 
                     // Add a global click listener for clickable links
@@ -2299,7 +2281,6 @@
 
                 renderScrollbarMarkers() {
                     const { timelineContainer, timelineWrapper, customScrollbarMarkers } = this.elements;
-                    if (!timelineContainer || !timelineWrapper || !customScrollbarMarkers) return;
                     const years = [...new Set(this.state.albums.map(album => album.year))].sort();
                     customScrollbarMarkers.innerHTML = ''; // Clear existing markers
 
@@ -2385,15 +2366,14 @@
                 },
 
                 // UPDATED METHOD FOR LEGACY SECTION
-                renderPathSelector() {
-                    const container = this.elements.pathsSelectorTrack;
+                renderPaths() {
+                    const container = this.elements.pathsContainer;
                     if (!container) return;
                     container.innerHTML = '';
 
                     Object.entries(this.state.legacyData).forEach(([pathKey, path]) => {
                         const pathEl = document.createElement('div');
-                        pathEl.className = 'path-card p-6 w-full flex-shrink-0';
-                        pathEl.dataset.pathKey = pathKey;
+                        pathEl.className = 'fade-in-element';
 
                         let colorVar;
                         switch(path.title) {
@@ -2406,42 +2386,23 @@
                             default: colorVar = 'var(--text-main)';
                         }
                         
-                        const pathDescription = path.albums[0].pivotalTracks[0].analysis;
+                        const pathDescription = path.albums.find(a => a.pivotalTracks[0].analysis)?.pivotalTracks[0].analysis || "No description available.";
 
                         pathEl.innerHTML = `
-                            <div class="flex flex-col md:flex-row gap-6 items-center">
-                                <img src="${path.albums[0].cover}" class="w-32 h-32 object-cover rounded-md border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
-                                <div class="text-left">
-                                    <h3 class="text-3xl font-bold mb-2" style="color: ${colorVar};">${path.title}</h3>
-                                    <p class="text-stone-700 leading-relaxed text-sm">${pathDescription}</p>
-                                </div>
-                            </div>
+                            <button class="path-title-button" data-path-key="${pathKey}">
+                                <h3 class="text-3xl font-bold mb-4" style="color: ${colorVar};">${path.title}</h3>
+                            </button>
+                            <p class="text-stone-700 leading-relaxed text-sm">${pathDescription}</p>
                         `;
                         container.appendChild(pathEl);
                     });
-                },
-                
-                setupPathSelectorSlider() {
-                    const { pathPrevBtn, pathNextBtn } = this.elements;
-                    pathPrevBtn.addEventListener('click', () => this.methods.movePathSlide(-1));
-                    pathNextBtn.addEventListener('click', () => this.methods.movePathSlide(1));
-                    this.methods.updatePathSelectorView();
-                },
 
-                movePathSlide(direction) {
-                    const numPaths = Object.keys(this.state.legacyData).length;
-                    this.state.currentPathIndex = (this.state.currentPathIndex + direction + numPaths) % numPaths;
-                    this.methods.updatePathSelectorView();
-                },
-
-                updatePathSelectorView() {
-                    const track = this.elements.pathsSelectorTrack;
-                    const newTransform = -this.state.currentPathIndex * 100;
-                    track.style.transform = `translateX(${newTransform}%)`;
-                    
-                    const pathKeys = Object.keys(this.state.legacyData);
-                    const currentPathKey = pathKeys[this.state.currentPathIndex];
-                    this.methods.renderLegacySlider(currentPathKey);
+                    document.querySelectorAll('.path-title-button').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const pathKey = e.currentTarget.dataset.pathKey;
+                            this.methods.renderLegacySlider(pathKey);
+                        });
+                    });
                 },
 
                 renderLegacySlider(pathKey) {
@@ -2466,8 +2427,8 @@
                             case 'The Neo-Bop Path': colorVar = 'var(--genre-bebop)'; break;
                             default: colorVar = 'var(--text-main)';
                         }
-                    legacySliderTitle.style.color = 'white';
-                    this.elements.legacySliderWrapper.style.backgroundColor = colorVar.replace(')', ', 0.1)').replace('rgb', 'rgba');
+                    legacySliderTitle.style.color = colorVar;
+                    this.elements.legacySliderWrapper.style.backgroundColor = `${colorVar.slice(0,-1)}, 0.1)`;
 
 
                     albums.forEach(album => {
@@ -2489,16 +2450,16 @@
                     
                     legacySliderWrapper.classList.remove('hidden');
                     this.state.currentLegacySlide = 0;
-                    this.methods.updateLegacyAlbumSlider();
+                    this.methods.updateLegacySlider();
                 },
 
-                setupLegacyAlbumSlider() {
+                setupLegacySlider() {
                     const { legacyPrevBtn, legacyNextBtn } = this.elements;
-                    legacyPrevBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(-1));
-                    legacyNextBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(1));
+                    legacyPrevBtn.addEventListener('click', () => this.methods.moveLegacySlide(-1));
+                    legacyNextBtn.addEventListener('click', () => this.methods.moveLegacySlide(1));
                 },
 
-                moveLegacyAlbumSlide(direction) {
+                moveLegacySlide(direction) {
                     const track = this.elements.legacySliderTrack;
                     const cards = track.querySelectorAll('.legacy-album-card');
                     const numCards = cards.length;
@@ -2509,15 +2470,15 @@
                         this.state.currentLegacySlide = 0;
                     }
                     
-                    const visibleCards = Math.floor(this.elements.legacyAlbumSliderContainer.clientWidth / (200 + 24));
+                    const visibleCards = 4;
                     if (this.state.currentLegacySlide > numCards - visibleCards) {
                         this.state.currentLegacySlide = numCards - visibleCards;
                     }
                     
-                    this.methods.updateLegacyAlbumSlider();
+                    this.methods.updateLegacySlider();
                 },
 
-                updateLegacyAlbumSlider() {
+                updateLegacySlider() {
                     const track = this.elements.legacySliderTrack;
                     const cardWidth = 200 + 24; // width + gap
                     const newTransform = -this.state.currentLegacySlide * cardWidth;
