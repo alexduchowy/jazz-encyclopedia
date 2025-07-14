@@ -9,6 +9,10 @@
           "artist": "The Mahavishnu Orchestra",
           "albumTitle": "The Inner Mounting Flame",
           "cover": "images/the-inner-mounting-flame.jpg",
+          "genres": [
+            "Jazz Fusion",
+            "Jazz-Rock"
+          ],
           "pivotalTracks": [
             {
               "title": "Meeting of the Spirits",
@@ -24,6 +28,10 @@
           "artist": "Herbie Hancock",
           "albumTitle": "Head Hunters",
           "cover": "images/head-hunters.jpg",
+          "genres": [
+            "Jazz-Funk",
+            "Jazz Fusion"
+          ],
           "pivotalTracks": [
             {
               "title": "Chameleon",
@@ -39,6 +47,10 @@
           "artist": "Miles Davis",
           "albumTitle": "Get Up With It",
           "cover": "images/get-up-with-it.jpg",
+          "genres": [
+            "Jazz Fusion",
+            "Ambient Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "He Loved Him Madly",
@@ -54,6 +66,10 @@
           "artist": "Sun Ra",
           "albumTitle": "Lanquidity",
           "cover": "images/lanquidity.jpg",
+          "genres": [
+            "Jazz-Funk",
+            "Spiritual Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Lanquidity",
@@ -69,6 +85,10 @@
           "artist": "John Zorn",
           "albumTitle": "Naked City",
           "cover": "images/naked-city.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Jazz-Rock"
+          ],
           "pivotalTracks": [
             {
               "title": "Batman",
@@ -84,6 +104,10 @@
           "artist": "Kamasi Washington",
           "albumTitle": "Fearless Movement",
           "cover": "images/fearless-movement.jpg",
+          "genres": [
+            "Spiritual Jazz",
+            "Jazz-Funk"
+          ],
           "pivotalTracks": [
             {
               "title": "Prologue",
@@ -105,6 +129,10 @@
           "artist": "Alice Coltrane",
           "albumTitle": "Journey in Satchidananda",
           "cover": "images/journey-in-satchidananda.jpg",
+          "genres": [
+            "Spiritual Jazz",
+            "Avant-Garde Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Journey in Satchidananda",
@@ -120,6 +148,10 @@
           "artist": "Pharoah Sanders",
           "albumTitle": "Black Unity",
           "cover": "images/black-unity.jpg",
+          "genres": [
+            "Spiritual Jazz",
+            "Free Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Black Unity",
@@ -135,6 +167,10 @@
           "artist": "McCoy Tyner",
           "albumTitle": "Enlightenment",
           "cover": "images/enlightenment.jpg",
+          "genres": [
+            "Spiritual Jazz",
+            "Post-Bop"
+          ],
           "pivotalTracks": [
             {
               "title": "Walk Spirit, Talk Spirit",
@@ -150,6 +186,10 @@
           "artist": "Billy Harper",
           "albumTitle": "Black Saint",
           "cover": "images/black-saint.jpg",
+          "genres": [
+            "Spiritual Jazz",
+            "Post-Bop"
+          ],
           "pivotalTracks": [
             {
               "title": "Black Saint",
@@ -164,7 +204,11 @@
           "year": 1977,
           "artist": "Don Cherry",
           "albumTitle": "Don Cherry",
-          "cover": "images/don-cherry2.jpg",
+          "cover": "images/don-cherry.jpg",
+          "genres": [
+            "Spiritual Jazz",
+            "Jazz-Funk"
+          ],
           "pivotalTracks": [
             {
               "title": "Brown Rice",
@@ -180,6 +224,10 @@
           "artist": "David S. Ware Quartet",
           "albumTitle": "Godspelized",
           "cover": "images/godspelized.jpg",
+          "genres": [
+            "Free Jazz",
+            "Spiritual Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Godspelized",
@@ -201,6 +249,10 @@
           "artist": "Ornette Coleman",
           "albumTitle": "Science Fiction",
           "cover": "images/science-fiction.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Free Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Science Fiction",
@@ -216,6 +268,10 @@
           "artist": "Anthony Davis",
           "albumTitle": "Variations in Dream-Time",
           "cover": "images/variations-in-dream-time.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Third Stream"
+          ],
           "pivotalTracks": [
             {
               "title": "Variations in Dream-Time",
@@ -231,6 +287,10 @@
           "artist": "Anthony Braxton",
           "albumTitle": "Willisau (Quartet) 1991",
           "cover": "images/willisau-quartet-1991.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Free Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Composition No. 160 (+147+96)",
@@ -246,6 +306,10 @@
           "artist": "Sonny Sharrock",
           "albumTitle": "Ask the Ages",
           "cover": "images/ask-the-ages.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Jazz-Rock"
+          ],
           "pivotalTracks": [
             {
               "title": "Promises Kept",
@@ -261,6 +325,10 @@
           "artist": "The Necks",
           "albumTitle": "Hanging Gardens",
           "cover": "images/hanging-gardens.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Ambient Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Hanging Gardens",
@@ -276,6 +344,10 @@
           "artist": "Matana Roberts",
           "albumTitle": "Coin Coin Chapter One: Gens de couleur libres",
           "cover": "images/coin-coin-chapter-one.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Free Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "pov piti",
@@ -297,6 +369,10 @@
           "artist": "Chick Corea",
           "albumTitle": "Return to Forever",
           "cover": "images/return-to-forever.jpg",
+          "genres": [
+            "Jazz Fusion",
+            "ECM Style Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Crystal Silence",
@@ -312,6 +388,10 @@
           "artist": "Paul Bley",
           "albumTitle": "Open, to Love",
           "cover": "images/open-to-love.jpg",
+          "genres": [
+            "Cool Jazz",
+            "ECM Style Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Ida Lupino",
@@ -327,6 +407,10 @@
           "artist": "Bennie Maupin",
           "albumTitle": "The Jewel in the Lotus",
           "cover": "images/the-jewel-in-the-lotus.jpg",
+          "genres": [
+            "Spiritual Jazz",
+            "ECM Style Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "The Jewel in the Lotus",
@@ -342,6 +426,10 @@
           "artist": "Jan Garbarek, Keith Jarrett, Palle Danielsson & Jon Christensen",
           "albumTitle": "Belonging",
           "cover": "images/belonging.jpg",
+          "genres": [
+            "Post-Bop",
+            "ECM Style Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "'Long As You Know You're Living Yours",
@@ -357,6 +445,10 @@
           "artist": "Keith Jarrett",
           "albumTitle": "The Köln Concert",
           "cover": "images/the-koln-concert.jpg",
+          "genres": [
+            "Cool Jazz",
+            "ECM Style Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Part I",
@@ -372,6 +464,10 @@
           "artist": "Pat Metheny Group",
           "albumTitle": "Pat Metheny Group",
           "cover": "images/pat-metheny-group.jpg",
+          "genres": [
+            "Jazz Fusion",
+            "ECM Style Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Phase Dance",
@@ -393,6 +489,10 @@
           "artist": "Woody Shaw",
           "albumTitle": "Blackstone Legacy",
           "cover": "images/blackstone-legacy.jpg",
+          "genres": [
+            "Post-Bop",
+            "Spiritual Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Blackstone Legacy",
@@ -408,6 +508,10 @@
           "artist": "The Art Ensemble of Chicago",
           "albumTitle": "Bap-Tizum",
           "cover": "images/bap-tizum.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Afro-Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Odwalla",
@@ -423,6 +527,10 @@
           "artist": "The Pyramids",
           "albumTitle": "King of Kings",
           "cover": "images/king-of-kings.jpg",
+          "genres": [
+            "Spiritual Jazz",
+            "Afro-Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "King of Kings",
@@ -438,6 +546,10 @@
           "artist": "Johnny Dyani Quartet",
           "albumTitle": "Song for Biko",
           "cover": "images/song-for-biko.jpg",
+          "genres": [
+            "Cape Jazz",
+            "Free Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Song for Biko",
@@ -453,6 +565,10 @@
           "artist": "Sons of Kemet",
           "albumTitle": "Your Queen Is a Reptile",
           "cover": "images/your-queen-is-a-reptile.jpg",
+          "genres": [
+            "Afro-Jazz",
+            "Jazz Fusion"
+          ],
           "pivotalTracks": [
             {
               "title": "My Queen Is Harriet Tubman",
@@ -468,6 +584,10 @@
           "artist": "Shabaka and the Ancestors",
           "albumTitle": "We Are Sent Here by History",
           "cover": "images/we-are-sent-here-by-history.jpg",
+          "genres": [
+            "Spiritual Jazz",
+            "Afro-Jazz"
+          ],
           "pivotalTracks": [
             {
               "title": "Go My Heart, Go to Heaven",
@@ -489,6 +609,10 @@
           "artist": "Ryo Fukui",
           "albumTitle": "Scenery",
           "cover": "images/scenery.jpg",
+          "genres": [
+            "Hard Bop",
+            "Post-Bop"
+          ],
           "pivotalTracks": [
             {
               "title": "It Could Happen to You",
@@ -504,6 +628,10 @@
           "artist": "Cedar Walton",
           "albumTitle": "Eastern Rebellion",
           "cover": "images/eastern-rebellion.jpg",
+          "genres": [
+            "Hard Bop",
+            "Post-Bop"
+          ],
           "pivotalTracks": [
             {
               "title": "Bolivia",
@@ -519,6 +647,10 @@
           "artist": "Wynton Marsalis",
           "albumTitle": "Black Codes (From the Underground)",
           "cover": "images/black-codes-from-the-underground.jpg",
+          "genres": [
+            "Post-Bop",
+            "Neo-Bop"
+          ],
           "pivotalTracks": [
             {
               "title": "Black Codes",
@@ -534,6 +666,10 @@
           "artist": "Tom Harrell",
           "albumTitle": "Sail Away",
           "cover": "images/sail-away.jpg",
+          "genres": [
+            "Post-Bop",
+            "Neo-Bop"
+          ],
           "pivotalTracks": [
             {
               "title": "Sail Away",
@@ -549,6 +685,10 @@
           "artist": "Joshua Redman",
           "albumTitle": "Moodswing",
           "cover": "images/moodswing.jpg",
+          "genres": [
+            "Post-Bop",
+            "Neo-Bop"
+          ],
           "pivotalTracks": [
             {
               "title": "Rejoice",
@@ -564,6 +704,10 @@
           "artist": "Kenny Garrett",
           "albumTitle": "Songbook",
           "cover": "images/songbook-kenny-garrett.jpg",
+          "genres": [
+            "Post-Bop",
+            "Neo-Bop"
+          ],
           "pivotalTracks": [
             {
               "title": "Ms. Baja",
