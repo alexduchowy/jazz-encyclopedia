@@ -1865,15 +1865,6 @@
                     const { pathSelectorSlider } = this.elements;
                     pathSelectorSlider.innerHTML = '';
 
-                    const pathImages = {
-                        "The Electric Path": "https://images.unsplash.com/photo-1598488581923-34e269431525?q=80&w=800&auto=format&fit=crop",
-                        "The Spiritual Path": "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=800&auto=format&fit=crop",
-                        "The Avant-Garde Path": "https://images.unsplash.com/photo-1519677100299-9c4de19857a6?q=80&w=800&auto=format&fit=crop",
-                        "The Melodic Path": "https://images.unsplash.com/photo-1500932334428-54c3758376b5?q=80&w=800&auto=format&fit=crop",
-                        "The Afro-Jazz Path": "https://images.unsplash.com/photo-1592534164823-86a0f4c4941a?q=80&w=800&auto=format&fit=crop",
-                        "The Neo-Bop Path": "https://images.unsplash.com/photo-1580694898145-24e478544951?q=80&w=800&auto=format&fit=crop"
-                    };
-
                     Object.entries(this.state.legacyData).forEach(([pathKey, pathData]) => {
                         const card = document.createElement('div');
                         card.className = 'path-selector-card text-left';
@@ -1886,7 +1877,10 @@
                         card.style.setProperty('--path-color', pathColor);
 
                         const description = pathData.albums[0]?.pivotalTracks[0]?.analysis || 'Explore this musical direction.';
-                        const imageSrc = pathImages[pathData.title] || 'https://placehold.co/320x160/1c1917/f5f5f4?text=Path';
+                        
+                        // Create image path from title
+                        const imageSlug = pathData.title.replace('The ', '').toLowerCase().replace(/\s+/g, '-');
+                        const imageSrc = `images/${imageSlug}.jpg`;
 
                         card.innerHTML = `
                             <img src="${imageSrc}" alt="${pathData.title}" class="path-selector-card-img" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/320x160/1c1917/f5f5f4?text=Path';">
