@@ -158,7 +158,7 @@
         }
         
         /* Horizontal draggable timeline container */
-        #horizontal-timeline-container, #legacy-album-slider-container {
+        #horizontal-timeline-container, #legacy-slider-container {
             position: relative;
             width: 100%;
             overflow-x: auto;
@@ -167,10 +167,10 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        #horizontal-timeline-container:active, #legacy-album-slider-container:active {
+        #horizontal-timeline-container:active, #legacy-slider-container:active {
             cursor: grabbing;
         }
-        #horizontal-timeline-container::-webkit-scrollbar, #legacy-album-slider-container::-webkit-scrollbar {
+        #horizontal-timeline-container::-webkit-scrollbar, #legacy-slider-container::-webkit-scrollbar {
             display: none;
         }
 
@@ -628,12 +628,6 @@
             gap: 1.5rem;
             padding-bottom: 1rem;
         }
-        #legacy-slider-title {
-            color: var(--text-main);
-        }
-        #legacy-slider-wrapper {
-            transition: background-color 0.5s ease;
-        }
    
     </style>
 </head>
@@ -803,17 +797,15 @@
                     <h2 class="section-header text-5xl">Legacy</h2>
                     <p class="text-center text-lg text-stone-600 mb-16 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
 
-                    <!-- Part 1: The Six Paths Selector -->
-                    <div id="paths-selector" class="relative mb-12">
-                        <div id="paths-selector-track" class="flex items-center justify-center space-x-4">
-                           <!-- Path selector cards will be injected here -->
-                        </div>
+                    <!-- Part 1: The Six Paths -->
+                    <div id="paths-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10 items-start text-left mb-20">
+                        <!-- Path descriptions will be injected here by JavaScript -->
                     </div>
                     
                     <!-- Part 2: The Legacy Album Slider -->
                     <div id="legacy-slider-wrapper" class="hidden mt-12 p-6 rounded-lg transition-colors duration-500">
-                        <h3 id="legacy-slider-title" class="text-3xl font-bold mb-8 text-center text-white"></h3>
-                        <div id="legacy-album-slider-container" class="min-h-[300px]">
+                        <h3 id="legacy-slider-title" class="text-3xl font-bold mb-8 text-center"></h3>
+                        <div id="legacy-slider-container" class="min-h-[300px]">
                              <div id="legacy-slider-track-container" class="relative">
                                 <div id="legacy-slider-track" class="flex transition-transform duration-500 ease-in-out">
                                     <!-- Album cards will be injected here -->
@@ -1106,7 +1098,7 @@
                     navLinks: document.querySelectorAll('header nav a'),
                     footerCopyright: document.getElementById('footer-copyright'),
                     onThisDayContainer: document.getElementById('on-this-day'),
-                    pathsContainer: document.getElementById('paths-selector-track'),
+                    pathsContainer: document.getElementById('paths-container'),
                     legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
                     legacySliderTrack: document.getElementById('legacy-slider-track'),
                     legacySliderTitle: document.getElementById('legacy-slider-title'),
@@ -2141,8 +2133,9 @@
                     if (typeof callback === 'function') setTimeout(callback, 300);
                 },
 
-                openPathModal(pathKey) {
+                openPathModal(pathId) {
                     const { pathModal } = this.elements;
+                    const pathKey = Object.keys(this.state.legacyData).find(key => this.methods.slugify(key) === pathId);
                     const data = this.state.legacyData[pathKey];
                     if (!data) return;
 
@@ -2277,6 +2270,30 @@
                         }
                     });
                     setTimeout(() => this.methods.updateCustomScrollbar(), 200);
+                },
+
+                renderScrollbarMarkers() {
+                    const { timelineContainer, timelineWrapper, customScrollbarMarkers } = this.elements;
+                    const years = [...new Set(this.state.albums.map(album => album.year))].sort();
+                    customScrollbarMarkers.innerHTML = ''; // Clear existing markers
+
+                    if (timelineWrapper.scrollWidth <= timelineContainer.clientWidth) {
+                        return; // Don't render if not scrollable
+                    }
+
+                    years.forEach(year => {
+                        const yearSection = document.getElementById(`year-${year}`);
+                        if (yearSection && yearSection.style.display !== 'none') {
+                            const position = yearSection.offsetLeft + (yearSection.offsetWidth / 2);
+                            const percentage = (position / timelineWrapper.scrollWidth) * 100;
+                            
+                            const marker = document.createElement('div');
+                            marker.className = 'scrollbar-marker';
+                            marker.style.left = `${percentage}%`;
+                            marker.dataset.year = `'${String(year).slice(2)}`;
+                            customScrollbarMarkers.appendChild(marker);
+                        }
+                    });
                 },
 
                 setupOnThisDayFeature() {
