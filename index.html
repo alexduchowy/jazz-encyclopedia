@@ -612,7 +612,7 @@
         /* UPDATED STYLES FOR LEGACY SECTION */
         #influence-web-container {
             position: relative;
-            height: 600px; /* Adjusted height for new layout */
+            height: 650px;
             overflow: hidden;
             cursor: default;
         }
@@ -639,28 +639,28 @@
             z-index: 20;
         }
         .influence-node .node-image {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             border: 3px solid var(--text-main);
             object-fit: cover;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             background-color: var(--bg-dark);
         }
-        .influence-node.sub-genre {
-           display: none; /* Moons are now hidden from the map */
+        .influence-node.mixed-genre .node-image {
+            width: 50px;
+            height: 50px;
+            border-width: 2px;
+            border-style: dashed;
         }
         .influence-node .node-label {
             margin-top: 8px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text-main);
-            background-color: rgba(245, 245, 244, 0.8);
+            background-color: rgba(0,0,0, 0.5);
             padding: 2px 6px;
             border-radius: 4px;
-        }
-        .influence-node .node-info {
-            display: none; /* Tooltips are now handled by the path modal */
         }
         #influence-web-svg {
             position: absolute;
@@ -2509,17 +2509,32 @@
                         avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 20, y: 50 }, isSubGenre: false },
                         jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 35, y: 20 }, isSubGenre: false },
                         melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic Path', color: 'var(--genre-cool-jazz)', pos: { x: 65, y: 20 }, isSubGenre: false },
+                        
+                        // Mixed Genres
+                        ecm: { id: 'ecm', label: 'ECM Style', parentA: 'melodic', parentB: 'jazzFusion', isMixed: true },
+                        smooth: { id: 'smooth', label: 'Smooth Jazz', parentA: 'melodic', parentB: 'neoBop', isMixed: true },
+                        soul: { id: 'soul', label: 'Soul Jazz', parentA: 'neoBop', parentB: 'spiritual', isMixed: true },
+                        cape: { id: 'cape', label: 'Cape Jazz', parentA: 'spiritual', parentB: 'afroJazz', isMixed: true },
+                        afrofuturismMix: { id: 'afrofuturismMix', label: 'Afrofuturism', parentA: 'afroJazz', parentB: 'avantGarde', isMixed: true },
+                        ambient: { id: 'ambient', label: 'Ambient Jazz', parentA: 'avantGarde', parentB: 'jazzFusion', isMixed: true },
                     };
 
                     Object.values(nodes).forEach(node => {
+                        if (node.isMixed) {
+                           const pA = nodes[node.parentA].pos;
+                           const pB = nodes[node.parentB].pos;
+                           node.pos = { x: (pA.x + pB.x) / 2, y: (pA.y + pB.y) / 2 };
+                        }
+
                         const nodeEl = document.createElement('div');
                         nodeEl.className = 'influence-node';
+                        if (node.isMixed) nodeEl.classList.add('mixed-genre');
                         nodeEl.id = `node-${node.id}`;
                         nodeEl.style.left = `${node.pos.x}%`;
                         nodeEl.style.top = `${node.pos.y}%`;
                         nodeEl.style.transform = 'translate(-50%, -50%)';
                         
-                        if (!node.isSubGenre) {
+                        if (!node.isSubGenre && !node.isMixed) {
                            nodeEl.dataset.pathId = node.pathId;
                         }
                         
@@ -2531,12 +2546,13 @@
                             labelEl.style.color = 'var(--text-main)';
                         }
                         
-                        nodeEl.innerHTML = `<img src="images/${node.pathId}.jpg" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">`;
+                        const imgPath = node.isMixed ? 'images/artistplaceholder.jpg' : `images/${node.pathId}.jpg`;
+                        nodeEl.innerHTML = `<img src="${imgPath}" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">`;
                         nodeEl.appendChild(labelEl);
                         canvas.appendChild(nodeEl);
                     });
                     
-                    document.querySelectorAll('.influence-node:not(.sub-genre)').forEach(node => {
+                    document.querySelectorAll('.influence-node:not(.mixed-genre)').forEach(node => {
                         node.addEventListener('click', () => {
                             this.methods.openPathModal(node.dataset.pathId);
                         });
