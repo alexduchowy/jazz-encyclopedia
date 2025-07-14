@@ -612,20 +612,16 @@
         /* UPDATED STYLES FOR LEGACY SECTION */
         #influence-web-container {
             position: relative;
-            height: 800px; /* Increased height */
-            overflow: hidden; /* Hide overflow for pan/zoom canvas */
-            cursor: grab;
-        }
-        #influence-web-container:active {
-            cursor: grabbing;
+            height: 750px;
+            overflow: visible; /* Allow nodes to overflow for hover effects */
+            cursor: default;
         }
         #influence-web-canvas {
             position: absolute;
-            width: 200%; /* Make canvas larger than container */
-            height: 200%;
-            top: -50%; /* Center the larger canvas */
-            left: -50%;
-            transform-origin: center center;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
         }
         .influence-node {
             position: absolute;
@@ -638,7 +634,7 @@
             z-index: 10;
         }
         .influence-node:hover {
-            transform: scale(1.1) !important; /* Use important to override JS transform */
+            transform: scale(1.1) !important;
             z-index: 20;
         }
         .influence-node .node-image {
@@ -660,7 +656,7 @@
             font-weight: bold;
             font-size: 0.9rem;
             color: var(--text-main);
-            background-color: rgba(245, 245, 244, 0.8); /* bg-main with transparency */
+            background-color: rgba(245, 245, 244, 0.8);
             padding: 2px 6px;
             border-radius: 4px;
         }
@@ -669,24 +665,7 @@
             margin-top: 6px;
         }
         .influence-node .node-info {
-            display: none;
-            position: absolute;
-            bottom: 110%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 220px;
-            background-color: var(--bg-dark);
-            color: var(--bg-main);
-            padding: 1rem;
-            border-radius: 0.25rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            font-size: 0.85rem;
-            line-height: 1.4;
-            z-index: 30;
-            pointer-events: none;
-        }
-        .influence-node:hover .node-info {
-            display: block;
+            display: none; /* Tooltips are now handled by the path modal */
         }
         #influence-web-svg {
             position: absolute;
@@ -695,7 +674,7 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            pointer-events: none; /* Let clicks pass through */
+            pointer-events: none;
         }
         #influence-web-svg line, #influence-web-svg polygon {
             stroke: var(--text-muted);
@@ -923,7 +902,7 @@
                     <!-- Part 2: The Interactive Web -->
                     <div class="text-left mb-16 fade-in-element">
                         <h3 class="text-3xl font-bold mb-2 text-center">A Living Tradition</h3>
-                        <p class="text-center text-stone-600 mb-8 max-w-3xl mx-auto">The harmonic sophistication of Bebop, the soulful grammar of Hard Bop, and the expansive freedom of Modal and Post-Bop were codified into a shared musical playbook. This legacy remains the bedrock for contemporary jazz education and performance worldwide. Hover over the nodes below to see the connections. Use your mouse wheel to zoom and drag to pan.</p>
+                        <p class="text-center text-stone-600 mb-8 max-w-3xl mx-auto">The harmonic sophistication of Bebop, the soulful grammar of Hard Bop, and the expansive freedom of Modal and Post-Bop were codified into a shared musical playbook. This legacy remains the bedrock for contemporary jazz education and performance worldwide. Hover over the nodes below to see the connections.</p>
                         <div id="influence-web-container" class="relative bg-stone-200 border-2 border-stone-900 rounded-sm p-4 shadow-inner">
                             <div id="influence-web-canvas">
                                <svg id="influence-web-svg"></svg>
@@ -992,6 +971,16 @@
                  <button id="close-genre-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
              </div>
              <div id="genre-modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+    <!-- NEW: Path Info Modal -->
+    <div id="path-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+                 <h3 id="path-modal-title" class="text-4xl"></h3>
+                 <button id="close-path-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+             </div>
+             <div id="path-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
     </div>
 
@@ -1142,11 +1131,85 @@
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
                 influenceWebState: {
-                    scale: 0.65,
+                    scale: 1,
                     panX: 0,
                     panY: 0,
                     isPanning: false,
                     startPos: { x: 0, y: 0 }
+                },
+                pathData: {
+                    electric: {
+                        title: "The Electric Path",
+                        affinity: "Jazz Fusion, Jazz-Funk, Jazz-Rock",
+                        albums: [
+                            { title: "The Inner Mounting Flame", artist: "The Mahavishnu Orchestra", year: 1971 },
+                            { title: "Head Hunters", artist: "Herbie Hancock", year: 1973 },
+                            { title: "Get Up With It", artist: "Miles Davis", year: 1974 },
+                            { title: "Lanquidity", artist: "Sun Ra", year: 1978 },
+                            { title: "Naked City", artist: "John Zorn", year: 1990 },
+                            { title: "Fearless Movement", artist: "Kamasi Washington", year: 2024 },
+                        ]
+                    },
+                    spiritual: {
+                        title: "The Spiritual Path",
+                        affinity: "Spiritual Jazz, Free Jazz",
+                        albums: [
+                           { title: "Journey in Satchidananda", artist: "Alice Coltrane", year: 1971 },
+                           { title: "Black Unity", artist: "Pharoah Sanders", year: 1972 },
+                           { title: "Enlightenment", artist: "McCoy Tyner", year: 1974 },
+                           { title: "Black Saint", artist: "Billy Harper", year: 1975 },
+                           { title: "Don Cherry", artist: "Don Cherry", year: 1977 },
+                           { title: "Godspelized", artist: "David S. Ware Quartet", year: 1997 },
+                        ]
+                    },
+                    avantGarde: {
+                        title: "The Avant-Garde Path",
+                        affinity: "Avant-Garde Jazz, Modern Creative, Third Stream",
+                        albums: [
+                            { title: "Science Fiction", artist: "Ornette Coleman", year: 1972 },
+                            { title: "Variations in Dream-Time", artist: "Anthony Davis", year: 1983 },
+                            { title: "Willisau (Quartet)", artist: "Anthony Braxton", year: 1991 },
+                            { title: "Ask the Ages", artist: "Sonny Sharrock", year: 1991 },
+                            { title: "Hanging Gardens", artist: "The Necks", year: 1999 },
+                            { title: "Coin Coin Chapter One", artist: "Matana Roberts", year: 2011 },
+                        ]
+                    },
+                    melodic: {
+                        title: "The Melodic Path",
+                        affinity: "ECM Style Jazz, Smooth Jazz, Ambient Jazz",
+                        albums: [
+                            { title: "Return to Forever", artist: "Chick Corea", year: 1972 },
+                            { title: "Open, to Love", artist: "Paul Bley", year: 1973 },
+                            { title: "The Jewel in the Lotus", artist: "Bennie Maupin", year: 1974 },
+                            { title: "Belonging", artist: "Jan Garbarek & Keith Jarrett", year: 1974 },
+                            { title: "The Köln Concert", artist: "Keith Jarrett", year: 1975 },
+                            { title: "Pat Metheny Group", artist: "Pat Metheny Group", year: 1978 },
+                        ]
+                    },
+                    afroJazz: {
+                        title: "The Afro-Jazz Path",
+                        affinity: "Afro-Jazz, Cape Jazz",
+                        albums: [
+                           { title: "Blackstone Legacy", artist: "Woody Shaw", year: 1971 },
+                           { title: "King of Kings", artist: "The Pyramids", year: 1974 },
+                           { title: "Song for Biko", artist: "Johnny Dyani Quartet", year: 1979 },
+                           { title: "Bap-Tizum", artist: "The Art Ensemble of Chicago", year: 1972 },
+                           { title: "Your Queen is a Reptile", artist: "Sons of Kemet", year: 2018 },
+                           { title: "We Are Sent Here by History", artist: "Shabaka and the Ancestors", year: 2020 },
+                        ]
+                    },
+                    neoBop: {
+                        title: "The Neo-Bop Path",
+                        affinity: "Hard Bop, Post-Bop, Soul Jazz",
+                        albums: [
+                           { title: "Scenery", artist: "Ryo Fukui", year: 1976 },
+                           { title: "Eastern Rebellion", artist: "Cedar Walton", year: 1976 },
+                           { title: "Black Codes (From the Underground)", artist: "Wynton Marsalis", year: 1985 },
+                           { title: "Sail Away", artist: "Tom Harrell", year: 1989 },
+                           { title: "Moonswing", artist: "Joshua Redman", year: 1994 },
+                           { title: "Songbook", artist: "Kenny Garrett", year: 1997 },
+                        ]
+                    }
                 }
             },
 
@@ -1180,6 +1243,7 @@
                     albumModal: document.getElementById('album-modal'),
                     artistModal: document.getElementById('artist-modal'),
                     genreModal: document.getElementById('genre-modal'),
+                    pathModal: document.getElementById('path-modal'),
                     instrumentFilter: document.getElementById('instrument-filter'),
                     artistSliderTrack: document.getElementById('artist-slider-track'),
                     artistPrevBtn: document.getElementById('artist-prev-btn'),
@@ -1245,7 +1309,6 @@
                 this.methods.setupArtistSlider();
                 this.methods.buildGenreMatrix();
                 this.methods.renderInfluenceWeb(); 
-                this.methods.setupPanAndZoom(); // Setup pan/zoom listeners
                 this.methods.setupMobileMenu();
                 this.methods.setupScrollObservers();
                 this.methods.setupGeneralEventListeners();
@@ -1640,7 +1703,7 @@
                 },
                 
                 setupModals() {
-                    const { albumModal, artistModal, genreModal, matrixContainer } = this.elements;
+                    const { albumModal, artistModal, genreModal, pathModal, matrixContainer } = this.elements;
                     albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeAlbumModal());
                     albumModal.addEventListener('click', e => { 
                         if (e.target.id === 'album-modal') this.methods.closeAlbumModal();
@@ -1688,9 +1751,11 @@
                     
                     genreModal.querySelector('#close-genre-modal').addEventListener('click', () => this.methods.closeGenreModal());
                     genreModal.addEventListener('click', e => { if (e.target.id === 'genre-modal') this.methods.closeGenreModal(); });
-                    
-                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal(); this.methods.closeArtistModal(); this.methods.closeGenreModal(); } });
 
+                    pathModal.querySelector('#close-path-modal').addEventListener('click', () => this.methods.closePathModal());
+                    pathModal.addEventListener('click', e => { if (e.target.id === 'path-modal') this.methods.closePathModal(); });
+                    
+                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal(); this.methods.closeArtistModal(); this.methods.closeGenreModal(); this.methods.closePathModal(); } });
                     
                     artistModal.addEventListener('click', (e) => {
                         if (e.target.matches('.clickable-link[data-album-title]')) {
@@ -2225,6 +2290,45 @@
                     genreModal.querySelector('.modal-content').classList.add('scale-95');
                     if (typeof callback === 'function') setTimeout(callback, 300);
                 },
+
+                openPathModal(pathId) {
+                    const { pathModal } = this.elements;
+                    const data = this.state.pathData[pathId];
+                    if (!data) return;
+
+                    const titleEl = pathModal.querySelector('#path-modal-title');
+                    titleEl.textContent = data.title;
+                    const mainNode = document.querySelector(`#node-${pathId}`);
+                    const color = mainNode ? mainNode.querySelector('.node-label').style.backgroundColor : 'var(--accent)';
+                    titleEl.style.color = color;
+                    
+                    const bodyEl = pathModal.querySelector('#path-modal-body');
+                    const albumsHtml = data.albums.map(album => 
+                        `<li class="text-sm"><strong>${album.year}</strong> - ${album.title} by ${album.artist}</li>`
+                    ).join('');
+
+                    bodyEl.innerHTML = `
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="text-lg font-bold text-stone-900">Genre Affinity</h4>
+                                <p class="text-base text-stone-700">${data.affinity}</p>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-stone-900">Key Albums</h4>
+                                <ul class="list-disc list-inside space-y-1">${albumsHtml}</ul>
+                            </div>
+                        </div>
+                    `;
+
+                    pathModal.classList.remove('opacity-0', 'pointer-events-none');
+                    pathModal.querySelector('.modal-content').classList.remove('scale-95');
+                },
+
+                closePathModal() {
+                    const { pathModal } = this.elements;
+                    pathModal.classList.add('opacity-0', 'pointer-events-none');
+                    pathModal.querySelector('.modal-content').classList.add('scale-95');
+                },
                 
                 populateInstrumentFilter(artists) {
                     const { instrumentFilter } = this.elements;
@@ -2427,51 +2531,59 @@
                     const slugify = this.methods.slugify;
                     const nodes = {
                         // Main Hexagonal Paths
-                        neoBop: { id: 'neoBop', label: 'Neo-Bop', info: 'In the 1980s, the "Young Lions" movement, led by Wynton Marsalis, championed a return to the acoustic, straight-ahead, bop-oriented traditions of the 50s and 60s.', color: 'var(--genre-bebop)', pos: { x: 50, y: 15 }, isSubGenre: false },
-                        jazzFusion: { id: 'jazzFusion', label: 'Jazz Fusion', info: 'Pioneered by Miles Davis, this path incorporated electric instruments and rock/funk rhythms.', color: 'var(--genre-jazz-fusion)', pos: { x: 80, y: 32.5 }, isSubGenre: false },
-                        spiritual: { id: 'spiritual', label: 'Spiritual Jazz', info: 'Following John Coltrane\'s quest, this path used music for transcendence and spiritual expression.', color: 'var(--genre-free-jazz)', pos: { x: 80, y: 67.5 }, isSubGenre: false },
-                        avantGarde: { id: 'avantGarde', label: 'Avant-Garde', info: 'Led by Ornette Coleman, this path deconstructed rules, focusing on pure melody and texture.', color: 'var(--genre-avant-garde)', pos: { x: 50, y: 85 }, isSubGenre: false },
-                        melodic: { id: 'melodic', label: 'Melodic Path', info: 'Evolving from Cool Jazz, this path emphasized space, atmosphere, and pristine production, defining the ECM Style and influencing Ambient Jazz.', color: 'var(--genre-cool-jazz)', pos: { x: 20, y: 67.5 }, isSubGenre: false },
-                        afrofuturism: { id: 'afrofuturism', label: 'Afro-Jazz Path', info: 'Visionaries like Sun Ra and the Art Ensemble of Chicago forged a path rooted in the African diaspora, blending free improv with ancient rhythms and a cosmic philosophy.', color: 'var(--genre-hard-bop)', pos: { x: 20, y: 32.5 }, isSubGenre: false },
+                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 50, y: 10 }, isSubGenre: false },
+                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual Jazz', color: 'var(--genre-free-jazz)', pos: { x: 85, y: 35 }, isSubGenre: false },
+                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 85, y: 65 }, isSubGenre: false },
+                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 50, y: 90 }, isSubGenre: false },
+                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 15, y: 65 }, isSubGenre: false },
+                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic Path', color: 'var(--genre-cool-jazz)', pos: { x: 15, y: 35 }, isSubGenre: false },
 
-                        // Electric Path Moons
-                        ef1: { id: 'ef1', label: 'The Inner Mounting Flame', info: 'The Mahavishnu Orchestra (1971)', img: 'https://e.snmc.io/i/600/s/b83f82024f94856f9fee72a6bed2a5d2/68291', pos: { x: 92, y: 25 }, isSubGenre: true },
-                        ef2: { id: 'ef2', label: 'Head Hunters', info: 'Herbie Hancock (1973)', img: 'https://e.snmc.io/i/600/s/57b18a198a1033374a7374312fba489f/71001', pos: { x: 96, y: 38 }, isSubGenre: true },
-                        ef3: { id: 'ef3', label: 'Get Up With It', info: 'Miles Davis (1974)', img: 'https://e.snmc.io/i/600/s/b61c3a6479f673323b6b6e4313f80c65/71008', pos: { x: 92, y: 51 }, isSubGenre: true },
+                        // Album Moons
+                        ef1: { id: 'ef1', label: 'The Inner Mounting Flame (1971)', img: 'https://e.snmc.io/i/600/s/b83f82024f94856f9fee72a6bed2a5d2/68291', parent: 'jazzFusion', angle: 240, dist: 15, isSubGenre: true },
+                        ef2: { id: 'ef2', label: 'Head Hunters (1973)', img: 'https://e.snmc.io/i/600/s/57b18a198a1033374a7374312fba489f/71001', parent: 'jazzFusion', angle: 180, dist: 15, isSubGenre: true },
+                        ef3: { id: 'ef3', label: 'Get Up With It (1974)', img: 'https://e.snmc.io/i/600/s/b61c3a6479f673323b6b6e4313f80c65/71008', parent: 'jazzFusion', angle: 120, dist: 15, isSubGenre: true },
                         
-                        // Spiritual Path Moons
-                        sp1: { id: 'sp1', label: 'Journey in Satchidananda', info: 'Alice Coltrane (1971)', img: 'https://e.snmc.io/i/600/s/17238a356248ab22323533458694f7a3/2836261', pos: { x: 96, y: 62 }, isSubGenre: true },
-                        sp2: { id: 'sp2', label: 'Black Unity', info: 'Pharoah Sanders (1972)', img: 'https://e.snmc.io/i/600/s/5319a27e366a2083160a36415d18d41a/50693', pos: { x: 92, y: 75 }, isSubGenre: true },
-                        sp3: { id: 'sp3', label: 'Godspelized', info: 'David S. Ware Quartet (1997)', img: 'https://e.snmc.io/i/600/s/e5927510d486d526279f06114878a876/50901', pos: { x: 85, y: 86 }, isSubGenre: true },
+                        sp1: { id: 'sp1', label: 'Journey in Satchidananda (1971)', img: 'https://e.snmc.io/i/600/s/17238a356248ab22323533458694f7a3/2836261', parent: 'spiritual', angle: 300, dist: 15, isSubGenre: true },
+                        sp2: { id: 'sp2', label: 'Black Unity (1972)', img: 'https://e.snmc.io/i/600/s/5319a27e366a2083160a36415d18d41a/50693', parent: 'spiritual', angle: 0, dist: 15, isSubGenre: true },
+                        sp3: { id: 'sp3', label: 'Godspelized (1997)', img: 'https://e.snmc.io/i/600/s/e5927510d486d526279f06114878a876/50901', parent: 'spiritual', angle: 60, dist: 15, isSubGenre: true },
+                        
+                        aj1: { id: 'aj1', label: 'Blackstone Legacy (1971)', img: 'https://e.snmc.io/i/600/s/f7d235c34226a0c56d7881f122e23363/50681', parent: 'afroJazz', angle: 0, dist: 15, isSubGenre: true },
+                        aj2: { id: 'aj2', label: 'King of Kings (1974)', img: 'https://e.snmc.io/i/600/s/a3554e20cf9321c82823b1853b75486e/10103755', parent: 'afroJazz', angle: 60, dist: 15, isSubGenre: true },
+                        aj3: { id: 'aj3', label: 'Bap-Tizum (1972)', img: 'https://e.snmc.io/i/600/s/3029288e221379133bd82c3f4e3c9889/50686', parent: 'afroJazz', angle: 120, dist: 15, isSubGenre: true },
 
-                        // Avant-Garde Path Moons
-                        ag1: { id: 'ag1', label: 'Science Fiction', info: 'Ornette Coleman (1972)', img: 'https://e.snmc.io/i/600/s/c0a69324e93f6b55502c2e04f9814524/50684', pos: { x: 65, y: 97 }, isSubGenre: true },
-                        ag2: { id: 'ag2', label: 'Ask the Ages', info: 'Sonny Sharrock (1991)', img: 'https://e.snmc.io/i/600/s/703da9127d0577747a151555577e384b/50853', pos: { x: 50, y: 102 }, isSubGenre: true },
-                        ag3: { id: 'ag3', label: 'Coin Coin Chapter One', info: 'Matana Roberts (2011)', img: 'https://e.snmc.io/i/600/s/f5f00e959586a439c09c37951c888981/4214228', pos: { x: 35, y: 97 }, isSubGenre: true },
-                        
-                        // Melodic Path Moons
-                        mp1: { id: 'mp1', label: 'Return to Forever', info: 'Chick Corea (1972)', img: 'https://e.snmc.io/i/600/s/1e7c5333f8193f2f8b05329188151525/81165', pos: { x: 15, y: 86 }, isSubGenre: true },
-                        mp2: { id: 'mp2', label: 'Open, to Love', info: 'Paul Bley (1973)', img: 'https://e.snmc.io/i/600/s/3201a070e4f5a3e477f86718d7f45a0e/81173', pos: { x: 8, y: 75 }, isSubGenre: true },
-                        mp3: { id: 'mp3', label: 'The Köln Concert', info: 'Keith Jarrett (1975)', img: 'https://e.snmc.io/i/600/s/c354a42b15163155716b5e02d1d45923/81188', pos: { x: 4, y: 62 }, isSubGenre: true },
+                        ag1: { id: 'ag1', label: 'Science Fiction (1972)', img: 'https://e.snmc.io/i/600/s/c0a69324e93f6b55502c2e04f9814524/50684', parent: 'avantGarde', angle: 60, dist: 15, isSubGenre: true },
+                        ag2: { id: 'ag2', label: 'Ask the Ages (1991)', img: 'https://e.snmc.io/i/600/s/703da9127d0577747a151555577e384b/50853', parent: 'avantGarde', angle: 120, dist: 15, isSubGenre: true },
+                        ag3: { id: 'ag3', label: 'Coin Coin Chapter One (2011)', img: 'https://e.snmc.io/i/600/s/f5f00e959586a439c09c37951c888981/4214228', parent: 'avantGarde', angle: 180, dist: 15, isSubGenre: true },
 
-                        // Afrofuturist Path Moons
-                        af1: { id: 'af1', label: 'Blackstone Legacy', info: 'Woody Shaw (1971)', img: 'https://e.snmc.io/i/600/s/f7d235c34226a0c56d7881f122e23363/50681', pos: { x: 4, y: 38 }, isSubGenre: true },
-                        af2: { id: 'af2', label: 'King of Kings', info: 'The Pyramids (1974)', img: 'https://e.snmc.io/i/600/s/a3554e20cf9321c82823b1853b75486e/10103755', pos: { x: 8, y: 25 }, isSubGenre: true },
-                        af3: { id: 'af3', label: 'Bap-Tizum', info: 'The Art Ensemble of Chicago (1972)', img: 'https://e.snmc.io/i/600/s/3029288e221379133bd82c3f4e3c9889/50686', pos: { x: 15, y: 14 }, isSubGenre: true },
+                        mp1: { id: 'mp1', label: 'Return to Forever (1972)', img: 'https://e.snmc.io/i/600/s/1e7c5333f8193f2f8b05329188151525/81165', parent: 'melodic', angle: 180, dist: 15, isSubGenre: true },
+                        mp2: { id: 'mp2', label: 'The Köln Concert (1975)', img: 'https://e.snmc.io/i/600/s/c354a42b15163155716b5e02d1d45923/81188', parent: 'melodic', angle: 240, dist: 15, isSubGenre: true },
+                        mp3: { id: 'mp3', label: 'Pat Metheny Group (1978)', img: 'https://e.snmc.io/i/600/s/66228b76c91a733e85e2821147137482/50707', parent: 'melodic', angle: 300, dist: 15, isSubGenre: true },
                         
-                        // Neo-Bop Path Moons
-                        nb1: { id: 'nb1', label: 'Scenery', info: 'Ryo Fukui (1976)', img: 'https://e.snmc.io/i/600/s/e51d63424683fd380481855a065846a8/50702', pos: { x: 35, y: 3 }, isSubGenre: true },
-                        nb2: { id: 'nb2', label: 'Eastern Rebellion', info: 'Cedar Walton (1976)', img: 'https://e.snmc.io/i/600/s/4d998b3135598e0d375d33a1e127f5a0/50703', pos: { x: 50, y: -2 }, isSubGenre: true },
-                        nb3: { id: 'nb3', label: 'Black Codes', info: 'Wynton Marsalis (1985)', img: 'https://e.snmc.io/i/600/s/82820b1d3460555342a6479e27c1f440/50849', pos: { x: 65, y: 3 }, isSubGenre: true },
+                        nb1: { id: 'nb1', label: 'Scenery (1976)', img: 'https://e.snmc.io/i/600/s/e51d63424683fd380481855a065846a8/50702', parent: 'neoBop', angle: 240, dist: 15, isSubGenre: true },
+                        nb2: { id: 'nb2', label: 'Eastern Rebellion (1976)', img: 'https://e.snmc.io/i/600/s/4d998b3135598e0d375d33a1e127f5a0/50703', parent: 'neoBop', angle: 300, dist: 15, isSubGenre: true },
+                        nb3: { id: 'nb3', label: 'Black Codes (1985)', img: 'https://e.snmc.io/i/600/s/82820b1d3460555342a6479e27c1f440/50849', parent: 'neoBop', angle: 0, dist: 15, isSubGenre: true },
                     };
 
                     Object.values(nodes).forEach(node => {
                         const nodeEl = document.createElement('div');
                         nodeEl.className = 'influence-node';
-                        if (node.isSubGenre) nodeEl.classList.add('sub-genre');
+                        if (node.isSubGenre) {
+                            nodeEl.classList.add('sub-genre');
+                            const parentNode = nodes[node.parent];
+                            const angleRad = (node.angle - 90) * (Math.PI / 180);
+                            node.pos = {
+                                x: parentNode.pos.x + node.dist * Math.cos(angleRad),
+                                y: parentNode.pos.y + node.dist * Math.sin(angleRad)
+                            };
+                        }
                         nodeEl.id = `node-${node.id}`;
                         nodeEl.style.left = `${node.pos.x}%`;
                         nodeEl.style.top = `${node.pos.y}%`;
+                        nodeEl.style.transform = 'translate(-50%, -50%)';
+                        
+                        if (!node.isSubGenre) {
+                           nodeEl.dataset.pathId = node.pathId;
+                        }
                         
                         const labelEl = document.createElement('span');
                         labelEl.className = 'node-label';
@@ -2485,8 +2597,18 @@
                             <img src="${node.img}" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">
                         `;
                         nodeEl.appendChild(labelEl);
-                        nodeEl.innerHTML += `<div class="node-info">${node.info}</div>`;
+                        if(node.info && !node.isSubGenre) {
+                            nodeEl.innerHTML += `<div class="node-info">${node.info}</div>`;
+                        } else if (node.isSubGenre) {
+                             nodeEl.innerHTML += `<div class="node-info">${node.label} by ${node.info}</div>`;
+                        }
                         canvas.appendChild(nodeEl);
+                    });
+                    
+                    document.querySelectorAll('.influence-node:not(.sub-genre)').forEach(node => {
+                        node.addEventListener('click', () => {
+                            this.methods.openPathModal(node.dataset.pathId);
+                        });
                     });
 
                     setTimeout(() => this.methods.drawInfluenceLines(), 50);
@@ -2499,7 +2621,7 @@
                     
                     svg.innerHTML = ''; // Clear previous lines
                     
-                    const mainPathIds = ['neoBop', 'jazzFusion', 'spiritual', 'avantGarde', 'melodic', 'afrofuturism'];
+                    const mainPathIds = ['neoBop', 'spiritual', 'afroJazz', 'avantGarde', 'jazzFusion', 'melodic'];
                     const mainPathPoints = mainPathIds.map(id => {
                         const el = document.getElementById(`node-${id}`);
                         return `${el.offsetLeft + el.offsetWidth / 2},${el.offsetTop + el.offsetHeight / 2}`;
@@ -2510,12 +2632,12 @@
                     svg.appendChild(hexagon);
 
                     const connections = [
-                        ['jazzFusion', 'ef1'], ['jazzFusion', 'ef2'], ['jazzFusion', 'ef3'],
-                        ['spiritual', 'sp1'], ['spiritual', 'sp2'], ['spiritual', 'sp3'],
-                        ['avantGarde', 'ag1'], ['avantGarde', 'ag2'], ['avantGarde', 'ag3'],
-                        ['melodic', 'mp1'], ['melodic', 'mp2'], ['melodic', 'mp3'],
-                        ['afrofuturism', 'af1'], ['afrofuturism', 'af2'], ['afrofuturism', 'af3'],
                         ['neoBop', 'nb1'], ['neoBop', 'nb2'], ['neoBop', 'nb3'],
+                        ['spiritual', 'sp1'], ['spiritual', 'sp2'], ['spiritual', 'sp3'],
+                        ['afroJazz', 'aj1'], ['afroJazz', 'aj2'], ['afroJazz', 'aj3'],
+                        ['avantGarde', 'ag1'], ['avantGarde', 'ag2'], ['avantGarde', 'ag3'],
+                        ['jazzFusion', 'jf1'], ['jazzFusion', 'jf2'], ['jazzFusion', 'jf3'],
+                        ['melodic', 'mp1'], ['melodic', 'mp2'], ['melodic', 'mp3'],
                     ];
 
                     connections.forEach(conn => {
@@ -2533,63 +2655,8 @@
                 },
                 
                 setupPanAndZoom() {
-                    const container = this.elements.influenceWebContainer;
-                    const canvas = this.elements.influenceWebCanvas;
-                    if (!container || !canvas) return;
-
-                    const state = this.state.influenceWebState;
-
-                    const applyTransform = () => {
-                        canvas.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.scale})`;
-                    };
-                    
-                    // Initial centering
-                    state.panX = (container.clientWidth - canvas.clientWidth*state.scale) / 2;
-                    state.panY = (container.clientHeight - canvas.clientHeight*state.scale) / 2;
-                    applyTransform();
-
-                    container.addEventListener('mousedown', (e) => {
-                        e.preventDefault();
-                        state.isPanning = true;
-                        state.startPos = { x: e.clientX - state.panX, y: e.clientY - state.panY };
-                        container.style.cursor = 'grabbing';
-                    });
-
-                    container.addEventListener('mousemove', (e) => {
-                        if (!state.isPanning) return;
-                        e.preventDefault();
-                        state.panX = e.clientX - state.startPos.x;
-                        state.panY = e.clientY - state.startPos.y;
-                        applyTransform();
-                    });
-
-                    const endPan = () => {
-                        state.isPanning = false;
-                        container.style.cursor = 'grab';
-                    };
-                    container.addEventListener('mouseup', endPan);
-                    container.addEventListener('mouseleave', endPan);
-
-                    container.addEventListener('wheel', (e) => {
-                        e.preventDefault();
-                        const rect = container.getBoundingClientRect();
-                        const mouseX = e.clientX - rect.left;
-                        const mouseY = e.clientY - rect.top;
-                        const zoomFactor = 1.1;
-                        const oldScale = state.scale;
-
-                        if (e.deltaY < 0) { // Zoom in
-                            state.scale = Math.min(2.5, state.scale * zoomFactor);
-                        } else { // Zoom out
-                            state.scale = Math.max(0.4, state.scale / zoomFactor);
-                        }
-                        
-                        // Zoom towards the mouse pointer
-                        state.panX = mouseX - (mouseX - state.panX) * (state.scale / oldScale);
-                        state.panY = mouseY - (mouseY - state.panY) * (state.scale / oldScale);
-
-                        applyTransform();
-                    });
+                    // Pan and zoom functionality is disabled as per user request.
+                    // The container is now sized to fit the screen.
                 }
             }
         };
