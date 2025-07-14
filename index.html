@@ -33,6 +33,7 @@
             --genre-free-jazz: #fca5a5; /* red-300 */
             --genre-avant-garde: #fecdd3; /* rose-200 */
             --genre-jazz-fusion: #a5f3fc; /* cyan-200 */
+            --genre-melodic-path: #64748b; /* slate-500, for Legacy section */
             --genre-default: #e7e5e4; /* stone-200 */
 
             /* Lighter Era Colors for Timeline Background */
@@ -1862,6 +1863,21 @@
                         if(firstCard) firstCard.classList.add('active');
                     }
                 },
+                
+                getPathColor(pathData) {
+                    if (pathData.title === "The Melodic Path") {
+                        return 'var(--genre-melodic-path)';
+                    }
+                    const affinityGenres = pathData.genreAffinity.split(', ');
+                    for (const genre of affinityGenres) {
+                        const normalizedGenre = this.methods.normalizeGenreName(genre.trim());
+                        const genreInfo = this.state.styleMatrix.genres[normalizedGenre];
+                        if (genreInfo) {
+                            return genreInfo.color;
+                        }
+                    }
+                    return 'var(--accent)'; // Default
+                },
 
                 renderPathSelector() {
                     const { pathSelectorSlider } = this.elements;
@@ -1881,10 +1897,7 @@
                         card.className = 'path-selector-card text-left';
                         card.dataset.pathKey = pathKey;
                         
-                        const mainGenre = pathData.genreAffinity.split(', ')[0];
-                        const normalizedGenre = this.methods.normalizeGenreName(mainGenre);
-                        const genreInfo = this.state.styleMatrix.genres[normalizedGenre];
-                        const pathColor = genreInfo ? genreInfo.color : 'var(--accent)';
+                        const pathColor = this.methods.getPathColor(pathData);
                         card.style.setProperty('--path-color', pathColor);
 
                         const description = pathDescriptions[pathData.title] || 'Explore this musical direction.';
@@ -1919,10 +1932,8 @@
                     legacySliderTitle.textContent = `Key Albums of ${pathData.title}`;
                     legacySliderTitle.style.color = 'var(--text-main)'; // Keep title black
                     
-                    const mainGenre = pathData.genreAffinity.split(', ')[0];
-                    const normalizedGenre = this.methods.normalizeGenreName(mainGenre);
-                    const genreInfo = this.state.styleMatrix.genres[normalizedGenre];
-                    const pathColor = genreInfo ? genreInfo.color : 'var(--accent)';
+                    const pathColor = this.methods.getPathColor(pathData);
+
                     // Create a semi-transparent background color from the path's main color
                     const bgColor = pathColor.startsWith('var') 
                         ? `color-mix(in srgb, ${getComputedStyle(document.documentElement).getPropertyValue(pathColor.match(/--[a-zA-Z-]+/)[0]).trim()} 15%, transparent)`
