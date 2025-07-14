@@ -610,7 +610,7 @@
             font-size: 0.9rem;
         }
         
-        /* NEW STYLES FOR LEGACY SECTION */
+        /* UPDATED STYLES FOR LEGACY SECTION */
         #path-selector-slider {
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
@@ -621,15 +621,42 @@
 
         .path-selector-card {
             flex-shrink: 0;
-            width: 280px;
+            width: 320px; /* Wider cards */
             background-color: var(--bg-secondary);
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
-            padding: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 4px 4px 0px var(--text-main);
+            overflow: hidden; /* To contain image */
+            display: flex;
+            flex-direction: column;
         }
+        .path-selector-card-img {
+            height: 160px;
+            width: 100%;
+            object-fit: cover;
+            filter: grayscale(50%);
+            transition: filter 0.3s ease;
+        }
+        .path-selector-card:hover .path-selector-card-img,
+        .path-selector-card.active .path-selector-card-img {
+            filter: grayscale(0%);
+        }
+        .path-selector-card-content {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .path-selector-card h4 {
+            color: var(--text-main) !important; /* Keep title black */
+            margin-bottom: 0.5rem;
+        }
+        .path-selector-card p {
+             flex-grow: 1;
+        }
+
         .path-selector-card:hover {
             transform: translateY(-4px) rotate(-1deg);
             box-shadow: 6px 6px 0px var(--text-main);
@@ -640,19 +667,17 @@
             border-color: var(--path-color, var(--accent));
             box-shadow: 8px 8px 0px var(--path-color, var(--accent));
         }
-        .path-selector-card h4 {
-            transition: color 0.3s ease;
-        }
-        .path-selector-card.active h4 {
-            color: var(--path-color, var(--accent));
-        }
 
         #legacy-slider-wrapper {
             background-color: rgba(231, 229, 228, 0.5); /* Default light background */
             transition: background-color 0.5s ease-in-out;
         }
+        #legacy-slider-title {
+            color: var(--text-main) !important; /* Keep title black */
+        }
         #legacy-album-track {
             padding: 1rem 0;
+            transition: transform 0.5s ease-in-out;
         }
         .legacy-album-card {
             width: 200px;
@@ -1840,6 +1865,15 @@
                     const { pathSelectorSlider } = this.elements;
                     pathSelectorSlider.innerHTML = '';
 
+                    const pathImages = {
+                        "The Electric Path": "https://images.unsplash.com/photo-1598488581923-34e269431525?q=80&w=800&auto=format&fit=crop",
+                        "The Spiritual Path": "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=800&auto=format&fit=crop",
+                        "The Avant-Garde Path": "https://images.unsplash.com/photo-1519677100299-9c4de19857a6?q=80&w=800&auto=format&fit=crop",
+                        "The Melodic Path": "https://images.unsplash.com/photo-1500932334428-54c3758376b5?q=80&w=800&auto=format&fit=crop",
+                        "The Afro-Jazz Path": "https://images.unsplash.com/photo-1592534164823-86a0f4c4941a?q=80&w=800&auto=format&fit=crop",
+                        "The Neo-Bop Path": "https://images.unsplash.com/photo-1580694898145-24e478544951?q=80&w=800&auto=format&fit=crop"
+                    };
+
                     Object.entries(this.state.legacyData).forEach(([pathKey, pathData]) => {
                         const card = document.createElement('div');
                         card.className = 'path-selector-card text-left';
@@ -1852,10 +1886,14 @@
                         card.style.setProperty('--path-color', pathColor);
 
                         const description = pathData.albums[0]?.pivotalTracks[0]?.analysis || 'Explore this musical direction.';
+                        const imageSrc = pathImages[pathData.title] || 'https://placehold.co/320x160/1c1917/f5f5f4?text=Path';
 
                         card.innerHTML = `
-                            <h4 class="text-3xl font-bold mb-2">${pathData.title}</h4>
-                            <p class="text-sm text-stone-600">${description}</p>
+                            <img src="${imageSrc}" alt="${pathData.title}" class="path-selector-card-img" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/320x160/1c1917/f5f5f4?text=Path';">
+                            <div class="path-selector-card-content">
+                                <h4 class="text-3xl font-bold">${pathData.title}</h4>
+                                <p class="text-sm text-stone-600">${description}</p>
+                            </div>
                         `;
 
                         card.addEventListener('click', () => {
@@ -1874,14 +1912,17 @@
                     if (!pathData) return;
 
                     legacySliderTitle.textContent = `Key Albums of ${pathData.title}`;
+                    legacySliderTitle.style.color = 'var(--text-main)'; // Keep title black
                     
                     const mainGenre = pathData.genreAffinity.split(', ')[0];
                     const normalizedGenre = this.methods.normalizeGenreName(mainGenre);
                     const genreInfo = this.state.styleMatrix.genres[normalizedGenre];
                     const pathColor = genreInfo ? genreInfo.color : 'var(--accent)';
-                    const bgColor = pathColor.startsWith('var') ? `color-mix(in srgb, ${getComputedStyle(document.documentElement).getPropertyValue(pathColor.match(/--[a-zA-Z-]+/)[0])} 15%, transparent)` : `${pathColor}26`;
+                    // Create a semi-transparent background color from the path's main color
+                    const bgColor = pathColor.startsWith('var') 
+                        ? `color-mix(in srgb, ${getComputedStyle(document.documentElement).getPropertyValue(pathColor.match(/--[a-zA-Z-]+/)[0]).trim()} 15%, transparent)`
+                        : `${pathColor}26`; // Add alpha for hex colors
                     
-                    legacySliderTitle.style.color = pathColor;
                     legacySliderWrapper.style.backgroundColor = bgColor;
 
                     legacyAlbumTrack.innerHTML = '';
@@ -1918,7 +1959,7 @@
                     if (!card) return;
 
                     const cardWidth = card.offsetWidth;
-                    const gap = parseInt(window.getComputedStyle(legacyAlbumTrack).gap);
+                    const gap = parseInt(window.getComputedStyle(legacyAlbumTrack).gap) || 24; // Default gap
                     const totalCardWidth = cardWidth + gap;
                     const visibleWidth = trackWrapper.offsetWidth;
                     this.state.legacyAlbumsPerPage = Math.floor(visibleWidth / totalCardWidth);
