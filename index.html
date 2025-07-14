@@ -1868,6 +1868,9 @@
                     if (pathData.title === "The Melodic Path") {
                         return 'var(--genre-melodic-path)';
                     }
+                     if (pathData.title === "The Spiritual Path") {
+                        return 'var(--genre-free-jazz)';
+                    }
                     const affinityGenres = pathData.genreAffinity.split(', ');
                     for (const genre of affinityGenres) {
                         const normalizedGenre = this.methods.normalizeGenreName(genre.trim());
@@ -2085,8 +2088,17 @@
                     modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
                     
                     const pivotalTrack = album.pivotalTracks ? album.pivotalTracks[0] : {};
-                    const genres = album.genres || (album.pivotalTracks && album.pivotalTracks[0].genre) || '';
-                    const genreTags = genres.split(', ').map(genre => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[genre] || 'var(--genre-default)'}" data-genre-name="${genre}">${genre}</span>`).join(' ');
+                    
+                    // FIX: Handle both string and array for genres
+                    let genreArray = [];
+                    const rawGenres = album.genres || (pivotalTrack && pivotalTrack.genre);
+                    if (Array.isArray(rawGenres)) {
+                        genreArray = rawGenres;
+                    } else if (typeof rawGenres === 'string') {
+                        genreArray = rawGenres.split(', ');
+                    }
+
+                    const genreTags = genreArray.map(genre => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[genre.trim()] || 'var(--genre-default)'}" data-genre-name="${genre.trim()}">${genre.trim()}</span>`).join(' ');
                     
                     let lineupString = pivotalTrack.lineup || 'N/A';
                     if (lineupString !== 'N/A') {
