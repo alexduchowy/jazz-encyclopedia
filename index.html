@@ -614,6 +614,8 @@
         #path-selector-slider {
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
+            padding-top: 1rem; /* Add space for animation */
+            padding-bottom: 1rem; /* Add space for animation */
         }
         #path-selector-slider::-webkit-scrollbar {
             display: none; /* Chrome, Safari, Opera */
@@ -1865,6 +1867,15 @@
                     const { pathSelectorSlider } = this.elements;
                     pathSelectorSlider.innerHTML = '';
 
+                    const pathDescriptions = {
+                        "The Electric Path": "A high-voltage fusion of jazz improvisation with the raw power of rock and funk. This path, pioneered by artists like Miles Davis and John McLaughlin, embraced electric instruments and driving grooves.",
+                        "The Spiritual Path": "A quest for transcendence through sound, blending jazz with Eastern and African influences. This deeply meditative and often cathartic music was championed by John Coltrane, Alice Coltrane, and Pharoah Sanders.",
+                        "The Avant-Garde Path": "A radical deconstruction of traditional music, this path explored pure sound, texture, and 'energy playing.' Innovators like Ornette Coleman, Cecil Taylor, and Anthony Braxton challenged the very definitions of melody, harmony, and rhythm.",
+                        "The Melodic Path": "Characterized by strong, folk-like melodies and atmospheric soundscapes, this path favored lyrical improvisation. Often associated with the ECM record label, its key figures include Keith Jarrett, Jan Garbarek, and Pat Metheny.",
+                        "The Afro-Jazz Path": "A conscious reconnection with the music's African and Caribbean roots. This path integrated traditional rhythms and cultural identity into the modern jazz framework, led by artists like Randy Weston, Abdullah Ibrahim, and Shabaka Hutchings.",
+                        "The Neo-Bop Path": "A powerful revival of the acoustic post-bop tradition that emerged in the 1980s. Led by the 'Young Lions' like Wynton Marsalis and Kenny Garrett, this path emphasized virtuosic technique and a deep reverence for the music's history."
+                    };
+
                     Object.entries(this.state.legacyData).forEach(([pathKey, pathData]) => {
                         const card = document.createElement('div');
                         card.className = 'path-selector-card text-left';
@@ -1876,7 +1887,7 @@
                         const pathColor = genreInfo ? genreInfo.color : 'var(--accent)';
                         card.style.setProperty('--path-color', pathColor);
 
-                        const description = pathData.albums[0]?.pivotalTracks[0]?.analysis || 'Explore this musical direction.';
+                        const description = pathDescriptions[pathData.title] || 'Explore this musical direction.';
                         
                         // Create image path from title
                         const imageSlug = pathData.title.replace('The ', '').toLowerCase().replace(/\s+/g, '-');
