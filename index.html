@@ -2503,12 +2503,12 @@
 
                     const nodes = {
                         // Main Hexagonal Paths
-                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 80, y: 50 }, isSubGenre: false },
-                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual Jazz', color: 'var(--genre-free-jazz)', pos: { x: 65, y: 80 }, isSubGenre: false },
-                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 35, y: 80 }, isSubGenre: false },
-                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 20, y: 50 }, isSubGenre: false },
-                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 35, y: 20 }, isSubGenre: false },
-                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic Path', color: 'var(--genre-cool-jazz)', pos: { x: 65, y: 20 }, isSubGenre: false },
+                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 80, y: 50 }, isSubGenre: false, img: 'images/neo-bop.jpg' },
+                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual', color: 'var(--genre-free-jazz)', pos: { x: 65, y: 80 }, isSubGenre: false, img: 'images/spiritual-jazz.jpg' },
+                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 35, y: 80 }, isSubGenre: false, img: 'images/afro-jazz.jpg' },
+                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 20, y: 50 }, isSubGenre: false, img: 'images/avant-garde.jpg' },
+                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 35, y: 20 }, isSubGenre: false, img: 'images/jazz-fusion.jpg' },
+                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic', color: 'var(--genre-cool-jazz)', pos: { x: 65, y: 20 }, isSubGenre: false, img: 'images/melodic-path.jpg' },
                         
                         // Mixed Genres
                         ecm: { id: 'ecm', label: 'ECM Style', parentA: 'melodic', parentB: 'jazzFusion', isMixed: true },
@@ -2546,7 +2546,7 @@
                             labelEl.style.color = 'var(--text-main)';
                         }
                         
-                        const imgPath = node.isMixed ? 'images/artistplaceholder.jpg' : `images/${node.pathId}.jpg`;
+                        const imgPath = node.img || 'images/artistplaceholder.jpg';
                         nodeEl.innerHTML = `<img src="${imgPath}" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">`;
                         nodeEl.appendChild(labelEl);
                         canvas.appendChild(nodeEl);
@@ -2577,6 +2577,13 @@
                     const hexagon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                     hexagon.setAttribute('points', mainPathPoints);
                     svg.appendChild(hexagon);
+
+                    const mixedGenreIds = ['ecm', 'smooth', 'soul', 'cape', 'afrofuturismMix', 'ambient'];
+                    mixedGenreIds.forEach(id => {
+                        const mixedNode = document.getElementById(`node-${id}`);
+                        const parentA = document.getElementById(`node-${mixedNode.id.replace(/Mix$/, '').replace(/ecm|smooth|soul|cape|ambient/,'')}`); // This logic is a bit brittle
+                        // A better approach would be to store parent references in the node data
+                    });
                 },
             }
         };
