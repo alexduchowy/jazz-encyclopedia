@@ -158,7 +158,7 @@
         }
         
         /* Horizontal draggable timeline container */
-        #horizontal-timeline-container, #legacy-album-slider-container {
+        #horizontal-timeline-container {
             position: relative;
             width: 100%;
             overflow-x: auto;
@@ -167,10 +167,10 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        #horizontal-timeline-container:active, #legacy-album-slider-container:active {
+        #horizontal-timeline-container:active {
             cursor: grabbing;
         }
-        #horizontal-timeline-container::-webkit-scrollbar, #legacy-album-slider-container::-webkit-scrollbar {
+        #horizontal-timeline-container::-webkit-scrollbar {
             display: none;
         }
 
@@ -610,29 +610,52 @@
             font-size: 0.9rem;
         }
         
-        /* UPDATED STYLES FOR LEGACY SECTION */
-        .path-title-button {
-            background: none;
-            border: none;
-            padding: 0;
-            font: inherit;
+        /* NEW STYLES FOR LEGACY SECTION */
+        #path-selector-slider {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        #path-selector-slider::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .path-selector-card {
+            flex-shrink: 0;
+            width: 280px;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            padding: 1rem;
             cursor: pointer;
-            text-align: left;
-            transition: color 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 0px var(--text-main);
         }
-        .path-title-button:hover {
-            color: var(--accent) !important;
+        .path-selector-card:hover {
+            transform: translateY(-4px) rotate(-1deg);
+            box-shadow: 6px 6px 0px var(--text-main);
         }
-        #legacy-slider-track {
-            display: flex;
-            gap: 1.5rem;
-            padding-bottom: 1rem;
+        .path-selector-card.active {
+            transform: translateY(-4px) rotate(-1deg) scale(1.02);
+            border-width: 4px;
+            border-color: var(--path-color, var(--accent));
+            box-shadow: 8px 8px 0px var(--path-color, var(--accent));
         }
-        #legacy-slider-title {
-            color: var(--text-main);
+        .path-selector-card h4 {
+            transition: color 0.3s ease;
         }
+        .path-selector-card.active h4 {
+            color: var(--path-color, var(--accent));
+        }
+
         #legacy-slider-wrapper {
-            transition: background-color 0.5s ease;
+            background-color: rgba(231, 229, 228, 0.5); /* Default light background */
+            transition: background-color 0.5s ease-in-out;
+        }
+        #legacy-album-track {
+            padding: 1rem 0;
+        }
+        .legacy-album-card {
+            width: 200px;
         }
    
     </style>
@@ -801,30 +824,30 @@
             <section id="legacy" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
                     <h2 class="section-header text-5xl">Legacy</h2>
-                    <p class="text-center text-lg text-stone-600 mb-16 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
-
-                    <!-- Part 1: The Six Paths Selector -->
-                    <div id="paths-selector" class="relative mb-12">
-                        <div id="paths-selector-track" class="flex items-center justify-center space-x-4">
-                           <!-- Path selector cards will be injected here -->
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
+            
+                    <!-- Path Selector Slider -->
+                    <div id="path-selector-container" class="relative group mb-12">
+                        <div id="path-selector-slider" class="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 cursor-grab">
+                            <!-- Path cards will be injected by JavaScript -->
                         </div>
                     </div>
                     
-                    <!-- Part 2: The Legacy Album Slider -->
-                    <div id="legacy-slider-wrapper" class="hidden mt-12 p-6 rounded-lg transition-colors duration-500">
-                        <h3 id="legacy-slider-title" class="text-3xl font-bold mb-8 text-center text-white"></h3>
-                        <div id="legacy-album-slider-container" class="min-h-[300px]">
-                             <div id="legacy-slider-track-container" class="relative">
-                                <div id="legacy-slider-track" class="flex transition-transform duration-500 ease-in-out">
-                                    <!-- Album cards will be injected here -->
+                    <!-- Album Display Area -->
+                    <div id="legacy-slider-wrapper" class="hidden mt-8 p-6 rounded-lg">
+                        <h3 id="legacy-slider-title" class="text-4xl mb-8 text-center transition-colors duration-300"></h3>
+                        <div id="legacy-album-slider-container" class="relative">
+                            <div id="legacy-album-track-wrapper" class="overflow-hidden">
+                                <div id="legacy-album-track" class="flex gap-6">
+                                    <!-- Album cards will be injected by JavaScript -->
                                 </div>
-                                <button id="legacy-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                                </button>
-                                <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                                </button>
                             </div>
+                            <button id="legacy-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                            </button>
+                            <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </button>
                         </div>
                     </div>
                     
@@ -1036,7 +1059,9 @@
                 styleMatrix: {},
                 legacyData: {},
                 visibleAlbums: [],
-                currentLegacySlide: 0,
+                currentLegacyAlbumPage: 0,
+                legacyAlbumsPerPage: 0,
+                totalLegacyAlbumPages: 0,
                 eras: [
                     { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'var(--era-cool-light)' },
                     { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: 'var(--era-hard-bop-light)' },
@@ -1106,10 +1131,11 @@
                     navLinks: document.querySelectorAll('header nav a'),
                     footerCopyright: document.getElementById('footer-copyright'),
                     onThisDayContainer: document.getElementById('on-this-day'),
-                    pathsContainer: document.getElementById('paths-selector-track'),
+                    // Legacy section elements
+                    pathSelectorSlider: document.getElementById('path-selector-slider'),
                     legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
-                    legacySliderTrack: document.getElementById('legacy-slider-track'),
                     legacySliderTitle: document.getElementById('legacy-slider-title'),
+                    legacyAlbumTrack: document.getElementById('legacy-album-track'),
                     legacyPrevBtn: document.getElementById('legacy-prev-btn'),
                     legacyNextBtn: document.getElementById('legacy-next-btn'),
                 };
@@ -1157,8 +1183,7 @@
                 this.methods.setupModals();
                 this.methods.setupArtistSlider();
                 this.methods.buildGenreMatrix();
-                this.methods.renderPaths();
-                this.methods.setupLegacySlider();
+                this.methods.setupLegacySection(); // UPDATED
                 this.methods.setupMobileMenu();
                 this.methods.setupScrollObservers();
                 this.methods.setupGeneralEventListeners();
@@ -1166,8 +1191,6 @@
                 this.methods.setupOnThisDayFeature();
                 this.showPage();
                 setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 0);
-                // Predetermined start
-                this.methods.renderLegacySlider("The Electric Path");
             },
 
             // Methods Object
@@ -1775,6 +1798,7 @@
                             this.methods.resizeCanvas();
                             this.methods.updateCustomScrollbar();
                             this.methods.renderScrollbarMarkers();
+                            this.methods.updateLegacyAlbumSliderView();
                         }, 200);
                     });
                     
@@ -1797,6 +1821,125 @@
                     });
                 },
                 
+                // --- LEGACY SECTION METHODS (UPDATED) ---
+                setupLegacySection() {
+                    this.methods.renderPathSelector();
+                    this.methods.setupDraggable(this.elements.pathSelectorSlider);
+                    this.elements.legacyPrevBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(-1));
+                    this.elements.legacyNextBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(1));
+                    // Initially select and render the first path
+                    const firstPathKey = Object.keys(this.state.legacyData)[0];
+                    if(firstPathKey) {
+                        this.methods.renderLegacyAlbumSlider(firstPathKey);
+                        const firstCard = this.elements.pathSelectorSlider.querySelector('.path-selector-card');
+                        if(firstCard) firstCard.classList.add('active');
+                    }
+                },
+
+                renderPathSelector() {
+                    const { pathSelectorSlider } = this.elements;
+                    pathSelectorSlider.innerHTML = '';
+
+                    Object.entries(this.state.legacyData).forEach(([pathKey, pathData]) => {
+                        const card = document.createElement('div');
+                        card.className = 'path-selector-card text-left';
+                        card.dataset.pathKey = pathKey;
+                        
+                        const mainGenre = pathData.genreAffinity.split(', ')[0];
+                        const normalizedGenre = this.methods.normalizeGenreName(mainGenre);
+                        const genreInfo = this.state.styleMatrix.genres[normalizedGenre];
+                        const pathColor = genreInfo ? genreInfo.color : 'var(--accent)';
+                        card.style.setProperty('--path-color', pathColor);
+
+                        const description = pathData.albums[0]?.pivotalTracks[0]?.analysis || 'Explore this musical direction.';
+
+                        card.innerHTML = `
+                            <h4 class="text-3xl font-bold mb-2">${pathData.title}</h4>
+                            <p class="text-sm text-stone-600">${description}</p>
+                        `;
+
+                        card.addEventListener('click', () => {
+                            pathSelectorSlider.querySelectorAll('.path-selector-card').forEach(c => c.classList.remove('active'));
+                            card.classList.add('active');
+                            this.methods.renderLegacyAlbumSlider(pathKey);
+                        });
+
+                        pathSelectorSlider.appendChild(card);
+                    });
+                },
+
+                renderLegacyAlbumSlider(pathKey) {
+                    const { legacySliderWrapper, legacySliderTitle, legacyAlbumTrack } = this.elements;
+                    const pathData = this.state.legacyData[pathKey];
+                    if (!pathData) return;
+
+                    legacySliderTitle.textContent = `Key Albums of ${pathData.title}`;
+                    
+                    const mainGenre = pathData.genreAffinity.split(', ')[0];
+                    const normalizedGenre = this.methods.normalizeGenreName(mainGenre);
+                    const genreInfo = this.state.styleMatrix.genres[normalizedGenre];
+                    const pathColor = genreInfo ? genreInfo.color : 'var(--accent)';
+                    const bgColor = pathColor.startsWith('var') ? `color-mix(in srgb, ${getComputedStyle(document.documentElement).getPropertyValue(pathColor.match(/--[a-zA-Z-]+/)[0])} 15%, transparent)` : `${pathColor}26`;
+                    
+                    legacySliderTitle.style.color = pathColor;
+                    legacySliderWrapper.style.backgroundColor = bgColor;
+
+                    legacyAlbumTrack.innerHTML = '';
+                    pathData.albums.forEach(album => {
+                        const card = document.createElement('div');
+                        card.className = 'legacy-album-card';
+                        card.dataset.albumTitle = album.albumTitle;
+                        card.dataset.artist = album.artist;
+                        card.innerHTML = `
+                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
+                            <div class="legacy-album-card-info">
+                                <h5 class="font-bold truncate">${album.albumTitle}</h5>
+                                <p class="truncate">${album.artist}</p>
+                            </div>`;
+                        card.addEventListener('click', () => {
+                             // Find the full album data from the main database to pass to the modal
+                            const fullAlbumData = this.state.albums.find(a => a.albumTitle === album.albumTitle) || album;
+                            this.methods.openAlbumModal(fullAlbumData, -1); // -1 indicates no next/prev context
+                        });
+                        legacyAlbumTrack.appendChild(card);
+                    });
+                    
+                    legacySliderWrapper.classList.remove('hidden');
+                    this.state.currentLegacyAlbumPage = 0;
+                    this.methods.updateLegacyAlbumSliderView();
+                },
+                
+                updateLegacyAlbumSliderView() {
+                    const { legacyAlbumTrack, legacyPrevBtn, legacyNextBtn } = this.elements;
+                    const trackWrapper = document.getElementById('legacy-album-track-wrapper');
+                    if (!trackWrapper) return;
+                    
+                    const card = legacyAlbumTrack.querySelector('.legacy-album-card');
+                    if (!card) return;
+
+                    const cardWidth = card.offsetWidth;
+                    const gap = parseInt(window.getComputedStyle(legacyAlbumTrack).gap);
+                    const totalCardWidth = cardWidth + gap;
+                    const visibleWidth = trackWrapper.offsetWidth;
+                    this.state.legacyAlbumsPerPage = Math.floor(visibleWidth / totalCardWidth);
+                    
+                    const numCards = legacyAlbumTrack.children.length;
+                    this.state.totalLegacyAlbumPages = Math.max(0, numCards - this.state.legacyAlbumsPerPage);
+                    
+                    this.state.currentLegacyAlbumPage = Math.max(0, Math.min(this.state.currentLegacyAlbumPage, this.state.totalLegacyAlbumPages));
+                    
+                    const offset = -this.state.currentLegacyAlbumPage * totalCardWidth;
+                    legacyAlbumTrack.style.transform = `translateX(${offset}px)`;
+
+                    legacyPrevBtn.disabled = this.state.currentLegacyAlbumPage === 0;
+                    legacyNextBtn.disabled = this.state.currentLegacyAlbumPage >= this.state.totalLegacyAlbumPages;
+                },
+
+                moveLegacyAlbumSlide(direction) {
+                    this.state.currentLegacyAlbumPage += direction;
+                    this.methods.updateLegacyAlbumSliderView();
+                },
+
                 // --- HELPER METHODS ---
                 slugify(name) {
                     if (!name) return '';
@@ -1885,7 +2028,8 @@
                     modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
                     
                     const pivotalTrack = album.pivotalTracks ? album.pivotalTracks[0] : {};
-                    const genreTags = album.genres ? album.genres.split(', ').map(genre => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[genre] || 'var(--genre-default)'}" data-genre-name="${genre}">${genre}</span>`).join(' ') : 'N/A';
+                    const genres = album.genres || (album.pivotalTracks && album.pivotalTracks[0].genre) || '';
+                    const genreTags = genres.split(', ').map(genre => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[genre] || 'var(--genre-default)'}" data-genre-name="${genre}">${genre}</span>`).join(' ');
                     
                     let lineupString = pivotalTrack.lineup || 'N/A';
                     if (lineupString !== 'N/A') {
@@ -2363,126 +2507,6 @@
                             </div>
                         `;
                     }
-                },
-
-                // UPDATED METHOD FOR LEGACY SECTION
-                renderPaths() {
-                    const container = this.elements.pathsContainer;
-                    if (!container) return;
-                    container.innerHTML = '';
-
-                    Object.entries(this.state.legacyData).forEach(([pathKey, path]) => {
-                        const pathEl = document.createElement('div');
-                        pathEl.className = 'fade-in-element';
-
-                        let colorVar;
-                        switch(path.title) {
-                            case 'The Electric Path': colorVar = 'var(--genre-jazz-fusion)'; break;
-                            case 'The Spiritual Path': colorVar = 'var(--genre-free-jazz)'; break;
-                            case 'The Avant-Garde Path': colorVar = 'var(--genre-avant-garde)'; break;
-                            case 'The Melodic Path': colorVar = 'var(--genre-cool-jazz)'; break;
-                            case 'The Afro-Jazz Path': colorVar = 'var(--genre-hard-bop)'; break;
-                            case 'The Neo-Bop Path': colorVar = 'var(--genre-bebop)'; break;
-                            default: colorVar = 'var(--text-main)';
-                        }
-                        
-                        const pathDescription = path.albums.find(a => a.pivotalTracks[0].analysis)?.pivotalTracks[0].analysis || "No description available.";
-
-                        pathEl.innerHTML = `
-                            <button class="path-title-button" data-path-key="${pathKey}">
-                                <h3 class="text-3xl font-bold mb-4" style="color: ${colorVar};">${path.title}</h3>
-                            </button>
-                            <p class="text-stone-700 leading-relaxed text-sm">${pathDescription}</p>
-                        `;
-                        container.appendChild(pathEl);
-                    });
-
-                    document.querySelectorAll('.path-title-button').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const pathKey = e.currentTarget.dataset.pathKey;
-                            this.methods.renderLegacySlider(pathKey);
-                        });
-                    });
-                },
-
-                renderLegacySlider(pathKey) {
-                    const { legacySliderWrapper, legacySliderTrack, legacySliderTitle } = this.elements;
-                    const pathData = this.state.legacyData[pathKey];
-                    const albums = pathData.albums || [];
-                    
-                    legacySliderTrack.innerHTML = '';
-                    if (albums.length === 0) {
-                        legacySliderWrapper.classList.add('hidden');
-                        return;
-                    }
-
-                    legacySliderTitle.textContent = `Key Albums of ${pathData.title}`;
-                    let colorVar;
-                        switch(pathData.title) {
-                            case 'The Electric Path': colorVar = 'var(--genre-jazz-fusion)'; break;
-                            case 'The Spiritual Path': colorVar = 'var(--genre-free-jazz)'; break;
-                            case 'The Avant-Garde Path': colorVar = 'var(--genre-avant-garde)'; break;
-                            case 'The Melodic Path': colorVar = 'var(--genre-cool-jazz)'; break;
-                            case 'The Afro-Jazz Path': colorVar = 'var(--genre-hard-bop)'; break;
-                            case 'The Neo-Bop Path': colorVar = 'var(--genre-bebop)'; break;
-                            default: colorVar = 'var(--text-main)';
-                        }
-                    legacySliderTitle.style.color = colorVar;
-                    this.elements.legacySliderWrapper.style.backgroundColor = `${colorVar.slice(0,-1)}, 0.1)`;
-
-
-                    albums.forEach(album => {
-                        const card = document.createElement('div');
-                        card.className = 'legacy-album-card';
-                        card.dataset.albumTitle = album.albumTitle;
-                        card.dataset.artist = album.artist;
-
-                        card.innerHTML = `
-                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
-                            <div class="legacy-album-card-info">
-                                <h5 class="font-bold truncate">${album.albumTitle}</h5>
-                                <p class="truncate">${album.artist}</p>
-                            </div>`;
-                        
-                        card.addEventListener('click', () => this.methods.openAlbumModal(album));
-                        legacySliderTrack.appendChild(card);
-                    });
-                    
-                    legacySliderWrapper.classList.remove('hidden');
-                    this.state.currentLegacySlide = 0;
-                    this.methods.updateLegacySlider();
-                },
-
-                setupLegacySlider() {
-                    const { legacyPrevBtn, legacyNextBtn } = this.elements;
-                    legacyPrevBtn.addEventListener('click', () => this.methods.moveLegacySlide(-1));
-                    legacyNextBtn.addEventListener('click', () => this.methods.moveLegacySlide(1));
-                },
-
-                moveLegacySlide(direction) {
-                    const track = this.elements.legacySliderTrack;
-                    const cards = track.querySelectorAll('.legacy-album-card');
-                    const numCards = cards.length;
-                    
-                    this.state.currentLegacySlide += direction;
-
-                    if (this.state.currentLegacySlide < 0) {
-                        this.state.currentLegacySlide = 0;
-                    }
-                    
-                    const visibleCards = 4;
-                    if (this.state.currentLegacySlide > numCards - visibleCards) {
-                        this.state.currentLegacySlide = numCards - visibleCards;
-                    }
-                    
-                    this.methods.updateLegacySlider();
-                },
-
-                updateLegacySlider() {
-                    const track = this.elements.legacySliderTrack;
-                    const cardWidth = 200 + 24; // width + gap
-                    const newTransform = -this.state.currentLegacySlide * cardWidth;
-                    track.style.transform = `translateX(${newTransform}px)`;
                 },
             }
         };
