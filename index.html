@@ -792,20 +792,8 @@
                     <p class="text-center text-lg text-stone-600 mb-16 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
 
                     <!-- Part 1: The Six Paths -->
-                    <div id="paths-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10 items-start text-left mb-16">
+                    <div id="paths-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10 items-start text-left mb-20">
                         <!-- Path descriptions will be injected here by JavaScript -->
-                    </div>
-
-                    <!-- Part 2: The Interactive Web -->
-                    <div class="text-left mb-16 fade-in-element">
-                        <h3 class="text-3xl font-bold mb-2 text-center">A Living Tradition</h3>
-                        <p class="text-center text-stone-600 mb-8 max-w-3xl mx-auto">The harmonic sophistication of Bebop, the soulful grammar of Hard Bop, and the expansive freedom of Modal and Post-Bop were codified into a shared musical playbook. This legacy remains the bedrock for contemporary jazz education and performance worldwide. Click a planet to explore its legacy.</p>
-                        <div id="influence-web-container" class="relative bg-stone-200 border-2 border-stone-900 rounded-sm p-4 shadow-inner">
-                            <div id="influence-web-canvas">
-                               <svg id="influence-web-svg"></svg>
-                               <!-- Nodes will be injected here by JavaScript -->
-                            </div>
-                        </div>
                     </div>
                     
                     <!-- Final Paragraph -->
@@ -2461,114 +2449,9 @@
                 },
 
                 renderInfluenceWeb() {
-                    const canvas = document.getElementById('influence-web-canvas');
-                    if (!canvas) return;
-                    canvas.innerHTML = '';
-                    
-                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                    svg.id = 'influence-web-svg';
-                    canvas.appendChild(svg);
-
-                    const nodes = {
-                        // Main Hexagonal Paths
-                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic', color: 'var(--genre-cool-jazz)', pos: { x: 50, y: 12 }, isSubGenre: false, img: 'images/melodic-path.jpg' },
-                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 85, y: 35 }, isSubGenre: false, img: 'images/neo-bop.jpg' },
-                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual', color: 'var(--genre-free-jazz)', pos: { x: 85, y: 65 }, isSubGenre: false, img: 'images/spiritual-jazz.jpg' },
-                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 50, y: 88 }, isSubGenre: false, img: 'images/afro-jazz.jpg' },
-                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 15, y: 65 }, isSubGenre: false, img: 'images/avant-garde.jpg' },
-                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 15, y: 35 }, isSubGenre: false, img: 'images/jazz-fusion.jpg' },
-                        
-                        // Mixed Genres
-                        ecm: { id: 'ecm', label: 'ECM Style', parentA: 'melodic', parentB: 'jazzFusion', isMixed: true },
-                        smooth: { id: 'smooth', label: 'Smooth Jazz', parentA: 'melodic', parentB: 'neoBop', isMixed: true },
-                        soul: { id: 'soul', label: 'Soul Jazz', parentA: 'neoBop', parentB: 'spiritual', isMixed: true },
-                        cape: { id: 'cape', label: 'Cape Jazz', parentA: 'spiritual', parentB: 'afroJazz', isMixed: true },
-                        afrofuturismMix: { id: 'afrofuturismMix', label: 'Afrofuturism', parentA: 'afroJazz', parentB: 'avantGarde', isMixed: true },
-                        ambient: { id: 'ambient', label: 'Ambient Jazz', parentA: 'avantGarde', parentB: 'jazzFusion', isMixed: true },
-                    };
-
-                    Object.values(nodes).forEach(node => {
-                        if (node.isMixed) {
-                           const pA = nodes[node.parentA].pos;
-                           const pB = nodes[node.parentB].pos;
-                           node.pos = { x: (pA.x + pB.x) / 2, y: (pA.y + pB.y) / 2 };
-                        }
-
-                        const nodeEl = document.createElement('div');
-                        nodeEl.className = 'influence-node';
-                        if (node.isMixed) nodeEl.classList.add('mixed-genre');
-                        nodeEl.id = `node-${node.id}`;
-                        nodeEl.style.left = `${node.pos.x}%`;
-                        nodeEl.style.top = `${node.pos.y}%`;
-                        nodeEl.style.transform = 'translate(-50%, -50%)';
-                        
-                        if (!node.isSubGenre && !node.isMixed) {
-                           nodeEl.dataset.pathId = node.pathId;
-                        }
-                        
-                        const labelEl = document.createElement('span');
-                        labelEl.className = 'node-label';
-                        labelEl.textContent = node.label;
-                        if (node.color) {
-                            labelEl.style.backgroundColor = node.color;
-                            labelEl.style.color = 'var(--text-main)';
-                        }
-                        
-                        const imgPath = node.img || 'images/artistplaceholder.jpg';
-                        nodeEl.innerHTML = `<img src="${imgPath}" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">`;
-                        nodeEl.appendChild(labelEl);
-                        canvas.appendChild(nodeEl);
-                    });
-                    
-                    document.querySelectorAll('.influence-node:not(.mixed-genre)').forEach(node => {
-                        node.addEventListener('click', () => {
-                            this.methods.openPathModal(node.dataset.pathId);
-                        });
-                    });
-
-                    setTimeout(() => this.methods.drawInfluenceLines(nodes), 50);
-                },
-
-                drawInfluenceLines(nodes) {
-                    const canvas = document.getElementById('influence-web-canvas');
-                    const svg = document.getElementById('influence-web-svg');
-                    if (!canvas || !svg) return;
-                    
-                    svg.innerHTML = '';
-                    
-                    const mainPathIds = ['melodic', 'neoBop', 'spiritual', 'afroJazz', 'avantGarde', 'jazzFusion'];
-                    const mainPathPoints = mainPathIds.map(id => {
-                        const el = document.getElementById(`node-${id}`);
-                        return `${el.offsetLeft + el.offsetWidth / 2},${el.offsetTop + el.offsetHeight / 2}`;
-                    }).join(' ');
-
-                    const hexagon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                    hexagon.setAttribute('points', mainPathPoints);
-                    svg.appendChild(hexagon);
-
-                    const mixedGenreIds = ['ecm', 'smooth', 'soul', 'cape', 'afrofuturismMix', 'ambient'];
-                    mixedGenreIds.forEach(id => {
-                        const mixedNodeData = nodes[id];
-                        const mixedNodeEl = document.getElementById(`node-${id}`);
-                        const parentA = document.getElementById(`node-${mixedNodeData.parentA}`);
-                        const parentB = document.getElementById(`node-${mixedNodeData.parentB}`);
-                        
-                        if(mixedNodeEl && parentA && parentB) {
-                            const lineA = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                            lineA.setAttribute('x1', mixedNodeEl.offsetLeft + mixedNodeEl.offsetWidth / 2);
-                            lineA.setAttribute('y1', mixedNodeEl.offsetTop + mixedNodeEl.offsetHeight / 2);
-                            lineA.setAttribute('x2', parentA.offsetLeft + parentA.offsetWidth / 2);
-                            lineA.setAttribute('y2', parentA.offsetTop + parentA.offsetHeight / 2);
-                            svg.appendChild(lineA);
-
-                            const lineB = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                            lineB.setAttribute('x1', mixedNodeEl.offsetLeft + mixedNodeEl.offsetWidth / 2);
-                            lineB.setAttribute('y1', mixedNodeEl.offsetTop + mixedNodeEl.offsetHeight / 2);
-                            lineB.setAttribute('x2', parentB.offsetLeft + parentB.offsetWidth / 2);
-                            lineB.setAttribute('y2', parentB.offsetTop + parentB.offsetHeight / 2);
-                            svg.appendChild(lineB);
-                        }
-                    });
+                    // This function is now empty as the visual map is removed.
+                    const container = document.getElementById('influence-web-container');
+                    if(container) container.remove();
                 },
             }
         };
