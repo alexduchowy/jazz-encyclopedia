@@ -158,7 +158,7 @@
         }
         
         /* Horizontal draggable timeline container */
-        #horizontal-timeline-container {
+        #horizontal-timeline-container, #legacy-slider-container {
             position: relative;
             width: 100%;
             overflow-x: auto;
@@ -167,10 +167,10 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        #horizontal-timeline-container:active {
+        #horizontal-timeline-container:active, #legacy-slider-container:active {
             cursor: grabbing;
         }
-        #horizontal-timeline-container::-webkit-scrollbar {
+        #horizontal-timeline-container::-webkit-scrollbar, #legacy-slider-container::-webkit-scrollbar {
             display: none;
         }
 
@@ -218,7 +218,7 @@
             min-height: 520px; /* Adjust height to fit two rows of cards + gap */
         }
         /* Individual album card styling */
-        .timeline-album-card {
+        .timeline-album-card, .legacy-album-card {
             width: 200px;
             flex-shrink: 0;
             background-color: var(--bg-main);
@@ -230,7 +230,7 @@
             overflow: hidden;
             opacity: 1;
         }
-        .timeline-album-card:hover {
+        .timeline-album-card:hover, .legacy-album-card:hover {
             transform: translateY(-5px) rotate(2deg);
         }
         .timeline-album-card.dimmed {
@@ -241,7 +241,7 @@
             box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
         }
         /* Style for the card that is currently selected/clicked */
-        .timeline-album-card.clicked {
+        .timeline-album-card.clicked, .legacy-album-card.clicked {
             transform: translateY(-5px) rotate(2deg) scale(1.05);
             box-shadow: 8px 8px 0px var(--accent) !important;
             opacity: 1 !important;
@@ -252,24 +252,25 @@
             border-color: var(--landmark-color, var(--accent));
             box-shadow: 0 0 15px 0px var(--landmark-color, var(--accent));
         }
-        .timeline-album-card img {
+        .timeline-album-card img, .legacy-album-card img {
             width: 100%;
             height: 200px;
             object-fit: cover;
             filter: grayscale(100%);
             transition: filter 0.3s ease;
         }
-        .timeline-album-card:hover img, .timeline-album-card.highlighted img, .timeline-album-card.clicked img {
+        .timeline-album-card:hover img, .timeline-album-card.highlighted img, .timeline-album-card.clicked img,
+        .legacy-album-card:hover img, .legacy-album-card.clicked img {
             filter: grayscale(0%);
         }
-        .timeline-album-card-info {
+        .timeline-album-card-info, .legacy-album-card-info {
             padding: 0.75rem;
         }
-        .timeline-album-card-info h5 {
+        .timeline-album-card-info h5, .legacy-album-card-info h5 {
             color: var(--text-main);
             font-size: 1.25rem;
         }
-        .timeline-album-card-info p {
+        .timeline-album-card-info p, .legacy-album-card-info p {
             color: var(--text-muted);
             font-family: 'Inter', sans-serif;
             font-size: 0.8rem;
@@ -622,6 +623,11 @@
         .path-title-button:hover {
             color: var(--accent) !important;
         }
+        #legacy-slider-track {
+            display: flex;
+            gap: 1.5rem;
+            padding-bottom: 1rem;
+        }
    
     </style>
 </head>
@@ -794,6 +800,24 @@
                     <!-- Part 1: The Six Paths -->
                     <div id="paths-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10 items-start text-left mb-20">
                         <!-- Path descriptions will be injected here by JavaScript -->
+                    </div>
+                    
+                    <!-- Part 2: The Legacy Album Slider -->
+                    <div id="legacy-slider-wrapper" class="hidden">
+                        <h3 class="text-3xl font-bold mb-8 text-center">Key Albums of the Path</h3>
+                        <div id="legacy-slider-container" class="min-h-[300px]">
+                             <div id="legacy-slider-track-container" class="relative">
+                                <div id="legacy-slider-track" class="flex transition-transform duration-500 ease-in-out">
+                                    <!-- Album cards will be injected here -->
+                                </div>
+                                <button id="legacy-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                </button>
+                                <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Final Paragraph -->
@@ -1002,7 +1026,9 @@
                 artistProfiles: {},
                 artistsData: [],
                 styleMatrix: {},
+                legacyData: {},
                 visibleAlbums: [],
+                currentLegacySlide: 0,
                 eras: [
                     { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'var(--era-cool-light)' },
                     { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: 'var(--era-hard-bop-light)' },
@@ -1152,9 +1178,11 @@
                     navLinks: document.querySelectorAll('header nav a'),
                     footerCopyright: document.getElementById('footer-copyright'),
                     onThisDayContainer: document.getElementById('on-this-day'),
-                    influenceWebContainer: document.getElementById('influence-web-container'),
-                    influenceWebCanvas: document.getElementById('influence-web-canvas'),
                     pathsContainer: document.getElementById('paths-container'),
+                    legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
+                    legacySliderTrack: document.getElementById('legacy-slider-track'),
+                    legacyPrevBtn: document.getElementById('legacy-prev-btn'),
+                    legacyNextBtn: document.getElementById('legacy-next-btn'),
                 };
             },
 
@@ -1166,18 +1194,20 @@
 
                 Promise.all([
                     fetch('database.json').then(res => res.json()),
-                    fetch('artists.json').then(res => res.json())
+                    fetch('artists.json').then(res => res.json()),
+                    fetch('legacy.json').then(res => res.json())
                 ])
-                .then(([dbData, artistProfileData]) => {
+                .then(([dbData, artistProfileData, legacyData]) => {
                     this.state.albums = dbData.albums;
                     this.state.artistProfiles = artistProfileData;
+                    this.state.legacyData = legacyData.paths;
                     this.initializeAppUI();
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                     this.elements.pageContent.innerHTML = `<div class="text-center p-8">
                         <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
-                        <p class="text-stone-600 mt-2">Could not fetch database files. Please ensure 'database.json' and 'artists.json' are available.</p>
+                        <p class="text-stone-600 mt-2">Could not fetch all required database files. Please ensure 'database.json', 'artists.json', and 'legacy.json' are available.</p>
                         <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
                     </div>`;
                     this.showPage();
@@ -1199,7 +1229,7 @@
                 this.methods.setupArtistSlider();
                 this.methods.buildGenreMatrix();
                 this.methods.renderPaths();
-                this.methods.renderInfluenceWeb(); 
+                this.methods.setupLegacySlider();
                 this.methods.setupMobileMenu();
                 this.methods.setupScrollObservers();
                 this.methods.setupGeneralEventListeners();
@@ -1814,7 +1844,6 @@
                             this.methods.resizeCanvas();
                             this.methods.updateCustomScrollbar();
                             this.methods.renderScrollbarMarkers();
-                            this.methods.renderInfluenceWeb(); // Re-render the web on resize
                         }, 200);
                     });
                     
@@ -2443,15 +2472,74 @@
                     document.querySelectorAll('.path-title-button').forEach(button => {
                         button.addEventListener('click', (e) => {
                             const pathId = e.currentTarget.dataset.pathId;
-                            this.methods.openPathModal(pathId);
+                            this.methods.renderLegacySlider(pathId);
                         });
                     });
                 },
 
-                renderInfluenceWeb() {
-                    // This function is now empty as the visual map is removed.
-                    const container = document.getElementById('influence-web-container');
-                    if(container) container.remove();
+                renderLegacySlider(pathId) {
+                    const { legacySliderWrapper, legacySliderTrack } = this.elements;
+                    const pathKey = Object.keys(this.state.legacyData).find(key => this.methods.slugify(key) === this.methods.slugify(this.state.pathData[pathId].title));
+                    const albums = this.state.legacyData[pathKey]?.albums || [];
+                    
+                    legacySliderTrack.innerHTML = '';
+                    if (albums.length === 0) {
+                        legacySliderWrapper.classList.add('hidden');
+                        return;
+                    }
+
+                    albums.forEach(album => {
+                        const card = document.createElement('div');
+                        card.className = 'legacy-album-card';
+                        card.dataset.albumTitle = album.albumTitle;
+                        card.dataset.artist = album.artist;
+
+                        card.innerHTML = `
+                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
+                            <div class="legacy-album-card-info">
+                                <h5 class="font-bold truncate">${album.albumTitle}</h5>
+                                <p class="truncate">${album.artist}</p>
+                            </div>`;
+                        card.addEventListener('click', () => this.methods.openAlbumModal(album));
+                        legacySliderTrack.appendChild(card);
+                    });
+                    
+                    legacySliderWrapper.classList.remove('hidden');
+                    this.state.currentLegacySlide = 0;
+                    this.methods.updateLegacySlider();
+                },
+
+                setupLegacySlider() {
+                    const { legacyPrevBtn, legacyNextBtn } = this.elements;
+                    legacyPrevBtn.addEventListener('click', () => this.methods.moveLegacySlide(-1));
+                    legacyNextBtn.addEventListener('click', () => this.methods.moveLegacySlide(1));
+                },
+
+                moveLegacySlide(direction) {
+                    const track = this.elements.legacySliderTrack;
+                    const cards = track.querySelectorAll('.legacy-album-card');
+                    const numCards = cards.length;
+                    
+                    this.state.currentLegacySlide += direction;
+
+                    if (this.state.currentLegacySlide < 0) {
+                        this.state.currentLegacySlide = 0;
+                    }
+                    // This logic assumes a certain number of visible cards. Let's adjust it.
+                    // For simplicity, let's assume we can see about 4-5 cards at once.
+                    const visibleCards = 4;
+                    if (this.state.currentLegacySlide > numCards - visibleCards) {
+                        this.state.currentLegacySlide = numCards - visibleCards;
+                    }
+                    
+                    this.methods.updateLegacySlider();
+                },
+
+                updateLegacySlider() {
+                    const track = this.elements.legacySliderTrack;
+                    const cardWidth = 200 + 24; // width + gap
+                    const newTransform = -this.state.currentLegacySlide * cardWidth;
+                    track.style.transform = `translateX(${newTransform}px)`;
                 },
             }
         };
