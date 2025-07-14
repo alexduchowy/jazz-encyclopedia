@@ -611,28 +611,31 @@
         }
         
         /* UPDATED STYLES FOR LEGACY SECTION */
-        .path-title-button {
-            background: none;
-            border: none;
-            padding: 0;
-            font: inherit;
-            cursor: pointer;
-            text-align: left;
-            transition: color 0.2s;
+        #paths-selector {
+            overflow: hidden;
         }
-        .path-title-button:hover {
-            color: var(--accent) !important;
+        #paths-selector-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .path-card {
+            width: 100%;
+            flex-shrink: 0;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+            border-radius: 0.5rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+        }
+        #legacy-slider-title {
+            color: white;
+        }
+        #legacy-slider-wrapper {
+            transition: background-color 0.5s ease;
         }
         #legacy-slider-track {
             display: flex;
             gap: 1.5rem;
-            padding-bottom: 1rem;
-        }
-        #legacy-slider-title {
-            color: var(--text-main);
-        }
-        #legacy-slider-wrapper {
-            transition: background-color 0.5s ease;
+            padding: 1rem 0;
         }
    
     </style>
@@ -803,27 +806,30 @@
                     <h2 class="section-header text-5xl">Legacy</h2>
                     <p class="text-center text-lg text-stone-600 mb-16 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
 
-                    <!-- Part 1: The Six Paths Selector -->
-                    <div id="paths-selector" class="relative mb-12">
-                        <div id="paths-selector-track" class="flex items-center justify-center space-x-4">
-                           <!-- Path selector cards will be injected here -->
+                    <!-- Part 1: The Path Selector -->
+                    <div id="path-selector-container" class="relative mb-12">
+                        <h3 class="text-3xl font-bold mb-4 text-center">Choose a Path</h3>
+                        <div id="paths-selector" class="overflow-hidden">
+                            <div id="paths-selector-track" class="flex transition-transform duration-500 ease-in-out">
+                                <!-- Path selector cards will be injected here -->
+                            </div>
                         </div>
+                        <button id="path-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="path-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
                     </div>
-                    
+
                     <!-- Part 2: The Legacy Album Slider -->
                     <div id="legacy-slider-wrapper" class="hidden mt-12 p-6 rounded-lg transition-colors duration-500">
-                        <h3 id="legacy-slider-title" class="text-3xl font-bold mb-8 text-center text-white"></h3>
+                        <h3 id="legacy-slider-title" class="text-3xl font-bold mb-8 text-center"></h3>
                         <div id="legacy-album-slider-container" class="min-h-[300px]">
                              <div id="legacy-slider-track-container" class="relative">
                                 <div id="legacy-slider-track" class="flex transition-transform duration-500 ease-in-out">
                                     <!-- Album cards will be injected here -->
                                 </div>
-                                <button id="legacy-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                                </button>
-                                <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -1037,6 +1043,7 @@
                 legacyData: {},
                 visibleAlbums: [],
                 currentLegacySlide: 0,
+                currentPathIndex: 0,
                 eras: [
                     { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'var(--era-cool-light)' },
                     { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: 'var(--era-hard-bop-light)' },
@@ -1106,10 +1113,13 @@
                     navLinks: document.querySelectorAll('header nav a'),
                     footerCopyright: document.getElementById('footer-copyright'),
                     onThisDayContainer: document.getElementById('on-this-day'),
-                    pathsContainer: document.getElementById('paths-selector-track'),
+                    pathsSelectorTrack: document.getElementById('paths-selector-track'),
+                    pathPrevBtn: document.getElementById('path-prev-btn'),
+                    pathNextBtn: document.getElementById('path-next-btn'),
                     legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
                     legacySliderTrack: document.getElementById('legacy-slider-track'),
                     legacySliderTitle: document.getElementById('legacy-slider-title'),
+                    legacyAlbumSliderContainer: document.getElementById('legacy-album-slider-container'),
                     legacyPrevBtn: document.getElementById('legacy-prev-btn'),
                     legacyNextBtn: document.getElementById('legacy-next-btn'),
                 };
@@ -1157,8 +1167,9 @@
                 this.methods.setupModals();
                 this.methods.setupArtistSlider();
                 this.methods.buildGenreMatrix();
-                this.methods.renderPaths();
-                this.methods.setupLegacySlider();
+                this.methods.renderPathSelector();
+                this.methods.setupPathSelectorSlider();
+                this.methods.setupLegacyAlbumSlider();
                 this.methods.setupMobileMenu();
                 this.methods.setupScrollObservers();
                 this.methods.setupGeneralEventListeners();
@@ -1167,7 +1178,7 @@
                 this.showPage();
                 setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 0);
                 // Predetermined start
-                this.methods.renderLegacySlider("The Electric Path");
+                this.methods.renderLegacySlider(Object.keys(this.state.legacyData)[0]);
             },
 
             // Methods Object
@@ -1782,6 +1793,7 @@
                     if (this.elements.scrollRightBtn) this.elements.scrollRightBtn.classList.add('nudge-animation');
                     
                     this.methods.setupDraggable(this.elements.timelineContainer);
+                    this.methods.setupDraggable(this.elements.legacyAlbumSliderContainer);
                     this.methods.setupCustomScrollbarInteraction();
 
                     // Add a global click listener for clickable links
@@ -2139,350 +2151,6 @@
                     genreModal.classList.add('opacity-0', 'pointer-events-none');
                     genreModal.querySelector('.modal-content').classList.add('scale-95');
                     if (typeof callback === 'function') setTimeout(callback, 300);
-                },
-
-                openPathModal(pathKey) {
-                    const { pathModal } = this.elements;
-                    const data = this.state.legacyData[pathKey];
-                    if (!data) return;
-
-                    const titleEl = pathModal.querySelector('#path-modal-title');
-                    titleEl.textContent = data.title;
-                    
-                    const bodyEl = pathModal.querySelector('#path-modal-body');
-                    const albumsHtml = data.albums.map(album => 
-                        `<li class="text-sm"><strong>${album.year}</strong> - ${album.albumTitle} by ${album.artist}</li>`
-                    ).join('');
-
-                    bodyEl.innerHTML = `
-                        <div class="space-y-4">
-                            <div>
-                                <h4 class="text-lg font-bold text-stone-900">Genre Affinity</h4>
-                                <p class="text-base text-stone-700">${data.genreAffinity}</p>
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-bold text-stone-900">Key Albums</h4>
-                                <ul class="list-disc list-inside space-y-1">${albumsHtml}</ul>
-                            </div>
-                        </div>
-                    `;
-
-                    pathModal.classList.remove('opacity-0', 'pointer-events-none');
-                    pathModal.querySelector('.modal-content').classList.remove('scale-95');
-                },
-
-                closePathModal() {
-                    const { pathModal } = this.elements;
-                    pathModal.classList.add('opacity-0', 'pointer-events-none');
-                    pathModal.querySelector('.modal-content').classList.add('scale-95');
-                },
-                
-                populateInstrumentFilter(artists) {
-                    const { instrumentFilter } = this.elements;
-                    const relevantInstruments = new Set(['alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'tuba', 'vibraphone', 'congas']);
-                    const instrumentsInDataset = new Set();
-                    artists.forEach(artist => artist.instruments.forEach(inst => { if (relevantInstruments.has(inst)) instrumentsInDataset.add(inst); }));
-                    instrumentFilter.innerHTML = '<option value="all">All Instruments</option>';
-                    Array.from(instrumentsInDataset).sort().forEach(instrument => {
-                        const option = document.createElement('option');
-                        option.value = instrument;
-                        option.textContent = instrument.charAt(0).toUpperCase() + instrument.slice(1);
-                        instrumentFilter.appendChild(option);
-                    });
-                },
-                
-                goToArtistPage(pageIndex) {
-                    const { artistSliderTrack, artistPrevBtn, artistNextBtn, artistPageIndicator } = this.elements;
-                    this.state.currentArtistPage = Math.max(0, Math.min(pageIndex, this.state.totalArtistPages - 1));
-                    artistSliderTrack.style.transform = `translateX(-${this.state.currentArtistPage * 100}%)`;
-                    artistPrevBtn.disabled = this.state.currentArtistPage === 0;
-                    artistNextBtn.disabled = this.state.currentArtistPage >= this.state.totalArtistPages - 1;
-                    if (artistPageIndicator) {
-                        if (this.state.totalArtistPages > 0) {
-                            artistPageIndicator.textContent = `${this.state.currentArtistPage + 1} / ${this.state.totalArtistPages}`;
-                        } else {
-                            artistPageIndicator.textContent = '';
-                        }
-                    }
-                },
-                
-                resizeCanvas() {
-                    const { timelineCanvas, timelineWrapper } = this.elements;
-                    timelineCanvas.width = timelineWrapper.scrollWidth;
-                    timelineCanvas.height = timelineWrapper.offsetHeight;
-                },
-                
-                setupDraggable(container) {
-                    if (!container) return;
-                    let isDown = false, startX, scrollLeft;
-                    container.addEventListener('mousedown', (e) => { isDown = true; container.style.cursor = 'grabbing'; startX = e.pageX - container.offsetLeft; scrollLeft = container.scrollLeft; });
-                    container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
-                    container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
-                    container.addEventListener('mousemove', (e) => {
-                        if(!isDown) return;
-                        e.preventDefault();
-                        const x = e.pageX - container.offsetLeft;
-                        const walk = (x - startX) * 2;
-                        container.scrollLeft = scrollLeft - walk;
-                    });
-                },
-                
-                updateCustomScrollbar() {
-                    const { timelineContainer, customScrollbar, customScrollbarThumb } = this.elements;
-                    if (!timelineContainer || !customScrollbar || !customScrollbarThumb) return;
-                    const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
-                    if (scrollableWidth <= 0) {
-                        customScrollbar.style.display = 'none';
-                        return;
-                    }
-                    customScrollbar.style.display = 'block';
-                    const scrollPercentage = timelineContainer.scrollLeft / scrollableWidth;
-                    const thumbWidthPercentage = timelineContainer.clientWidth / timelineContainer.scrollWidth;
-                    customScrollbarThumb.style.width = `${thumbWidthPercentage * 100}%`;
-                    customScrollbarThumb.style.left = `${scrollPercentage * (100 - thumbWidthPercentage * 100)}%`;
-                },
-                
-                setupCustomScrollbarInteraction() {
-                    const { customScrollbar, customScrollbarThumb, timelineContainer } = this.elements;
-                    let isDraggingThumb = false, thumbStartX, thumbStartScrollLeft;
-                    customScrollbarThumb.addEventListener('mousedown', (e) => {
-                        isDraggingThumb = true;
-                        thumbStartX = e.clientX;
-                        thumbStartScrollLeft = timelineContainer.scrollLeft;
-                        customScrollbarThumb.style.cursor = 'grabbing';
-                        document.body.style.cursor = 'grabbing';
-                        document.body.style.userSelect = 'none';
-                    });
-                    document.addEventListener('mousemove', (e) => {
-                        if (!isDraggingThumb) return;
-                        e.preventDefault();
-                        const dx = e.clientX - thumbStartX;
-                        const scrollbarWidth = customScrollbar.clientWidth;
-                        const thumbWidth = customScrollbarThumb.clientWidth;
-                        const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
-                        timelineContainer.scrollLeft = thumbStartScrollLeft + (dx / (scrollbarWidth - thumbWidth)) * scrollableWidth;
-                    });
-                    document.addEventListener('mouseup', () => {
-                        isDraggingThumb = false;
-                        if (customScrollbarThumb) customScrollbarThumb.style.cursor = 'grab';
-                        document.body.style.cursor = '';
-                        document.body.style.userSelect = '';
-                    });
-                    customScrollbar.addEventListener('click', (e) => {
-                        if (e.target === customScrollbar) {
-                            const scrollbarRect = customScrollbar.getBoundingClientRect();
-                            const clickPosition = (e.clientX - scrollbarRect.left) / scrollbarRect.width;
-                            const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
-                            timelineContainer.scrollTo({ left: clickPosition * scrollableWidth, behavior: 'smooth' });
-                        }
-                    });
-                    setTimeout(() => this.methods.updateCustomScrollbar(), 200);
-                },
-
-                renderScrollbarMarkers() {
-                    const { timelineContainer, timelineWrapper, customScrollbarMarkers } = this.elements;
-                    const years = [...new Set(this.state.albums.map(album => album.year))].sort();
-                    customScrollbarMarkers.innerHTML = ''; // Clear existing markers
-
-                    if (timelineWrapper.scrollWidth <= timelineContainer.clientWidth) {
-                        return; // Don't render if not scrollable
-                    }
-
-                    years.forEach(year => {
-                        const yearSection = document.getElementById(`year-${year}`);
-                        if (yearSection && yearSection.style.display !== 'none') {
-                            const position = yearSection.offsetLeft + (yearSection.offsetWidth / 2);
-                            const percentage = (position / timelineWrapper.scrollWidth) * 100;
-                            
-                            const marker = document.createElement('div');
-                            marker.className = 'scrollbar-marker';
-                            marker.style.left = `${percentage}%`;
-                            marker.dataset.year = `'${String(year).slice(2)}`;
-                            customScrollbarMarkers.appendChild(marker);
-                        }
-                    });
-                },
-
-                setupOnThisDayFeature() {
-                    const { onThisDayContainer } = this.elements;
-                    if (!onThisDayContainer) return;
-
-                    const today = new Date();
-                    const currentMonth = today.toLocaleString('en-US', { month: 'long' });
-                    const currentDay = today.getDate();
-
-                    const matchingTracks = [];
-                    this.state.albums.forEach(album => {
-                        album.pivotalTracks.forEach(track => {
-                            const dateParts = track.recordingDate.replace(/,/g, '').split(' ');
-                            if (dateParts.length >= 2) {
-                                const recordMonth = dateParts[0];
-                                const recordDay = parseInt(dateParts[1]);
-                                if (recordMonth === currentMonth && recordDay === currentDay) {
-                                    matchingTracks.push({ ...track, parentAlbum: album });
-                                }
-                            }
-                        });
-                    });
-
-                    if (matchingTracks.length > 0) {
-                        const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
-                        const album = featured.parentAlbum;
-
-                        onThisDayContainer.innerHTML = `
-                            <div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)] cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] hover:-translate-y-1 transition-all">
-                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
-                                <div class="flex items-center gap-4 mt-2">
-                                    <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-stone-900 rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
-                                    <div>
-                                        <p class="text-sm text-stone-600">On <strong>${currentMonth} ${currentDay}</strong>, ${album.year}, the track...</p>
-                                        <p class="text-lg font-bold text-stone-900">"${featured.title}"</p>
-                                        <p class="text-sm text-stone-600">from the album <strong>${album.albumTitle}</strong> by <strong>${album.artist}</strong> was recorded.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        onThisDayContainer.addEventListener('click', () => {
-                            const albumIndex = this.state.visibleAlbums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
-                            if (albumIndex !== -1) {
-                                this.methods.openAlbumModal(this.state.visibleAlbums[albumIndex], albumIndex);
-                            } else {
-                                // If not visible, we can still open it by finding it in the main list
-                                const mainIndex = this.state.albums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
-                                if (mainIndex !== -1) {
-                                    // This is a simplified open, as it won't have next/prev context
-                                     this.methods.openAlbumModal(this.state.albums[mainIndex], -1);
-                                }
-                            }
-                        });
-                    } else {
-                        onThisDayContainer.innerHTML = `
-                             <div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)]">
-                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
-                                <p class="text-center text-stone-600 mt-4">No landmark tracks were recorded on this day in our database. Check back tomorrow!</p>
-                            </div>
-                        `;
-                    }
-                },
-
-                // UPDATED METHOD FOR LEGACY SECTION
-                renderPaths() {
-                    const container = this.elements.pathsContainer;
-                    if (!container) return;
-                    container.innerHTML = '';
-
-                    Object.entries(this.state.legacyData).forEach(([pathKey, path]) => {
-                        const pathEl = document.createElement('div');
-                        pathEl.className = 'fade-in-element';
-
-                        let colorVar;
-                        switch(path.title) {
-                            case 'The Electric Path': colorVar = 'var(--genre-jazz-fusion)'; break;
-                            case 'The Spiritual Path': colorVar = 'var(--genre-free-jazz)'; break;
-                            case 'The Avant-Garde Path': colorVar = 'var(--genre-avant-garde)'; break;
-                            case 'The Melodic Path': colorVar = 'var(--genre-cool-jazz)'; break;
-                            case 'The Afro-Jazz Path': colorVar = 'var(--genre-hard-bop)'; break;
-                            case 'The Neo-Bop Path': colorVar = 'var(--genre-bebop)'; break;
-                            default: colorVar = 'var(--text-main)';
-                        }
-                        
-                        const pathDescription = path.albums.find(a => a.pivotalTracks[0].analysis)?.pivotalTracks[0].analysis || "No description available.";
-
-                        pathEl.innerHTML = `
-                            <button class="path-title-button" data-path-key="${pathKey}">
-                                <h3 class="text-3xl font-bold mb-4" style="color: ${colorVar};">${path.title}</h3>
-                            </button>
-                            <p class="text-stone-700 leading-relaxed text-sm">${pathDescription}</p>
-                        `;
-                        container.appendChild(pathEl);
-                    });
-
-                    document.querySelectorAll('.path-title-button').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const pathKey = e.currentTarget.dataset.pathKey;
-                            this.methods.renderLegacySlider(pathKey);
-                        });
-                    });
-                },
-
-                renderLegacySlider(pathKey) {
-                    const { legacySliderWrapper, legacySliderTrack, legacySliderTitle } = this.elements;
-                    const pathData = this.state.legacyData[pathKey];
-                    const albums = pathData.albums || [];
-                    
-                    legacySliderTrack.innerHTML = '';
-                    if (albums.length === 0) {
-                        legacySliderWrapper.classList.add('hidden');
-                        return;
-                    }
-
-                    legacySliderTitle.textContent = `Key Albums of ${pathData.title}`;
-                    let colorVar;
-                        switch(pathData.title) {
-                            case 'The Electric Path': colorVar = 'var(--genre-jazz-fusion)'; break;
-                            case 'The Spiritual Path': colorVar = 'var(--genre-free-jazz)'; break;
-                            case 'The Avant-Garde Path': colorVar = 'var(--genre-avant-garde)'; break;
-                            case 'The Melodic Path': colorVar = 'var(--genre-cool-jazz)'; break;
-                            case 'The Afro-Jazz Path': colorVar = 'var(--genre-hard-bop)'; break;
-                            case 'The Neo-Bop Path': colorVar = 'var(--genre-bebop)'; break;
-                            default: colorVar = 'var(--text-main)';
-                        }
-                    legacySliderTitle.style.color = colorVar;
-                    this.elements.legacySliderWrapper.style.backgroundColor = `${colorVar.slice(0,-1)}, 0.1)`;
-
-
-                    albums.forEach(album => {
-                        const card = document.createElement('div');
-                        card.className = 'legacy-album-card';
-                        card.dataset.albumTitle = album.albumTitle;
-                        card.dataset.artist = album.artist;
-
-                        card.innerHTML = `
-                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
-                            <div class="legacy-album-card-info">
-                                <h5 class="font-bold truncate">${album.albumTitle}</h5>
-                                <p class="truncate">${album.artist}</p>
-                            </div>`;
-                        
-                        card.addEventListener('click', () => this.methods.openAlbumModal(album));
-                        legacySliderTrack.appendChild(card);
-                    });
-                    
-                    legacySliderWrapper.classList.remove('hidden');
-                    this.state.currentLegacySlide = 0;
-                    this.methods.updateLegacySlider();
-                },
-
-                setupLegacySlider() {
-                    const { legacyPrevBtn, legacyNextBtn } = this.elements;
-                    legacyPrevBtn.addEventListener('click', () => this.methods.moveLegacySlide(-1));
-                    legacyNextBtn.addEventListener('click', () => this.methods.moveLegacySlide(1));
-                },
-
-                moveLegacySlide(direction) {
-                    const track = this.elements.legacySliderTrack;
-                    const cards = track.querySelectorAll('.legacy-album-card');
-                    const numCards = cards.length;
-                    
-                    this.state.currentLegacySlide += direction;
-
-                    if (this.state.currentLegacySlide < 0) {
-                        this.state.currentLegacySlide = 0;
-                    }
-                    
-                    const visibleCards = 4;
-                    if (this.state.currentLegacySlide > numCards - visibleCards) {
-                        this.state.currentLegacySlide = numCards - visibleCards;
-                    }
-                    
-                    this.methods.updateLegacySlider();
-                },
-
-                updateLegacySlider() {
-                    const track = this.elements.legacySliderTrack;
-                    const cardWidth = 200 + 24; // width + gap
-                    const newTransform = -this.state.currentLegacySlide * cardWidth;
-                    track.style.transform = `translateX(${newTransform}px)`;
                 },
             }
         };
