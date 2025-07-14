@@ -19,7 +19,7 @@
             --bg-secondary: #e7e5e4; /* stone-200 */
             --bg-dark: #1a1a1a; /* Custom dark gray */
             --text-main: #1c1917; /* stone-900 */
-            --text-muted: #57534e; /* stone-600 */
+            --text-muted: #44403c; /* stone-700 - Darkened for readability */
             --accent: #f97316; /* orange-500 */
             --accent-dark: #ea580c; /* orange-600 */
             --yellow-accent: #facc15; /* yellow-400 */
@@ -612,8 +612,8 @@
         /* UPDATED STYLES FOR LEGACY SECTION */
         #influence-web-container {
             position: relative;
-            height: 750px;
-            overflow: visible; /* Allow nodes to overflow for hover effects */
+            height: 700px; /* Adjusted height for new layout */
+            overflow: hidden;
             cursor: default;
         }
         #influence-web-canvas {
@@ -647,10 +647,8 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             background-color: var(--bg-dark);
         }
-        .influence-node.sub-genre .node-image {
-            width: 65px;
-            height: 65px;
-            border-width: 2px;
+        .influence-node.sub-genre {
+           display: none; /* Moons are now hidden from the map */
         }
         .influence-node .node-label {
             margin-top: 8px;
@@ -660,13 +658,6 @@
             background-color: rgba(245, 245, 244, 0.8);
             padding: 2px 6px;
             border-radius: 4px;
-        }
-        .influence-node.sub-genre .node-label {
-            font-size: 0.8rem;
-            margin-top: 6px;
-        }
-        .influence-node .node-info {
-            display: none; /* Tooltips are now handled by the path modal */
         }
         #influence-web-svg {
             position: absolute;
@@ -1118,13 +1109,6 @@
                 lastKnownEraTitle: '',
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
-                influenceWebState: {
-                    scale: 1,
-                    panX: 0,
-                    panY: 0,
-                    isPanning: false,
-                    startPos: { x: 0, y: 0 }
-                },
                 pathData: {
                     electric: {
                         title: "The Electric Path",
@@ -2514,54 +2498,19 @@
                     svg.id = 'influence-web-svg';
                     canvas.appendChild(svg);
 
-                    const slugify = this.methods.slugify;
                     const nodes = {
                         // Main Hexagonal Paths
-                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 50, y: 12 }, isSubGenre: false },
-                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual Jazz', color: 'var(--genre-free-jazz)', pos: { x: 80, y: 35 }, isSubGenre: false },
-                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 80, y: 65 }, isSubGenre: false },
-                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 50, y: 88 }, isSubGenre: false },
-                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 20, y: 65 }, isSubGenre: false },
-                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic Path', color: 'var(--genre-cool-jazz)', pos: { x: 20, y: 35 }, isSubGenre: false },
-
-                        // Album Moons
-                        ef1: { id: 'ef1', label: 'The Inner Mounting Flame (1971)', parent: 'jazzFusion', angle: 240, dist: 15, isSubGenre: true },
-                        ef2: { id: 'ef2', label: 'Head Hunters (1973)', parent: 'jazzFusion', angle: 180, dist: 15, isSubGenre: true },
-                        ef3: { id: 'ef3', label: 'Get Up With It (1974)', parent: 'jazzFusion', angle: 120, dist: 15, isSubGenre: true },
-                        
-                        sp1: { id: 'sp1', label: 'Journey in Satchidananda (1971)', parent: 'spiritual', angle: 300, dist: 15, isSubGenre: true },
-                        sp2: { id: 'sp2', label: 'Black Unity (1972)', parent: 'spiritual', angle: 0, dist: 15, isSubGenre: true },
-                        sp3: { id: 'sp3', label: 'Godspelized (1997)', parent: 'spiritual', angle: 60, dist: 15, isSubGenre: true },
-                        
-                        aj1: { id: 'aj1', label: 'Blackstone Legacy (1971)', parent: 'afroJazz', angle: 0, dist: 15, isSubGenre: true },
-                        aj2: { id: 'aj2', label: 'King of Kings (1974)', parent: 'afroJazz', angle: 60, dist: 15, isSubGenre: true },
-                        aj3: { id: 'aj3', label: 'Bap-Tizum (1972)', parent: 'afroJazz', angle: 120, dist: 15, isSubGenre: true },
-
-                        ag1: { id: 'ag1', label: 'Science Fiction (1972)', parent: 'avantGarde', angle: 60, dist: 15, isSubGenre: true },
-                        ag2: { id: 'ag2', label: 'Ask the Ages (1991)', parent: 'avantGarde', angle: 120, dist: 15, isSubGenre: true },
-                        ag3: { id: 'ag3', label: 'Coin Coin Chapter One (2011)', parent: 'avantGarde', angle: 180, dist: 15, isSubGenre: true },
-
-                        mp1: { id: 'mp1', label: 'Return to Forever (1972)', parent: 'melodic', angle: 180, dist: 15, isSubGenre: true },
-                        mp2: { id: 'mp2', label: 'The Köln Concert (1975)', parent: 'melodic', angle: 240, dist: 15, isSubGenre: true },
-                        mp3: { id: 'mp3', label: 'Pat Metheny Group (1978)', parent: 'melodic', angle: 300, dist: 15, isSubGenre: true },
-                        
-                        nb1: { id: 'nb1', label: 'Scenery (1976)', parent: 'neoBop', angle: 240, dist: 15, isSubGenre: true },
-                        nb2: { id: 'nb2', label: 'Eastern Rebellion (1976)', parent: 'neoBop', angle: 300, dist: 15, isSubGenre: true },
-                        nb3: { id: 'nb3', label: 'Black Codes (1985)', parent: 'neoBop', angle: 0, dist: 15, isSubGenre: true },
+                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 50, y: 15 }, isSubGenre: false },
+                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual Jazz', color: 'var(--genre-free-jazz)', pos: { x: 85, y: 35 }, isSubGenre: false },
+                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 85, y: 65 }, isSubGenre: false },
+                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 50, y: 85 }, isSubGenre: false },
+                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 15, y: 65 }, isSubGenre: false },
+                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic Path', color: 'var(--genre-cool-jazz)', pos: { x: 15, y: 35 }, isSubGenre: false },
                     };
 
                     Object.values(nodes).forEach(node => {
                         const nodeEl = document.createElement('div');
                         nodeEl.className = 'influence-node';
-                        if (node.isSubGenre) {
-                            nodeEl.classList.add('sub-genre');
-                            const parentNode = nodes[node.parent];
-                            const angleRad = (node.angle - 90) * (Math.PI / 180);
-                            node.pos = {
-                                x: parentNode.pos.x + node.dist * Math.cos(angleRad),
-                                y: parentNode.pos.y + node.dist * Math.sin(angleRad)
-                            };
-                        }
                         nodeEl.id = `node-${node.id}`;
                         nodeEl.style.left = `${node.pos.x}%`;
                         nodeEl.style.top = `${node.pos.y}%`;
@@ -2579,7 +2528,7 @@
                             labelEl.style.color = 'var(--text-main)';
                         }
                         
-                        nodeEl.innerHTML = `<img src="${node.img || 'images/artistplaceholder.jpg'}" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">`;
+                        nodeEl.innerHTML = `<img src="images/${node.id}.jpg" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">`;
                         nodeEl.appendChild(labelEl);
                         canvas.appendChild(nodeEl);
                     });
@@ -2609,33 +2558,7 @@
                     const hexagon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                     hexagon.setAttribute('points', mainPathPoints);
                     svg.appendChild(hexagon);
-
-                    const connections = [
-                        ['neoBop', 'nb1'], ['neoBop', 'nb2'], ['neoBop', 'nb3'],
-                        ['spiritual', 'sp1'], ['spiritual', 'sp2'], ['spiritual', 'sp3'],
-                        ['afroJazz', 'aj1'], ['afroJazz', 'aj2'], ['afroJazz', 'aj3'],
-                        ['avantGarde', 'ag1'], ['avantGarde', 'ag2'], ['avantGarde', 'ag3'],
-                        ['jazzFusion', 'jf1'], ['jazzFusion', 'jf2'], ['jazzFusion', 'jf3'],
-                        ['melodic', 'mp1'], ['melodic', 'mp2'], ['melodic', 'mp3'],
-                    ];
-
-                    connections.forEach(conn => {
-                        const el1 = document.getElementById(`node-${conn[0]}`);
-                        const el2 = document.getElementById(`node-${conn[1]}`);
-                        if (el1 && el2) {
-                            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                            line.setAttribute('x1', el1.offsetLeft + el1.offsetWidth / 2);
-                            line.setAttribute('y1', el1.offsetTop + el1.offsetHeight / 2);
-                            line.setAttribute('x2', el2.offsetLeft + el2.offsetWidth / 2);
-                            line.setAttribute('y2', el2.offsetTop + el2.offsetHeight / 2);
-                            svg.appendChild(line);
-                        }
-                    });
                 },
-                
-                setupPanAndZoom() {
-                    // Pan and zoom functionality is disabled as per user request.
-                }
             }
         };
 
