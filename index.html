@@ -648,6 +648,11 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             background-color: var(--bg-dark);
         }
+        .influence-node.sub-genre .node-image {
+            width: 65px;
+            height: 65px;
+            border-width: 2px;
+        }
         .influence-node .node-label {
             margin-top: 8px;
             font-weight: bold;
@@ -656,6 +661,10 @@
             background-color: rgba(245, 245, 244, 0.8); /* bg-main with transparency */
             padding: 2px 6px;
             border-radius: 4px;
+        }
+        .influence-node.sub-genre .node-label {
+            font-size: 0.8rem;
+            margin-top: 6px;
         }
         .influence-node .node-info {
             display: none;
@@ -860,7 +869,7 @@
                     <h2 class="section-header text-5xl">Legacy</h2>
                     <p class="text-center text-lg text-stone-600 mb-16 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
 
-                    <!-- Part 1: The Four Paths -->
+                    <!-- Part 1: The Five Paths -->
                     <div class="grid md:grid-cols-2 gap-x-12 gap-y-10 items-start text-left mb-16">
                         <!-- The Electric Path -->
                         <div class="fade-in-element">
@@ -892,6 +901,14 @@
                             <div class="flex gap-4 items-start">
                                  <img src="https://i.scdn.co/image/ab67616d0000b2730c8f6144ab22306786883138" class="w-32 h-32 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
                                 <p class="text-stone-700 leading-relaxed">Continuing the tradition of Cool Jazz and Bossa Nova, artists like <strong class="clickable-link" data-artist-name="Stan Getz">Stan Getz</strong> focused on lyrical beauty and accessibility, creating a commercially successful sound that would evolve into the Smooth Jazz of later decades.</p>
+                            </div>
+                        </div>
+                         <!-- The Afrofuturist Path -->
+                        <div class="fade-in-element md:col-span-2">
+                            <h3 class="text-3xl font-bold mb-4 text-center" style="color: var(--genre-hard-bop);">The Afrofuturist Path</h3>
+                            <div class="flex flex-col sm:flex-row gap-4 items-start text-center sm:text-left">
+                                 <img src="https://e.snmc.io/i/600/s/e5716e37e33529322b8514539224d4e3/50531" class="w-32 h-32 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0 mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
+                                <p class="text-stone-700 leading-relaxed">Visionaries like <strong class="clickable-link" data-artist-name="Sun Ra">Sun Ra</strong> created a unique cosmology, blending ancient Egyptian mythology, science fiction, and free improvisation. This path explored jazz as a vehicle for Black identity and cosmic exploration, creating a unique and enduring cultural aesthetic.</p>
                             </div>
                         </div>
                     </div>
@@ -2402,40 +2419,51 @@
 
                     const slugify = this.methods.slugify;
                     const nodes = {
-                        center: { id: 'center', label: 'Post-Bop (1959-69)', info: 'The common language of the 60s, blending harmonic complexity with modal freedom.', img: 'images/logo.svg', pos: { x: 50, y: 50 } },
+                        // Core
+                        center: { id: 'center', label: 'Post-Bop (1959-69)', info: 'The common language of the 60s, blending harmonic complexity with modal freedom.', img: 'images/logo.svg', pos: { x: 50, y: 50 }, isSubGenre: false },
                         
-                        // Primary Branches
-                        jazzFusion: { id: 'jazzFusion', label: 'Jazz Fusion', info: 'Pioneered by Miles Davis, this path incorporated electric instruments and rock/funk rhythms.', img: `images/${slugify('Miles Davis')}.jpg`, pos: { x: 50, y: 15 } },
-                        spiritual: { id: 'spiritual', label: 'Spiritual Jazz', info: 'Following John Coltrane\'s quest, this path used music for transcendence and spiritual expression.', img: `images/${slugify('John Coltrane')}.jpg`, pos: { x: 85, y: 50 } },
-                        avantGarde: { id: 'avantGarde', label: 'Avant-Garde', info: 'Led by Ornette Coleman, this path deconstructed rules, focusing on pure melody and texture.', img: `images/${slugify('Ornette Coleman')}.jpg`, pos: { x: 50, y: 85 } },
-                        cool: { id: 'cool', label: 'Cool & Bossa', info: 'Championed by Stan Getz, this path focused on lyrical beauty, leading to Smooth Jazz.', img: 'https://i.scdn.co/image/ab67616d0000b2730c8f6144ab22306786883138', pos: { x: 15, y: 50 } },
+                        // Main Pentagon
+                        afrofuturism: { id: 'afrofuturism', label: 'Afrofuturism', info: 'Visionaries like Sun Ra created a unique cosmology, blending mythology, sci-fi, and free improvisation.', img: `https://e.snmc.io/i/600/s/e5716e37e33529322b8514539224d4e3/50531`, pos: { x: 50, y: 10 }, isSubGenre: false },
+                        jazzFusion: { id: 'jazzFusion', label: 'Jazz Fusion', info: 'Pioneered by Miles Davis, this path incorporated electric instruments and rock/funk rhythms.', img: `images/${slugify('Miles Davis')}.jpg`, pos: { x: 88, y: 35 }, isSubGenre: false },
+                        spiritual: { id: 'spiritual', label: 'Spiritual Jazz', info: 'Following John Coltrane\'s quest, this path used music for transcendence and spiritual expression.', img: `images/${slugify('John Coltrane')}.jpg`, pos: { x: 73, y: 80 }, isSubGenre: false },
+                        avantGarde: { id: 'avantGarde', label: 'Avant-Garde', info: 'Led by Ornette Coleman, this path deconstructed rules, focusing on pure melody and texture.', img: `images/${slugify('Ornette Coleman')}.jpg`, pos: { x: 27, y: 80 }, isSubGenre: false },
+                        cool: { id: 'cool', label: 'Cool & Bossa', info: 'Championed by Stan Getz, this path focused on lyrical beauty, leading to Smooth Jazz.', img: 'https://i.scdn.co/image/ab67616d0000b2730c8f6144ab22306786883138', pos: { x: 12, y: 35 }, isSubGenre: false },
 
                         // Future Branches
-                        spiritualAvantGarde: { id: 'spiritualAvantGarde', label: 'Spiritual + Avant-Garde', info: 'Combines the intensity of free improvisation with a deep, meditative quality.', img: 'https://e.snmc.io/i/600/s/17238a356248ab22323533458694f7a3/2836261', pos: { x: 95, y: 25 } },
-                        afroJazz: { id: 'afroJazz', label: 'Afro-Jazz', info: 'Fuses jazz improvisation with traditional African rhythms and instrumentation.', img: 'https://e.snmc.io/i/600/s/a3554e20cf9321c82823b1853b75486e/10103755', pos: { x: 95, y: 75 } },
+                        spiritualAvantGarde: { id: 'spiritualAvantGarde', label: 'Spiritual + Avant-Garde', info: 'Combines the intensity of free improvisation with a deep, meditative quality.', img: 'https://e.snmc.io/i/600/s/17238a356248ab22323533458694f7a3/2836261', pos: { x: 95, y: 58 }, isSubGenre: true },
+                        afroJazz: { id: 'afroJazz', label: 'Afro-Jazz', info: 'Fuses jazz improvisation with traditional African rhythms and instrumentation.', img: 'https://e.snmc.io/i/600/s/a3554e20cf9321c82823b1853b75486e/10103755', pos: { x: 85, y: 98 }, isSubGenre: true },
                         
-                        fusionAvantGarde: { id: 'fusionAvantGarde', label: 'Fusion + Avant-Garde', info: 'The raw energy of free jazz meets the volume and electricity of rock.', img: 'https://e.snmc.io/i/600/s/e5716e37e33529322b8514539224d4e3/50531', pos: { x: 75, y: 5 } },
-                        fusionRock: { id: 'fusionRock', label: 'Jazz-Rock', info: 'Emphasizes virtuosic soloing over powerful, complex rock grooves.', img: 'https://e.snmc.io/i/600/s/5b35835d0643714f3f4e13e4f3a763d5/71003', pos: { x: 50, y: -5 } },
-                        fusionECM: { id: 'fusionECM', label: 'Fusion + ECM Style', info: 'A more atmospheric and spacious approach to fusion, typical of the ECM label.', img: 'https://e.snmc.io/i/600/s/f8b19a1618693867c29e7f81f8f39e31/81180', pos: { x: 25, y: 5 } },
+                        fusionAvantGarde: { id: 'fusionAvantGarde', label: 'Fusion + Avant-Garde', info: 'The raw energy of free jazz meets the volume and electricity of rock.', img: `https://e.snmc.io/i/600/s/e5716e37e33529322b8514539224d4e3/50531`, pos: { x: 75, y: 15 }, isSubGenre: true },
+                        fusionRock: { id: 'fusionRock', label: 'Jazz-Rock', info: 'Emphasizes virtuosic soloing over powerful, complex rock grooves.', img: 'https://e.snmc.io/i/600/s/5b35835d0643714f3f4e13e4f3a763d5/71003', pos: { x: 65, y: -5 }, isSubGenre: true },
+                        fusionECM: { id: 'fusionECM', label: 'Fusion + ECM Style', info: 'A more atmospheric and spacious approach to fusion, typical of the ECM label.', img: 'https://e.snmc.io/i/600/s/f8b19a1618693867c29e7f81f8f39e31/81180', pos: { x: 98, y: 10 }, isSubGenre: true },
                         
-                        modernCreative: { id: 'modernCreative', label: 'Modern Creative', info: 'A contemporary extension of the avant-garde, often blending composition and free play.', img: 'https://e.snmc.io/i/600/s/4c2642a8b9e663d2e94a89a0dc1181da/4785420', pos: { x: 75, y: 95 } },
-                        loftJazz: { id: 'loftJazz', label: 'Loft Jazz', info: 'A gritty, bluesy, and funky take on the avant-garde that emerged from New York lofts.', img: 'https://e.snmc.io/i/600/s/2d69427f0f62d73359d9978181f727c9/50699', pos: { x: 25, y: 95 } },
+                        modernCreative: { id: 'modernCreative', label: 'Modern Creative', info: 'A contemporary extension of the avant-garde, often blending composition and free play.', img: 'https://e.snmc.io/i/600/s/4c2642a8b9e663d2e94a89a0dc1181da/4785420', pos: { x: 50, y: 105 }, isSubGenre: true },
+                        loftJazz: { id: 'loftJazz', label: 'Loft Jazz', info: 'A gritty, bluesy, and funky take on the avant-garde that emerged from New York lofts.', img: 'https://e.snmc.io/i/600/s/2d69427f0f62d73359d9978181f727c9/50699', pos: { x: 15, y: 98 }, isSubGenre: true },
 
-                        ecmStyle: { id: 'ecmStyle', label: 'ECM Style Jazz', info: 'Known for pristine production and a blend of modal jazz with folk and classical influences.', img: 'https://e.snmc.io/i/600/s/c354a42b15163155716b5e02d1d45923/81188', pos: { x: 5, y: 25 } },
-                        postBopFusion: { id: 'postBopFusion', label: 'Post-Bop + Fusion', info: 'Features acoustic post-bop musicians incorporating electric instruments and funk.', img: 'https://e.snmc.io/i/600/s/f01229302633a69a4892c55d0132b318/50567', pos: { x: 5, y: 75 } },
+                        ecmStyle: { id: 'ecmStyle', label: 'ECM Style Jazz', info: 'Known for pristine production and a blend of modal jazz with folk and classical influences.', img: 'https://e.snmc.io/i/600/s/c354a42b15163155716b5e02d1d45923/81188', pos: { x: 2, y: 10 }, isSubGenre: true },
+                        postBopFusion: { id: 'postBopFusion', label: 'Post-Bop + Fusion', info: 'Features acoustic post-bop musicians incorporating electric instruments and funk.', img: 'https://e.snmc.io/i/600/s/f01229302633a69a4892c55d0132b318/50567', pos: { x: 2, y: 58 }, isSubGenre: true },
+
+                        kamasi: { id: 'kamasi', label: 'Spiritual + Fusion', info: 'A modern blend of large-ensemble spiritual jazz with funk and fusion elements.', img: 'https://e.snmc.io/i/600/s/f7a070e831a337c7885b983f4e311f99/11516462', pos: { x: 98, y: -2 }, isSubGenre: true },
                     };
 
                     const connections = [
-                        ['center', 'jazzFusion'], ['center', 'spiritual'], ['center', 'avantGarde'], ['center', 'cool'],
-                        ['spiritual', 'spiritualAvantGarde'], ['spiritual', 'afroJazz'],
-                        ['jazzFusion', 'fusionAvantGarde'], ['jazzFusion', 'fusionRock'], ['jazzFusion', 'fusionECM'],
-                        ['avantGarde', 'modernCreative'], ['avantGarde', 'loftJazz'],
-                        ['cool', 'ecmStyle'], ['cool', 'postBopFusion'],
+                        ['center', 'jazzFusion'], ['center', 'spiritual'], ['center', 'avantGarde'], ['center', 'cool'], ['center', 'afrofuturism'],
+                        ['spiritual', 'spiritualAvantGarde'], ['avantGarde', 'spiritualAvantGarde'],
+                        ['spiritual', 'afroJazz'], ['avantGarde', 'afroJazz'], ['afrofuturism', 'afroJazz'],
+                        ['jazzFusion', 'fusionAvantGarde'], ['avantGarde', 'fusionAvantGarde'],
+                        ['jazzFusion', 'fusionRock'],
+                        ['jazzFusion', 'fusionECM'], ['cool', 'fusionECM'],
+                        ['avantGarde', 'modernCreative'],
+                        ['avantGarde', 'loftJazz'], ['postBopFusion', 'loftJazz'],
+                        ['cool', 'ecmStyle'],
+                        ['cool', 'postBopFusion'],
+                        ['spiritual', 'kamasi'], ['jazzFusion', 'kamasi'],
                     ];
 
                     Object.values(nodes).forEach(node => {
                         const nodeEl = document.createElement('div');
                         nodeEl.className = 'influence-node';
+                        if (node.isSubGenre) nodeEl.classList.add('sub-genre');
                         nodeEl.id = `node-${node.id}`;
                         nodeEl.style.left = `${node.pos.x}%`;
                         nodeEl.style.top = `${node.pos.y}%`;
@@ -2459,11 +2487,17 @@
                     svg.innerHTML = ''; // Clear previous lines
                     
                     const connections = [
-                        ['center', 'jazzFusion'], ['center', 'spiritual'], ['center', 'avantGarde'], ['center', 'cool'],
-                        ['spiritual', 'spiritualAvantGarde'], ['spiritual', 'afroJazz'],
-                        ['jazzFusion', 'fusionAvantGarde'], ['jazzFusion', 'fusionRock'], ['jazzFusion', 'fusionECM'],
-                        ['avantGarde', 'modernCreative'], ['avantGarde', 'loftJazz'],
-                        ['cool', 'ecmStyle'], ['cool', 'postBopFusion'],
+                        ['center', 'jazzFusion'], ['center', 'spiritual'], ['center', 'avantGarde'], ['center', 'cool'], ['center', 'afrofuturism'],
+                        ['spiritual', 'spiritualAvantGarde'], ['avantGarde', 'spiritualAvantGarde'],
+                        ['spiritual', 'afroJazz'], ['avantGarde', 'afroJazz'], ['afrofuturism', 'afroJazz'],
+                        ['jazzFusion', 'fusionAvantGarde'], ['avantGarde', 'fusionAvantGarde'],
+                        ['jazzFusion', 'fusionRock'],
+                        ['jazzFusion', 'fusionECM'], ['cool', 'fusionECM'],
+                        ['avantGarde', 'modernCreative'],
+                        ['avantGarde', 'loftJazz'], ['postBopFusion', 'loftJazz'],
+                        ['cool', 'ecmStyle'],
+                        ['cool', 'postBopFusion'],
+                        ['spiritual', 'kamasi'], ['jazzFusion', 'kamasi'],
                     ];
 
                     connections.forEach(conn => {
@@ -2506,15 +2540,12 @@
                         applyTransform();
                     });
 
-                    container.addEventListener('mouseup', () => {
+                    const endPan = () => {
                         state.isPanning = false;
                         container.style.cursor = 'grab';
-                    });
-                    
-                    container.addEventListener('mouseleave', () => {
-                        state.isPanning = false;
-                        container.style.cursor = 'grab';
-                    });
+                    };
+                    container.addEventListener('mouseup', endPan);
+                    container.addEventListener('mouseleave', endPan);
 
                     container.addEventListener('wheel', (e) => {
                         e.preventDefault();
@@ -2527,7 +2558,7 @@
                         if (e.deltaY < 0) { // Zoom in
                             state.scale = Math.min(3, state.scale * zoomFactor);
                         } else { // Zoom out
-                            state.scale = Math.max(0.5, state.scale / zoomFactor);
+                            state.scale = Math.max(0.3, state.scale / zoomFactor);
                         }
                         
                         state.panX = mouseX - (mouseX - state.panX) * (state.scale / oldScale);
