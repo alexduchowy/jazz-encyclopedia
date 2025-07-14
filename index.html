@@ -632,9 +632,10 @@
             cursor: pointer;
             transition: transform 0.2s ease;
             z-index: 10;
+            transform: translate(-50%, -50%);
         }
         .influence-node:hover {
-            transform: scale(1.1) !important;
+            transform: translate(-50%, -50%) scale(1.1) !important;
             z-index: 20;
         }
         .influence-node .node-image {
@@ -857,58 +858,45 @@
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10 items-start text-left mb-16">
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-jazz-fusion);">The Electric Path</h3>
-                            <div class="flex gap-4 items-start">
-                                <img src="https://e.snmc.io/i/600/s/5b35835d0643714f3f4e13e4f3a763d5/71003" class="w-24 h-24 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
-                                <p class="text-stone-700 leading-relaxed text-sm">Led by <strong class="clickable-link" data-artist-name="Miles Davis">Miles Davis</strong>, this path embraced electric instruments and the powerful rhythms of funk and rock, creating the high-energy sound of Jazz Fusion.</p>
-                            </div>
+                            <p class="text-stone-400 leading-relaxed text-sm">Led by <strong class="clickable-link" data-artist-name="Miles Davis">Miles Davis</strong>, this path embraced electric instruments and the powerful rhythms of funk and rock, creating the high-energy sound of Jazz Fusion.</p>
                         </div>
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-free-jazz);">The Spiritual Path</h3>
-                            <div class="flex gap-4 items-start">
-                                 <img src="https://e.snmc.io/i/600/s/17238a356248ab22323533458694f7a3/2836261" class="w-24 h-24 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
-                                <p class="text-stone-700 leading-relaxed text-sm">Following <strong class="clickable-link" data-artist-name="John Coltrane">John Coltrane</strong>, this movement explored music as a form of transcendence and spiritual expression.</p>
-                            </div>
+                            <p class="text-stone-400 leading-relaxed text-sm">Following <strong class="clickable-link" data-artist-name="John Coltrane">John Coltrane</strong>, this movement explored music as a form of transcendence and spiritual expression.</p>
                         </div>
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-avant-garde);">The Avant-Garde Path</h3>
-                            <div class="flex gap-4 items-start">
-                                 <img src="https://e.snmc.io/i/600/s/4c2642a8b9e663d2e94a89a0dc1181da/4785420" class="w-24 h-24 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
-                                <p class="text-stone-700 leading-relaxed text-sm">Pioneered by <strong class="clickable-link" data-artist-name="Ornette Coleman">Ornette Coleman</strong>, this path deconstructed the rules of jazz, focusing on pure melodic invention.</p>
-                            </div>
+                            <p class="text-stone-400 leading-relaxed text-sm">Pioneered by <strong class="clickable-link" data-artist-name="Ornette Coleman">Ornette Coleman</strong>, this path deconstructed the rules of jazz, focusing on pure melodic invention.</p>
                         </div>
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-cool-jazz);">The Melodic Path</h3>
-                            <div class="flex gap-4 items-start">
-                                 <img src="https://e.snmc.io/i/600/s/c354a42b15163155716b5e02d1d45923/81188" class="w-24 h-24 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
-                                <p class="text-stone-700 leading-relaxed text-sm">Evolving from Cool Jazz, this path emphasized space, atmosphere, and pristine production, defining the ECM Style and influencing Ambient Jazz.</p>
-                            </div>
+                             <p class="text-stone-400 leading-relaxed text-sm">Evolving from Cool Jazz, this path emphasized space, atmosphere, and pristine production, defining the ECM Style and influencing Ambient Jazz.</p>
                         </div>
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-hard-bop);">The Afro-Jazz Path</h3>
-                            <div class="flex gap-4 items-start">
-                                 <img src="https://e.snmc.io/i/600/s/a3554e20cf9321c82823b1853b75486e/10103755" class="w-24 h-24 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
-                                <p class="text-stone-700 leading-relaxed text-sm">Visionaries like <strong class="clickable-link" data-artist-name="Sun Ra">Sun Ra</strong> and the Art Ensemble of Chicago forged a path rooted in the African diaspora, blending free improv with ancient rhythms and a cosmic philosophy.</p>
-                            </div>
+                            <p class="text-stone-400 leading-relaxed text-sm">Visionaries like <strong class="clickable-link" data-artist-name="Sun Ra">Sun Ra</strong> and the Art Ensemble of Chicago forged a path rooted in the African diaspora, blending free improv with ancient rhythms and a cosmic philosophy.</p>
                         </div>
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-bebop);">The Neo-Bop Path</h3>
-                            <div class="flex gap-4 items-start">
-                                 <img src="https://e.snmc.io/i/600/s/82820b1d3460555342a6479e27c1f440/50849" class="w-24 h-24 object-cover rounded-sm border-2 border-stone-900 shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
-                                <p class="text-stone-700 leading-relaxed text-sm">In the 1980s, the "Young Lions" movement, led by <strong class="clickable-link" data-artist-name="Wynton Marsalis">Wynton Marsalis</strong>, championed a return to the acoustic, straight-ahead, bop-oriented traditions of the 50s and 60s.</p>
-                            </div>
+                            <p class="text-stone-400 leading-relaxed text-sm">In the 1980s, the "Young Lions" movement, led by <strong class="clickable-link" data-artist-name="Wynton Marsalis">Wynton Marsalis</strong>, championed a return to the acoustic, straight-ahead, bop-oriented traditions of the 50s and 60s.</p>
                         </div>
                     </div>
 
                     <!-- Part 2: The Interactive Web -->
                     <div class="text-left mb-16 fade-in-element">
                         <h3 class="text-3xl font-bold mb-2 text-center">A Living Tradition</h3>
-                        <p class="text-center text-stone-600 mb-8 max-w-3xl mx-auto">The harmonic sophistication of Bebop, the soulful grammar of Hard Bop, and the expansive freedom of Modal and Post-Bop were codified into a shared musical playbook. This legacy remains the bedrock for contemporary jazz education and performance worldwide. Hover over the nodes below to see the connections.</p>
+                        <p class="text-center text-stone-600 mb-8 max-w-3xl mx-auto">The harmonic sophistication of Bebop, the soulful grammar of Hard Bop, and the expansive freedom of Modal and Post-Bop were codified into a shared musical playbook. This legacy remains the bedrock for contemporary jazz education and performance worldwide. Click a planet to explore its legacy.</p>
                         <div id="influence-web-container" class="relative bg-stone-200 border-2 border-stone-900 rounded-sm p-4 shadow-inner">
                             <div id="influence-web-canvas">
                                <svg id="influence-web-svg"></svg>
                                <!-- Nodes will be injected here by JavaScript -->
                             </div>
                         </div>
+                    </div>
+                    
+                    <!-- Final Paragraph -->
+                    <div class="fade-in-element mt-16 text-lg text-stone-400 max-w-4xl mx-auto text-left space-y-4">
+                        <p>Ultimately, the innovations of the 1950s and 1960s did not simply create new styles; they expanded the very definition of what jazz could be. The era's legacy is not a single sound, but a spectrum of possibilities—from the intricate harmonies of Neo-Bop to the atmospheric soundscapes of the Melodic Path, and the boundless explorations of the Avant-Garde. This period codified a language of "controlled freedom" that continues to be learned, challenged, and reinterpreted by musicians across the globe, ensuring that the spirit of jazz remains a vital and evolving force in modern music.</p>
                     </div>
                 </div>
             </section>
@@ -2114,13 +2102,11 @@
                     artistModal.querySelector('#artist-modal-title').textContent = artist.name;
                     const body = artistModal.querySelector('#artist-modal-body');
 
-                    // Create a sorted list of the artist's albums with their years
                     const artistAlbumsWithYear = artist.albums
                         .map(albumTitle => this.state.albums.find(a => a.albumTitle === albumTitle))
-                        .filter(Boolean) // Filter out any albums not found in the main list
+                        .filter(Boolean)
                         .sort((a, b) => a.year - b.year);
                     
-                    // Check if an album is a landmark album
                     const isLandmark = (albumTitle) => {
                         for (const genreName in this.state.styleMatrix.genres) {
                             const genreData = this.state.styleMatrix.genres[genreName];
@@ -2522,7 +2508,7 @@
                 renderInfluenceWeb() {
                     const canvas = document.getElementById('influence-web-canvas');
                     if (!canvas) return;
-                    canvas.innerHTML = ''; // Clear previous content
+                    canvas.innerHTML = '';
                     
                     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                     svg.id = 'influence-web-svg';
@@ -2531,37 +2517,37 @@
                     const slugify = this.methods.slugify;
                     const nodes = {
                         // Main Hexagonal Paths
-                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 50, y: 10 }, isSubGenre: false },
-                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual Jazz', color: 'var(--genre-free-jazz)', pos: { x: 85, y: 35 }, isSubGenre: false },
-                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 85, y: 65 }, isSubGenre: false },
-                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 50, y: 90 }, isSubGenre: false },
-                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 15, y: 65 }, isSubGenre: false },
-                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic Path', color: 'var(--genre-cool-jazz)', pos: { x: 15, y: 35 }, isSubGenre: false },
+                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 50, y: 12 }, isSubGenre: false },
+                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual Jazz', color: 'var(--genre-free-jazz)', pos: { x: 80, y: 35 }, isSubGenre: false },
+                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 80, y: 65 }, isSubGenre: false },
+                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 50, y: 88 }, isSubGenre: false },
+                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 20, y: 65 }, isSubGenre: false },
+                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic Path', color: 'var(--genre-cool-jazz)', pos: { x: 20, y: 35 }, isSubGenre: false },
 
                         // Album Moons
-                        ef1: { id: 'ef1', label: 'The Inner Mounting Flame (1971)', img: 'https://e.snmc.io/i/600/s/b83f82024f94856f9fee72a6bed2a5d2/68291', parent: 'jazzFusion', angle: 240, dist: 15, isSubGenre: true },
-                        ef2: { id: 'ef2', label: 'Head Hunters (1973)', img: 'https://e.snmc.io/i/600/s/57b18a198a1033374a7374312fba489f/71001', parent: 'jazzFusion', angle: 180, dist: 15, isSubGenre: true },
-                        ef3: { id: 'ef3', label: 'Get Up With It (1974)', img: 'https://e.snmc.io/i/600/s/b61c3a6479f673323b6b6e4313f80c65/71008', parent: 'jazzFusion', angle: 120, dist: 15, isSubGenre: true },
+                        ef1: { id: 'ef1', label: 'The Inner Mounting Flame (1971)', parent: 'jazzFusion', angle: 240, dist: 15, isSubGenre: true },
+                        ef2: { id: 'ef2', label: 'Head Hunters (1973)', parent: 'jazzFusion', angle: 180, dist: 15, isSubGenre: true },
+                        ef3: { id: 'ef3', label: 'Get Up With It (1974)', parent: 'jazzFusion', angle: 120, dist: 15, isSubGenre: true },
                         
-                        sp1: { id: 'sp1', label: 'Journey in Satchidananda (1971)', img: 'https://e.snmc.io/i/600/s/17238a356248ab22323533458694f7a3/2836261', parent: 'spiritual', angle: 300, dist: 15, isSubGenre: true },
-                        sp2: { id: 'sp2', label: 'Black Unity (1972)', img: 'https://e.snmc.io/i/600/s/5319a27e366a2083160a36415d18d41a/50693', parent: 'spiritual', angle: 0, dist: 15, isSubGenre: true },
-                        sp3: { id: 'sp3', label: 'Godspelized (1997)', img: 'https://e.snmc.io/i/600/s/e5927510d486d526279f06114878a876/50901', parent: 'spiritual', angle: 60, dist: 15, isSubGenre: true },
+                        sp1: { id: 'sp1', label: 'Journey in Satchidananda (1971)', parent: 'spiritual', angle: 300, dist: 15, isSubGenre: true },
+                        sp2: { id: 'sp2', label: 'Black Unity (1972)', parent: 'spiritual', angle: 0, dist: 15, isSubGenre: true },
+                        sp3: { id: 'sp3', label: 'Godspelized (1997)', parent: 'spiritual', angle: 60, dist: 15, isSubGenre: true },
                         
-                        aj1: { id: 'aj1', label: 'Blackstone Legacy (1971)', img: 'https://e.snmc.io/i/600/s/f7d235c34226a0c56d7881f122e23363/50681', parent: 'afroJazz', angle: 0, dist: 15, isSubGenre: true },
-                        aj2: { id: 'aj2', label: 'King of Kings (1974)', img: 'https://e.snmc.io/i/600/s/a3554e20cf9321c82823b1853b75486e/10103755', parent: 'afroJazz', angle: 60, dist: 15, isSubGenre: true },
-                        aj3: { id: 'aj3', label: 'Bap-Tizum (1972)', img: 'https://e.snmc.io/i/600/s/3029288e221379133bd82c3f4e3c9889/50686', parent: 'afroJazz', angle: 120, dist: 15, isSubGenre: true },
+                        aj1: { id: 'aj1', label: 'Blackstone Legacy (1971)', parent: 'afroJazz', angle: 0, dist: 15, isSubGenre: true },
+                        aj2: { id: 'aj2', label: 'King of Kings (1974)', parent: 'afroJazz', angle: 60, dist: 15, isSubGenre: true },
+                        aj3: { id: 'aj3', label: 'Bap-Tizum (1972)', parent: 'afroJazz', angle: 120, dist: 15, isSubGenre: true },
 
-                        ag1: { id: 'ag1', label: 'Science Fiction (1972)', img: 'https://e.snmc.io/i/600/s/c0a69324e93f6b55502c2e04f9814524/50684', parent: 'avantGarde', angle: 60, dist: 15, isSubGenre: true },
-                        ag2: { id: 'ag2', label: 'Ask the Ages (1991)', img: 'https://e.snmc.io/i/600/s/703da9127d0577747a151555577e384b/50853', parent: 'avantGarde', angle: 120, dist: 15, isSubGenre: true },
-                        ag3: { id: 'ag3', label: 'Coin Coin Chapter One (2011)', img: 'https://e.snmc.io/i/600/s/f5f00e959586a439c09c37951c888981/4214228', parent: 'avantGarde', angle: 180, dist: 15, isSubGenre: true },
+                        ag1: { id: 'ag1', label: 'Science Fiction (1972)', parent: 'avantGarde', angle: 60, dist: 15, isSubGenre: true },
+                        ag2: { id: 'ag2', label: 'Ask the Ages (1991)', parent: 'avantGarde', angle: 120, dist: 15, isSubGenre: true },
+                        ag3: { id: 'ag3', label: 'Coin Coin Chapter One (2011)', parent: 'avantGarde', angle: 180, dist: 15, isSubGenre: true },
 
-                        mp1: { id: 'mp1', label: 'Return to Forever (1972)', img: 'https://e.snmc.io/i/600/s/1e7c5333f8193f2f8b05329188151525/81165', parent: 'melodic', angle: 180, dist: 15, isSubGenre: true },
-                        mp2: { id: 'mp2', label: 'The Köln Concert (1975)', img: 'https://e.snmc.io/i/600/s/c354a42b15163155716b5e02d1d45923/81188', parent: 'melodic', angle: 240, dist: 15, isSubGenre: true },
-                        mp3: { id: 'mp3', label: 'Pat Metheny Group (1978)', img: 'https://e.snmc.io/i/600/s/66228b76c91a733e85e2821147137482/50707', parent: 'melodic', angle: 300, dist: 15, isSubGenre: true },
+                        mp1: { id: 'mp1', label: 'Return to Forever (1972)', parent: 'melodic', angle: 180, dist: 15, isSubGenre: true },
+                        mp2: { id: 'mp2', label: 'The Köln Concert (1975)', parent: 'melodic', angle: 240, dist: 15, isSubGenre: true },
+                        mp3: { id: 'mp3', label: 'Pat Metheny Group (1978)', parent: 'melodic', angle: 300, dist: 15, isSubGenre: true },
                         
-                        nb1: { id: 'nb1', label: 'Scenery (1976)', img: 'https://e.snmc.io/i/600/s/e51d63424683fd380481855a065846a8/50702', parent: 'neoBop', angle: 240, dist: 15, isSubGenre: true },
-                        nb2: { id: 'nb2', label: 'Eastern Rebellion (1976)', img: 'https://e.snmc.io/i/600/s/4d998b3135598e0d375d33a1e127f5a0/50703', parent: 'neoBop', angle: 300, dist: 15, isSubGenre: true },
-                        nb3: { id: 'nb3', label: 'Black Codes (1985)', img: 'https://e.snmc.io/i/600/s/82820b1d3460555342a6479e27c1f440/50849', parent: 'neoBop', angle: 0, dist: 15, isSubGenre: true },
+                        nb1: { id: 'nb1', label: 'Scenery (1976)', parent: 'neoBop', angle: 240, dist: 15, isSubGenre: true },
+                        nb2: { id: 'nb2', label: 'Eastern Rebellion (1976)', parent: 'neoBop', angle: 300, dist: 15, isSubGenre: true },
+                        nb3: { id: 'nb3', label: 'Black Codes (1985)', parent: 'neoBop', angle: 0, dist: 15, isSubGenre: true },
                     };
 
                     Object.values(nodes).forEach(node => {
@@ -2593,15 +2579,8 @@
                             labelEl.style.color = 'var(--text-main)';
                         }
                         
-                        nodeEl.innerHTML = `
-                            <img src="${node.img}" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">
-                        `;
+                        nodeEl.innerHTML = `<img src="${node.img || 'images/artistplaceholder.jpg'}" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">`;
                         nodeEl.appendChild(labelEl);
-                        if(node.info && !node.isSubGenre) {
-                            nodeEl.innerHTML += `<div class="node-info">${node.info}</div>`;
-                        } else if (node.isSubGenre) {
-                             nodeEl.innerHTML += `<div class="node-info">${node.label} by ${node.info}</div>`;
-                        }
                         canvas.appendChild(nodeEl);
                     });
                     
@@ -2619,7 +2598,7 @@
                     const svg = document.getElementById('influence-web-svg');
                     if (!canvas || !svg) return;
                     
-                    svg.innerHTML = ''; // Clear previous lines
+                    svg.innerHTML = '';
                     
                     const mainPathIds = ['neoBop', 'spiritual', 'afroJazz', 'avantGarde', 'jazzFusion', 'melodic'];
                     const mainPathPoints = mainPathIds.map(id => {
@@ -2656,7 +2635,6 @@
                 
                 setupPanAndZoom() {
                     // Pan and zoom functionality is disabled as per user request.
-                    // The container is now sized to fit the screen.
                 }
             }
         };
