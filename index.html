@@ -158,7 +158,7 @@
         }
         
         /* Horizontal draggable timeline container */
-        #horizontal-timeline-container, #legacy-slider-container {
+        #horizontal-timeline-container, #legacy-album-slider-container {
             position: relative;
             width: 100%;
             overflow-x: auto;
@@ -167,10 +167,10 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        #horizontal-timeline-container:active, #legacy-slider-container:active {
+        #horizontal-timeline-container:active, #legacy-album-slider-container:active {
             cursor: grabbing;
         }
-        #horizontal-timeline-container::-webkit-scrollbar, #legacy-slider-container::-webkit-scrollbar {
+        #horizontal-timeline-container::-webkit-scrollbar, #legacy-album-slider-container::-webkit-scrollbar {
             display: none;
         }
 
@@ -628,6 +628,12 @@
             gap: 1.5rem;
             padding-bottom: 1rem;
         }
+        #legacy-slider-title {
+            color: var(--text-main);
+        }
+        #legacy-slider-wrapper {
+            transition: background-color 0.5s ease;
+        }
    
     </style>
 </head>
@@ -797,15 +803,17 @@
                     <h2 class="section-header text-5xl">Legacy</h2>
                     <p class="text-center text-lg text-stone-600 mb-16 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
 
-                    <!-- Part 1: The Six Paths -->
-                    <div id="paths-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10 items-start text-left mb-20">
-                        <!-- Path descriptions will be injected here by JavaScript -->
+                    <!-- Part 1: The Six Paths Selector -->
+                    <div id="paths-selector" class="relative mb-12">
+                        <div id="paths-selector-track" class="flex items-center justify-center space-x-4">
+                           <!-- Path selector cards will be injected here -->
+                        </div>
                     </div>
                     
                     <!-- Part 2: The Legacy Album Slider -->
                     <div id="legacy-slider-wrapper" class="hidden mt-12 p-6 rounded-lg transition-colors duration-500">
-                        <h3 id="legacy-slider-title" class="text-3xl font-bold mb-8 text-center"></h3>
-                        <div id="legacy-slider-container" class="min-h-[300px]">
+                        <h3 id="legacy-slider-title" class="text-3xl font-bold mb-8 text-center text-white"></h3>
+                        <div id="legacy-album-slider-container" class="min-h-[300px]">
                              <div id="legacy-slider-track-container" class="relative">
                                 <div id="legacy-slider-track" class="flex transition-transform duration-500 ease-in-out">
                                     <!-- Album cards will be injected here -->
@@ -1098,7 +1106,7 @@
                     navLinks: document.querySelectorAll('header nav a'),
                     footerCopyright: document.getElementById('footer-copyright'),
                     onThisDayContainer: document.getElementById('on-this-day'),
-                    pathsContainer: document.getElementById('paths-container'),
+                    pathsContainer: document.getElementById('paths-selector-track'),
                     legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
                     legacySliderTrack: document.getElementById('legacy-slider-track'),
                     legacySliderTitle: document.getElementById('legacy-slider-title'),
@@ -2133,9 +2141,8 @@
                     if (typeof callback === 'function') setTimeout(callback, 300);
                 },
 
-                openPathModal(pathId) {
+                openPathModal(pathKey) {
                     const { pathModal } = this.elements;
-                    const pathKey = Object.keys(this.state.legacyData).find(key => this.methods.slugify(key) === pathId);
                     const data = this.state.legacyData[pathKey];
                     if (!data) return;
 
