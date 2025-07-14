@@ -679,6 +679,18 @@
             fill: rgba(0,0,0,0.02);
             stroke-dasharray: 8 8;
         }
+        .path-title-button {
+            background: none;
+            border: none;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            text-align: left;
+            transition: color 0.2s;
+        }
+        .path-title-button:hover {
+            color: var(--accent) !important;
+        }
    
     </style>
 </head>
@@ -849,31 +861,8 @@
                     <p class="text-center text-lg text-stone-600 mb-16 italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
 
                     <!-- Part 1: The Six Paths -->
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10 items-start text-left mb-16">
-                        <div class="fade-in-element">
-                            <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-jazz-fusion);">The Electric Path</h3>
-                            <p class="text-stone-700 leading-relaxed text-sm">Led by <strong class="clickable-link" data-artist-name="Miles Davis">Miles Davis</strong>, this path embraced electric instruments and the powerful rhythms of funk and rock, creating the high-energy sound of Jazz Fusion.</p>
-                        </div>
-                        <div class="fade-in-element">
-                            <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-free-jazz);">The Spiritual Path</h3>
-                            <p class="text-stone-700 leading-relaxed text-sm">Following <strong class="clickable-link" data-artist-name="John Coltrane">John Coltrane</strong>, this movement explored music as a form of transcendence and spiritual expression.</p>
-                        </div>
-                        <div class="fade-in-element">
-                            <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-avant-garde);">The Avant-Garde Path</h3>
-                            <p class="text-stone-700 leading-relaxed text-sm">Pioneered by <strong class="clickable-link" data-artist-name="Ornette Coleman">Ornette Coleman</strong>, this path deconstructed the rules of jazz, focusing on pure melodic invention.</p>
-                        </div>
-                        <div class="fade-in-element">
-                            <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-cool-jazz);">The Melodic Path</h3>
-                             <p class="text-stone-700 leading-relaxed text-sm">Evolving from Cool Jazz, this path emphasized space, atmosphere, and pristine production, defining the ECM Style and influencing Ambient Jazz.</p>
-                        </div>
-                        <div class="fade-in-element">
-                            <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-hard-bop);">The Afro-Jazz Path</h3>
-                            <p class="text-stone-700 leading-relaxed text-sm">Visionaries like <strong class="clickable-link" data-artist-name="Sun Ra">Sun Ra</strong> and the Art Ensemble of Chicago forged a path rooted in the African diaspora, blending free improv with ancient rhythms and a cosmic philosophy.</p>
-                        </div>
-                        <div class="fade-in-element">
-                            <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-bebop);">The Neo-Bop Path</h3>
-                            <p class="text-stone-700 leading-relaxed text-sm">In the 1980s, the "Young Lions" movement, led by <strong class="clickable-link" data-artist-name="Wynton Marsalis">Wynton Marsalis</strong>, championed a return to the acoustic, straight-ahead, bop-oriented traditions of the 50s and 60s.</p>
-                        </div>
+                    <div id="paths-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10 items-start text-left mb-16">
+                        <!-- Path descriptions will be injected here by JavaScript -->
                     </div>
 
                     <!-- Part 2: The Interactive Web -->
@@ -1240,6 +1229,7 @@
                     onThisDayContainer: document.getElementById('on-this-day'),
                     influenceWebContainer: document.getElementById('influence-web-container'),
                     influenceWebCanvas: document.getElementById('influence-web-canvas'),
+                    pathsContainer: document.getElementById('paths-container'),
                 };
             },
 
@@ -1283,6 +1273,7 @@
                 this.methods.setupModals();
                 this.methods.setupArtistSlider();
                 this.methods.buildGenreMatrix();
+                this.methods.renderPaths();
                 this.methods.renderInfluenceWeb(); 
                 this.methods.setupMobileMenu();
                 this.methods.setupScrollObservers();
@@ -2492,6 +2483,46 @@
                 },
 
                 // UPDATED METHOD FOR LEGACY SECTION
+                renderPaths() {
+                    const container = this.elements.pathsContainer;
+                    if (!container) return;
+                    container.innerHTML = '';
+
+                    const pathOrder = ['electric', 'spiritual', 'avantGarde', 'melodic', 'afroJazz', 'neoBop'];
+                    
+                    pathOrder.forEach(pathId => {
+                        const path = this.state.pathData[pathId];
+                        const pathEl = document.createElement('div');
+                        pathEl.className = 'fade-in-element';
+
+                        let colorVar;
+                        switch(path.title) {
+                            case 'The Electric Path': colorVar = 'var(--genre-jazz-fusion)'; break;
+                            case 'The Spiritual Path': colorVar = 'var(--genre-free-jazz)'; break;
+                            case 'The Avant-Garde Path': colorVar = 'var(--genre-avant-garde)'; break;
+                            case 'The Melodic Path': colorVar = 'var(--genre-cool-jazz)'; break;
+                            case 'The Afro-Jazz Path': colorVar = 'var(--genre-hard-bop)'; break;
+                            case 'The Neo-Bop Path': colorVar = 'var(--genre-bebop)'; break;
+                            default: colorVar = 'var(--text-main)';
+                        }
+
+                        pathEl.innerHTML = `
+                            <button class="path-title-button" data-path-id="${pathId}">
+                                <h3 class="text-3xl font-bold mb-4" style="color: ${colorVar};">${path.title}</h3>
+                            </button>
+                            <p class="text-stone-700 leading-relaxed text-sm">${path.description}</p>
+                        `;
+                        container.appendChild(pathEl);
+                    });
+
+                    document.querySelectorAll('.path-title-button').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const pathId = e.currentTarget.dataset.pathId;
+                            this.methods.openPathModal(pathId);
+                        });
+                    });
+                },
+
                 renderInfluenceWeb() {
                     const canvas = document.getElementById('influence-web-canvas');
                     if (!canvas) return;
@@ -2558,17 +2589,17 @@
                         });
                     });
 
-                    setTimeout(() => this.methods.drawInfluenceLines(), 50);
+                    setTimeout(() => this.methods.drawInfluenceLines(nodes), 50);
                 },
 
-                drawInfluenceLines() {
+                drawInfluenceLines(nodes) {
                     const canvas = document.getElementById('influence-web-canvas');
                     const svg = document.getElementById('influence-web-svg');
                     if (!canvas || !svg) return;
                     
                     svg.innerHTML = '';
                     
-                    const mainPathIds = ['neoBop', 'spiritual', 'afroJazz', 'avantGarde', 'jazzFusion', 'melodic'];
+                    const mainPathIds = ['melodic', 'neoBop', 'spiritual', 'afroJazz', 'avantGarde', 'jazzFusion'];
                     const mainPathPoints = mainPathIds.map(id => {
                         const el = document.getElementById(`node-${id}`);
                         return `${el.offsetLeft + el.offsetWidth / 2},${el.offsetTop + el.offsetHeight / 2}`;
@@ -2580,21 +2611,22 @@
 
                     const mixedGenreIds = ['ecm', 'smooth', 'soul', 'cape', 'afrofuturismMix', 'ambient'];
                     mixedGenreIds.forEach(id => {
-                        const mixedNode = document.getElementById(`node-${id}`);
-                        const parentA = document.getElementById(`node-${nodes[id].parentA}`);
-                        const parentB = document.getElementById(`node-${nodes[id].parentB}`);
+                        const mixedNodeData = nodes[id];
+                        const mixedNodeEl = document.getElementById(`node-${id}`);
+                        const parentA = document.getElementById(`node-${mixedNodeData.parentA}`);
+                        const parentB = document.getElementById(`node-${mixedNodeData.parentB}`);
                         
-                        if(mixedNode && parentA && parentB) {
+                        if(mixedNodeEl && parentA && parentB) {
                             const lineA = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                            lineA.setAttribute('x1', mixedNode.offsetLeft + mixedNode.offsetWidth / 2);
-                            lineA.setAttribute('y1', mixedNode.offsetTop + mixedNode.offsetHeight / 2);
+                            lineA.setAttribute('x1', mixedNodeEl.offsetLeft + mixedNodeEl.offsetWidth / 2);
+                            lineA.setAttribute('y1', mixedNodeEl.offsetTop + mixedNodeEl.offsetHeight / 2);
                             lineA.setAttribute('x2', parentA.offsetLeft + parentA.offsetWidth / 2);
                             lineA.setAttribute('y2', parentA.offsetTop + parentA.offsetHeight / 2);
                             svg.appendChild(lineA);
 
                             const lineB = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                            lineB.setAttribute('x1', mixedNode.offsetLeft + mixedNode.offsetWidth / 2);
-                            lineB.setAttribute('y1', mixedNode.offsetTop + mixedNode.offsetHeight / 2);
+                            lineB.setAttribute('x1', mixedNodeEl.offsetLeft + mixedNodeEl.offsetWidth / 2);
+                            lineB.setAttribute('y1', mixedNodeEl.offsetTop + mixedNodeEl.offsetHeight / 2);
                             lineB.setAttribute('x2', parentB.offsetLeft + parentB.offsetWidth / 2);
                             lineB.setAttribute('y2', parentB.offsetTop + parentB.offsetHeight / 2);
                             svg.appendChild(lineB);
