@@ -610,75 +610,6 @@
         }
         
         /* UPDATED STYLES FOR LEGACY SECTION */
-        #influence-web-container {
-            position: relative;
-            height: 600px; /* Adjusted height for new layout */
-            overflow: hidden;
-            cursor: default;
-        }
-        #influence-web-canvas {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-        }
-        .influence-node {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            z-index: 10;
-            transform: translate(-50%, -50%);
-        }
-        .influence-node:hover {
-            transform: translate(-50%, -50%) scale(1.1) !important;
-            z-index: 20;
-        }
-        .influence-node .node-image {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: 3px solid var(--text-main);
-            object-fit: cover;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            background-color: var(--bg-dark);
-        }
-        .influence-node.mixed-genre .node-image {
-            width: 50px;
-            height: 50px;
-            border-width: 2px;
-            border-style: dashed;
-        }
-        .influence-node .node-label {
-            margin-top: 8px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            color: var(--text-main);
-            background-color: rgba(0,0,0, 0.5);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-        #influence-web-svg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-        #influence-web-svg line, #influence-web-svg polygon {
-            stroke: var(--text-muted);
-            stroke-width: 2;
-        }
-        #influence-web-svg polygon {
-            fill: rgba(0,0,0,0.02);
-            stroke-dasharray: 8 8;
-        }
         .path-title-button {
             background: none;
             border: none;
@@ -1104,6 +1035,7 @@
                 pathData: {
                     electric: {
                         title: "The Electric Path",
+                        description: "Led by Miles Davis, this path embraced electric instruments and the powerful rhythms of funk and rock, creating the high-energy sound of Jazz Fusion.",
                         affinity: "Jazz Fusion, Jazz-Funk, Jazz-Rock",
                         albums: [
                             { title: "The Inner Mounting Flame", artist: "The Mahavishnu Orchestra", year: 1971 },
@@ -1116,6 +1048,7 @@
                     },
                     spiritual: {
                         title: "The Spiritual Path",
+                        description: "Following John Coltrane, this movement explored music as a form of transcendence and spiritual expression.",
                         affinity: "Spiritual Jazz, Free Jazz",
                         albums: [
                            { title: "Journey in Satchidananda", artist: "Alice Coltrane", year: 1971 },
@@ -1128,6 +1061,7 @@
                     },
                     avantGarde: {
                         title: "The Avant-Garde Path",
+                        description: "Pioneered by Ornette Coleman, this path deconstructed the rules of jazz, focusing on pure melodic invention.",
                         affinity: "Avant-Garde Jazz, Modern Creative, Third Stream",
                         albums: [
                             { title: "Science Fiction", artist: "Ornette Coleman", year: 1972 },
@@ -1140,6 +1074,7 @@
                     },
                     melodic: {
                         title: "The Melodic Path",
+                        description: "Evolving from Cool Jazz, this path emphasized space, atmosphere, and pristine production, defining the ECM Style and influencing Ambient Jazz.",
                         affinity: "ECM Style Jazz, Smooth Jazz, Ambient Jazz",
                         albums: [
                             { title: "Return to Forever", artist: "Chick Corea", year: 1972 },
@@ -1152,6 +1087,7 @@
                     },
                     afroJazz: {
                         title: "The Afro-Jazz Path",
+                        description: "Visionaries like Sun Ra and the Art Ensemble of Chicago forged a path rooted in the African diaspora, blending free improv with ancient rhythms and a cosmic philosophy.",
                         affinity: "Afro-Jazz, Cape Jazz",
                         albums: [
                            { title: "Blackstone Legacy", artist: "Woody Shaw", year: 1971 },
@@ -1164,6 +1100,7 @@
                     },
                     neoBop: {
                         title: "The Neo-Bop Path",
+                        description: "In the 1980s, the 'Young Lions' movement, led by Wynton Marsalis, championed a return to the acoustic, straight-ahead, bop-oriented traditions of the 50s and 60s.",
                         affinity: "Hard Bop, Post-Bop, Soul Jazz",
                         albums: [
                            { title: "Scenery", artist: "Ryo Fukui", year: 1976 },
