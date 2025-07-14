@@ -803,8 +803,8 @@
                     </div>
                     
                     <!-- Part 2: The Legacy Album Slider -->
-                    <div id="legacy-slider-wrapper" class="hidden">
-                        <h3 class="text-3xl font-bold mb-8 text-center">Key Albums of the Path</h3>
+                    <div id="legacy-slider-wrapper" class="hidden mt-12">
+                        <h3 id="legacy-slider-title" class="text-3xl font-bold mb-8 text-center"></h3>
                         <div id="legacy-slider-container" class="min-h-[300px]">
                              <div id="legacy-slider-track-container" class="relative">
                                 <div id="legacy-slider-track" class="flex transition-transform duration-500 ease-in-out">
@@ -1046,86 +1046,6 @@
                 lastKnownEraTitle: '',
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
-                pathData: {
-                    electric: {
-                        title: "The Electric Path",
-                        description: "Led by Miles Davis, this path embraced electric instruments and the powerful rhythms of funk and rock, creating the high-energy sound of Jazz Fusion.",
-                        affinity: "Jazz Fusion, Jazz-Funk, Jazz-Rock",
-                        albums: [
-                            { title: "The Inner Mounting Flame", artist: "The Mahavishnu Orchestra", year: 1971 },
-                            { title: "Head Hunters", artist: "Herbie Hancock", year: 1973 },
-                            { title: "Get Up With It", artist: "Miles Davis", year: 1974 },
-                            { title: "Lanquidity", artist: "Sun Ra", year: 1978 },
-                            { title: "Naked City", artist: "John Zorn", year: 1990 },
-                            { title: "Fearless Movement", artist: "Kamasi Washington", year: 2024 },
-                        ]
-                    },
-                    spiritual: {
-                        title: "The Spiritual Path",
-                        description: "Following John Coltrane, this movement explored music as a form of transcendence and spiritual expression.",
-                        affinity: "Spiritual Jazz, Free Jazz",
-                        albums: [
-                           { title: "Journey in Satchidananda", artist: "Alice Coltrane", year: 1971 },
-                           { title: "Black Unity", artist: "Pharoah Sanders", year: 1972 },
-                           { title: "Enlightenment", artist: "McCoy Tyner", year: 1974 },
-                           { title: "Black Saint", artist: "Billy Harper", year: 1975 },
-                           { title: "Don Cherry", artist: "Don Cherry", year: 1977 },
-                           { title: "Godspelized", artist: "David S. Ware Quartet", year: 1997 },
-                        ]
-                    },
-                    avantGarde: {
-                        title: "The Avant-Garde Path",
-                        description: "Pioneered by Ornette Coleman, this path deconstructed the rules of jazz, focusing on pure melodic invention.",
-                        affinity: "Avant-Garde Jazz, Modern Creative, Third Stream",
-                        albums: [
-                            { title: "Science Fiction", artist: "Ornette Coleman", year: 1972 },
-                            { title: "Variations in Dream-Time", artist: "Anthony Davis", year: 1983 },
-                            { title: "Willisau (Quartet)", artist: "Anthony Braxton", year: 1991 },
-                            { title: "Ask the Ages", artist: "Sonny Sharrock", year: 1991 },
-                            { title: "Hanging Gardens", artist: "The Necks", year: 1999 },
-                            { title: "Coin Coin Chapter One", artist: "Matana Roberts", year: 2011 },
-                        ]
-                    },
-                    melodic: {
-                        title: "The Melodic Path",
-                        description: "Evolving from Cool Jazz, this path emphasized space, atmosphere, and pristine production, defining the ECM Style and influencing Ambient Jazz.",
-                        affinity: "ECM Style Jazz, Smooth Jazz, Ambient Jazz",
-                        albums: [
-                            { title: "Return to Forever", artist: "Chick Corea", year: 1972 },
-                            { title: "Open, to Love", artist: "Paul Bley", year: 1973 },
-                            { title: "The Jewel in the Lotus", artist: "Bennie Maupin", year: 1974 },
-                            { title: "Belonging", artist: "Jan Garbarek & Keith Jarrett", year: 1974 },
-                            { title: "The Köln Concert", artist: "Keith Jarrett", year: 1975 },
-                            { title: "Pat Metheny Group", artist: "Pat Metheny Group", year: 1978 },
-                        ]
-                    },
-                    afroJazz: {
-                        title: "The Afro-Jazz Path",
-                        description: "Visionaries like Sun Ra and the Art Ensemble of Chicago forged a path rooted in the African diaspora, blending free improv with ancient rhythms and a cosmic philosophy.",
-                        affinity: "Afro-Jazz, Cape Jazz",
-                        albums: [
-                           { title: "Blackstone Legacy", artist: "Woody Shaw", year: 1971 },
-                           { title: "King of Kings", artist: "The Pyramids", year: 1974 },
-                           { title: "Song for Biko", artist: "Johnny Dyani Quartet", year: 1979 },
-                           { title: "Bap-Tizum", artist: "The Art Ensemble of Chicago", year: 1972 },
-                           { title: "Your Queen is a Reptile", artist: "Sons of Kemet", year: 2018 },
-                           { title: "We Are Sent Here by History", artist: "Shabaka and the Ancestors", year: 2020 },
-                        ]
-                    },
-                    neoBop: {
-                        title: "The Neo-Bop Path",
-                        description: "In the 1980s, the 'Young Lions' movement, led by Wynton Marsalis, championed a return to the acoustic, straight-ahead, bop-oriented traditions of the 50s and 60s.",
-                        affinity: "Hard Bop, Post-Bop, Soul Jazz",
-                        albums: [
-                           { title: "Scenery", artist: "Ryo Fukui", year: 1976 },
-                           { title: "Eastern Rebellion", artist: "Cedar Walton", year: 1976 },
-                           { title: "Black Codes (From the Underground)", artist: "Wynton Marsalis", year: 1985 },
-                           { title: "Sail Away", artist: "Tom Harrell", year: 1989 },
-                           { title: "Moonswing", artist: "Joshua Redman", year: 1994 },
-                           { title: "Songbook", artist: "Kenny Garrett", year: 1997 },
-                        ]
-                    }
-                }
             },
 
             // DOM Elements
@@ -1181,6 +1101,7 @@
                     pathsContainer: document.getElementById('paths-container'),
                     legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
                     legacySliderTrack: document.getElementById('legacy-slider-track'),
+                    legacySliderTitle: document.getElementById('legacy-slider-title'),
                     legacyPrevBtn: document.getElementById('legacy-prev-btn'),
                     legacyNextBtn: document.getElementById('legacy-next-btn'),
                 };
@@ -1952,10 +1873,11 @@
                     modalImg.src = album.cover || '';
                     modalImg.alt = `Cover for ${album.albumTitle}`;
                     modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
-                    const firstTrack = album.pivotalTracks[0] || {};
-                    const genreTags = album.genres.split(', ').map(genre => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[genre] || 'var(--genre-default)'}" data-genre-name="${genre}">${genre}</span>`).join(' ');
                     
-                    let lineupString = firstTrack.lineup || 'N/A';
+                    const pivotalTrack = album.pivotalTracks ? album.pivotalTracks[0] : {};
+                    const genreTags = album.genres ? album.genres.split(', ').map(genre => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[genre] || 'var(--genre-default)'}" data-genre-name="${genre}">${genre}</span>`).join(' ') : 'N/A';
+                    
+                    let lineupString = pivotalTrack.lineup || 'N/A';
                     if (lineupString !== 'N/A') {
                         lineupString = lineupString.replace(/Roland Kirk/g, 'Rahsaan Roland Kirk');
                     }
@@ -1967,7 +1889,7 @@
                         return personnel;
                     }).join(', ') : 'N/A';
 
-                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-stone-900 mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${firstTrack.recordingDate || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${firstTrack.label || 'N/A'}</span><strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span></div>`;
+                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-stone-900 mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span><strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span></div>`;
                     
                     const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                     const pivotalTracksHtml = album.pivotalTracks.map(track => {
@@ -2478,15 +2400,30 @@
                 },
 
                 renderLegacySlider(pathId) {
-                    const { legacySliderWrapper, legacySliderTrack } = this.elements;
-                    const pathKey = Object.keys(this.state.legacyData).find(key => this.methods.slugify(key) === this.methods.slugify(this.state.pathData[pathId].title));
-                    const albums = this.state.legacyData[pathKey]?.albums || [];
+                    const { legacySliderWrapper, legacySliderTrack, legacySliderTitle } = this.elements;
+                    const pathData = this.state.pathData[pathId];
+                    const albums = pathData.albums || [];
                     
                     legacySliderTrack.innerHTML = '';
                     if (albums.length === 0) {
                         legacySliderWrapper.classList.add('hidden');
                         return;
                     }
+
+                    legacySliderTitle.textContent = `Key Albums of ${pathData.title}`;
+                    let colorVar;
+                        switch(pathData.title) {
+                            case 'The Electric Path': colorVar = 'var(--genre-jazz-fusion)'; break;
+                            case 'The Spiritual Path': colorVar = 'var(--genre-free-jazz)'; break;
+                            case 'The Avant-Garde Path': colorVar = 'var(--genre-avant-garde)'; break;
+                            case 'The Melodic Path': colorVar = 'var(--genre-cool-jazz)'; break;
+                            case 'The Afro-Jazz Path': colorVar = 'var(--genre-hard-bop)'; break;
+                            case 'The Neo-Bop Path': colorVar = 'var(--genre-bebop)'; break;
+                            default: colorVar = 'var(--text-main)';
+                        }
+                    legacySliderTitle.style.color = colorVar;
+                    this.elements.legacySliderWrapper.style.backgroundColor = `${colorVar.slice(0,-1)}, 0.1)`;
+
 
                     albums.forEach(album => {
                         const card = document.createElement('div');
@@ -2500,7 +2437,9 @@
                                 <h5 class="font-bold truncate">${album.albumTitle}</h5>
                                 <p class="truncate">${album.artist}</p>
                             </div>`;
-                        card.addEventListener('click', () => this.methods.openAlbumModal(album));
+                        
+                        const fullAlbumData = this.state.legacyData[pathData.title]?.albums.find(a => a.albumTitle === album.albumTitle);
+                        card.addEventListener('click', () => this.methods.openAlbumModal(fullAlbumData));
                         legacySliderTrack.appendChild(card);
                     });
                     
@@ -2525,8 +2464,7 @@
                     if (this.state.currentLegacySlide < 0) {
                         this.state.currentLegacySlide = 0;
                     }
-                    // This logic assumes a certain number of visible cards. Let's adjust it.
-                    // For simplicity, let's assume we can see about 4-5 cards at once.
+                    
                     const visibleCards = 4;
                     if (this.state.currentLegacySlide > numCards - visibleCards) {
                         this.state.currentLegacySlide = numCards - visibleCards;
