@@ -612,7 +612,7 @@
         /* UPDATED STYLES FOR LEGACY SECTION */
         #influence-web-container {
             position: relative;
-            height: 700px; /* Adjusted height for new layout */
+            height: 600px; /* Adjusted height for new layout */
             overflow: hidden;
             cursor: default;
         }
@@ -658,6 +658,9 @@
             background-color: rgba(245, 245, 244, 0.8);
             padding: 2px 6px;
             border-radius: 4px;
+        }
+        .influence-node .node-info {
+            display: none; /* Tooltips are now handled by the path modal */
         }
         #influence-web-svg {
             position: absolute;
@@ -849,27 +852,27 @@
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10 items-start text-left mb-16">
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-jazz-fusion);">The Electric Path</h3>
-                            <p class="text-stone-400 leading-relaxed text-sm">Led by <strong class="clickable-link" data-artist-name="Miles Davis">Miles Davis</strong>, this path embraced electric instruments and the powerful rhythms of funk and rock, creating the high-energy sound of Jazz Fusion.</p>
+                            <p class="text-stone-700 leading-relaxed text-sm">Led by <strong class="clickable-link" data-artist-name="Miles Davis">Miles Davis</strong>, this path embraced electric instruments and the powerful rhythms of funk and rock, creating the high-energy sound of Jazz Fusion.</p>
                         </div>
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-free-jazz);">The Spiritual Path</h3>
-                            <p class="text-stone-400 leading-relaxed text-sm">Following <strong class="clickable-link" data-artist-name="John Coltrane">John Coltrane</strong>, this movement explored music as a form of transcendence and spiritual expression.</p>
+                            <p class="text-stone-700 leading-relaxed text-sm">Following <strong class="clickable-link" data-artist-name="John Coltrane">John Coltrane</strong>, this movement explored music as a form of transcendence and spiritual expression.</p>
                         </div>
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-avant-garde);">The Avant-Garde Path</h3>
-                            <p class="text-stone-400 leading-relaxed text-sm">Pioneered by <strong class="clickable-link" data-artist-name="Ornette Coleman">Ornette Coleman</strong>, this path deconstructed the rules of jazz, focusing on pure melodic invention.</p>
+                            <p class="text-stone-700 leading-relaxed text-sm">Pioneered by <strong class="clickable-link" data-artist-name="Ornette Coleman">Ornette Coleman</strong>, this path deconstructed the rules of jazz, focusing on pure melodic invention.</p>
                         </div>
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-cool-jazz);">The Melodic Path</h3>
-                             <p class="text-stone-400 leading-relaxed text-sm">Evolving from Cool Jazz, this path emphasized space, atmosphere, and pristine production, defining the ECM Style and influencing Ambient Jazz.</p>
+                             <p class="text-stone-700 leading-relaxed text-sm">Evolving from Cool Jazz, this path emphasized space, atmosphere, and pristine production, defining the ECM Style and influencing Ambient Jazz.</p>
                         </div>
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-hard-bop);">The Afro-Jazz Path</h3>
-                            <p class="text-stone-400 leading-relaxed text-sm">Visionaries like <strong class="clickable-link" data-artist-name="Sun Ra">Sun Ra</strong> and the Art Ensemble of Chicago forged a path rooted in the African diaspora, blending free improv with ancient rhythms and a cosmic philosophy.</p>
+                            <p class="text-stone-700 leading-relaxed text-sm">Visionaries like <strong class="clickable-link" data-artist-name="Sun Ra">Sun Ra</strong> and the Art Ensemble of Chicago forged a path rooted in the African diaspora, blending free improv with ancient rhythms and a cosmic philosophy.</p>
                         </div>
                         <div class="fade-in-element">
                             <h3 class="text-3xl font-bold mb-4" style="color: var(--genre-bebop);">The Neo-Bop Path</h3>
-                            <p class="text-stone-400 leading-relaxed text-sm">In the 1980s, the "Young Lions" movement, led by <strong class="clickable-link" data-artist-name="Wynton Marsalis">Wynton Marsalis</strong>, championed a return to the acoustic, straight-ahead, bop-oriented traditions of the 50s and 60s.</p>
+                            <p class="text-stone-700 leading-relaxed text-sm">In the 1980s, the "Young Lions" movement, led by <strong class="clickable-link" data-artist-name="Wynton Marsalis">Wynton Marsalis</strong>, championed a return to the acoustic, straight-ahead, bop-oriented traditions of the 50s and 60s.</p>
                         </div>
                     </div>
 
@@ -886,7 +889,7 @@
                     </div>
                     
                     <!-- Final Paragraph -->
-                    <div class="fade-in-element mt-16 text-lg text-stone-400 max-w-4xl mx-auto text-left space-y-4">
+                    <div class="fade-in-element mt-16 text-lg text-stone-700 max-w-4xl mx-auto text-left space-y-4">
                         <p>Ultimately, the innovations of the 1950s and 1960s did not simply create new styles; they expanded the very definition of what jazz could be. The era's legacy is not a single sound, but a spectrum of possibilities—from the intricate harmonies of Neo-Bop to the atmospheric soundscapes of the Melodic Path, and the boundless explorations of the Avant-Garde. This period codified a language of "controlled freedom" that continues to be learned, challenged, and reinterpreted by musicians across the globe, ensuring that the spirit of jazz remains a vital and evolving force in modern music.</p>
                     </div>
                 </div>
@@ -2500,12 +2503,12 @@
 
                     const nodes = {
                         // Main Hexagonal Paths
-                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 50, y: 15 }, isSubGenre: false },
-                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual Jazz', color: 'var(--genre-free-jazz)', pos: { x: 85, y: 35 }, isSubGenre: false },
-                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 85, y: 65 }, isSubGenre: false },
-                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 50, y: 85 }, isSubGenre: false },
-                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 15, y: 65 }, isSubGenre: false },
-                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic Path', color: 'var(--genre-cool-jazz)', pos: { x: 15, y: 35 }, isSubGenre: false },
+                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 80, y: 50 }, isSubGenre: false },
+                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual Jazz', color: 'var(--genre-free-jazz)', pos: { x: 65, y: 80 }, isSubGenre: false },
+                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 35, y: 80 }, isSubGenre: false },
+                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 20, y: 50 }, isSubGenre: false },
+                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 35, y: 20 }, isSubGenre: false },
+                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic Path', color: 'var(--genre-cool-jazz)', pos: { x: 65, y: 20 }, isSubGenre: false },
                     };
 
                     Object.values(nodes).forEach(node => {
@@ -2528,7 +2531,7 @@
                             labelEl.style.color = 'var(--text-main)';
                         }
                         
-                        nodeEl.innerHTML = `<img src="images/${node.id}.jpg" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">`;
+                        nodeEl.innerHTML = `<img src="images/${node.pathId}.jpg" class="node-image" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=...';">`;
                         nodeEl.appendChild(labelEl);
                         canvas.appendChild(nodeEl);
                     });
