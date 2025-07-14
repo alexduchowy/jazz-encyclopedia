@@ -612,7 +612,7 @@
         /* UPDATED STYLES FOR LEGACY SECTION */
         #influence-web-container {
             position: relative;
-            height: 650px;
+            height: 600px; /* Adjusted height for new layout */
             overflow: hidden;
             cursor: default;
         }
@@ -2503,12 +2503,12 @@
 
                     const nodes = {
                         // Main Hexagonal Paths
-                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 80, y: 50 }, isSubGenre: false, img: 'images/neo-bop.jpg' },
-                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual', color: 'var(--genre-free-jazz)', pos: { x: 65, y: 80 }, isSubGenre: false, img: 'images/spiritual-jazz.jpg' },
-                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 35, y: 80 }, isSubGenre: false, img: 'images/afro-jazz.jpg' },
-                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 20, y: 50 }, isSubGenre: false, img: 'images/avant-garde.jpg' },
-                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 35, y: 20 }, isSubGenre: false, img: 'images/jazz-fusion.jpg' },
-                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic', color: 'var(--genre-cool-jazz)', pos: { x: 65, y: 20 }, isSubGenre: false, img: 'images/melodic-path.jpg' },
+                        melodic: { id: 'melodic', pathId: 'melodic', label: 'Melodic', color: 'var(--genre-cool-jazz)', pos: { x: 50, y: 12 }, isSubGenre: false, img: 'images/melodic-path.jpg' },
+                        neoBop: { id: 'neoBop', pathId: 'neoBop', label: 'Neo-Bop', color: 'var(--genre-bebop)', pos: { x: 85, y: 35 }, isSubGenre: false, img: 'images/neo-bop.jpg' },
+                        spiritual: { id: 'spiritual', pathId: 'spiritual', label: 'Spiritual', color: 'var(--genre-free-jazz)', pos: { x: 85, y: 65 }, isSubGenre: false, img: 'images/spiritual-jazz.jpg' },
+                        afroJazz: { id: 'afroJazz', pathId: 'afroJazz', label: 'Afro-Jazz', color: 'var(--genre-hard-bop)', pos: { x: 50, y: 88 }, isSubGenre: false, img: 'images/afro-jazz.jpg' },
+                        avantGarde: { id: 'avantGarde', pathId: 'avantGarde', label: 'Avant-Garde', color: 'var(--genre-avant-garde)', pos: { x: 15, y: 65 }, isSubGenre: false, img: 'images/avant-garde.jpg' },
+                        jazzFusion: { id: 'jazzFusion', pathId: 'electric', label: 'Jazz Fusion', color: 'var(--genre-jazz-fusion)', pos: { x: 15, y: 35 }, isSubGenre: false, img: 'images/jazz-fusion.jpg' },
                         
                         // Mixed Genres
                         ecm: { id: 'ecm', label: 'ECM Style', parentA: 'melodic', parentB: 'jazzFusion', isMixed: true },
@@ -2581,8 +2581,24 @@
                     const mixedGenreIds = ['ecm', 'smooth', 'soul', 'cape', 'afrofuturismMix', 'ambient'];
                     mixedGenreIds.forEach(id => {
                         const mixedNode = document.getElementById(`node-${id}`);
-                        const parentA = document.getElementById(`node-${mixedNode.id.replace(/Mix$/, '').replace(/ecm|smooth|soul|cape|ambient/,'')}`); // This logic is a bit brittle
-                        // A better approach would be to store parent references in the node data
+                        const parentA = document.getElementById(`node-${nodes[id].parentA}`);
+                        const parentB = document.getElementById(`node-${nodes[id].parentB}`);
+                        
+                        if(mixedNode && parentA && parentB) {
+                            const lineA = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                            lineA.setAttribute('x1', mixedNode.offsetLeft + mixedNode.offsetWidth / 2);
+                            lineA.setAttribute('y1', mixedNode.offsetTop + mixedNode.offsetHeight / 2);
+                            lineA.setAttribute('x2', parentA.offsetLeft + parentA.offsetWidth / 2);
+                            lineA.setAttribute('y2', parentA.offsetTop + parentA.offsetHeight / 2);
+                            svg.appendChild(lineA);
+
+                            const lineB = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                            lineB.setAttribute('x1', mixedNode.offsetLeft + mixedNode.offsetWidth / 2);
+                            lineB.setAttribute('y1', mixedNode.offsetTop + mixedNode.offsetHeight / 2);
+                            lineB.setAttribute('x2', parentB.offsetLeft + parentB.offsetWidth / 2);
+                            lineB.setAttribute('y2', parentB.offsetTop + parentB.offsetHeight / 2);
+                            svg.appendChild(lineB);
+                        }
                     });
                 },
             }
