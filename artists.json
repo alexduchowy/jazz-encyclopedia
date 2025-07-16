@@ -95,6 +95,15 @@
     "profile": "A major voice on the alto saxophone, Art Pepper's playing was characterized by its raw emotional honesty and piercing lyrical beauty. A leading figure in West Coast jazz, he was equally adept and authoritative in fiery, hard-bop settings, making him a uniquely versatile artist.",
     "knownFor": "Lyrical and emotionally raw alto saxophone playing."
   },
+  "Art Taylor": {
+    "name": "Art Taylor",
+    "lifespan": "1929–1995",
+    "instruments": [
+      "Drums"
+    ],
+    "profile": "A crisp, swinging, and supremely reliable drummer, Art Taylor was a first-call sideman for countless hard bop sessions on labels like Prestige and Blue Note. He was known for his impeccable taste, driving beat, and his ability to make every band he was in sound better.",
+    "knownFor": "Quintessential hard bop drumming on countless classic albums."
+  },
   "Ben Webster": {
     "name": "Ben Webster",
     "lifespan": "1909–1973",
@@ -234,6 +243,15 @@
     "profile": "Nicknamed 'Bird,' Charlie Parker was a primary architect of bebop and arguably the most important soloist in jazz history. His revolutionary harmonic vocabulary and rhythmic dexterity fundamentally changed the language of jazz improvisation, influencing virtually every musician who came after him.",
     "knownFor": "Pioneering bebop, revolutionary harmonic genius."
   },
+  "Charlie Rouse": {
+    "name": "Charlie Rouse",
+    "lifespan": "1924–1988",
+    "instruments": [
+      "Tenor Saxophone"
+    ],
+    "profile": "A tenor saxophonist best known for his long and fruitful tenure as Thelonious Monk's musical foil. Rouse possessed a unique ability to navigate Monk's eccentric compositions with a melodic, blues-rooted, and swinging sensibility, acting as the perfect translator for Monk's ideas.",
+    "knownFor": "Long-time tenor saxophonist with Thelonious Monk."
+  },
   "Chet Baker": {
     "name": "Chet Baker",
     "lifespan": "1929–1988",
@@ -273,6 +291,15 @@
     ],
     "profile": "A legendary trumpeter whose meteoric rise was cut tragically short. In just a few years, he redefined the instrument with his stunning virtuosity, warm tone, and brilliant melodic sense, becoming a foundational figure of hard bop and influencing nearly every trumpeter who followed.",
     "knownFor": "Virtuosic trumpet playing, defining the hard bop sound."
+  },
+  "Clifford Jordan": {
+    "name": "Clifford Jordan",
+    "lifespan": "1931–1993",
+    "instruments": [
+      "Tenor Saxophone"
+    ],
+    "profile": "A versatile and soulful tenor saxophonist from Chicago, Clifford Jordan possessed a robust tone and a style deeply rooted in the hard bop tradition. He was a consistently excellent and reliable sideman on many classic sessions and a respected bandleader in his own right.",
+    "knownFor": "Robust and soulful hard bop tenor saxophone."
   },
   "Coleman Hawkins": {
     "name": "Coleman Hawkins",
@@ -362,6 +389,15 @@
     "profile": "A versatile trumpeter who evolved from a top-tier hard bop soloist in the 1950s and 60s into a pioneer of jazz-funk and soul-jazz in the 1970s. His album 'A New Perspective,' featuring the hit 'Cristo Redentor,' was a landmark of gospel-infused jazz.",
     "knownFor": "Versatile hard bop and pioneering jazz-funk."
   },
+  "Dupree Bolton": {
+    "name": "Dupree Bolton",
+    "lifespan": "1929–1993",
+    "instruments": [
+      "Trumpet"
+    ],
+    "profile": "A brilliant and fiery hard bop trumpeter who is one of jazz's most legendary and mysterious figures. Due to a life of hardship, he was only recorded on a handful of sessions, most notably 'Katanga!'. His playing showed immense talent and potential reminiscent of Clifford Brown.",
+    "knownFor": "Legendary, rarely-recorded hard bop trumpet virtuoso."
+  },
   "Duke Ellington": {
     "name": "Duke Ellington",
     "lifespan": "1899–1974",
@@ -407,7 +443,10 @@
   "Errol Garner": {
     "name": "Errol Garner",
     "lifespan": "1921-1977",
-    "instruments": ["Piano", "Composer"],
+    "instruments": [
+      "Piano",
+      "Composer"
+    ],
     "profile": "A uniquely gifted pianist known for his joyful, swinging, and orchestral approach to the keyboard. His hit 'Misty' and the best-selling album 'Concert by the Sea' brought him worldwide fame. He played with a distinctive 'behind-the-beat' lag in his right hand.",
     "knownFor": "The composition 'Misty'; his best-selling album 'Concert by the Sea'."
   },
@@ -463,6 +502,17 @@
     ],
     "profile": "A master of the baritone saxophone and a key architect of West Coast Cool Jazz. He famously led a groundbreaking 'pianoless quartet' with trumpeter Chet Baker, a format that allowed for intricate and lyrical contrapuntal interplay between the two horns.",
     "knownFor": "Mastery of the baritone sax; the pianoless quartet."
+  },
+  "Gigi Gryce": {
+    "name": "Gigi Gryce",
+    "lifespan": "1925–1983",
+    "instruments": [
+      "Alto Saxophone",
+      "Composer",
+      "Arranger"
+    ],
+    "profile": "An alto saxophonist, composer, and arranger who was a key figure in the transition from bebop to hard bop. His compositions, such as 'Minority' and 'Social Call,' are known for their sophisticated harmonies and intricate melodies, becoming standards of the hard bop repertoire.",
+    "knownFor": "Sophisticated hard bop compositions and arrangements."
   },
   "Gil Evans": {
     "name": "Gil Evans",
@@ -661,6 +711,16 @@
     "profile": "A monumental and deeply influential figure, John Coltrane's musical journey was a relentless spiritual quest. He revolutionized jazz multiple times, from his 'sheets of sound' and pioneering modal work to his final, cathartic explorations in free jazz.",
     "knownFor": "'Sheets of sound,' pioneering modal and spiritual jazz."
   },
+  "John Gilmore": {
+    "name": "John Gilmore",
+    "lifespan": "1931–1995",
+    "instruments": [
+      "Tenor Saxophone",
+      "Percussion"
+    ],
+    "profile": "A tenor saxophonist of immense power and creativity, best known for his four-decade tenure as the primary horn soloist in Sun Ra's Arkestra. His 'inside-outside' playing and explosive solos were a profound influence on John Coltrane. He was a master of both hard bop and the avant-garde.",
+    "knownFor": "Legendary long-time tenor soloist with Sun Ra's Arkestra."
+  },
   "John Handy": {
     "name": "John Handy",
     "lifespan": "1933–Present",
@@ -707,6 +767,15 @@
     ],
     "profile": "The epitome of elegance and taste, Kenny Burrell is a premier guitarist who flawlessly bridges bebop sophistication with deep blues feeling. His warm, round tone and impeccably swinging lines have graced countless classic recordings, establishing him as one of the most respected guitarists in jazz.",
     "knownFor": "Elegant, blues-infused guitar playing."
+  },
+  "Kenny Clarke": {
+    "name": "Kenny Clarke",
+    "lifespan": "1914–1985",
+    "instruments": [
+      "Drums"
+    ],
+    "profile": "Nicknamed 'Klook,' Kenny Clarke was a revolutionary figure who pioneered the bebop style of drumming. He shifted the primary time-keeping from the bass drum to the ride cymbal, using the snare and bass drum for sharp, irregular accents ('dropping bombs'), a language still used today.",
+    "knownFor": "Pioneering bebop drumming, 'dropping bombs'."
   },
   "Kenny Dorham": {
     "name": "Kenny Dorham",
@@ -957,6 +1026,15 @@
     ],
     "profile": "A tenor saxophonist known for his raw, spiritual, and often abrasive 'energy playing.' A key figure in the free and spiritual jazz movements, especially through his influential work with John Coltrane, he developed a unique, cathartic, and influential saxophone vocabulary.",
     "knownFor": "Pioneering spiritual jazz; intense, cathartic saxophone playing."
+  },
+  "Philly Joe Jones": {
+    "name": "Philly Joe Jones",
+    "lifespan": "1923–1985",
+    "instruments": [
+      "Drums"
+    ],
+    "profile": "The explosive engine of Miles Davis's First Great Quintet, Philly Joe Jones was a quintessential hard bop drummer. His playing was famous for its fiery solos, crisp snare drum sound, and a relentless, interactive swing that could elevate any session he was on.",
+    "knownFor": "Explosive hard bop drumming with Miles Davis."
   },
   "Phineas Newborn Jr.": {
     "name": "Phineas Newborn Jr.",
@@ -1261,6 +1339,27 @@
     ],
     "profile": "A revolutionary guitarist who redefined the instrument's sound in jazz. Wes Montgomery is renowned for his innovative technique—using his thumb for a warm tone, his ingenious use of melodic octaves, and his soulful, blues-drenched improvisations.",
     "knownFor": "Revolutionary guitar technique using octaves and his thumb."
+  },
+  "Woody Shaw": {
+    "name": "Woody Shaw",
+    "lifespan": "1944–1989",
+    "instruments": [
+      "Trumpet",
+      "Flugelhorn"
+    ],
+    "profile": "A virtuosic and highly influential trumpeter and composer of the post-bop era. Woody Shaw was known for his use of wide, intervallic leaps and his advanced harmonic vocabulary, which often incorporated quartal harmony. He was a powerful and innovative voice on the trumpet.",
+    "knownFor": "Advanced harmonic concepts and wide intervallic leaps on trumpet."
+  },
+  "Wynton Marsalis": {
+    "name": "Wynton Marsalis",
+    "lifespan": "1961–Present",
+    "instruments": [
+      "Trumpet",
+      "Composer",
+      "Bandleader"
+    ],
+    "profile": "A trumpeter and composer who became a leading figure of the 'Young Lions' movement in the 1980s. His work sparked a revival of acoustic, traditionalist jazz, emphasizing the historical foundations of bebop and post-bop. He is also the artistic director of Jazz at Lincoln Center.",
+    "knownFor": "Leading the 'Young Lions' movement; reviving acoustic jazz."
   },
   "Wynton Kelly": {
     "name": "Wynton Kelly",
