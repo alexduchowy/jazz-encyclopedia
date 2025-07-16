@@ -944,7 +944,7 @@
                 </div>
             </section>
 
-            <!-- NEW: Reviews Section -->
+            <!-- Reviews Section -->
             <section id="reviews" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="text-center mb-12">
@@ -1168,7 +1168,7 @@
                 artistsData: [],
                 styleMatrix: {},
                 legacyData: {},
-                reviews: [], // NEW: State for reviews
+                reviews: [],
                 visibleAlbums: [],
                 currentLegacyAlbumPage: 0,
                 legacyAlbumsPerPage: 0,
@@ -1198,7 +1198,6 @@
             // Initialization
             init() {
                 this.cacheDOMElements();
-                // Bind all methods to the JazzApp context once
                 for (const key in this.methods) {
                     if (typeof this.methods[key] === 'function') {
                         this.methods[key] = this.methods[key].bind(this);
@@ -1242,14 +1241,12 @@
                     navLinks: document.querySelectorAll('header nav a'),
                     footerCopyright: document.getElementById('footer-copyright'),
                     onThisDayContainer: document.getElementById('on-this-day'),
-                    // Legacy section elements
                     pathSelectorSlider: document.getElementById('path-selector-slider'),
                     legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
                     legacySliderTitle: document.getElementById('legacy-slider-title'),
                     legacyAlbumTrack: document.getElementById('legacy-album-track'),
                     legacyPrevBtn: document.getElementById('legacy-prev-btn'),
                     legacyNextBtn: document.getElementById('legacy-next-btn'),
-                    // NEW: Reviews section elements
                     reviewList: document.getElementById('review-list'),
                     reviewContentArea: document.getElementById('review-content-area'),
                 };
@@ -1265,23 +1262,23 @@
                     fetch('database.json').then(res => res.json()),
                     fetch('artists.json').then(res => res.json()),
                     fetch('legacy.json').then(res => res.json()),
-                    fetch('reviews.json').then(res => res.json()) // NEW: Fetch reviews
+                    fetch('reviews.json').then(res => res.json())
                 ])
                 .then(([dbData, artistProfileData, legacyData, reviewData]) => {
-                    this.state.albums = dbData.albums.concat(legacyData.paths["The Electric Path"].albums, legacyData.paths["The Spiritual Path"].albums, legacyData.paths["The Avant-Garde Path"].albums, legacyData.paths["The Melodic Path"].albums, legacyData.paths["The Afro-Jazz Path"].albums, legacyData.paths["The Neo-Bop Path"].albums);
+                    this.state.albums = dbData.albums.concat(Object.values(legacyData.paths).flatMap(path => path.albums));
                     
                     // FIX: Normalize genres data immediately after loading
                     this.state.albums.forEach(album => {
                         if (typeof album.genres === 'string') {
                             album.genres = album.genres.split(',').map(g => g.trim());
                         } else if (!Array.isArray(album.genres)) {
-                            album.genres = []; // Default to empty array if undefined or other type
+                            album.genres = [];
                         }
                     });
 
                     this.state.artistProfiles = artistProfileData;
                     this.state.legacyData = legacyData.paths;
-                    this.state.reviews = reviewData.reviews; // NEW: Store reviews
+                    this.state.reviews = reviewData.reviews;
                     this.initializeAppUI();
                 })
                 .catch(error => {
@@ -1310,7 +1307,7 @@
                 this.methods.setupArtistSlider();
                 this.methods.buildGenreMatrix();
                 this.methods.setupLegacySection();
-                this.methods.setupReviewsSection(); // NEW
+                this.methods.setupReviewsSection();
                 this.methods.setupMobileMenu();
                 this.methods.setupScrollObservers();
                 this.methods.setupGeneralEventListeners();
@@ -1353,15 +1350,22 @@
                             album.firstRecordingDate = album.pivotalTracks[0].recordingDate;
                         }
                     });
-                    this.state.albums.sort((a,b) => parseDate(a.firstRecordingDate) - parseDate(b.firstRecordingDate));
                     
+                    // Filter out legacy albums before sorting the main timeline
+                    const timelineAlbums = this.state.albums.filter(a => a.year <= 1969);
+                    timelineAlbums.sort((a,b) => parseDate(a.firstRecordingDate) - parseDate(b.firstRecordingDate));
+                    this.state.albums = timelineAlbums; // Overwrite state.albums with only timeline albums
+                    
+                    // Create legacy bandleader set
+                    const legacyBandleaders = new Set(Object.values(this.state.legacyData).flatMap(path => path.albums.map(album => this.methods.getCanonicalName(album.artist))));
+
                     const allTracks = this.state.albums.flatMap(album =>
                         album.pivotalTracks.map(track => ({ ...track, year: album.year, artist: album.artist, album: album.albumTitle, cover: album.cover, genre: album.genres }))
                     );
-                    this.state.artistsData = this.methods.processArtists(allTracks, this.state.artistProfiles);
+                    this.state.artistsData = this.methods.processArtists(allTracks, this.state.artistProfiles, legacyBandleaders);
                 },
 
-                processArtists(tracks, profiles) {
+                processArtists(tracks, profiles, legacyBandleaders) {
                     const artistsMap = new Map();
                     const slugify = this.methods.slugify;
                     const getCanonicalName = this.methods.getCanonicalName;
@@ -1384,14 +1388,14 @@
                                         instruments: new Set(), 
                                         albums: new Set(), 
                                         photo: `images/${slugify(name)}.jpg`, 
-                                        isBandleader: false, 
+                                        isTimelineBandleader: false, 
                                         profile: profiles[name] || { name: name, profile: 'No profile available.'} 
                                     });
                                 }
                                 const artistEntry = artistsMap.get(name);
                                 
                                 if (trackArtist.includes(name)) {
-                                    artistEntry.isBandleader = true;
+                                    artistEntry.isTimelineBandleader = true;
                                 }
                                 
                                 instrumentsString.split(/, | \/ /).forEach(inst => {
@@ -1409,13 +1413,16 @@
                     artistsArray.forEach(artist => {
                         artist.instruments = Array.from(artist.instruments);
                         artist.albums = Array.from(artist.albums);
-                        // Assign tier
-                        if (artist.isBandleader) {
-                            artist.tier = 1;
-                        } else if (artist.albums.length >= 4) {
-                            artist.tier = 2;
+                        
+                        // UPDATED TIER ASSIGNMENT LOGIC
+                        const isLegacyLeader = legacyBandleaders.has(artist.name);
+
+                        if (artist.isTimelineBandleader && !isLegacyLeader) {
+                            artist.tier = 1; // Main timeline leader (orange)
+                        } else if (isLegacyLeader || artist.albums.length >= 4) {
+                            artist.tier = 2; // Legacy leader or influential sideman (yellow)
                         } else {
-                            artist.tier = 3;
+                            artist.tier = 3; // Other (no highlight)
                         }
                     });
                     return artistsArray;
