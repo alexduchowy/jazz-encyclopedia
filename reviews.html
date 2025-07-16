@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews - Controlled Freedom</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #f5f5f4; --bg-secondary: #e7e5e4; --text-main: #1c1917; --text-muted: #44403c; --accent: #f97316; --yellow-accent: #facc15;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); }
+        h1, h2, h3, h4, h5 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+        .nav-link { transition: color 0.2s; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 1.2rem; }
+        .nav-link:hover, .nav-link.active { color: var(--accent); }
+        .section-header { transform: rotate(-1deg); display: inline-block; background-color: var(--accent); color: var(--bg-main); padding: 0.25rem 1rem; margin-bottom: 1rem; }
+        .title-rotate { transform: rotate(-1.5deg); }
+        .nav-bar-hidden-behaviour { display: flex; transform: rotate(-1.5deg); }
+        @media (max-width: 768px) { .nav-bar-hidden-behaviour { display: none; } }
+        #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
+        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
+        .dropdown-menu { background-color: var(--bg-main); border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); margin-top: 1.75rem; transform: rotate(1.5deg); transform-origin: top left; }
+        .dropdown-menu a { font-family: 'Inter', sans-serif; letter-spacing: normal; font-size: 1rem; display: block; padding: 0.5rem 1.5rem; color: var(--text-muted); transition: all 0.2s; }
+        .dropdown-menu a:hover { background-color: var(--accent); color: var(--bg-main); transform: translateX(5px); }
+        #loader { position: fixed; inset: 0; background-color: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .loader-spinner { border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .content-hidden { display: none; }
+        .news-card { background-color: var(--bg-secondary); border: 2px solid var(--text-main); border-radius: 0.25rem; box-shadow: 4px 4px 0px var(--text-main); transition: all 0.2s ease; }
+        .news-card:hover { transform: translateY(-4px) rotate(-1deg); box-shadow: 6px 6px 0px var(--accent); }
+        .review-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        @media (min-width: 768px) { .review-grid { grid-template-columns: 250px 1fr; gap: 3rem; } }
+        #review-list { max-height: 80vh; overflow-y: auto; padding-right: 1rem; }
+        .review-list-item { padding: 1rem; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s ease; }
+        .review-list-item:hover { background-color: var(--bg-secondary); border-left-color: var(--accent-dark); }
+        .review-list-item.active { background-color: var(--bg-secondary); border-left-color: var(--accent); }
+        #review-content-area { font-family: 'Lora', serif; }
+        .review-header { border-bottom: 2px solid var(--bg-secondary); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .review-title { font-family: 'Lora', serif; font-weight: 600; }
+        .review-body p { margin-bottom: 1.5rem; line-height: 1.7; }
+        .review-rating .star-filled { color: var(--yellow-accent); }
+        .review-rating .star-empty { color: var(--bg-secondary); }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-900">
+
+    <div id="loader"><div class="loader-spinner"></div></div>
+
+    <div id="page-content" class="content-hidden">
+        <div class="sticky top-0 z-50 h-24">
+            <header class="relative container mx-auto h-full">
+                <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
+                <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10"><a href="index.html"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a></div>
+                    <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
+                        <div class="relative group">
+                            <a href="index.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                            <div class="absolute hidden group-hover:block pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="index.html#overview">Overview</a><a href="index.html#timeline">Timeline</a><a href="index.html#matrix">Genres</a><a href="index.html#artists">Artists</a></div></div>
+                        </div>
+                        <div class="relative group">
+                            <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                            <div class="absolute hidden group-hover:block pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="legacy.html#legacy">Path Timeline</a><a href="legacy.html#artists">Legacy Artists</a></div></div>
+                        </div>
+                        <a href="#" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
+                    </div>
+                    <div class="sm:hidden"><button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
+                </nav>
+            </header>
+        </div>
+
+        <main class="pt-12">
+            <section id="news" class="py-16 sm:py-20">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+                    <div class="text-center mb-12">
+                        <h2 class="section-header text-5xl">Latest News</h2>
+                        <p class="text-center text-lg text-stone-600 max-w-3xl mx-auto italic">The latest happenings, releases, and discoveries in the world of jazz.</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Placeholder News Card 1 -->
+                        <div class="news-card">
+                            <img src="https://placehold.co/600x400/a5f3fc/1c1917?text=News" alt="News placeholder" class="w-full h-48 object-cover rounded-t-sm">
+                            <div class="p-6">
+                                <p class="text-sm text-stone-500 mb-2">July 15, 2025</p>
+                                <h3 class="text-2xl font-bold mb-3">Lost Tapes from 1972 Session Unearthed</h3>
+                                <p class="text-stone-700">A previously unknown recording session from a legendary fusion group has been discovered in a studio vault, promising new insights...</p>
+                                <a href="#" class="inline-block mt-4 font-bold text-orange-600 hover:text-orange-700">Read More &rarr;</a>
+                            </div>
+                        </div>
+                        <!-- Placeholder News Card 2 -->
+                        <div class="news-card">
+                            <img src="https://placehold.co/600x400/fecdd3/1c1917?text=News" alt="News placeholder" class="w-full h-48 object-cover rounded-t-sm">
+                            <div class="p-6">
+                                <p class="text-sm text-stone-500 mb-2">July 12, 2025</p>
+                                <h3 class="text-2xl font-bold mb-3">Modern Masters: A New Generation Reinterprets Hard Bop</h3>
+                                <p class="text-stone-700">A new wave of young artists are taking the language of Hard Bop and infusing it with modern sensibilities. We look at the key players...</p>
+                                <a href="#" class="inline-block mt-4 font-bold text-orange-600 hover:text-orange-700">Read More &rarr;</a>
+                            </div>
+                        </div>
+                        <!-- Placeholder News Card 3 -->
+                        <div class="news-card">
+                            <img src="https://placehold.co/600x400/d8b4fe/1c1917?text=News" alt="News placeholder" class="w-full h-48 object-cover rounded-t-sm">
+                            <div class="p-6">
+                                <p class="text-sm text-stone-500 mb-2">July 10, 2025</p>
+                                <h3 class="text-2xl font-bold mb-3">Upcoming Festival to Celebrate Women in Jazz</h3>
+                                <p class="text-stone-700">The annual "First Ladies of Jazz" festival has announced its lineup, featuring a stunning array of both iconic figures and rising stars...</p>
+                                <a href="#" class="inline-block mt-4 font-bold text-orange-600 hover:text-orange-700">Read More &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="reviews" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+                    <div class="text-center mb-12">
+                        <h2 class="section-header text-5xl">Album Reviews</h2>
+                        <p class="text-center text-lg text-stone-600 max-w-3xl mx-auto italic">Deep dives into essential albums from the golden age and beyond.</p>
+                    </div>
+                    <div class="review-grid">
+                        <div class="border-t-2 md:border-t-0 md:border-r-2 border-stone-300"><nav id="review-list" class="space-y-1"></nav></div>
+                        <div id="review-content-area"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-stone-900 text-stone-200 py-8">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center"><p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p><div class="mt-6 border-t border-stone-700 pt-6"><p id="footer-copyright" class="text-xs text-stone-400"></p></div></div>
+        </footer>
+    </div>
+
+    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
+        <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
+                <div>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Home</button>
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2"><a href="index.html#overview" class="mobile-nav-link block">Overview</a><a href="index.html#timeline" class="mobile-nav-link block">Timeline</a><a href="index.html#matrix" class="mobile-nav-link block">Genres</a><a href="index.html#artists" class="mobile-nav-link block">Artists</a></div>
+                </div>
+                <div>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</button>
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2"><a href="legacy.html#legacy" class="mobile-nav-link block">Path Timeline</a><a href="legacy.html#artists" class="mobile-nav-link block">Legacy Artists</a></div>
+                </div>
+                <a href="#" class="text-lg font-bold text-orange-500">Reviews</a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        const ReviewsApp = {
+            state: { reviews: [], allAlbums: [] },
+            elements: {},
+            init() {
+                this.elements = {
+                    loader: document.getElementById('loader'), pageContent: document.getElementById('page-content'),
+                    reviewList: document.getElementById('review-list'), reviewContentArea: document.getElementById('review-content-area'),
+                    mobileMenuButton: document.getElementById('mobile-menu-button'), mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
+                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                    footerCopyright: document.getElementById('footer-copyright')
+                };
+                this.fetchData();
+                this.setupMobileMenu();
+                this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+            },
+            fetchData() {
+                Promise.all([
+                    fetch('reviews.json').then(res => res.json()),
+                    fetch('database.json').then(res => res.json()),
+                    fetch('legacy.json').then(res => res.json())
+                ]).then(([reviewData, dbData, legacyData]) => {
+                    this.state.reviews = reviewData.reviews;
+                    const legacyAlbums = Object.values(legacyData.paths).flatMap(p => p.albums);
+                    this.state.allAlbums = dbData.albums.concat(legacyAlbums);
+                    this.initializeAppUI();
+                }).catch(error => {
+                    console.error('Error fetching data:', error);
+                    this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2></div>`;
+                    this.showPage();
+                });
+            },
+            showPage() {
+                this.elements.loader.style.display = 'none';
+                this.elements.pageContent.classList.remove('content-hidden');
+            },
+            initializeAppUI() {
+                this.renderReviewList();
+                if (this.state.reviews.length > 0) {
+                    this.renderReviewContent(0);
+                } else {
+                    this.elements.reviewContentArea.innerHTML = '<p class="text-stone-500">No reviews available yet.</p>';
+                }
+                this.showPage();
+            },
+            renderReviewList() {
+                const { reviewList } = this.elements;
+                reviewList.innerHTML = '';
+                this.state.reviews.forEach((review, index) => {
+                    const listItem = document.createElement('div');
+                    listItem.className = 'review-list-item';
+                    listItem.dataset.reviewIndex = index;
+                    listItem.innerHTML = `<h5 class="font-bold text-stone-900">${review.albumTitle}</h5><p class="text-sm text-stone-600">${review.artist}</p>`;
+                    listItem.addEventListener('click', () => this.renderReviewContent(index));
+                    reviewList.appendChild(listItem);
+                });
+            },
+            renderReviewContent(index) {
+                const { reviewList, reviewContentArea } = this.elements;
+                const review = this.state.reviews[index];
+                if (!review) return;
+
+                reviewList.querySelectorAll('.review-list-item').forEach(item => item.classList.remove('active'));
+                reviewList.querySelector(`[data-review-index='${index}']`).classList.add('active');
+
+                const albumData = this.state.allAlbums.find(a => a.albumTitle === review.albumTitle && a.artist === review.artist);
+                const coverImage = albumData ? albumData.cover : 'https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';
+
+                let starsHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    starsHtml += `<svg class="w-5 h-5 ${i <= review.rating ? 'star-filled' : 'star-empty'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
+                }
+
+                reviewContentArea.innerHTML = `
+                    <div class="flex flex-col sm:flex-row gap-8 items-start">
+                        <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-full sm:w-1/3 md:w-1/4 h-auto object-cover border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)]" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
+                        <div class="flex-1">
+                            <div class="review-header">
+                                <h3 class="review-title text-4xl lg:text-5xl text-stone-900">${review.reviewTitle}</h3>
+                                <p class="text-stone-600 mt-2">A review of <strong>${review.albumTitle}</strong> by <strong>${review.artist}</strong></p>
+                                <div class="flex items-center gap-2 mt-3"><div class="review-rating flex">${starsHtml}</div><span class="text-sm text-stone-500 font-semibold">(${review.rating}/5)</span></div>
+                            </div>
+                            <div class="review-body text-stone-800">${review.reviewBody}</div>
+                            <div class="text-sm text-right text-stone-500 italic mt-8"><p>Reviewed by ${review.author} on ${review.reviewDate}</p></div>
+                        </div>
+                    </div>`;
+            },
+            setupMobileMenu() {
+                const { mobileMenuButton, mobileMenuOverlay, mobileMenuCloseButton } = this.elements;
+                const openMenu = () => mobileMenuOverlay.classList.remove('hidden');
+                const closeMenu = () => mobileMenuOverlay.classList.add('hidden');
+                mobileMenuButton.addEventListener('click', openMenu);
+                mobileMenuCloseButton.addEventListener('click', closeMenu);
+                document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+                document.querySelectorAll('.mobile-nav-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const submenu = header.nextElementSibling;
+                        submenu.classList.toggle('hidden');
+                    });
+                });
+            }
+        };
+        document.addEventListener('DOMContentLoaded', () => ReviewsApp.init());
+    </script>
+</body>
+</html>
