@@ -1269,6 +1269,16 @@
                 ])
                 .then(([dbData, artistProfileData, legacyData, reviewData]) => {
                     this.state.albums = dbData.albums.concat(legacyData.paths["The Electric Path"].albums, legacyData.paths["The Spiritual Path"].albums, legacyData.paths["The Avant-Garde Path"].albums, legacyData.paths["The Melodic Path"].albums, legacyData.paths["The Afro-Jazz Path"].albums, legacyData.paths["The Neo-Bop Path"].albums);
+                    
+                    // FIX: Normalize genres data immediately after loading
+                    this.state.albums.forEach(album => {
+                        if (typeof album.genres === 'string') {
+                            album.genres = album.genres.split(',').map(g => g.trim());
+                        } else if (!Array.isArray(album.genres)) {
+                            album.genres = []; // Default to empty array if undefined or other type
+                        }
+                    });
+
                     this.state.artistProfiles = artistProfileData;
                     this.state.legacyData = legacyData.paths;
                     this.state.reviews = reviewData.reviews; // NEW: Store reviews
