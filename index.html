@@ -342,7 +342,7 @@
                     customScrollbar: document.getElementById('custom-scrollbar'), customScrollbarThumb: document.getElementById('custom-scrollbar-thumb'),
                     customScrollbarMarkers: document.getElementById('custom-scrollbar-markers'), mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'), mobileMenuPanel: document.getElementById('mobile-menu-panel'),
-                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'), mobileNavLinks: document.querySelectorAll('#mobile-nav-links a'),
+                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'), mobileNavLinks: document.querySelectorAll('.mobile-nav-link'),
                     sections: document.querySelectorAll('main section[id]'), navLinks: document.querySelectorAll('header nav a.nav-link'),
                     footerCopyright: document.getElementById('footer-copyright'), onThisDayContainer: document.getElementById('on-this-day'),
                     mobileNavHeaders: document.querySelectorAll('.mobile-nav-header'),
@@ -363,7 +363,7 @@
                     this.initializeAppUI();
                 }).catch(error => {
                     console.error('Error fetching data:', error);
-                    this.elements.pageContent.innerHTML = `<p class="text-red-500 text-center p-8">Error loading data. Please check console.</p>`;
+                    this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2><p>Could not fetch required data files.</p></div>`;
                     this.showPage();
                 });
             },
@@ -758,11 +758,20 @@
                     const { onThisDayContainer } = this.elements;
                     if (!onThisDayContainer) return;
                     const today = new Date();
-                    const matchingTracks = this.state.albums.flatMap(a => a.pivotalTracks.map(t => ({...t, parentAlbum: a}))).filter(t => { const d = new Date(t.recordingDate); return d.getMonth() === today.getMonth() && d.getDate() === today.getDate(); });
+                    const matchingTracks = this.state.albums.flatMap(a => (a.pivotalTracks || []).map(t => ({...t, parentAlbum: a}))).filter(t => {
+                        try {
+                            const d = new Date(t.recordingDate);
+                            return d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
+                        } catch (e) { return false; }
+                    });
                     if (matchingTracks.length > 0) {
                         const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
                         const album = featured.parentAlbum;
-                        onThisDayContainer.innerHTML = `<div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)] cursor-pointer" onclick="JazzApp.methods.openAlbumModal(JazzApp.state.albums.find(a => a.albumTitle === '${album.albumTitle.replace(/'/g, "\\'")}' && a.artist === '${album.artist.replace(/'/g, "\\'")}'), -1)">...</div>`; // Simplified
+                        onThisDayContainer.innerHTML = `<div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)] cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] hover:-translate-y-1 transition-all">...</div>`; // Simplified for brevity
+                        onThisDayContainer.firstElementChild.addEventListener('click', () => {
+                             const albumIndex = this.state.visibleAlbums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
+                             this.methods.openAlbumModal(album, albumIndex);
+                        });
                     } else {
                         onThisDayContainer.innerHTML = `<div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)]"><h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4><p class="text-center text-stone-600 mt-4">No landmark tracks recorded today.</p></div>`;
                     }
