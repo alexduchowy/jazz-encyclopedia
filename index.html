@@ -611,12 +611,12 @@
             font-size: 0.9rem;
         }
         
-        /* UPDATED STYLES FOR LEGACY SECTION */
+        /* Legacy Section Styles */
         #path-selector-slider {
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
-            padding-top: 1rem; /* Add space for animation */
-            padding-bottom: 1rem; /* Add space for animation */
+            padding-top: 1rem;
+            padding-bottom: 1rem;
         }
         #path-selector-slider::-webkit-scrollbar {
             display: none; /* Chrome, Safari, Opera */
@@ -624,14 +624,14 @@
 
         .path-selector-card {
             flex-shrink: 0;
-            width: 320px; /* Wider cards */
+            width: 320px;
             background-color: var(--bg-secondary);
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 4px 4px 0px var(--text-main);
-            overflow: hidden; /* To contain image */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
@@ -653,7 +653,7 @@
             flex-direction: column;
         }
         .path-selector-card h4 {
-            color: var(--text-main) !important; /* Keep title black */
+            color: var(--text-main) !important;
             margin-bottom: 0.5rem;
         }
         .path-selector-card p {
@@ -672,11 +672,11 @@
         }
 
         #legacy-slider-wrapper {
-            background-color: rgba(231, 229, 228, 0.5); /* Default light background */
+            background-color: rgba(231, 229, 228, 0.5);
             transition: background-color 0.5s ease-in-out;
         }
         #legacy-slider-title {
-            color: var(--text-main) !important; /* Keep title black */
+            color: var(--text-main) !important;
         }
         #legacy-album-track {
             padding: 1rem 0;
@@ -684,6 +684,63 @@
         }
         .legacy-album-card {
             width: 200px;
+        }
+
+        /* NEW: Reviews Section Styling */
+        #reviews {
+            background-color: var(--bg-main);
+        }
+        .review-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .review-grid {
+                grid-template-columns: 250px 1fr; /* Sidebar for list, main area for content */
+                gap: 3rem;
+            }
+        }
+        #review-list {
+            max-height: 80vh;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+        .review-list-item {
+            padding: 1rem;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .review-list-item:hover {
+            background-color: var(--bg-secondary);
+            border-left-color: var(--accent-dark);
+        }
+        .review-list-item.active {
+            background-color: var(--bg-secondary);
+            border-left-color: var(--accent);
+        }
+        #review-content-area {
+            font-family: 'Lora', serif;
+        }
+        .review-header {
+            border-bottom: 2px solid var(--bg-secondary);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .review-title {
+            font-family: 'Lora', serif;
+            font-weight: 600;
+        }
+        .review-body p {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+        .review-rating .star-filled {
+            color: var(--yellow-accent);
+        }
+        .review-rating .star-empty {
+            color: var(--bg-secondary);
         }
    
     </style>
@@ -713,6 +770,7 @@
                             <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
                             <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
                             <a href="#legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                            <a href="#reviews" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
                         </div>
                         <!-- Hamburger Menu Button -->
                         <div class="sm:hidden">
@@ -848,7 +906,7 @@
                 </div>
             </section>
             
-            <!-- UPDATED Legacy Section -->
+            <!-- Legacy Section -->
             <section id="legacy" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
                     <h2 class="section-header text-5xl">Legacy</h2>
@@ -885,6 +943,29 @@
                     </div>
                 </div>
             </section>
+
+            <!-- NEW: Reviews Section -->
+            <section id="reviews" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+                    <div class="text-center mb-12">
+                        <h2 class="section-header text-5xl">Reviews</h2>
+                        <p class="text-center text-lg text-stone-600 max-w-3xl mx-auto italic">Deep dives into essential albums from the golden age and beyond.</p>
+                    </div>
+                    <div class="review-grid">
+                        <!-- Left Column: Review List -->
+                        <div class="border-t-2 md:border-t-0 md:border-r-2 border-stone-300">
+                            <nav id="review-list" class="space-y-1">
+                                <!-- Review list items will be injected here by JavaScript -->
+                            </nav>
+                        </div>
+                        <!-- Right Column: Review Content -->
+                        <div id="review-content-area">
+                            <!-- Selected review content will be injected here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </main>
 
         <!-- Footer -->
@@ -974,6 +1055,7 @@
                 <a href="#matrix" class="mobile-nav-link text-lg font-bold text-stone-900 hover:text-orange-500">Genres</a>
                 <a href="#artists" class="mobile-nav-link text-lg font-bold text-stone-900 hover:text-orange-500">Artists</a>
                 <a href="#legacy" class="mobile-nav-link text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</a>
+                <a href="#reviews" class="mobile-nav-link text-lg font-bold text-stone-900 hover:text-orange-500">Reviews</a>
             </nav>
         </div>
     </div>
@@ -1086,6 +1168,7 @@
                 artistsData: [],
                 styleMatrix: {},
                 legacyData: {},
+                reviews: [], // NEW: State for reviews
                 visibleAlbums: [],
                 currentLegacyAlbumPage: 0,
                 legacyAlbumsPerPage: 0,
@@ -1166,6 +1249,9 @@
                     legacyAlbumTrack: document.getElementById('legacy-album-track'),
                     legacyPrevBtn: document.getElementById('legacy-prev-btn'),
                     legacyNextBtn: document.getElementById('legacy-next-btn'),
+                    // NEW: Reviews section elements
+                    reviewList: document.getElementById('review-list'),
+                    reviewContentArea: document.getElementById('review-content-area'),
                 };
             },
 
@@ -1178,19 +1264,21 @@
                 Promise.all([
                     fetch('database.json').then(res => res.json()),
                     fetch('artists.json').then(res => res.json()),
-                    fetch('legacy.json').then(res => res.json())
+                    fetch('legacy.json').then(res => res.json()),
+                    fetch('reviews.json').then(res => res.json()) // NEW: Fetch reviews
                 ])
-                .then(([dbData, artistProfileData, legacyData]) => {
-                    this.state.albums = dbData.albums;
+                .then(([dbData, artistProfileData, legacyData, reviewData]) => {
+                    this.state.albums = dbData.albums.concat(legacyData.paths["The Electric Path"].albums, legacyData.paths["The Spiritual Path"].albums, legacyData.paths["The Avant-Garde Path"].albums, legacyData.paths["The Melodic Path"].albums, legacyData.paths["The Afro-Jazz Path"].albums, legacyData.paths["The Neo-Bop Path"].albums);
                     this.state.artistProfiles = artistProfileData;
                     this.state.legacyData = legacyData.paths;
+                    this.state.reviews = reviewData.reviews; // NEW: Store reviews
                     this.initializeAppUI();
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                     this.elements.pageContent.innerHTML = `<div class="text-center p-8">
                         <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
-                        <p class="text-stone-600 mt-2">Could not fetch all required database files. Please ensure 'database.json', 'artists.json', and 'legacy.json' are available.</p>
+                        <p class="text-stone-600 mt-2">Could not fetch all required database files. Please ensure all .json files are available.</p>
                         <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
                     </div>`;
                     this.showPage();
@@ -1211,7 +1299,8 @@
                 this.methods.setupModals();
                 this.methods.setupArtistSlider();
                 this.methods.buildGenreMatrix();
-                this.methods.setupLegacySection(); // UPDATED
+                this.methods.setupLegacySection();
+                this.methods.setupReviewsSection(); // NEW
                 this.methods.setupMobileMenu();
                 this.methods.setupScrollObservers();
                 this.methods.setupGeneralEventListeners();
@@ -1333,7 +1422,7 @@
                     this.state.fullGenreColorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
                     this.state.albums.forEach(album => {
                         if(album.genres) {
-                            album.genres.split(', ').forEach(genre => {
+                            album.genres.forEach(genre => {
                                 if (!this.state.fullGenreColorMap[genre]) this.state.fullGenreColorMap[genre] = 'var(--genre-default)';
                             });
                         }
@@ -1345,9 +1434,9 @@
                     const { genreFilterContainer, instrumentFilter } = this.elements;
                     const allGenresInDB = new Set();
                     this.state.albums.forEach(album => {
-                        if (album.genres) album.genres.split(', ').forEach(genre => allGenresInDB.add(genre.trim()));
+                        if (album.genres) album.genres.forEach(genre => allGenresInDB.add(genre.trim()));
                     });
-                    const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock'];
+                    const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock', 'ECM Style Jazz', 'Neo-Bop', 'Cape Jazz', 'Vocal Jazz', 'Swing', 'Orchestral Jazz'];
                     const filterableGenres = Array.from(allGenresInDB).filter(genre => !excludedGenres.includes(genre)).sort();
                     
                     genreFilterContainer.innerHTML = ''; // Clear previous
@@ -1444,9 +1533,9 @@
                                 card.className = 'timeline-album-card fade-in-element';
                                 card.dataset.albumTitle = album.albumTitle;
                                 card.dataset.artist = album.artist;
-                                card.dataset.genres = album.genres;
+                                card.dataset.genres = Array.isArray(album.genres) ? album.genres.join(', ') : album.genres;
 
-                                const albumGenres = album.genres.split(', ');
+                                const albumGenres = Array.isArray(album.genres) ? album.genres : (album.genres || '').split(', ');
                                 let isLandmark = false;
                                 let landmarkColor = null;
 
@@ -1522,7 +1611,7 @@
                         const card = e.target.closest('.timeline-album-card');
 
                         if (card && !card.classList.contains('hidden') && !document.querySelector('.timeline-album-card.clicked')) {
-                            const primaryGenre = card.dataset.genres.split(', ')[0];
+                            const primaryGenre = (card.dataset.genres || '').split(', ')[0];
                             if (primaryGenre === this.state.lastHoveredGenre) {
                                 return; // Same genre, do nothing
                             }
@@ -1849,7 +1938,7 @@
                     });
                 },
                 
-                // --- LEGACY SECTION METHODS (UPDATED) ---
+                // --- LEGACY SECTION METHODS ---
                 setupLegacySection() {
                     this.methods.renderPathSelector();
                     this.methods.setupDraggable(this.elements.pathSelectorSlider);
@@ -2000,6 +2089,72 @@
                     this.methods.updateLegacyAlbumSliderView();
                 },
 
+                // NEW: Reviews Section Methods
+                setupReviewsSection() {
+                    this.methods.renderReviewList();
+                    if (this.state.reviews.length > 0) {
+                        this.methods.renderReviewContent(0); // Display the first review by default
+                    } else {
+                        this.elements.reviewContentArea.innerHTML = '<p class="text-stone-500">No reviews available yet.</p>';
+                    }
+                },
+
+                renderReviewList() {
+                    const { reviewList } = this.elements;
+                    reviewList.innerHTML = '';
+                    this.state.reviews.forEach((review, index) => {
+                        const listItem = document.createElement('div');
+                        listItem.className = 'review-list-item';
+                        listItem.dataset.reviewIndex = index;
+                        listItem.innerHTML = `
+                            <h5 class="font-bold text-stone-900">${review.albumTitle}</h5>
+                            <p class="text-sm text-stone-600">${review.artist}</p>
+                        `;
+                        listItem.addEventListener('click', () => this.methods.renderReviewContent(index));
+                        reviewList.appendChild(listItem);
+                    });
+                },
+
+                renderReviewContent(index) {
+                    const { reviewList, reviewContentArea } = this.elements;
+                    const review = this.state.reviews[index];
+                    if (!review) return;
+
+                    // Highlight active item in the list
+                    reviewList.querySelectorAll('.review-list-item').forEach(item => item.classList.remove('active'));
+                    reviewList.querySelector(`[data-review-index='${index}']`).classList.add('active');
+
+                    // Find the corresponding album data to show the cover
+                    const albumData = this.state.albums.find(a => a.albumTitle === review.albumTitle && a.artist === review.artist);
+                    const coverImage = albumData ? albumData.cover : 'https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';
+
+                    // Generate rating stars
+                    let starsHtml = '';
+                    for (let i = 1; i <= 5; i++) {
+                        starsHtml += `<svg class="w-5 h-5 ${i <= review.rating ? 'star-filled' : 'star-empty'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
+                    }
+
+                    reviewContentArea.innerHTML = `
+                        <div class="flex flex-col sm:flex-row gap-8 items-start">
+                            <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-full sm:w-1/3 md:w-1/4 h-auto object-cover border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)]" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
+                            <div class="flex-1">
+                                <div class="review-header">
+                                    <h3 class="review-title text-4xl lg:text-5xl text-stone-900">${review.reviewTitle}</h3>
+                                    <p class="text-stone-600 mt-2">A review of <strong>${review.albumTitle}</strong> by <strong>${review.artist}</strong></p>
+                                    <div class="flex items-center gap-2 mt-3">
+                                        <div class="review-rating flex">${starsHtml}</div>
+                                        <span class="text-sm text-stone-500 font-semibold">(${review.rating}/5)</span>
+                                    </div>
+                                </div>
+                                <div class="review-body text-stone-800">${review.reviewBody}</div>
+                                <div class="text-sm text-right text-stone-500 italic mt-8">
+                                    <p>Reviewed by ${review.author} on ${review.reviewDate}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                },
+
                 // --- HELPER METHODS ---
                 slugify(name) {
                     if (!name) return '';
@@ -2015,7 +2170,7 @@
                     const selectedGenres = Array.from(this.elements.genreFilterContainer.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
                     this.state.visibleAlbums = [];
                     document.querySelectorAll('.timeline-album-card').forEach(card => {
-                        const cardGenres = card.dataset.genres.split(', ');
+                        const cardGenres = (card.dataset.genres || '').split(', ');
                         const isVisible = cardGenres.some(genre => selectedGenres.includes(genre));
                         card.classList.toggle('hidden', !isVisible);
                         if(isVisible) {
@@ -2048,12 +2203,12 @@
                     });
                     if (!selectedCard) return;
                     document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.add('dimmed'));
-                    const selectedGenres = selectedCard.dataset.genres.split(', ');
+                    const selectedGenres = (selectedCard.dataset.genres || '').split(', ');
                     const primaryGenre = selectedGenres[0];
                     const highlightColor = this.state.fullGenreColorMap[primaryGenre] || 'var(--accent)';
                     const allCards = Array.from(document.querySelectorAll('.timeline-album-card:not(.hidden)'));
                     allCards.forEach(card => {
-                        const cardGenres = card.dataset.genres.split(', ');
+                        const cardGenres = (card.dataset.genres || '').split(', ');
                         if (cardGenres.includes(primaryGenre)) {
                             card.classList.remove('dimmed');
                             card.classList.add('highlighted');
@@ -2089,9 +2244,8 @@
                     
                     const pivotalTrack = album.pivotalTracks ? album.pivotalTracks[0] : {};
                     
-                    // FIX: Handle both string and array for genres
                     let genreArray = [];
-                    const rawGenres = album.genres || (pivotalTrack && pivotalTrack.genre);
+                    const rawGenres = album.genres;
                     if (Array.isArray(rawGenres)) {
                         genreArray = rawGenres;
                     } else if (typeof rawGenres === 'string') {
