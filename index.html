@@ -610,6 +610,25 @@
             font-weight: 600;
             font-size: 0.9rem;
         }
+        
+        /* NEW: Era Glossary Styling */
+        .era-glossary-link {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.75rem;
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            background-color: var(--bg-main);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .era-glossary-link:hover {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            transform: translateY(-2px);
+        }
+   
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -693,6 +712,9 @@
                     <div id="timeline-controls" class="flex flex-col items-center justify-center gap-4 mb-8">
                         <div id="genre-filter-container" class="flex flex-wrap justify-center gap-x-4 gap-y-3">
                            <!-- Checkboxes will be injected here by JavaScript -->
+                        </div>
+                        <div id="era-glossary-container" class="mt-4">
+                            <!-- Era glossary links will be injected here -->
                         </div>
                     </div>
 
@@ -1017,6 +1039,7 @@
                     scrollLeftBtn: document.getElementById('scroll-left-btn'),
                     scrollRightBtn: document.getElementById('scroll-right-btn'),
                     genreFilterContainer: document.getElementById('genre-filter-container'),
+                    eraGlossaryContainer: document.getElementById('era-glossary-container'),
                     stickyYearDisplay: document.getElementById('sticky-year-display'),
                     stickyEraTitle: document.getElementById('sticky-era-title'),
                     albumModal: document.getElementById('album-modal'),
@@ -1090,6 +1113,7 @@
                 this.methods.processAndSortData();
                 this.methods.buildGenreColorMap();
                 this.methods.setupFilters();
+                this.methods.renderEraGlossary();
                 this.methods.renderTimeline();
                 this.methods.setupTimelineInteraction();
                 this.methods.setupModals();
@@ -1228,12 +1252,12 @@
 
                 // --- UI SETUP & RENDERING ---
                 setupFilters() {
-                    const { genreFilterContainer, instrumentFilter } = this.elements;
+                    const { genreFilterContainer } = this.elements;
                     const allGenresInDB = new Set();
                     this.state.albums.forEach(album => {
                         if (album.genres) album.genres.forEach(genre => allGenresInDB.add(genre.trim()));
                     });
-                    const excludedGenres = ['Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock', 'ECM Style Jazz', 'Neo-Bop', 'Cape Jazz', 'Vocal Jazz', 'Swing', 'Orchestral Jazz'];
+                    const excludedGenres = ['Afro-Cuban Jazz', 'Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock', 'ECM Style Jazz', 'Neo-Bop', 'Cape Jazz', 'Vocal Jazz', 'Swing', 'Orchestral Jazz'];
                     const filterableGenres = Array.from(allGenresInDB).filter(genre => !excludedGenres.includes(genre)).sort();
                     
                     genreFilterContainer.innerHTML = ''; // Clear previous
@@ -1280,6 +1304,22 @@
                     });
                     
                     this.methods.populateInstrumentFilter(this.state.artistsData);
+                },
+
+                renderEraGlossary() {
+                    const { eraGlossaryContainer } = this.elements;
+                    if (!eraGlossaryContainer) return;
+                    const glossaryHtml = `
+                        <div class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2">
+                            <span class="font-bold text-sm text-stone-600">JUMP TO ERA:</span>
+                            ${this.state.eras.map(era => `
+                                <button class="era-glossary-link" data-start-year="${era.startYear}">
+                                    '${String(era.startYear).slice(2)}s
+                                </button>
+                            `).join('')}
+                        </div>
+                    `;
+                    eraGlossaryContainer.innerHTML = glossaryHtml;
                 },
 
                 renderTimeline() {
@@ -1733,6 +1773,7 @@
                     
                     this.methods.setupDraggable(this.elements.timelineContainer);
                     this.methods.setupCustomScrollbarInteraction();
+                    this.methods.setupGlossaryInteraction();
 
                     // Add a global click listener for clickable links
                     document.body.addEventListener('click', e => {
@@ -1742,6 +1783,24 @@
                             const artist = this.state.artistsData.find(a => a.name === artistName);
                             if (artist) {
                                 this.methods.openArtistModal(artist);
+                            }
+                        }
+                    });
+                },
+
+                setupGlossaryInteraction() {
+                    const { eraGlossaryContainer, timelineContainer, timelineWrapper } = this.elements;
+                    eraGlossaryContainer.addEventListener('click', (e) => {
+                        const button = e.target.closest('.era-glossary-link');
+                        if (button && button.dataset.startYear) {
+                            const year = button.dataset.startYear;
+                            const yearSection = timelineWrapper.querySelector(`#year-${year}`);
+                            if (yearSection) {
+                                const scrollPosition = yearSection.offsetLeft - 30; // Small offset for padding
+                                timelineContainer.scrollTo({
+                                    left: scrollPosition,
+                                    behavior: 'smooth'
+                                });
                             }
                         }
                     });
