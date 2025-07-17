@@ -127,8 +127,8 @@
                     <h2 class="section-header text-5xl">Legacy Artists</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who carried the torch forward.</p>
                     <div class="flex justify-center mb-8"><div class="w-full max-w-xs styled-select"><label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label><select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold"></select></div></div>
-                    <div id="artist-slider-wrapper" class="relative">
-                        <div id="artist-slider-container" class="min-h-[550px] md:min-h-[580px]"><div id="artist-slider-track"></div></div>
+                    <div id="artist-slider-wrapper" class="relative w-full">
+                        <div id="artist-slider-container" class="overflow-hidden min-h-[550px] md:min-h-[580px]"><div id="artist-slider-track"></div></div>
                         <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4"><button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><span id="artist-page-indicator" class="font-bold text-lg text-stone-900 pointer-events-auto"></span><button id="artist-next-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
                     </div>
                 </div>
@@ -218,6 +218,7 @@
                     legacyNextBtn: document.getElementById('legacy-next-btn'),
                     instrumentFilter: document.getElementById('instrument-filter'),
                     artistSliderTrack: document.getElementById('artist-slider-track'),
+                    artistSliderContainer: document.getElementById('artist-slider-container'),
                     artistPrevBtn: document.getElementById('artist-prev-btn'),
                     artistNextBtn: document.getElementById('artist-next-btn'),
                     artistPaginationControls: document.getElementById('artist-pagination-controls'),
@@ -297,7 +298,7 @@
                         ...artist,
                         instruments: Array.from(artist.instruments),
                         albums: Array.from(artist.albums),
-                        tier: 1 // All legacy artists are bandleaders in this context
+                        tier: 1 
                     }));
                 },
                 setupLegacySection() {
@@ -352,7 +353,7 @@
                         card.dataset.artist = album.artist;
                         card.innerHTML = `<img src="${album.cover}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="legacy-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
                         card.addEventListener('click', () => {
-                            const fullAlbumData = this.state.fullAlbumDatabase.find(a => a.albumTitle === album.albumTitle && a.artist === album.artist) || album;
+                            const fullAlbumData = this.state.fullAlbumDatabase.find(a => a.albumTitle === album.albumTitle && a.artist === album.artist) || this.state.allLegacyAlbums.find(a => a.albumTitle === album.albumTitle && a.artist === album.artist) || album;
                             this.methods.openAlbumModal(fullAlbumData);
                         });
                         legacyAlbumTrack.appendChild(card);
@@ -474,7 +475,7 @@
                     modalImg.alt = `Cover for ${album.albumTitle}`;
                     modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
                     const pivotalTrack = album.pivotalTracks ? album.pivotalTracks[0] : {};
-                    const genreTags = (album.genres || []).map(g => `<span class="genre-tag" style="background-color: ${this.state.genreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`).join(' ');
+                    const genreTags = (album.genres || "").split(',').map(g => `<span class="genre-tag" style="background-color: ${this.state.genreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`).join(' ');
                     albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-stone-900 mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span></div>`;
                     const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                     analysisWrapper.innerHTML = `<div id="modal-analysis-section"><h5 class="text-2xl font-bold text-white">Key Track: "${pivotalTrack.title}"</h5><p class="liner-notes-text">${pivotalTrack.analysis}</p></div>`;
