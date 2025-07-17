@@ -611,22 +611,51 @@
             font-size: 0.9rem;
         }
         
-        /* NEW: Era Glossary Styling */
-        .era-glossary-link {
+        /* Era Glossary Dropdown Styling */
+        #era-glossary-dropdown-btn {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
-            font-size: 0.9rem;
-            padding: 0.25rem 0.75rem;
+            font-size: 1.1rem;
+            padding: 0.5rem 1.5rem;
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
             background-color: var(--bg-main);
             transition: all 0.2s ease;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .era-glossary-link:hover {
+        #era-glossary-dropdown-btn:hover {
             background-color: var(--accent);
             color: var(--bg-main);
-            transform: translateY(-2px);
+        }
+        #era-glossary-list {
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            z-index: 20;
+            width: 300px;
+        }
+        #era-glossary-list a {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+        }
+        #era-glossary-list a:hover {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            transform: translateX(4px);
+        }
+        #era-glossary-list a .era-year {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        #era-glossary-list a:hover .era-year {
+            color: var(--bg-main);
         }
    
     </style>
@@ -713,8 +742,14 @@
                         <div id="genre-filter-container" class="flex flex-wrap justify-center gap-x-4 gap-y-3">
                            <!-- Checkboxes will be injected here by JavaScript -->
                         </div>
-                        <div id="era-glossary-container" class="mt-4">
-                            <!-- Era glossary links will be injected here -->
+                        <div id="era-glossary-container" class="relative mt-4">
+                            <button id="era-glossary-dropdown-btn">
+                                Jump to Era
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </button>
+                            <div id="era-glossary-list" class="absolute top-full mt-2 hidden">
+                                <!-- Era glossary links will be injected here -->
+                            </div>
                         </div>
                     </div>
 
@@ -1040,6 +1075,7 @@
                     scrollRightBtn: document.getElementById('scroll-right-btn'),
                     genreFilterContainer: document.getElementById('genre-filter-container'),
                     eraGlossaryContainer: document.getElementById('era-glossary-container'),
+                    eraGlossaryList: document.getElementById('era-glossary-list'),
                     stickyYearDisplay: document.getElementById('sticky-year-display'),
                     stickyEraTitle: document.getElementById('sticky-era-title'),
                     albumModal: document.getElementById('album-modal'),
@@ -1081,7 +1117,6 @@
                 .then(([dbData, artistProfileData]) => {
                     this.state.albums = dbData.albums;
                     
-                    // FIX: Normalize genres data immediately after loading
                     this.state.albums.forEach(album => {
                         if (typeof album.genres === 'string') {
                             album.genres = album.genres.split(',').map(g => g.trim());
@@ -1307,19 +1342,15 @@
                 },
 
                 renderEraGlossary() {
-                    const { eraGlossaryContainer } = this.elements;
-                    if (!eraGlossaryContainer) return;
-                    const glossaryHtml = `
-                        <div class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2">
-                            <span class="font-bold text-sm text-stone-600">JUMP TO ERA:</span>
-                            ${this.state.eras.map(era => `
-                                <button class="era-glossary-link" data-start-year="${era.startYear}">
-                                    '${String(era.startYear).slice(2)}s
-                                </button>
-                            `).join('')}
-                        </div>
-                    `;
-                    eraGlossaryContainer.innerHTML = glossaryHtml;
+                    const { eraGlossaryList } = this.elements;
+                    if (!eraGlossaryList) return;
+                    
+                    eraGlossaryList.innerHTML = this.state.eras.map(era => `
+                        <a href="#" class="era-glossary-link" data-start-year="${era.startYear}">
+                            <span class="font-bold">${era.title}</span>
+                            <span class="era-year block">(${era.startYear} - ${era.endYear})</span>
+                        </a>
+                    `).join('');
                 },
 
                 renderTimeline() {
@@ -1775,7 +1806,6 @@
                     this.methods.setupCustomScrollbarInteraction();
                     this.methods.setupGlossaryInteraction();
 
-                    // Add a global click listener for clickable links
                     document.body.addEventListener('click', e => {
                         const target = e.target;
                         if (target.matches('.clickable-link[data-artist-name]')) {
@@ -1785,23 +1815,37 @@
                                 this.methods.openArtistModal(artist);
                             }
                         }
+                        // Close dropdown if clicking outside
+                        const glossaryContainer = this.elements.eraGlossaryContainer;
+                        if (glossaryContainer && !glossaryContainer.contains(e.target)) {
+                            this.elements.eraGlossaryList.classList.add('hidden');
+                        }
                     });
                 },
 
                 setupGlossaryInteraction() {
-                    const { eraGlossaryContainer, timelineContainer, timelineWrapper } = this.elements;
-                    eraGlossaryContainer.addEventListener('click', (e) => {
-                        const button = e.target.closest('.era-glossary-link');
-                        if (button && button.dataset.startYear) {
-                            const year = button.dataset.startYear;
+                    const { eraGlossaryContainer, timelineContainer, timelineWrapper, eraGlossaryList } = this.elements;
+                    const dropdownBtn = document.getElementById('era-glossary-dropdown-btn');
+
+                    dropdownBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        eraGlossaryList.classList.toggle('hidden');
+                    });
+
+                    eraGlossaryList.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const link = e.target.closest('.era-glossary-link');
+                        if (link && link.dataset.startYear) {
+                            const year = link.dataset.startYear;
                             const yearSection = timelineWrapper.querySelector(`#year-${year}`);
                             if (yearSection) {
-                                const scrollPosition = yearSection.offsetLeft - 30; // Small offset for padding
+                                const scrollPosition = yearSection.offsetLeft - 30;
                                 timelineContainer.scrollTo({
                                     left: scrollPosition,
                                     behavior: 'smooth'
                                 });
                             }
+                            eraGlossaryList.classList.add('hidden');
                         }
                     });
                 },
