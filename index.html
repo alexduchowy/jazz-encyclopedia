@@ -99,7 +99,7 @@
             border-bottom: 2px solid var(--bg-secondary);
             text-align: left;
             vertical-align: top;
-            transition: background-color 0.1s ease-in-out;
+            transition: background-color: 0.1s ease-in-out;
         }
         .matrix-table thead th {
             background-color: var(--text-main);
@@ -705,7 +705,7 @@
                         </div>
                         <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
                             <div class="relative group">
-                                <button class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Menu</button>
+                                <a href="#" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Menu</a>
                                 <div class="absolute hidden group-hover:block pt-2 z-10">
                                     <div class="dropdown-menu rounded-sm py-2">
                                         <a href="#overview">Overview</a>
@@ -715,8 +715,24 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                            <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
+                            <div class="relative group">
+                                <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                                <div class="absolute hidden group-hover:block pt-2 z-10">
+                                    <div class="dropdown-menu rounded-sm py-2">
+                                        <a href="legacy.html#legacy">Path Timeline</a>
+                                        <a href="legacy.html#artists">Legacy Artists</a>
+                                    </div>
+                                </div>
+                            </div>
+                           <div class="relative group">
+                                <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
+                                <div class="absolute hidden group-hover:block pt-2 z-10">
+                                    <div class="dropdown-menu rounded-sm py-2">
+                                        <a href="reviews.html#news">Latest News</a>
+                                        <a href="reviews.html#reviews">Album Reviews</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <!-- Hamburger Menu Button -->
                         <div class="sm:hidden">
@@ -955,8 +971,20 @@
                         <a href="#artists" class="mobile-nav-link block">Artists</a>
                     </div>
                 </div>
-                <a href="legacy.html" class="text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</a>
-                <a href="reviews.html" class="text-lg font-bold text-stone-900 hover:text-orange-500">Reviews</a>
+                <div>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</button>
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
+                        <a href="legacy.html#legacy" class="mobile-nav-link block">Path Timeline</a>
+                        <a href="legacy.html#artists" class="mobile-nav-link block">Legacy Artists</a>
+                    </div>
+                </div>
+                <div>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Reviews</button>
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
+                        <a href="reviews.html#news" class="mobile-nav-link block">Latest News</a>
+                        <a href="reviews.html#reviews" class="mobile-nav-link block">Album Reviews</a>
+                    </div>
+                </div>
             </nav>
         </div>
     </div>
