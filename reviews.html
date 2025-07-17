@@ -3,85 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controlled Freedom: An Interactive Jazz Encyclopedia</title>
+    <title>Reviews - Controlled Freedom</title>
     
-    <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
-    <!-- Custom CSS Styling -->
     <style>
         :root {
-            --bg-main: #f5f5f4; --bg-secondary: #e7e5e4; --bg-dark: #1a1a1a; --text-main: #1c1917; --text-muted: #44403c; --accent: #f97316; --accent-dark: #ea580c; --yellow-accent: #facc15;
-            --genre-bebop: #C19A6B; --genre-hard-bop: #d8b4fe; --genre-cool-jazz: #93c5fd; --genre-modal-jazz: #a7f3d0; --genre-post-bop: #fed7aa; --genre-free-jazz: #fca5a5; --genre-avant-garde: #fecdd3; --genre-jazz-fusion: #a5f3fc; --genre-melodic-path: #64748b; --genre-default: #e7e5e4;
-            --era-cool-light: #dbeafe; --era-hard-bop-light: #f3e8ff; --era-bebop-light: #EADDCA; --era-modal-light: #d1fae5; --era-post-bop-light: #ffedd5; --era-free-jazz-light: #fee2e2; --era-roots-light: #fef9c3; --era-fusion-light: #cffafe;
+            --bg-main: #f5f5f4; --bg-secondary: #e7e5e4; --text-main: #1c1917; --text-muted: #44403c; --accent: #f97316; --yellow-accent: #facc15;
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); }
-        h1, h2, h3, h4, h5 { font-family: 'Bebas+Neue', sans-serif; letter-spacing: 0.05em; }
-        .nav-link { transition: color 0.2s; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 1.1rem; }
+        h1, h2, h3, h4, h5 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+        .nav-link { transition: color 0.2s; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 1.2rem; }
         .nav-link:hover, .nav-link.active { color: var(--accent); }
         .section-header { transform: rotate(-1deg); display: inline-block; background-color: var(--accent); color: var(--bg-main); padding: 0.25rem 1rem; margin-bottom: 1rem; }
-        #genre-matrix-container { border: 2px solid var(--text-main); border-radius: 0.25rem; overflow: auto; max-height: 70vh; background-color: var(--bg-main); }
-        .matrix-table { border-collapse: collapse; width: 100%; min-width: 800px; }
-        .matrix-table th, .matrix-table td { padding: 1rem; border-bottom: 2px solid var(--bg-secondary); text-align: left; vertical-align: top; }
-        .matrix-table thead th { background-color: var(--text-main); color: var(--bg-main); position: sticky; top: 0; z-index: 10; }
-        .matrix-table tbody th { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; width: 150px; position: sticky; left: 0; z-index: 5; border-right: 2px solid var(--bg-secondary); }
-        .genre-header-button { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; background: none; border: none; padding: 0; cursor: pointer; font-size: inherit; font-weight: inherit; color: inherit; }
-        .modal { transition: opacity 0.3s ease; }
-        .modal-content { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
-        #horizontal-timeline-container { position: relative; width: 100%; overflow-x: auto; cursor: grab; border: none; -ms-overflow-style: none; scrollbar-width: none; }
-        #horizontal-timeline-container::-webkit-scrollbar { display: none; }
-        #timeline-wrapper { position: relative; display: inline-flex; align-items: flex-start; padding: 2rem 1rem; padding-top: 5rem; z-index: 2; }
-        .timeline-year-section { display: flex; flex-shrink: 0; flex-direction: column; align-items: center; border-left: 4px dotted #a8a29e; padding: 0 2rem; }
-        .timeline-album-list { display: grid; grid-template-rows: repeat(2, 1fr); grid-auto-flow: column; gap: 1.5rem; min-height: 520px; }
-        .timeline-album-card, .legacy-album-card { width: 200px; flex-shrink: 0; background-color: var(--bg-main); border-radius: 0.25rem; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease; box-shadow: 4px 4px 0px var(--text-main); border: 2px solid var(--text-main); overflow: hidden; opacity: 1; }
-        .timeline-album-card:hover, .legacy-album-card:hover { transform: translateY(-5px) rotate(2deg); }
-        .timeline-album-card.dimmed { opacity: 0.5; }
-        .timeline-album-card.highlighted { opacity: 1; box-shadow: 8px 8px 0px var(--highlight-color, var(--accent)); }
-        .timeline-album-card.clicked, .legacy-album-card.clicked { transform: translateY(-5px) rotate(2deg) scale(1.05); box-shadow: 8px 8px 0px var(--accent) !important; opacity: 1 !important; z-index: 10; }
-        .timeline-album-card.landmark-album { border-width: 4px; border-color: var(--landmark-color, var(--accent)); box-shadow: 0 0 15px 0px var(--landmark-color, var(--accent)); }
-        .timeline-album-card img, .legacy-album-card img { width: 100%; height: 200px; object-fit: cover; filter: grayscale(100%); transition: filter 0.3s ease; }
-        .timeline-album-card:hover img, .timeline-album-card.highlighted img, .timeline-album-card.clicked img, .legacy-album-card:hover img, .legacy-album-card.clicked img { filter: grayscale(0%); }
-        .timeline-album-card-info, .legacy-album-card-info { padding: 0.75rem; }
-        .artist-card { background-color: var(--bg-main); border-radius: 0.25rem; overflow: hidden; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 4px 4px 0px var(--text-main); border: 2px solid var(--text-main); }
-        .artist-card:hover { transform: translateY(-5px) rotate(2deg); box-shadow: 8px 8px 0px var(--accent) !important; }
-        .artist-card.bandleader { box-shadow: 4px 4px 0px var(--accent); }
-        .artist-card.influential-sideman { box-shadow: 4px 4px 0px var(--yellow-accent); }
-        .artist-card img { width: 100%; height: 224px; object-fit: cover; object-position: center; filter: grayscale(100%); transition: filter 0.3s ease; }
-        .artist-card:hover img { filter: grayscale(0%); }
-        #artist-slider-track { display: flex; transition: transform 0.5s ease-in-out; }
-        .artist-slider-page { width: 100%; flex-shrink: 0; padding: 0 0.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-        @media (min-width: 768px) { .artist-slider-page { grid-template-columns: repeat(6, 1fr); } }
-        .styled-select select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 1.2em; }
-        #modal-analysis-section { background-color: var(--bg-dark); padding: 1.5rem; margin-top: 2rem; border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); }
-        #modal-analysis-section h5 { color: var(--bg-main); }
-        .liner-notes-text { font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; color: #d4d4d2; }
-        audio.styled-player { height: 35px; accent-color: var(--accent); }
-        .genre-checkbox-label { display: flex; align-items: center; cursor: pointer; font-size: 0.875rem; font-weight: 600; padding: 0.5rem 1rem; border: 2px solid var(--text-main); border-radius: 9999px; background-color: var(--bg-main); transition: all 0.2s ease; flex-shrink: 0; }
-        .genre-checkbox-label input { display: none; }
-        .genre-checkbox-label:has(input:checked) { background-color: var(--genre-color, var(--accent)); color: var(--text-main); }
-        #loader { position: fixed; inset: 0; background-color: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 100; }
-        .loader-spinner { border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .content-hidden { display: none; }
-        .genre-tag { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; color: var(--text-main); border: 2px solid var(--text-main); }
-        .clickable-link { cursor: pointer; text-decoration: underline; text-decoration-color: var(--accent); }
         .title-rotate { transform: rotate(-1.5deg); }
         .nav-bar-hidden-behaviour { display: flex; transform: rotate(-1.5deg); }
         @media (max-width: 768px) { .nav-bar-hidden-behaviour { display: none; } }
         #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
-        .era-section { padding-top: 1.5rem; padding-bottom: 2rem; border-left: 4px solid var(--text-main); display: flex; flex-direction: row; }
-        .era-content { display: flex; flex-direction: row; align-items: flex-start; }
-        #path-selector-slider { -ms-overflow-style: none; scrollbar-width: none; }
-        #path-selector-slider::-webkit-scrollbar { display: none; }
-        .path-selector-card { flex-shrink: 0; width: 320px; background-color: var(--bg-secondary); border: 2px solid var(--text-main); border-radius: 0.25rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 4px 4px 0px var(--text-main); }
-        .path-selector-card:hover { transform: translateY(-4px) rotate(-1deg); box-shadow: 6px 6px 0px var(--text-main); }
-        .path-selector-card.active { transform: translateY(-4px) rotate(-1deg) scale(1.02); border-width: 4px; border-color: var(--path-color, var(--accent)); box-shadow: 8px 8px 0px var(--path-color, var(--accent)); }
-        #legacy-slider-wrapper { background-color: rgba(231, 229, 228, 0.5); transition: background-color 0.5s ease-in-out; }
-        #legacy-album-track { padding: 1rem 0; transition: transform 0.5s ease-in-out; }
+        .dropdown-menu { background-color: var(--bg-main); border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); margin-top: 1.75rem; transform: rotate(1.5deg); transform-origin: top left; }
+        .dropdown-menu a { font-family: 'Inter', sans-serif; letter-spacing: normal; font-size: 1rem; display: block; padding: 0.5rem 1.5rem; color: var(--text-muted); transition: all 0.2s; }
+        .dropdown-menu a:hover { background-color: var(--accent); color: var(--bg-main); transform: translateX(5px); }
+        #loader { position: fixed; inset: 0; background-color: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .loader-spinner { border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .content-hidden { display: none; }
+        .news-card { background-color: var(--bg-secondary); border: 2px solid var(--text-main); border-radius: 0.25rem; box-shadow: 4px 4px 0px var(--text-main); transition: all 0.2s ease; }
+        .news-card:hover { transform: translateY(-4px) rotate(-1deg); box-shadow: 6px 6px 0px var(--accent); }
+        .review-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        @media (min-width: 768px) { .review-grid { grid-template-columns: 250px 1fr; gap: 3rem; } }
+        #review-list { max-height: 80vh; overflow-y: auto; padding-right: 1rem; }
+        .review-list-item { padding: 1rem; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s ease; }
+        .review-list-item:hover { background-color: var(--bg-secondary); border-left-color: var(--accent-dark); }
+        .review-list-item.active { background-color: var(--bg-secondary); border-left-color: var(--accent); }
+        #review-content-area { font-family: 'Lora', serif; }
+        .review-header { border-bottom: 2px solid var(--bg-secondary); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .review-title { font-family: 'Lora', serif; font-weight: 600; }
+        .review-body p { margin-bottom: 1.5rem; line-height: 1.7; }
+        .review-rating .star-filled { color: var(--yellow-accent); }
+        .review-rating .star-empty { color: var(--bg-secondary); }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -93,160 +56,131 @@
             <header class="relative container mx-auto h-full">
                 <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
                 <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10"><a href="#"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a></div>
+                    <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10"><a href="index.html"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a></div>
                     <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
-                        <a href="index.html" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                        <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                        <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
+                        <div class="relative group">
+                            <a href="index.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                            <div class="absolute hidden group-hover:block pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="index.html#overview">Overview</a><a href="index.html#timeline">Timeline</a><a href="index.html#matrix">Genres</a><a href="index.html#artists">Artists</a></div></div>
+                        </div>
+                        <div class="relative group">
+                            <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                            <div class="absolute hidden group-hover:block pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="legacy.html#legacy">Path Timeline</a><a href="legacy.html#artists">Legacy Artists</a></div></div>
+                        </div>
+                        <a href="#" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
                     </div>
                     <div class="sm:hidden"><button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
                 </nav>
             </header>
         </div>
 
-        <main class="-mt-24">
-            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80">
-                <img src="images/banner.jpg" alt="Post-bop musicians" class="w-full h-full object-cover">
-                <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
-            </section>
-            <section id="overview" class="pt-12 pb-16 sm:pb-20 bg-stone-100">
+        <main class="pt-12">
+            <section id="news" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-                    <div class="grid md:grid-cols-5 gap-12 items-start">
-                        <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
-                            <div class="mb-8"><h2 class="section-header text-5xl">A Jazz Evolution Encyclopedia</h2><p class="text-lg text-stone-600 mt-4 italic">Follow the development of modern jazz through the 50s and 60s.</p></div>
-                            <p>The period between 1950 and 1969 represents the most accelerated and dynamic evolution in jazz history. From the virtuosic fire of <strong>Bebop</strong>, the music branched into myriad new forms. Some musicians pursued the soulful, blues-drenched energy of <strong>Hard Bop</strong>, while others explored the harmonically rich, restrained arrangements of <strong>Cool Jazz</strong>.</p>
-                            <p>At the heart of this era lies the central theme of <strong style="color: var(--accent);">"controlled freedom."</strong> The philosophy of <strong>Post-Bop</strong> sought a middle ground between dense structures and the radical abandon of the burgeoning <strong>Free Jazz</strong> and <strong>Avant-Garde</strong> scenes, introducing new harmonic and rhythmic complexity while still retaining elements of form and melody.</p>
-                            <p>This application provides an interactive journey through this interconnected history, ordered by recording date—not release date—to understand the influence exercised between all these musicians and <strong>reveal the authentic path of jazz evolution as it happened.</strong></p>
+                    <div class="text-center mb-12">
+                        <h2 class="section-header text-5xl">Latest News</h2>
+                        <p class="text-center text-lg text-stone-600 max-w-3xl mx-auto italic">The latest happenings, releases, and discoveries in the world of jazz.</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Placeholder News Card 1 -->
+                        <div class="news-card">
+                            <img src="https://placehold.co/600x400/a5f3fc/1c1917?text=News" alt="News placeholder" class="w-full h-48 object-cover rounded-t-sm">
+                            <div class="p-6">
+                                <p class="text-sm text-stone-500 mb-2">July 15, 2025</p>
+                                <h3 class="text-2xl font-bold mb-3">Lost Tapes from 1972 Session Unearthed</h3>
+                                <p class="text-stone-700">A previously unknown recording session from a legendary fusion group has been discovered in a studio vault, promising new insights...</p>
+                                <a href="#" class="inline-block mt-4 font-bold text-orange-600 hover:text-orange-700">Read More &rarr;</a>
+                            </div>
                         </div>
-                        <div class="md:col-span-2 mt-8 md:mt-0">
-                            <div id="on-this-day" class="mb-8"></div>
-                            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        <!-- Placeholder News Card 2 -->
+                        <div class="news-card">
+                            <img src="https://placehold.co/600x400/fecdd3/1c1917?text=News" alt="News placeholder" class="w-full h-48 object-cover rounded-t-sm">
+                            <div class="p-6">
+                                <p class="text-sm text-stone-500 mb-2">July 12, 2025</p>
+                                <h3 class="text-2xl font-bold mb-3">Modern Masters: A New Generation Reinterprets Hard Bop</h3>
+                                <p class="text-stone-700">A new wave of young artists are taking the language of Hard Bop and infusing it with modern sensibilities. We look at the key players...</p>
+                                <a href="#" class="inline-block mt-4 font-bold text-orange-600 hover:text-orange-700">Read More &rarr;</a>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </section>
-            <section id="timeline" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 class="section-header text-5xl">Timeline Explorer</h2>
-                    <p class="text-center text-lg text-stone-600 mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
-                    <div id="timeline-controls" class="flex flex-col items-center justify-center gap-4 mb-8"><div id="genre-filter-container" class="flex flex-wrap justify-center gap-x-4 gap-y-3"></div></div>
-                    <div class="relative group">
-                        <div id="sticky-header-display" class="absolute top-4 left-1 sm:left-4 flex items-end gap-x-3 pointer-events-none z-10"><div id="sticky-year-display" class="font-black text-orange-500 text-5xl leading-none"></div><h3 id="sticky-era-title" class="font-black text-stone-500 text-3xl leading-tight pb-1"></h3></div>
-                        <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center"><canvas id="timeline-canvas"></canvas><div id="timeline-wrapper"></div></div>
-                        <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-                        <button id="scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
-                    </div>
-                    <div class="mt-6"><div id="custom-scrollbar" class="w-full h-3 bg-stone-300 rounded-full cursor-pointer relative"><div id="custom-scrollbar-markers"></div><div id="custom-scrollbar-thumb" class="h-full bg-stone-800 rounded-full absolute top-0 cursor-grab"></div></div></div>
-                </div>
-            </section>
-            <section id="matrix" class="py-16 sm:py-20">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 class="section-header text-5xl">The Genres</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Compare the main aspects of each style.</p>
-                    <div id="genre-matrix-container" class="matrix-container max-w-6xl mx-auto"><table id="style-matrix-table" class="matrix-table"></table></div>
-                </div>
-            </section>
-            <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 class="section-header text-5xl">The Architects</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined an era.</p>
-                    <div class="flex justify-center mb-8"><div class="w-full max-w-xs styled-select"><label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label><select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold"></select></div></div>
-                    <div id="artist-slider-wrapper" class="relative">
-                        <div id="artist-slider-container" class="min-h-[550px] md:min-h-[580px]"><div id="artist-slider-track"></div></div>
-                        <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4"><button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><span id="artist-page-indicator" class="font-bold text-lg text-stone-900 pointer-events-auto"></span><button id="artist-next-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
-                    </div>
-                </div>
-            </section>
-            <section id="legacy" class="py-16 sm:py-20">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
-                    <h2 class="section-header text-5xl">Legacy</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
-                    <div id="path-selector-container" class="relative group mb-12"><div id="path-selector-slider" class="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 cursor-grab"></div></div>
-                    <div id="legacy-slider-wrapper" class="hidden mt-8 p-6 rounded-lg">
-                        <h3 id="legacy-slider-title" class="text-4xl mb-8 text-center transition-colors duration-300"></h3>
-                        <div id="legacy-album-slider-container" class="relative">
-                            <div id="legacy-album-track-wrapper" class="overflow-hidden"><div id="legacy-album-track" class="flex gap-6"></div></div>
-                            <button id="legacy-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-                            <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                        <!-- Placeholder News Card 3 -->
+                        <div class="news-card">
+                            <img src="https://placehold.co/600x400/d8b4fe/1c1917?text=News" alt="News placeholder" class="w-full h-48 object-cover rounded-t-sm">
+                            <div class="p-6">
+                                <p class="text-sm text-stone-500 mb-2">July 10, 2025</p>
+                                <h3 class="text-2xl font-bold mb-3">Upcoming Festival to Celebrate Women in Jazz</h3>
+                                <p class="text-stone-700">The annual "First Ladies of Jazz" festival has announced its lineup, featuring a stunning array of both iconic figures and rising stars...</p>
+                                <a href="#" class="inline-block mt-4 font-bold text-orange-600 hover:text-orange-700">Read More &rarr;</a>
+                            </div>
                         </div>
                     </div>
-                    <div class="fade-in-element mt-16 text-lg text-stone-700 max-w-4xl mx-auto text-left space-y-4"><p>Ultimately, the innovations of the 1950s and 1960s did not simply create new styles; they expanded the very definition of what jazz could be. The era's legacy is not a single sound, but a spectrum of possibilities—from the intricate harmonies of Neo-Bop to the atmospheric soundscapes of the Melodic Path, and the boundless explorations of the Avant-Garde. This period codified a language of "controlled freedom" that continues to be learned, challenged, and reinterpreted by musicians across the globe, ensuring that the spirit of jazz remains a vital and evolving force in modern music.</p></div>
+                </div>
+            </section>
+
+            <section id="reviews" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+                    <div class="text-center mb-12">
+                        <h2 class="section-header text-5xl">Album Reviews</h2>
+                        <p class="text-center text-lg text-stone-600 max-w-3xl mx-auto italic">Deep dives into essential albums from the golden age and beyond.</p>
+                    </div>
+                    <div class="review-grid">
+                        <div class="border-t-2 md:border-t-0 md:border-r-2 border-stone-300"><nav id="review-list" class="space-y-1"></nav></div>
+                        <div id="review-content-area"></div>
+                    </div>
                 </div>
             </section>
         </main>
 
         <footer class="bg-stone-900 text-stone-200 py-8">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
-                <div class="mt-6 border-t border-stone-700 pt-6"><p id="footer-copyright" class="text-xs text-stone-400"></p></div>
-            </div>
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center"><p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p><div class="mt-6 border-t border-stone-700 pt-6"><p id="footer-copyright" class="text-xs text-stone-400"></p></div></div>
         </footer>
     </div>
-    
-    <!-- Modals, Mobile Menu, and Data Scripts will go here -->
-    <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">...</div>
-    <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">...</div>
-    <div id="genre-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">...</div>
-    <div id="path-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">...</div>
-    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">...</div>
-    <script id="styleMatrixData" type="application/json">...</script>
+
+    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
+        <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
+                <div>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Home</button>
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2"><a href="index.html#overview" class="mobile-nav-link block">Overview</a><a href="index.html#timeline" class="mobile-nav-link block">Timeline</a><a href="index.html#matrix" class="mobile-nav-link block">Genres</a><a href="index.html#artists" class="mobile-nav-link block">Artists</a></div>
+                </div>
+                <div>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</button>
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2"><a href="legacy.html#legacy" class="mobile-nav-link block">Path Timeline</a><a href="legacy.html#artists" class="mobile-nav-link block">Legacy Artists</a></div>
+                </div>
+                <a href="#" class="text-lg font-bold text-orange-500">Reviews</a>
+            </nav>
+        </div>
+    </div>
+
     <script>
-        const JazzApp = {
-            state: {
-                albums: [], artistProfiles: {}, artistsData: [], styleMatrix: {}, legacyData: {}, visibleAlbums: [],
-                currentLegacyAlbumPage: 0, legacyAlbumsPerPage: 0, totalLegacyAlbumPages: 0,
-                eras: [ { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'var(--era-cool-light)' }, { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: 'var(--era-hard-bop-light)' }, { title: "Hard Bop At Its Peak", startYear: 1957, endYear: 1958, color: 'var(--era-bebop-light)' }, { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: 'var(--era-modal-light)' }, { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: 'var(--era-post-bop-light)' }, { title: "Spiritual Awakening", startYear: 1964, endYear: 1966, color: 'var(--era-free-jazz-light)' }, { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: 'var(--era-roots-light)' }, { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: 'var(--era-fusion-light)' } ],
-                currentVisibleAlbumIndex: -1, currentArtistPage: 0, totalArtistPages: 0,
-                lastKnownYear: '', lastKnownEraTitle: '', mobileCardSelectedForModal: null, lastHoveredGenre: null,
-            },
+        const ReviewsApp = {
+            state: { reviews: [], allAlbums: [] },
             elements: {},
             init() {
-                this.cacheDOMElements();
-                for (const key in this.methods) { this.methods[key] = this.methods[key].bind(this); }
-                this.fetchData();
-            },
-            cacheDOMElements() {
                 this.elements = {
                     loader: document.getElementById('loader'), pageContent: document.getElementById('page-content'),
-                    timelineContainer: document.getElementById('horizontal-timeline-container'), timelineWrapper: document.getElementById('timeline-wrapper'),
-                    timelineCanvas: document.getElementById('timeline-canvas'), scrollLeftBtn: document.getElementById('scroll-left-btn'),
-                    scrollRightBtn: document.getElementById('scroll-right-btn'), genreFilterContainer: document.getElementById('genre-filter-container'),
-                    stickyYearDisplay: document.getElementById('sticky-year-display'), stickyEraTitle: document.getElementById('sticky-era-title'),
-                    albumModal: document.getElementById('album-modal'), artistModal: document.getElementById('artist-modal'),
-                    genreModal: document.getElementById('genre-modal'), pathModal: document.getElementById('path-modal'),
-                    instrumentFilter: document.getElementById('instrument-filter'), artistSliderTrack: document.getElementById('artist-slider-track'),
-                    artistPrevBtn: document.getElementById('artist-prev-btn'), artistNextBtn: document.getElementById('artist-next-btn'),
-                    artistPaginationControls: document.getElementById('artist-pagination-controls'), artistPageIndicator: document.getElementById('artist-page-indicator'),
-                    matrixContainer: document.getElementById('style-matrix-table'), customScrollbar: document.getElementById('custom-scrollbar'),
-                    customScrollbarThumb: document.getElementById('custom-scrollbar-thumb'), customScrollbarMarkers: document.getElementById('custom-scrollbar-markers'),
+                    reviewList: document.getElementById('review-list'), reviewContentArea: document.getElementById('review-content-area'),
                     mobileMenuButton: document.getElementById('mobile-menu-button'), mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
-                    mobileMenuPanel: document.getElementById('mobile-menu-panel'), mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
-                    mobileNavLinks: document.querySelectorAll('#mobile-nav-links a'), sections: document.querySelectorAll('main section[id]'),
-                    navLinks: document.querySelectorAll('header nav a'), footerCopyright: document.getElementById('footer-copyright'),
-                    onThisDayContainer: document.getElementById('on-this-day'), pathSelectorSlider: document.getElementById('path-selector-slider'),
-                    legacySliderWrapper: document.getElementById('legacy-slider-wrapper'), legacySliderTitle: document.getElementById('legacy-slider-title'),
-                    legacyAlbumTrack: document.getElementById('legacy-album-track'), legacyPrevBtn: document.getElementById('legacy-prev-btn'),
-                    legacyNextBtn: document.getElementById('legacy-next-btn'),
+                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                    footerCopyright: document.getElementById('footer-copyright')
                 };
+                this.fetchData();
+                this.setupMobileMenu();
+                this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
             fetchData() {
-                this.state.styleMatrix = JSON.parse(document.getElementById('styleMatrixData').textContent);
                 Promise.all([
+                    fetch('reviews.json').then(res => res.json()),
                     fetch('database.json').then(res => res.json()),
-                    fetch('artists.json').then(res => res.json()),
                     fetch('legacy.json').then(res => res.json())
-                ]).then(([dbData, artistProfileData, legacyData]) => {
-                    this.state.albums = dbData.albums.concat(Object.values(legacyData.paths).flatMap(path => path.albums));
-                    this.state.albums.forEach(album => {
-                        if (typeof album.genres === 'string') album.genres = album.genres.split(',').map(g => g.trim());
-                        else if (!Array.isArray(album.genres)) album.genres = [];
-                    });
-                    this.state.artistProfiles = artistProfileData;
-                    this.state.legacyData = legacyData.paths;
+                ]).then(([reviewData, dbData, legacyData]) => {
+                    this.state.reviews = reviewData.reviews;
+                    const legacyAlbums = Object.values(legacyData.paths).flatMap(p => p.albums);
+                    this.state.allAlbums = dbData.albums.concat(legacyAlbums);
                     this.initializeAppUI();
                 }).catch(error => {
                     console.error('Error fetching data:', error);
-                    this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2><p class="text-stone-600 mt-2">Could not fetch required data files.</p></div>`;
+                    this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2></div>`;
                     this.showPage();
                 });
             },
@@ -255,67 +189,72 @@
                 this.elements.pageContent.classList.remove('content-hidden');
             },
             initializeAppUI() {
-                this.methods.processAndSortData();
-                this.methods.buildGenreColorMap();
-                this.methods.setupFilters();
-                this.methods.renderTimeline();
-                this.methods.setupTimelineInteraction();
-                this.methods.setupModals();
-                this.methods.setupArtistSlider();
-                this.methods.buildGenreMatrix();
-                this.methods.setupLegacySection();
-                this.methods.setupMobileMenu();
-                this.methods.setupScrollObservers();
-                this.methods.setupGeneralEventListeners();
-                this.methods.renderScrollbarMarkers();
-                this.methods.setupOnThisDayFeature();
+                this.renderReviewList();
+                if (this.state.reviews.length > 0) {
+                    this.renderReviewContent(0);
+                } else {
+                    this.elements.reviewContentArea.innerHTML = '<p class="text-stone-500">No reviews available yet.</p>';
+                }
                 this.showPage();
-                setTimeout(() => { if (this.elements.timelineContainer) this.elements.timelineContainer.scrollLeft = 0; }, 0);
             },
-            methods: {
-                // All methods from the original file are included here, but truncated for brevity.
-                // The full, correct logic is in the generated code.
-                getCanonicalName(name) { /* ... */ },
-                processAndSortData() { /* ... */ },
-                processArtists(tracks, profiles, legacyBandleaders) { /* ... */ },
-                buildGenreColorMap() { /* ... */ },
-                setupFilters() { /* ... */ },
-                renderTimeline() { /* ... */ },
-                buildGenreMatrix() { /* ... */ },
-                setupTimelineInteraction() { /* ... */ },
-                setupModals() { /* ... */ },
-                setupArtistSlider() { /* ... */ },
-                setupMobileMenu() { /* ... */ },
-                setupScrollObservers() { /* ... */ },
-                setupGeneralEventListeners() { /* ... */ },
-                setupLegacySection() { /* ... */ },
-                getPathColor(pathData) { /* ... */ },
-                renderPathSelector() { /* ... */ },
-                renderLegacyAlbumSlider(pathKey) { /* ... */ },
-                updateLegacyAlbumSliderView() { /* ... */ },
-                moveLegacyAlbumSlide(direction) { /* ... */ },
-                filterTimeline() { /* ... */ },
-                applyHighlights(selectedCard) { /* ... */ },
-                openAlbumModal(album, indexInVisibleList) { /* ... */ },
-                closeAlbumModal(callback) { /* ... */ },
-                openArtistModal(artist) { /* ... */ },
-                closeArtistModal(callback) { /* ... */ },
-                openGenreModal(genreName) { /* ... */ },
-                closeGenreModal(callback) { /* ... */ },
-                openPathModal(pathKey) { /* ... */ },
-                closePathModal() { /* ... */ },
-                populateInstrumentFilter(artists) { /* ... */ },
-                goToArtistPage(pageIndex) { /* ... */ },
-                resizeCanvas() { /* ... */ },
-                setupDraggable(container) { /* ... */ },
-                updateCustomScrollbar() { /* ... */ },
-                setupCustomScrollbarInteraction() { /* ... */ },
-                renderScrollbarMarkers() { /* ... */ },
-                setupOnThisDayFeature() { /* ... */ },
+            renderReviewList() {
+                const { reviewList } = this.elements;
+                reviewList.innerHTML = '';
+                this.state.reviews.forEach((review, index) => {
+                    const listItem = document.createElement('div');
+                    listItem.className = 'review-list-item';
+                    listItem.dataset.reviewIndex = index;
+                    listItem.innerHTML = `<h5 class="font-bold text-stone-900">${review.albumTitle}</h5><p class="text-sm text-stone-600">${review.artist}</p>`;
+                    listItem.addEventListener('click', () => this.renderReviewContent(index));
+                    reviewList.appendChild(listItem);
+                });
+            },
+            renderReviewContent(index) {
+                const { reviewList, reviewContentArea } = this.elements;
+                const review = this.state.reviews[index];
+                if (!review) return;
+
+                reviewList.querySelectorAll('.review-list-item').forEach(item => item.classList.remove('active'));
+                reviewList.querySelector(`[data-review-index='${index}']`).classList.add('active');
+
+                const albumData = this.state.allAlbums.find(a => a.albumTitle === review.albumTitle && a.artist === review.artist);
+                const coverImage = albumData ? albumData.cover : 'https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';
+
+                let starsHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    starsHtml += `<svg class="w-5 h-5 ${i <= review.rating ? 'star-filled' : 'star-empty'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
+                }
+
+                reviewContentArea.innerHTML = `
+                    <div class="flex flex-col sm:flex-row gap-8 items-start">
+                        <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-full sm:w-1/3 md:w-1/4 h-auto object-cover border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)]" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
+                        <div class="flex-1">
+                            <div class="review-header">
+                                <h3 class="review-title text-4xl lg:text-5xl text-stone-900">${review.reviewTitle}</h3>
+                                <p class="text-stone-600 mt-2">A review of <strong>${review.albumTitle}</strong> by <strong>${review.artist}</strong></p>
+                                <div class="flex items-center gap-2 mt-3"><div class="review-rating flex">${starsHtml}</div><span class="text-sm text-stone-500 font-semibold">(${review.rating}/5)</span></div>
+                            </div>
+                            <div class="review-body text-stone-800">${review.reviewBody}</div>
+                            <div class="text-sm text-right text-stone-500 italic mt-8"><p>Reviewed by ${review.author} on ${review.reviewDate}</p></div>
+                        </div>
+                    </div>`;
+            },
+            setupMobileMenu() {
+                const { mobileMenuButton, mobileMenuOverlay, mobileMenuCloseButton } = this.elements;
+                const openMenu = () => mobileMenuOverlay.classList.remove('hidden');
+                const closeMenu = () => mobileMenuOverlay.classList.add('hidden');
+                mobileMenuButton.addEventListener('click', openMenu);
+                mobileMenuCloseButton.addEventListener('click', closeMenu);
+                document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+                document.querySelectorAll('.mobile-nav-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const submenu = header.nextElementSibling;
+                        submenu.classList.toggle('hidden');
+                    });
+                });
             }
         };
-        // This is a placeholder for the full script logic which is included in the actual code block.
-        document.addEventListener('DOMContentLoaded', () => JazzApp.init());
+        document.addEventListener('DOMContentLoaded', () => ReviewsApp.init());
     </script>
 </body>
 </html>
