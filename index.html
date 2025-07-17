@@ -657,6 +657,30 @@
         #era-glossary-list a:hover .era-year {
             color: var(--bg-main);
         }
+
+        /* NEW: Dropdown Menu Styling */
+        .dropdown-menu {
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
+            margin-top: 1.75rem;
+            transform: rotate(1.5deg);
+            transform-origin: top left;
+        }
+        .dropdown-menu a {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: normal;
+            font-size: 1rem;
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .dropdown-menu a:hover {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            transform: translateX(5px);
+        }
    
     </style>
 </head>
@@ -680,10 +704,17 @@
                             <a href="#"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
                         </div>
                         <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
-                            <a href="#overview" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Overview</a>
-                            <a href="#timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                            <a href="#matrix" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Genres</a>
-                            <a href="#artists" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Artists</a>
+                            <div class="relative group">
+                                <button class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Menu</button>
+                                <div class="absolute hidden group-hover:block pt-2 z-10">
+                                    <div class="dropdown-menu rounded-sm py-2">
+                                        <a href="#overview">Overview</a>
+                                        <a href="#timeline">Timeline</a>
+                                        <a href="#matrix">Genres</a>
+                                        <a href="#artists">Artists</a>
+                                    </div>
+                                </div>
+                            </div>
                             <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                             <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
                         </div>
@@ -747,7 +778,7 @@
                                 Jump to Era
                                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                             </button>
-                            <div id="era-glossary-list" class="absolute top-full mt-2 hidden">
+                            <div id="era-glossary-list" class="absolute left-0 top-full mt-2 hidden">
                                 <!-- Era glossary links will be injected here -->
                             </div>
                         </div>
@@ -912,13 +943,18 @@
                     </svg>
                 </button>
             </div>
-            <nav id="mobile-nav-links" class="flex flex-col space-y-4">
-                <a href="#overview" class="mobile-nav-link text-lg font-bold text-stone-900 hover:text-orange-500">Overview</a>
-                <a href="#timeline" class="mobile-nav-link text-lg font-bold text-stone-900 hover:text-orange-500">Timeline</a>
-                <a href="#matrix" class="mobile-nav-link text-lg font-bold text-stone-900 hover:text-orange-500">Genres</a>
-                <a href="#artists" class="mobile-nav-link text-lg font-bold text-stone-900 hover:text-orange-500">Artists</a>
-                <a href="legacy.html" class="mobile-nav-link text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</a>
-                <a href="reviews.html" class="mobile-nav-link text-lg font-bold text-stone-900 hover:text-orange-500">Reviews</a>
+            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
+                <div>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Menu</button>
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
+                        <a href="#overview" class="mobile-nav-link block">Overview</a>
+                        <a href="#timeline" class="mobile-nav-link block">Timeline</a>
+                        <a href="#matrix" class="mobile-nav-link block">Genres</a>
+                        <a href="#artists" class="mobile-nav-link block">Artists</a>
+                    </div>
+                </div>
+                <a href="legacy.html" class="text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</a>
+                <a href="reviews.html" class="text-lg font-bold text-stone-900 hover:text-orange-500">Reviews</a>
             </nav>
         </div>
     </div>
@@ -1701,7 +1737,7 @@
                 },
                 
                 setupMobileMenu() {
-                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton, mobileNavLinks } = this.elements;
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
                     const openMenu = () => {
                         mobileMenuOverlay.classList.remove('hidden');
                         setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
@@ -1713,14 +1749,20 @@
                     mobileMenuButton.addEventListener('click', openMenu);
                     mobileMenuCloseButton.addEventListener('click', closeMenu);
                     document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
-                    mobileNavLinks.forEach(link => {
+                    
+                    document.querySelectorAll('.mobile-nav-header').forEach(header => {
+                        header.addEventListener('click', () => {
+                            header.nextElementSibling.classList.toggle('hidden');
+                        });
+                    });
+
+                    document.querySelectorAll('#mobile-nav-links a').forEach(link => {
                         link.addEventListener('click', (e) => {
                             const href = link.getAttribute('href');
                             if (href.startsWith('#')) {
                                 e.preventDefault();
                                 closeMenu();
-                                const targetId = href;
-                                const targetElement = document.querySelector(targetId);
+                                const targetElement = document.querySelector(href);
                                 if (targetElement) {
                                     setTimeout(() => { window.scrollTo({ top: targetElement.offsetTop - 80, behavior: 'smooth' }); }, 300);
                                 }
