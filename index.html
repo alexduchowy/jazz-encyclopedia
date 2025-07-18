@@ -704,16 +704,16 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
             font-size: 0.9rem;
-            padding: 0.25rem 0.75rem;
+            padding: 0.5rem 0.75rem; /* Increased padding for better touch targets */
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
-            background-color: var(--bg-main);
             transition: all 0.2s ease;
             cursor: pointer;
+            color: var(--text-main);
+            font-weight: 600;
         }
         .era-button:hover {
-            background-color: var(--accent);
-            color: var(--bg-main);
+            filter: brightness(95%);
             transform: translateY(-2px);
         }
    
@@ -1488,7 +1488,7 @@
 
                     // Web Buttons
                     const webButtonsHtml = this.state.eras.map(era => `
-                        <button class="era-button w-full" data-start-year="${era.startYear}">
+                        <button class="era-button w-full" data-start-year="${era.startYear}" style="background-color: ${era.color};">
                             ${era.title}
                         </button>
                     `).join('');
