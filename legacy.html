@@ -104,14 +104,14 @@
             </header>
         </div>
 
-        <main>
+        <main class="-mt-24">
             <!-- Banner Section -->
-            <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64 -mb-16">
+            <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64">
                 <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x256/1c1917/f5f5f4?text=Legacy';">
-                <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-stone-100 to-transparent"></div>
+                <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
 
-            <section id="legacy" class="relative py-16 sm:py-20">
+            <section id="legacy" class="relative pt-12 pb-16 sm:pb-20 -mt-24">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
                     <h2 class="section-header text-5xl">Legacy</h2>
                     <p class="text-center text-lg text-stone-600 mb-4 max-w-3xl mx-auto italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
@@ -205,6 +205,7 @@
                 totalLegacyAlbumPages: 0,
                 currentArtistPage: 0,
                 totalArtistPages: 0,
+                currentPathArtists: [],
             },
             elements: {},
             init() {
@@ -371,7 +372,8 @@
                     this.methods.updateLegacyAlbumSliderView();
 
                     const artistNames = [...new Set(pathData.albums.map(a => this.methods.getCanonicalName(a.artist)))];
-                    this.methods.setupArtistSlider(artistNames);
+                    this.state.currentPathArtists = this.state.artistsData.filter(artist => artistNames.includes(artist.name));
+                    this.methods.setupArtistSlider();
                 },
                 updateLegacyAlbumSliderView() {
                     const { legacyAlbumTrack, legacyPrevBtn, legacyNextBtn } = this.elements;
@@ -396,11 +398,9 @@
                     this.state.currentLegacyAlbumPage += direction;
                     this.methods.updateLegacyAlbumSliderView();
                 },
-                setupArtistSlider(artistNames) {
+                setupArtistSlider() {
                     const { artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
-                    const filteredArtists = artistNames 
-                        ? this.state.artistsData.filter(artist => artistNames.includes(artist.name))
-                        : this.state.artistsData;
+                    const filteredArtists = [...this.state.currentPathArtists].sort((a, b) => a.name.localeCompare(b.name));
                     
                     artistSliderTrack.innerHTML = '';
                     const pageSize = window.innerWidth >= 768 ? 12 : 6;
@@ -472,7 +472,7 @@
                     window.addEventListener('resize', () => {
                         clearTimeout(resizeTimeout);
                         resizeTimeout = setTimeout(() => {
-                            this.methods.setupArtistSlider();
+                            this.methods.setupArtistSlider(this.state.currentPathArtists.map(a => a.name));
                             this.methods.updateLegacyAlbumSliderView();
                         }, 200);
                     });
@@ -490,7 +490,7 @@
                     const genreTags = (album.genres || "").split(',').map(g => `<span class="genre-tag" style="background-color: ${this.state.genreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`).join(' ');
                     albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-stone-900 mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span></div>`;
                     const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
-                    analysisWrapper.innerHTML = `<div id="modal-analysis-section"><h5 class="text-2xl font-bold text-white">Key Track: "${pivotalTrack.title}"</h5><p class="liner-notes-text">${pivotalTrack.analysis}</p></div>`;
+                    analysisWrapper.innerHTML = `<div id="modal-analysis-section"><h5 class="text-2xl font-bold text-white">Key Track: "${pivotalTrack.title || 'N/A'}"</h5><p class="liner-notes-text">${pivotalTrack.analysis || 'Analysis not available.'}</p></div>`;
                     albumModal.classList.remove('opacity-0', 'pointer-events-none');
                     albumModal.querySelector('.modal-content').classList.remove('scale-95');
                 },
