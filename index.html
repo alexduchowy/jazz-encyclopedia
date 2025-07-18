@@ -536,6 +536,14 @@
                 display: none;
             }
         }
+        
+        /* FIX: New class to handle dropdown visibility on hover */
+        .desktop-dropdown-behaviour {
+            display: none;
+        }
+        .group:hover .desktop-dropdown-behaviour {
+            display: block;
+        }
 
         /* Mobile Menu Panel Transition */
         #mobile-menu-panel {
@@ -733,7 +741,7 @@
                         <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
                             <div class="relative group">
                                 <a href="index.html" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                                <div class="absolute content-hidden group-hover:block pt-2 z-10">
+                                <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
                                     <div class="dropdown-menu rounded-sm py-2">
                                         <a href="#overview">Overview</a>
                                         <a href="#timeline">Timeline</a>
@@ -744,7 +752,7 @@
                             </div>
                             <div class="relative group">
                                 <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                                 <div class="absolute content-hidden group-hover:block pt-2 z-10">
+                                 <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
                                     <div class="dropdown-menu rounded-sm py-2">
                                         <a href="legacy.html#legacy">Path Timeline</a>
                                         <a href="legacy.html#artists">Legacy Artists</a>
@@ -753,7 +761,7 @@
                             </div>
                            <div class="relative group">
                                 <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
-                                 <div class="absolute content-hidden group-hover:block pt-2 z-10">
+                                 <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
                                     <div class="dropdown-menu rounded-sm py-2">
                                         <a href="reviews.html#news">Latest News</a>
                                         <a href="reviews.html#reviews">Album Reviews</a>
@@ -824,7 +832,7 @@
                                <!-- Checkboxes will be injected here by JavaScript -->
                             </div>
                         </div>
-                        <div class="flex justify-center md:justify-start">
+                        <div class="flex justify-center">
                              <!-- Mobile Dropdown -->
                             <div id="era-glossary-container-mobile" class="relative md:hidden">
                                 <button id="era-glossary-dropdown-btn">
@@ -836,9 +844,8 @@
                                 </div>
                             </div>
                             <!-- Web Buttons -->
-                            <div id="era-glossary-container-web" class="desktop-filters-behaviour flex-wrap justify-start items-center gap-x-3 gap-y-2">
-                                <span class="font-bold text-sm text-stone-600">JUMP TO ERA:</span>
-                                 <!-- Era glossary buttons will be injected here -->
+                            <div id="era-glossary-container-web" class="desktop-filters-behaviour w-full">
+                                 <!-- Content will be injected by JavaScript -->
                             </div>
                         </div>
                     </div>
@@ -1481,11 +1488,20 @@
 
                     // Web Buttons
                     const webButtonsHtml = this.state.eras.map(era => `
-                        <button class="era-button" data-start-year="${era.startYear}">
+                        <button class="era-button w-full" data-start-year="${era.startYear}">
                             ${era.title}
                         </button>
                     `).join('');
-                    eraGlossaryContainerWeb.innerHTML = `<span class="font-bold text-sm text-stone-600 mr-2">JUMP TO ERA:</span> ${webButtonsHtml}`;
+
+                    // New structure for centered grid layout
+                    eraGlossaryContainerWeb.innerHTML = `
+                        <div class="flex flex-col items-center">
+                            <span class="font-bold text-sm text-stone-600 mb-2">JUMP TO ERA:</span>
+                            <div class="grid grid-cols-4 gap-x-3 gap-y-2 max-w-3xl">
+                                ${webButtonsHtml}
+                            </div>
+                        </div>
+                    `;
                 },
 
                 renderTimeline() {
