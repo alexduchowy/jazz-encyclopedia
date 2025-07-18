@@ -722,8 +722,8 @@
                         </div>
                         <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
                             <div class="relative group">
-                                <a href="#" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Menu</a>
-                                <div class="absolute hidden group-hover:block pt-2 z-10">
+                                <a href="index.html" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                                <div class="absolute hidden group-hover:block pt-2 z-20">
                                     <div class="dropdown-menu rounded-sm py-2">
                                         <a href="#overview">Overview</a>
                                         <a href="#timeline">Timeline</a>
@@ -734,7 +734,7 @@
                             </div>
                             <div class="relative group">
                                 <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                                <div class="absolute hidden group-hover:block pt-2 z-10">
+                                <div class="absolute hidden group-hover:block pt-2 z-20">
                                     <div class="dropdown-menu rounded-sm py-2">
                                         <a href="legacy.html#legacy">Path Timeline</a>
                                         <a href="legacy.html#artists">Legacy Artists</a>
@@ -743,7 +743,7 @@
                             </div>
                            <div class="relative group">
                                 <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
-                                <div class="absolute hidden group-hover:block pt-2 z-10">
+                                <div class="absolute hidden group-hover:block pt-2 z-20">
                                     <div class="dropdown-menu rounded-sm py-2">
                                         <a href="reviews.html#news">Latest News</a>
                                         <a href="reviews.html#reviews">Album Reviews</a>
@@ -994,7 +994,7 @@
             </div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
                 <div>
-                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Menu</button>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Home</button>
                     <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
                         <a href="#overview" class="mobile-nav-link block">Overview</a>
                         <a href="#timeline" class="mobile-nav-link block">Timeline</a>
@@ -2002,17 +2002,26 @@
                 },
 
                 filterTimeline() {
-                    const selectedGenres = Array.from(this.elements.genreFilterContainer.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
-                    this.state.visibleAlbums = [];
+                    const selectedGenres = this.elements.genreFilterMobile.value === 'all' 
+                        ? Array.from(this.elements.genreFilterContainer.querySelectorAll('input[data-genre]')).map(input => input.value)
+                        : [this.elements.genreFilterMobile.value];
+
+                    if (window.innerWidth >= 768) { // md breakpoint
+                        const webSelectedGenres = Array.from(this.elements.genreFilterContainer.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
+                        this.state.visibleAlbums = this.state.albums.filter(album => 
+                            album.genres.some(genre => webSelectedGenres.includes(genre))
+                        );
+                    } else {
+                         this.state.visibleAlbums = this.elements.genreFilterMobile.value === 'all'
+                            ? [...this.state.albums]
+                            : this.state.albums.filter(album => album.genres.includes(this.elements.genreFilterMobile.value));
+                    }
+                    
                     document.querySelectorAll('.timeline-album-card').forEach(card => {
-                        const cardGenres = (card.dataset.genres || '').split(', ');
-                        const isVisible = selectedGenres.length === 0 || cardGenres.some(genre => selectedGenres.includes(genre));
+                        const isVisible = this.state.visibleAlbums.some(a => a.albumTitle === card.dataset.albumTitle && a.artist === card.dataset.artist);
                         card.classList.toggle('hidden', !isVisible);
-                        if(isVisible) {
-                            const album = this.state.albums.find(a => a.albumTitle === card.dataset.albumTitle && a.artist === card.dataset.artist);
-                            if (album) this.state.visibleAlbums.push(album);
-                        }
                     });
+
                     document.querySelectorAll('.timeline-year-section').forEach(yearSection => {
                         const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
                         yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
@@ -2021,8 +2030,6 @@
                         const visibleYears = eraSection.querySelectorAll('.timeline-year-section:not([style*="display: none"])');
                         eraSection.style.display = visibleYears.length > 0 ? 'flex' : 'none';
                     });
-
-                    this.elements.genreFilterContainer.querySelector('#all-genres-checkbox').checked = selectedGenres.length === this.elements.genreFilterContainer.querySelectorAll('input[data-genre]').length;
                     
                     setTimeout(() => {
                         this.methods.resizeCanvas();
