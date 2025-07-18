@@ -681,6 +681,23 @@
             color: var(--bg-main);
             transform: translateX(5px);
         }
+
+        .era-button {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.75rem;
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            background-color: var(--bg-main);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .era-button:hover {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            transform: translateY(-2px);
+        }
    
     </style>
 </head>
@@ -786,11 +803,20 @@
                     
                     <!-- Timeline Filter Controls -->
                     <div id="timeline-controls" class="space-y-6 mb-8">
-                        <div id="genre-filter-container" class="flex flex-wrap justify-center gap-x-4 gap-y-3">
-                           <!-- Checkboxes will be injected here by JavaScript -->
+                        <div id="genre-filter-wrapper">
+                            <!-- Mobile Dropdown -->
+                            <div class="md:hidden w-full max-w-xs mx-auto styled-select">
+                                <label for="genre-filter-mobile" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Genre:</label>
+                                <select id="genre-filter-mobile" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold"></select>
+                            </div>
+                            <!-- Web Bubbles -->
+                            <div id="genre-filter-container" class="hidden md:flex flex-wrap justify-center gap-x-4 gap-y-3">
+                               <!-- Checkboxes will be injected here by JavaScript -->
+                            </div>
                         </div>
                         <div class="flex justify-center md:justify-start">
-                             <div id="era-glossary-container" class="relative">
+                             <!-- Mobile Dropdown -->
+                            <div id="era-glossary-container-mobile" class="relative md:hidden">
                                 <button id="era-glossary-dropdown-btn">
                                     Jump to Era
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
@@ -798,6 +824,11 @@
                                 <div id="era-glossary-list" class="absolute left-0 top-full mt-2 hidden text-left">
                                     <!-- Era glossary links will be injected here -->
                                 </div>
+                            </div>
+                            <!-- Web Buttons -->
+                            <div id="era-glossary-container-web" class="hidden md:flex flex-wrap justify-start items-center gap-x-3 gap-y-2">
+                                <span class="font-bold text-sm text-stone-600">JUMP TO ERA:</span>
+                                 <!-- Era glossary buttons will be injected here -->
                             </div>
                         </div>
                     </div>
@@ -1140,7 +1171,9 @@
                     scrollLeftBtn: document.getElementById('scroll-left-btn'),
                     scrollRightBtn: document.getElementById('scroll-right-btn'),
                     genreFilterContainer: document.getElementById('genre-filter-container'),
-                    eraGlossaryContainer: document.getElementById('era-glossary-container'),
+                    genreFilterMobile: document.getElementById('genre-filter-mobile'),
+                    eraGlossaryContainerMobile: document.getElementById('era-glossary-container-mobile'),
+                    eraGlossaryContainerWeb: document.getElementById('era-glossary-container-web'),
                     eraGlossaryList: document.getElementById('era-glossary-list'),
                     stickyYearDisplay: document.getElementById('sticky-year-display'),
                     stickyEraTitle: document.getElementById('sticky-era-title'),
@@ -1353,7 +1386,7 @@
 
                 // --- UI SETUP & RENDERING ---
                 setupFilters() {
-                    const { genreFilterContainer } = this.elements;
+                    const { genreFilterContainer, genreFilterMobile } = this.elements;
                     const allGenresInDB = new Set();
                     this.state.albums.forEach(album => {
                         if (album.genres) album.genres.forEach(genre => allGenresInDB.add(genre.trim()));
@@ -1361,8 +1394,8 @@
                     const excludedGenres = ['Afro-Cuban Jazz', 'Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock', 'ECM Style Jazz', 'Neo-Bop', 'Cape Jazz', 'Vocal Jazz', 'Swing', 'Orchestral Jazz'];
                     const filterableGenres = Array.from(allGenresInDB).filter(genre => !excludedGenres.includes(genre)).sort();
                     
-                    genreFilterContainer.innerHTML = ''; // Clear previous
-                    
+                    // Web Filters (Checkboxes)
+                    genreFilterContainer.innerHTML = '';
                     const allCheckboxLabel = document.createElement('label');
                     allCheckboxLabel.className = 'genre-checkbox-label';
                     allCheckboxLabel.style.setProperty('--genre-color', 'var(--text-muted)');
@@ -1388,13 +1421,21 @@
                         genreFilterContainer.appendChild(label);
                     });
                     
+                    // Mobile Filter (Dropdown)
+                    genreFilterMobile.innerHTML = '<option value="all">All Genres</option>';
+                    filterableGenres.forEach(genre => {
+                        const option = document.createElement('option');
+                        option.value = genre;
+                        option.textContent = genre;
+                        genreFilterMobile.appendChild(option);
+                    });
+
+                    // Event Listeners
                     const allGenreCheckboxes = genreFilterContainer.querySelectorAll('input[data-genre]');
-                    
                     allCheckbox.addEventListener('change', () => {
                         allGenreCheckboxes.forEach(cb => { cb.checked = allCheckbox.checked; });
                         this.methods.filterTimeline();
                     });
-
                     genreFilterContainer.addEventListener('change', (e) => {
                         if (e.target.matches('input[type="checkbox"]')) {
                             if(e.target.id !== 'all-genres-checkbox') {
@@ -1403,20 +1444,38 @@
                             this.methods.filterTimeline();
                         }
                     });
+
+                    genreFilterMobile.addEventListener('change', () => {
+                        const selectedGenre = genreFilterMobile.value;
+                        allGenreCheckboxes.forEach(cb => {
+                            cb.checked = (selectedGenre === 'all' || cb.value === selectedGenre);
+                        });
+                        allCheckbox.checked = (selectedGenre === 'all');
+                        this.methods.filterTimeline();
+                    });
                     
                     this.methods.populateInstrumentFilter(this.state.artistsData);
                 },
 
                 renderEraGlossary() {
-                    const { eraGlossaryList } = this.elements;
-                    if (!eraGlossaryList) return;
+                    const { eraGlossaryList, eraGlossaryContainerWeb } = this.elements;
+                    if (!eraGlossaryList || !eraGlossaryContainerWeb) return;
                     
+                    // Mobile Dropdown List
                     eraGlossaryList.innerHTML = this.state.eras.map(era => `
                         <a href="#" class="era-glossary-link" data-start-year="${era.startYear}">
                             <span class="font-bold">${era.title}</span>
                             <span class="era-year block">(${era.startYear} - ${era.endYear})</span>
                         </a>
                     `).join('');
+
+                    // Web Buttons
+                    const webButtonsHtml = this.state.eras.map(era => `
+                        <button class="era-button" data-start-year="${era.startYear}">
+                            ${era.title}
+                        </button>
+                    `).join('');
+                    eraGlossaryContainerWeb.innerHTML = `<span class="font-bold text-sm text-stone-600 mr-2">JUMP TO ERA:</span> ${webButtonsHtml}`;
                 },
 
                 renderTimeline() {
@@ -1888,16 +1947,26 @@
                             }
                         }
                         // Close dropdown if clicking outside
-                        const glossaryContainer = this.elements.eraGlossaryContainer;
-                        if (glossaryContainer && !glossaryContainer.contains(e.target)) {
+                        if (this.elements.eraGlossaryContainerMobile && !this.elements.eraGlossaryContainerMobile.contains(e.target)) {
                             this.elements.eraGlossaryList.classList.add('hidden');
                         }
                     });
                 },
 
                 setupGlossaryInteraction() {
-                    const { eraGlossaryContainer, timelineContainer, timelineWrapper, eraGlossaryList } = this.elements;
+                    const { timelineContainer, timelineWrapper, eraGlossaryList, eraGlossaryContainerWeb } = this.elements;
                     const dropdownBtn = document.getElementById('era-glossary-dropdown-btn');
+
+                    const handleEraClick = (year) => {
+                        const yearSection = timelineWrapper.querySelector(`#year-${year}`);
+                        if (yearSection) {
+                            const scrollPosition = yearSection.offsetLeft - 30;
+                            timelineContainer.scrollTo({
+                                left: scrollPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                    };
 
                     dropdownBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -1908,16 +1977,15 @@
                         e.preventDefault();
                         const link = e.target.closest('.era-glossary-link');
                         if (link && link.dataset.startYear) {
-                            const year = link.dataset.startYear;
-                            const yearSection = timelineWrapper.querySelector(`#year-${year}`);
-                            if (yearSection) {
-                                const scrollPosition = yearSection.offsetLeft - 30;
-                                timelineContainer.scrollTo({
-                                    left: scrollPosition,
-                                    behavior: 'smooth'
-                                });
-                            }
+                            handleEraClick(link.dataset.startYear);
                             eraGlossaryList.classList.add('hidden');
+                        }
+                    });
+
+                    eraGlossaryContainerWeb.addEventListener('click', (e) => {
+                        const button = e.target.closest('.era-button');
+                        if (button && button.dataset.startYear) {
+                            handleEraClick(button.dataset.startYear);
                         }
                     });
                 },
@@ -1938,7 +2006,7 @@
                     this.state.visibleAlbums = [];
                     document.querySelectorAll('.timeline-album-card').forEach(card => {
                         const cardGenres = (card.dataset.genres || '').split(', ');
-                        const isVisible = cardGenres.some(genre => selectedGenres.includes(genre));
+                        const isVisible = selectedGenres.length === 0 || cardGenres.some(genre => selectedGenres.includes(genre));
                         card.classList.toggle('hidden', !isVisible);
                         if(isVisible) {
                             const album = this.state.albums.find(a => a.albumTitle === card.dataset.albumTitle && a.artist === card.dataset.artist);
