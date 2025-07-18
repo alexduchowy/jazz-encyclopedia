@@ -104,17 +104,18 @@
             </header>
         </div>
 
-        <main class="-mt-24">
+        <main>
             <!-- Banner Section -->
-            <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64">
+            <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64 -mb-16">
                 <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x256/1c1917/f5f5f4?text=Legacy';">
-                <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
+                <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
 
-            <section id="legacy" class="py-16 sm:py-20">
+            <section id="legacy" class="relative py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
                     <h2 class="section-header text-5xl">Legacy</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
+                    <p class="text-center text-lg text-stone-600 mb-4 max-w-3xl mx-auto italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
+                    <p class="text-left text-base text-stone-700 max-w-4xl mx-auto mb-12">The two decades from 1950 to 1969 were a period of unprecedented creative explosion in jazz. But the story didn't end there. The innovations of these years branched out, creating new musical languages that continue to evolve today. This section explores the primary paths that grew from the fertile ground of the post-bop era, tracing the lineage of modern jazz into the 21st century.</p>
                     <div id="path-selector-container" class="relative group mb-12"><div id="path-selector-slider" class="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 cursor-grab"></div></div>
                     <div id="legacy-slider-wrapper" class="hidden mt-8 p-6 rounded-lg">
                         <h3 id="legacy-slider-title" class="text-4xl mb-8 text-center transition-colors duration-300"></h3>
@@ -124,7 +125,6 @@
                             <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
                         </div>
                     </div>
-                    <div class="fade-in-element mt-16 text-lg text-stone-700 max-w-4xl mx-auto text-left space-y-4"><p>Ultimately, the innovations of the 1950s and 1960s did not simply create new styles; they expanded the very definition of what jazz could be. The era's legacy is not a single sound, but a spectrum of possibilities—from the intricate harmonies of Neo-Bop to the atmospheric soundscapes of the Melodic Path, and the boundless explorations of the Avant-Garde. This period codified a language of "controlled freedom" that continues to be learned, challenged, and reinterpreted by musicians across the globe, ensuring that the spirit of jazz remains a vital and evolving force in modern music.</p></div>
                 </div>
             </section>
 
@@ -222,7 +222,6 @@
                     legacyAlbumTrack: document.getElementById('legacy-album-track'),
                     legacyPrevBtn: document.getElementById('legacy-prev-btn'),
                     legacyNextBtn: document.getElementById('legacy-next-btn'),
-                    instrumentFilter: document.getElementById('instrument-filter'),
                     instrumentFilterContainer: document.getElementById('instrument-filter-container'),
                     artistSliderTrack: document.getElementById('artist-slider-track'),
                     artistSliderContainer: document.getElementById('artist-slider-container'),
@@ -283,7 +282,7 @@
                 },
                 processArtists() {
                     const artistsMap = new Map();
-                    const allAlbums = this.state.allLegacyAlbums;
+                    const allAlbums = this.state.allLegacyAlbums.concat(this.state.fullAlbumDatabase);
                     
                     allAlbums.forEach(album => {
                         const artistName = this.methods.getCanonicalName(album.artist);
@@ -296,9 +295,10 @@
                                 profile: this.state.artistProfiles[artistName] || { name: artistName, profile: 'No profile available.' }
                             });
                         }
-                        artistsMap.get(artistName).albums.add(album.albumTitle);
+                        const artistEntry = artistsMap.get(artistName);
+                        artistEntry.albums.add(album.albumTitle);
                         if(this.state.artistProfiles[artistName] && this.state.artistProfiles[artistName].instruments){
-                            this.state.artistProfiles[artistName].instruments.forEach(inst => artistsMap.get(artistName).instruments.add(inst));
+                            this.state.artistProfiles[artistName].instruments.forEach(inst => artistEntry.instruments.add(inst));
                         }
                     });
 
@@ -306,7 +306,7 @@
                         ...artist,
                         instruments: Array.from(artist.instruments),
                         albums: Array.from(artist.albums),
-                        tier: 1 // All legacy artists are bandleaders in this context
+                        tier: 1 
                     }));
                 },
                 setupLegacySection() {
@@ -369,6 +369,9 @@
                     legacySliderWrapper.classList.remove('hidden');
                     this.state.currentLegacyAlbumPage = 0;
                     this.methods.updateLegacyAlbumSliderView();
+
+                    const artistNames = [...new Set(pathData.albums.map(a => this.methods.getCanonicalName(a.artist)))];
+                    this.methods.setupArtistSlider(artistNames);
                 },
                 updateLegacyAlbumSliderView() {
                     const { legacyAlbumTrack, legacyPrevBtn, legacyNextBtn } = this.elements;
@@ -393,9 +396,11 @@
                     this.state.currentLegacyAlbumPage += direction;
                     this.methods.updateLegacyAlbumSliderView();
                 },
-                setupArtistSlider() {
+                setupArtistSlider(artistNames) {
                     const { artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
-                    const filteredArtists = [...this.state.artistsData].sort((a, b) => a.name.localeCompare(b.name));
+                    const filteredArtists = artistNames 
+                        ? this.state.artistsData.filter(artist => artistNames.includes(artist.name))
+                        : this.state.artistsData;
                     
                     artistSliderTrack.innerHTML = '';
                     const pageSize = window.innerWidth >= 768 ? 12 : 6;
@@ -426,7 +431,7 @@
                     document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal(); this.methods.closeArtistModal(); } });
                 },
                 setupMobileMenu() {
-                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuCloseButton, mobileMenuPanel } = this.elements;
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
                     const openMenu = () => {
                         mobileMenuOverlay.classList.remove('hidden');
                         setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
