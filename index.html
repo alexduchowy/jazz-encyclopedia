@@ -704,13 +704,19 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
             font-size: 0.9rem;
-            padding: 0.5rem 0.75rem; /* Increased padding for better touch targets */
+            padding: 0.5rem 0.75rem;
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
             transition: all 0.2s ease;
             cursor: pointer;
             color: var(--text-main);
             font-weight: 600;
+            width: 180px; /* Set a fixed width */
+            height: 50px; /* Set a fixed height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
         .era-button:hover {
             filter: brightness(95%);
@@ -844,7 +850,7 @@
                                 </div>
                             </div>
                             <!-- Web Buttons -->
-                            <div id="era-glossary-container-web" class="desktop-filters-behaviour w-full">
+                            <div id="era-glossary-container-web" class="desktop-filters-behaviour w-full justify-center">
                                  <!-- Content will be injected by JavaScript -->
                             </div>
                         </div>
@@ -1488,16 +1494,16 @@
 
                     // Web Buttons
                     const webButtonsHtml = this.state.eras.map(era => `
-                        <button class="era-button w-full" data-start-year="${era.startYear}" style="background-color: ${era.color};">
+                        <button class="era-button" data-start-year="${era.startYear}" style="background-color: ${era.color};">
                             ${era.title}
                         </button>
                     `).join('');
 
                     // New structure for centered grid layout
                     eraGlossaryContainerWeb.innerHTML = `
-                        <div class="flex flex-col items-center">
+                        <div class="flex flex-col items-center w-full">
                             <span class="font-bold text-sm text-stone-600 mb-2">JUMP TO ERA:</span>
-                            <div class="grid grid-cols-4 gap-x-3 gap-y-2 max-w-3xl">
+                            <div class="grid grid-cols-4 gap-x-3 gap-y-2" style="width: 740px;">
                                 ${webButtonsHtml}
                             </div>
                         </div>
