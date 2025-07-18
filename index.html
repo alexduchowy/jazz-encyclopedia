@@ -527,6 +527,16 @@
             animation: nudge-right 1.5s ease-in-out 3;
         }
 
+        /* FIX: New class to handle responsive filters */
+        .desktop-filters-behaviour {
+            display: flex;
+        }
+        @media (max-width: 767px) { /* Below md breakpoint (768px) */
+            .desktop-filters-behaviour {
+                display: none;
+            }
+        }
+
         /* Mobile Menu Panel Transition */
         #mobile-menu-panel {
             transition: transform 0.3s ease-in-out;
@@ -810,7 +820,7 @@
                                 <select id="genre-filter-mobile" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold"></select>
                             </div>
                             <!-- Web Bubbles -->
-                            <div id="genre-filter-container" class="hidden md:flex flex-wrap justify-center gap-x-4 gap-y-3">
+                            <div id="genre-filter-container" class="desktop-filters-behaviour flex-wrap justify-center gap-x-4 gap-y-3">
                                <!-- Checkboxes will be injected here by JavaScript -->
                             </div>
                         </div>
@@ -826,7 +836,7 @@
                                 </div>
                             </div>
                             <!-- Web Buttons -->
-                            <div id="era-glossary-container-web" class="hidden md:flex flex-wrap justify-start items-center gap-x-3 gap-y-2">
+                            <div id="era-glossary-container-web" class="desktop-filters-behaviour flex-wrap justify-start items-center gap-x-3 gap-y-2">
                                 <span class="font-bold text-sm text-stone-600">JUMP TO ERA:</span>
                                  <!-- Era glossary buttons will be injected here -->
                             </div>
