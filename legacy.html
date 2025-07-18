@@ -132,7 +132,7 @@
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Legacy Artists</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who carried the torch forward.</p>
-                    <div id="instrument-filter-container" class="flex justify-center mb-8"><div class="w-full max-w-xs styled-select"><label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label><select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold"></select></div></div>
+                    <div id="instrument-filter-container" class="flex justify-center mb-8 hidden"><div class="w-full max-w-xs styled-select"><label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label><select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold"></select></div></div>
                     <div id="artist-slider-wrapper" class="relative w-full">
                         <div id="artist-slider-container" class="overflow-hidden min-h-[550px] md:min-h-[580px]"><div id="artist-slider-track"></div></div>
                         <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4"><button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><span id="artist-page-indicator" class="font-bold text-lg text-stone-900 pointer-events-auto"></span><button id="artist-next-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
@@ -394,11 +394,8 @@
                     this.methods.updateLegacyAlbumSliderView();
                 },
                 setupArtistSlider() {
-                    const { instrumentFilter, artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
-                    this.methods.populateInstrumentFilter(this.state.artistsData);
-                    const selectedInstrument = instrumentFilter.value;
-                    const filteredArtists = (selectedInstrument === 'all' ? [...this.state.artistsData] : this.state.artistsData.filter(artist => artist.instruments.includes(selectedInstrument)))
-                        .sort((a, b) => a.name.localeCompare(b.name));
+                    const { artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
+                    const filteredArtists = [...this.state.artistsData].sort((a, b) => a.name.localeCompare(b.name));
                     
                     artistSliderTrack.innerHTML = '';
                     const pageSize = window.innerWidth >= 768 ? 12 : 6;
@@ -429,13 +426,13 @@
                     document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal(); this.methods.closeArtistModal(); } });
                 },
                 setupMobileMenu() {
-                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuCloseButton } = this.elements;
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuCloseButton, mobileMenuPanel } = this.elements;
                     const openMenu = () => {
                         mobileMenuOverlay.classList.remove('hidden');
-                        setTimeout(() => { this.elements.mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
                     };
                     const closeMenu = () => {
-                        this.elements.mobileMenuPanel.style.transform = 'translateX(100%)';
+                        mobileMenuPanel.style.transform = 'translateX(100%)';
                         setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
                     };
                     mobileMenuButton.addEventListener('click', openMenu);
@@ -457,10 +454,6 @@
                     });
                 },
                 setupGeneralEventListeners() {
-                    this.elements.instrumentFilter.addEventListener('change', () => {
-                        this.state.currentArtistPage = 0;
-                        this.methods.setupArtistSlider();
-                    });
                     this.elements.artistSliderTrack.addEventListener('click', (e) => {
                         const card = e.target.closest('.artist-card');
                         if (card && card.dataset.artistName) {
