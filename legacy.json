@@ -1,724 +1,555 @@
-{
-  "paths": {
-    "The Electric Path": {
-      "title": "The Electric Path",
-      "genreAffinity": "Jazz Fusion, Jazz-Funk, Jazz-Rock",
-      "albums": [
-        {
-          "year": 1971,
-          "artist": "The Mahavishnu Orchestra",
-          "albumTitle": "The Inner Mounting Flame",
-          "cover": "images/the-inner-mounting-flame.jpg",
-          "genres": [
-            "Jazz Fusion",
-            "Jazz-Rock"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Meeting of the Spirits",
-              "recordingDate": "August 14, 1971",
-              "label": "Columbia",
-              "lineup": "John McLaughlin (guitar), Rick Laird (bass), Billy Cobham (drums), Jan Hammer (keyboards), Jerry Goodman (violin)",
-              "analysis": "This opening track is a cataclysmic explosion that announced the arrival of jazz-rock as a major force. It combines the volume and visceral power of rock with the virtuosic speed of bebop and the complex time signatures of Indian classical music. Billy Cobham's explosive drumming and John McLaughlin's lightning-fast guitar created a sound of unprecedented intensity, setting a new standard for musical virtuosity and defining the jazz fusion movement."
-            }
-          ]
-        },
-        {
-          "year": 1973,
-          "artist": "Herbie Hancock",
-          "albumTitle": "Head Hunters",
-          "cover": "images/head-hunters.jpg",
-          "genres": [
-            "Jazz-Funk",
-            "Jazz Fusion"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Chameleon",
-              "recordingDate": "September 1973",
-              "label": "Columbia",
-              "lineup": "Herbie Hancock (Fender Rhodes, clavinet, ARP synthesizers), Bennie Maupin (saxophones), Paul Jackson (electric bass), Harvey Mason (drums), Bill Summers (percussion)",
-              "analysis": "A landmark of jazz-funk, 'Chameleon' is built on one of the most iconic and infectious bass lines in music history. The track's deep, funky groove, created with electric bass and clavinet, was a deliberate move away from complex jazz harmony toward a more grounded, dance-floor-oriented sound. The album became one of the best-selling jazz records of all time, creating a hugely popular and influential blueprint for the jazz-funk genre."
-            }
-          ]
-        },
-        {
-          "year": 1974,
-          "artist": "Miles Davis",
-          "albumTitle": "Get Up With It",
-          "cover": "images/get-up-with-it.jpg",
-          "genres": [
-            "Jazz Fusion",
-            "Ambient Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "He Loved Him Madly",
-              "recordingDate": "June 19, 1974",
-              "label": "Columbia",
-              "lineup": "Miles Davis (trumpet, organ), Dave Liebman (flute), Pete Cosey (guitar), Reggie Lucas (guitar), Michael Henderson (bass), Al Foster (drums), Mtume (percussion)",
-              "analysis": "A sprawling, 32-minute elegy for the recently deceased Duke Ellington, this track is a cornerstone of ambient music. Miles Davis creates a dark, atmospheric, and mournful soundscape, with his lonely organ chords and trumpet cries floating over a hypnotic, static groove. The piece's focus on texture and mood over melody was revolutionary, profoundly influencing ambient and electronic artists like Brian Eno and cementing Davis's status as a perpetual innovator."
-            }
-          ]
-        },
-        {
-          "year": 1978,
-          "artist": "Sun Ra",
-          "albumTitle": "Lanquidity",
-          "cover": "images/lanquidity.jpg",
-          "genres": [
-            "Jazz-Funk",
-            "Spiritual Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Lanquidity",
-              "recordingDate": "July 17, 1978",
-              "label": "Philly Jazz",
-              "lineup": "Sun Ra (organ, electric piano), John Gilmore (tenor saxophone), Marshall Allen (alto saxophone), and members of the Arkestra",
-              "analysis": "This track is a unique and surprisingly accessible entry in Sun Ra's vast discography. It finds the Arkestra exploring a deeply funky, noir-ish groove that borders on instrumental R&B. The relaxed, loping rhythm, combined with Sun Ra's spacey keyboard textures and the soulful horn lines, creates a sound that is both mysterious and infectious. It's a key example of Sun Ra's ability to absorb and transform popular music forms into his own cosmic vision."
-            }
-          ]
-        },
-        {
-          "year": 1990,
-          "artist": "John Zorn",
-          "albumTitle": "Naked City",
-          "cover": "images/naked-city.jpg",
-          "genres": [
-            "Avant-Garde Jazz",
-            "Jazz-Rock"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Batman",
-              "recordingDate": "1989",
-              "label": "Nonesuch",
-              "lineup": "John Zorn (alto saxophone), Bill Frisell (guitar), Wayne Horvitz (keyboards), Fred Frith (bass), Joey Baron (drums)",
-              "analysis": "A masterpiece of postmodern deconstruction. John Zorn's Naked City takes the iconic Neal Hefti television theme and violently smashes it together with fragments of hardcore punk, free jazz, and cinematic sound effects. The track's ability to shift genres in a split second became the band's signature, creating a thrilling and often humorous musical collage. It was a key text for the downtown New York scene, breaking down all stylistic barriers."
-            }
-          ]
-        },
-        {
-          "year": 2024,
-          "artist": "Kamasi Washington",
-          "albumTitle": "Fearless Movement",
-          "cover": "images/fearless-movement.jpg",
-          "genres": [
-            "Spiritual Jazz",
-            "Jazz-Funk"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Prologue",
-              "recordingDate": "c. 2023-2024",
-              "label": "Young",
-              "lineup": "Kamasi Washington (tenor saxophone), Terrace Martin (alto saxophone), Patrice Quinn (vocals), Brandon Coleman (keyboards), Thundercat (bass), Ronald Bruner Jr. (drums)",
-              "analysis": "This track represents a powerful modern synthesis of the jazz tradition. It blends the spiritual intensity of John Coltrane, the grand scale of a cinematic orchestra, and the deep, body-moving funk of Parliament-Funkadelic into a cohesive whole. The music is both epic and danceable, featuring virtuosic solos alongside powerful grooves, demonstrating how the electric path continues to evolve by absorbing the sounds of hip-hop and modern funk."
-            }
-          ]
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy - Controlled Freedom</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #f5f5f4; --bg-secondary: #e7e5e4; --bg-dark: #1a1a1a; --text-main: #1c1917; --text-muted: #44403c; --accent: #f97316; --accent-dark: #ea580c; --yellow-accent: #facc15;
+            --genre-melodic-path: #64748b; --genre-free-jazz: #fca5a5; --genre-avant-garde: #fecdd3; --genre-jazz-fusion: #a5f3fc; --genre-post-bop: #fed7aa; --genre-hard-bop: #d8b4fe; --genre-default: #e7e5e4;
         }
-      ]
-    },
-    "The Spiritual Path": {
-      "title": "The Spiritual Path",
-      "genreAffinity": "Spiritual Jazz, Free Jazz",
-      "albums": [
-        {
-          "year": 1971,
-          "artist": "Alice Coltrane",
-          "albumTitle": "Journey in Satchidananda",
-          "cover": "images/journey-in-satchidananda.jpg",
-          "genres": [
-            "Spiritual Jazz",
-            "Avant-Garde Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Journey in Satchidananda",
-              "recordingDate": "November 8, 1970",
-              "label": "Impulse!",
-              "lineup": "Alice Coltrane (harp, piano), Pharoah Sanders (soprano saxophone), Cecil McBee (bass), Rashied Ali (drums), Tulsi (tambura)",
-              "analysis": "A foundational document of spiritual jazz. The title track creates a meditative, trance-like state through its use of the tambura's drone and Alice Coltrane's cascading harp. Pharoah Sanders's soprano saxophone floats over this celestial soundscape, his playing more lyrical and contemplative than his fiery work elsewhere. The piece is a beautiful synthesis of jazz improvisation with the spiritual and musical traditions of India, creating a new, transcendent sound."
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); }
+        h1, h2, h3, h4, h5 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+        .nav-link { transition: color 0.2s; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 1.2rem; }
+        .nav-link:hover, .nav-link.active { color: var(--accent); }
+        .section-header { transform: rotate(-1deg); display: inline-block; background-color: var(--accent); color: var(--bg-main); padding: 0.25rem 1rem; margin-bottom: 1rem; }
+        .modal { transition: opacity 0.3s ease; }
+        .modal-content { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
+        .modal.opacity-0 .modal-content { opacity: 0; transform: scale(0.95) translateY(10px); }
+        .legacy-album-card { width: 200px; flex-shrink: 0; background-color: var(--bg-main); border-radius: 0.25rem; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 4px 4px 0px var(--text-main); border: 2px solid var(--text-main); overflow: hidden; }
+        .legacy-album-card:hover { transform: translateY(-5px) rotate(2deg); }
+        .legacy-album-card img { width: 100%; height: 200px; object-fit: cover; filter: grayscale(100%); transition: filter 0.3s ease; }
+        .legacy-album-card:hover img { filter: grayscale(0%); }
+        .artist-card { background-color: var(--bg-main); border-radius: 0.25rem; overflow: hidden; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 4px 4px 0px var(--text-main); border: 2px solid var(--text-main); }
+        .artist-card:hover { transform: translateY(-5px) rotate(2deg); box-shadow: 8px 8px 0px var(--accent) !important; }
+        .artist-card.bandleader { box-shadow: 4px 4px 0px var(--accent); }
+        .artist-card img { width: 100%; height: 224px; object-fit: cover; filter: grayscale(100%); transition: filter 0.3s ease; }
+        .artist-card:hover img { filter: grayscale(0%); }
+        #artist-slider-track { display: flex; transition: transform 0.5s ease-in-out; }
+        .artist-slider-page { width: 100%; flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        @media (min-width: 768px) { .artist-slider-page { grid-template-columns: repeat(6, 1fr); } }
+        .styled-select select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 1.2em; }
+        #modal-analysis-section { background-color: var(--bg-dark); padding: 1.5rem; margin-top: 2rem; border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); }
+        #modal-analysis-section h5 { color: var(--bg-main); }
+        .liner-notes-text { font-family: 'Lora', serif; font-size: 1rem; line-height: 1.6; color: #d4d4d2; }
+        audio.styled-player { height: 35px; accent-color: var(--accent); }
+        .genre-tag { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; color: var(--text-main); border: 2px solid var(--text-main); }
+        .clickable-link { cursor: pointer; text-decoration: underline; text-decoration-color: var(--accent); }
+        .title-rotate { transform: rotate(-1.5deg); }
+        .nav-bar-hidden-behaviour { display: flex; transform: rotate(-1.5deg); }
+        @media (max-width: 768px) { .nav-bar-hidden-behaviour { display: none; } }
+        #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
+        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
+        #path-selector-slider { -ms-overflow-style: none; scrollbar-width: none; }
+        #path-selector-slider::-webkit-scrollbar { display: none; }
+        .path-selector-card { flex-shrink: 0; width: 320px; background-color: var(--bg-secondary); border: 2px solid var(--text-main); border-radius: 0.25rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 4px 4px 0px var(--text-main); overflow: hidden; display: flex; flex-direction: column; }
+        .path-selector-card-img { height: 160px; width: 100%; object-fit: cover; filter: grayscale(50%); transition: filter 0.3s ease; }
+        .path-selector-card:hover .path-selector-card-img, .path-selector-card.active .path-selector-card-img { filter: grayscale(0%); }
+        .path-selector-card-content { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .path-selector-card:hover { transform: translateY(-4px) rotate(-1deg); box-shadow: 6px 6px 0px var(--text-main); }
+        .path-selector-card.active { transform: translateY(-4px) rotate(-1deg) scale(1.02); border-width: 4px; border-color: var(--path-color, var(--accent)); box-shadow: 8px 8px 0px var(--path-color, var(--accent)); }
+        #legacy-slider-wrapper { background-color: rgba(231, 229, 228, 0.5); transition: background-color 0.5s ease-in-out; }
+        #legacy-album-track { padding: 1rem 0; transition: transform 0.5s ease-in-out; }
+        #loader { position: fixed; inset: 0; background-color: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .loader-spinner { border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .content-hidden { display: none; }
+        .dropdown-menu { background-color: var(--bg-main); border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); margin-top: 1.75rem; transform: rotate(1.5deg); transform-origin: top left; }
+        .dropdown-menu a { font-family: 'Inter', sans-serif; letter-spacing: normal; font-size: 1rem; display: block; padding: 0.5rem 1.5rem; color: var(--text-muted); transition: all 0.2s; }
+        .dropdown-menu a:hover { background-color: var(--accent); color: var(--bg-main); transform: translateX(5px); }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-900">
+
+    <div id="loader"><div class="loader-spinner"></div></div>
+
+    <div id="page-content" class="content-hidden">
+        <div class="sticky top-0 z-50 h-24">
+            <header class="relative container mx-auto h-full">
+                <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
+                <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10"><a href="index.html"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a></div>
+                    <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
+                        <div class="relative group">
+                            <a href="index.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                            <div class="absolute hidden group-hover:block pt-2 z-10">
+                                <div class="dropdown-menu rounded-sm py-2">
+                                    <a href="index.html#overview">Overview</a>
+                                    <a href="index.html#timeline">Timeline</a>
+                                    <a href="index.html#matrix">Genres</a>
+                                    <a href="index.html#artists">Artists</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative group">
+                            <a href="#" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                             <div class="absolute hidden group-hover:block pt-2 z-10">
+                                <div class="dropdown-menu rounded-sm py-2">
+                                    <a href="#legacy">Path Timeline</a>
+                                    <a href="#artists">Legacy Artists</a>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
+                    </div>
+                    <div class="sm:hidden"><button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
+                </nav>
+            </header>
+        </div>
+
+        <main class="-mt-24">
+            <!-- Banner Section -->
+            <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64">
+                <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x256/1c1917/f5f5f4?text=Legacy';">
+                <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
+            </section>
+
+            <section id="legacy" class="py-16 sm:py-20">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
+                    <h2 class="section-header text-5xl">Legacy</h2>
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
+                    <div id="path-selector-container" class="relative group mb-12"><div id="path-selector-slider" class="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 cursor-grab"></div></div>
+                    <div id="legacy-slider-wrapper" class="hidden mt-8 p-6 rounded-lg">
+                        <h3 id="legacy-slider-title" class="text-4xl mb-8 text-center transition-colors duration-300"></h3>
+                        <div id="legacy-album-slider-container" class="relative">
+                            <div id="legacy-album-track-wrapper" class="overflow-hidden"><div id="legacy-album-track" class="flex gap-6"></div></div>
+                            <button id="legacy-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                            <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                        </div>
+                    </div>
+                    <div class="fade-in-element mt-16 text-lg text-stone-700 max-w-4xl mx-auto text-left space-y-4"><p>Ultimately, the innovations of the 1950s and 1960s did not simply create new styles; they expanded the very definition of what jazz could be. The era's legacy is not a single sound, but a spectrum of possibilities—from the intricate harmonies of Neo-Bop to the atmospheric soundscapes of the Melodic Path, and the boundless explorations of the Avant-Garde. This period codified a language of "controlled freedom" that continues to be learned, challenged, and reinterpreted by musicians across the globe, ensuring that the spirit of jazz remains a vital and evolving force in modern music.</p></div>
+                </div>
+            </section>
+
+            <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 class="section-header text-5xl">Legacy Artists</h2>
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who carried the torch forward.</p>
+                    <div id="instrument-filter-container" class="flex justify-center mb-8 hidden"><div class="w-full max-w-xs styled-select"><label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label><select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold"></select></div></div>
+                    <div id="artist-slider-wrapper" class="relative w-full">
+                        <div id="artist-slider-container" class="overflow-hidden min-h-[550px] md:min-h-[580px]"><div id="artist-slider-track"></div></div>
+                        <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4"><button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><span id="artist-page-indicator" class="font-bold text-lg text-stone-900 pointer-events-auto"></span><button id="artist-next-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-stone-900 text-stone-200 py-8">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
+                <div class="mt-6 border-t border-stone-700 pt-6"><p id="footer-copyright" class="text-xs text-stone-400"></p></div>
+            </div>
+        </footer>
+    </div>
+    
+    <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+                <div><h3 id="modal-title" class="text-4xl text-orange-500"></h3><button id="modal-artist" class="text-xl text-stone-600 bg-transparent border-none p-0"></button></div>
+                <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+            </div>
+            <div id="modal-body" class="p-6 overflow-y-auto"><div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6"><div id="modal-album-art-container" class="w-full md:w-1/3 flex-shrink-0"><img id="modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="" loading="lazy"></div><div id="modal-album-details" class="w-full md:w-2/3"></div></div><div id="analysis-wrapper" class="relative mt-4"></div></div>
+        </div>
+    </div>
+    <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0"><h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3><button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button></div>
+            <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
+        <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
+                <div>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Home</button>
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
+                        <a href="index.html#overview" class="mobile-nav-link block">Overview</a>
+                        <a href="index.html#timeline" class="mobile-nav-link block">Timeline</a>
+                        <a href="index.html#matrix" class="mobile-nav-link block">Genres</a>
+                        <a href="index.html#artists" class="mobile-nav-link block">Artists</a>
+                    </div>
+                </div>
+                 <div>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</button>
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
+                        <a href="#legacy" class="mobile-nav-link block">Path Timeline</a>
+                        <a href="#artists" class="mobile-nav-link block">Legacy Artists</a>
+                    </div>
+                </div>
+                <a href="reviews.html" class="text-lg font-bold text-stone-900 hover:text-orange-500">Reviews</a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        const LegacyApp = {
+            state: {
+                legacyData: {},
+                artistProfiles: {},
+                artistsData: [],
+                allLegacyAlbums: [],
+                fullAlbumDatabase: [],
+                genreColorMap: { 'Jazz Fusion': 'var(--genre-jazz-fusion)', 'Jazz-Rock': 'var(--genre-jazz-fusion)', 'Jazz-Funk': 'var(--genre-jazz-fusion)', 'Spiritual Jazz': 'var(--genre-free-jazz)', 'Free Jazz': 'var(--genre-free-jazz)', 'Avant-Garde Jazz': 'var(--genre-avant-garde)', 'Modern Creative': 'var(--genre-avant-garde)', 'Third Stream': 'var(--genre-avant-garde)', 'ECM Style Jazz': 'var(--genre-melodic-path)', 'Smooth Jazz': 'var(--genre-melodic-path)', 'Ambient Jazz': 'var(--genre-melodic-path)', 'Afro-Jazz': 'var(--genre-post-bop)', 'Cape Jazz': 'var(--genre-post-bop)', 'Hard Bop': 'var(--genre-hard-bop)', 'Post-Bop': 'var(--genre-post-bop)', 'Neo-Bop': 'var(--genre-hard-bop)', 'default': 'var(--genre-default)' },
+                currentLegacyAlbumPage: 0,
+                legacyAlbumsPerPage: 0,
+                totalLegacyAlbumPages: 0,
+                currentArtistPage: 0,
+                totalArtistPages: 0,
+            },
+            elements: {},
+            init() {
+                this.cacheDOMElements();
+                for (const key in this.methods) { this.methods[key] = this.methods[key].bind(this); }
+                this.fetchData();
+            },
+            cacheDOMElements() {
+                this.elements = {
+                    loader: document.getElementById('loader'),
+                    pageContent: document.getElementById('page-content'),
+                    pathSelectorSlider: document.getElementById('path-selector-slider'),
+                    legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
+                    legacySliderTitle: document.getElementById('legacy-slider-title'),
+                    legacyAlbumTrack: document.getElementById('legacy-album-track'),
+                    legacyPrevBtn: document.getElementById('legacy-prev-btn'),
+                    legacyNextBtn: document.getElementById('legacy-next-btn'),
+                    instrumentFilter: document.getElementById('instrument-filter'),
+                    instrumentFilterContainer: document.getElementById('instrument-filter-container'),
+                    artistSliderTrack: document.getElementById('artist-slider-track'),
+                    artistSliderContainer: document.getElementById('artist-slider-container'),
+                    artistPrevBtn: document.getElementById('artist-prev-btn'),
+                    artistNextBtn: document.getElementById('artist-next-btn'),
+                    artistPaginationControls: document.getElementById('artist-pagination-controls'),
+                    artistPageIndicator: document.getElementById('artist-page-indicator'),
+                    albumModal: document.getElementById('album-modal'),
+                    artistModal: document.getElementById('artist-modal'),
+                    mobileMenuButton: document.getElementById('mobile-menu-button'),
+                    mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
+                    mobileMenuPanel: document.getElementById('mobile-menu-panel'),
+                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                    footerCopyright: document.getElementById('footer-copyright')
+                };
+            },
+            fetchData() {
+                Promise.all([
+                    fetch('legacy.json').then(res => res.json()),
+                    fetch('artists.json').then(res => res.json()),
+                    fetch('database.json').then(res => res.json())
+                ]).then(([legacyData, artistProfileData, dbData]) => {
+                    this.state.legacyData = legacyData.paths;
+                    this.state.artistProfiles = artistProfileData;
+                    this.state.fullAlbumDatabase = dbData.albums;
+                    this.state.allLegacyAlbums = Object.values(legacyData.paths).flatMap(path => path.albums);
+                    this.initializeAppUI();
+                }).catch(error => {
+                    console.error('Error fetching data:', error);
+                    this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2></div>`;
+                    this.showPage();
+                });
+            },
+            showPage() {
+                this.elements.loader.style.display = 'none';
+                this.elements.pageContent.classList.remove('content-hidden');
+            },
+            initializeAppUI() {
+                this.methods.processArtists();
+                this.methods.setupLegacySection();
+                this.methods.setupArtistSlider();
+                this.methods.setupModals();
+                this.methods.setupMobileMenu();
+                this.methods.setupGeneralEventListeners();
+                this.showPage();
+            },
+            methods: {
+                getCanonicalName(name) {
+                    if (!name) return '';
+                    const trimmedName = name.trim();
+                    if (trimmedName === 'Roland Kirk') return 'Rahsaan Roland Kirk';
+                    if (trimmedName === 'Anthony Williams') return 'Tony Williams';
+                    return trimmedName;
+                },
+                slugify(name) {
+                    if (!name) return '';
+                    return name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+                },
+                processArtists() {
+                    const artistsMap = new Map();
+                    const allAlbums = this.state.allLegacyAlbums;
+                    
+                    allAlbums.forEach(album => {
+                        const artistName = this.methods.getCanonicalName(album.artist);
+                        if (!artistsMap.has(artistName)) {
+                             artistsMap.set(artistName, {
+                                name: artistName,
+                                instruments: new Set(),
+                                albums: new Set(),
+                                photo: `images/${this.methods.slugify(artistName)}.jpg`,
+                                profile: this.state.artistProfiles[artistName] || { name: artistName, profile: 'No profile available.' }
+                            });
+                        }
+                        artistsMap.get(artistName).albums.add(album.albumTitle);
+                        if(this.state.artistProfiles[artistName] && this.state.artistProfiles[artistName].instruments){
+                            this.state.artistProfiles[artistName].instruments.forEach(inst => artistsMap.get(artistName).instruments.add(inst));
+                        }
+                    });
+
+                    this.state.artistsData = Array.from(artistsMap.values()).map(artist => ({
+                        ...artist,
+                        instruments: Array.from(artist.instruments),
+                        albums: Array.from(artist.albums),
+                        tier: 1 // All legacy artists are bandleaders in this context
+                    }));
+                },
+                setupLegacySection() {
+                    this.methods.renderPathSelector();
+                    this.methods.setupDraggable(this.elements.pathSelectorSlider);
+                    this.elements.legacyPrevBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(-1));
+                    this.elements.legacyNextBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(1));
+                    const firstPathKey = Object.keys(this.state.legacyData)[0];
+                    if (firstPathKey) {
+                        this.methods.renderLegacyAlbumSlider(firstPathKey);
+                        const firstCard = this.elements.pathSelectorSlider.querySelector('.path-selector-card');
+                        if (firstCard) firstCard.classList.add('active');
+                    }
+                },
+                getPathColor(pathData) {
+                    const affinity = pathData.genreAffinity.split(', ')[0];
+                    return this.state.genreColorMap[affinity] || this.state.genreColorMap['default'];
+                },
+                renderPathSelector() {
+                    const { pathSelectorSlider } = this.elements;
+                    pathSelectorSlider.innerHTML = '';
+                    const pathDescriptions = { "The Electric Path": "A high-voltage fusion of jazz improvisation with the raw power of rock and funk.", "The Spiritual Path": "A quest for transcendence through sound, blending jazz with Eastern and African influences.", "The Avant-Garde Path": "A radical deconstruction of traditional music, exploring pure sound, texture, and 'energy playing.'", "The Melodic Path": "Characterized by strong, folk-like melodies and atmospheric soundscapes, favoring lyrical improvisation.", "The Afro-Jazz Path": "A conscious reconnection with the music's African and Caribbean roots, integrating traditional rhythms.", "The Neo-Bop Path": "A powerful revival of the acoustic post-bop tradition that emerged in the 1980s." };
+                    Object.entries(this.state.legacyData).forEach(([pathKey, pathData]) => {
+                        const card = document.createElement('div');
+                        card.className = 'path-selector-card text-left';
+                        card.dataset.pathKey = pathKey;
+                        const pathColor = this.methods.getPathColor(pathData);
+                        card.style.setProperty('--path-color', pathColor);
+                        const imageSlug = pathData.title.replace('The ', '').toLowerCase().replace(/\s+/g, '-');
+                        card.innerHTML = `<img src="images/${imageSlug}.jpg" alt="${pathData.title}" class="path-selector-card-img" onerror="this.onerror=null;this.src='https://placehold.co/320x160/1c1917/f5f5f4?text=Path';"><div class="path-selector-card-content"><h4 class="text-3xl font-bold">${pathData.title}</h4><p class="text-sm text-stone-600">${pathDescriptions[pathData.title] || ''}</p></div>`;
+                        card.addEventListener('click', () => {
+                            pathSelectorSlider.querySelectorAll('.path-selector-card').forEach(c => c.classList.remove('active'));
+                            card.classList.add('active');
+                            this.methods.renderLegacyAlbumSlider(pathKey);
+                        });
+                        pathSelectorSlider.appendChild(card);
+                    });
+                },
+                renderLegacyAlbumSlider(pathKey) {
+                    const { legacySliderWrapper, legacySliderTitle, legacyAlbumTrack } = this.elements;
+                    const pathData = this.state.legacyData[pathKey];
+                    if (!pathData) return;
+                    legacySliderTitle.textContent = `Key Albums of ${pathData.title}`;
+                    const pathColor = this.methods.getPathColor(pathData);
+                    const bgColor = pathColor.startsWith('var') ? `color-mix(in srgb, ${getComputedStyle(document.documentElement).getPropertyValue(pathColor.match(/--[a-zA-Z-]+/)[0]).trim()} 15%, transparent)` : `${pathColor}26`;
+                    legacySliderWrapper.style.backgroundColor = bgColor;
+                    legacyAlbumTrack.innerHTML = '';
+                    pathData.albums.forEach(album => {
+                        const card = document.createElement('div');
+                        card.className = 'legacy-album-card';
+                        card.dataset.albumTitle = album.albumTitle;
+                        card.dataset.artist = album.artist;
+                        card.innerHTML = `<img src="${album.cover}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="legacy-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
+                        card.addEventListener('click', () => {
+                            const fullAlbumData = this.state.fullAlbumDatabase.find(a => a.albumTitle === album.albumTitle && a.artist === album.artist) || this.state.allLegacyAlbums.find(a => a.albumTitle === album.albumTitle && a.artist === album.artist) || album;
+                            this.methods.openAlbumModal(fullAlbumData);
+                        });
+                        legacyAlbumTrack.appendChild(card);
+                    });
+                    legacySliderWrapper.classList.remove('hidden');
+                    this.state.currentLegacyAlbumPage = 0;
+                    this.methods.updateLegacyAlbumSliderView();
+                },
+                updateLegacyAlbumSliderView() {
+                    const { legacyAlbumTrack, legacyPrevBtn, legacyNextBtn } = this.elements;
+                    const trackWrapper = document.getElementById('legacy-album-track-wrapper');
+                    if (!trackWrapper) return;
+                    const card = legacyAlbumTrack.querySelector('.legacy-album-card');
+                    if (!card) return;
+                    const cardWidth = card.offsetWidth;
+                    const gap = parseInt(window.getComputedStyle(legacyAlbumTrack).gap) || 24;
+                    const totalCardWidth = cardWidth + gap;
+                    const visibleWidth = trackWrapper.offsetWidth;
+                    this.state.legacyAlbumsPerPage = Math.floor(visibleWidth / totalCardWidth);
+                    const numCards = legacyAlbumTrack.children.length;
+                    this.state.totalLegacyAlbumPages = Math.max(0, numCards - this.state.legacyAlbumsPerPage);
+                    this.state.currentLegacyAlbumPage = Math.max(0, Math.min(this.state.currentLegacyAlbumPage, this.state.totalLegacyAlbumPages));
+                    const offset = -this.state.currentLegacyAlbumPage * totalCardWidth;
+                    legacyAlbumTrack.style.transform = `translateX(${offset}px)`;
+                    legacyPrevBtn.disabled = this.state.currentLegacyAlbumPage === 0;
+                    legacyNextBtn.disabled = this.state.currentLegacyAlbumPage >= this.state.totalLegacyAlbumPages;
+                },
+                moveLegacyAlbumSlide(direction) {
+                    this.state.currentLegacyAlbumPage += direction;
+                    this.methods.updateLegacyAlbumSliderView();
+                },
+                setupArtistSlider() {
+                    const { artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
+                    const filteredArtists = [...this.state.artistsData].sort((a, b) => a.name.localeCompare(b.name));
+                    
+                    artistSliderTrack.innerHTML = '';
+                    const pageSize = window.innerWidth >= 768 ? 12 : 6;
+                    this.state.totalArtistPages = Math.ceil(filteredArtists.length / pageSize);
+                    artistPaginationControls.classList.toggle('hidden', this.state.totalArtistPages <= 1);
+
+                    for (let i = 0; i < this.state.totalArtistPages; i++) {
+                        const pageDiv = document.createElement('div');
+                        pageDiv.className = 'artist-slider-page';
+                        const pageArtists = filteredArtists.slice(i * pageSize, (i + 1) * pageSize);
+                        pageArtists.forEach(artist => {
+                            const card = document.createElement('div');
+                            card.className = 'artist-card bandleader';
+                            card.dataset.artistName = artist.name;
+                            card.innerHTML = `<div class="h-56 bg-stone-900"><img src="${artist.photo}" alt="Photo of ${artist.name}" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';"></div><div class="p-3"><h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4></div>`;
+                            pageDiv.appendChild(card);
+                        });
+                        artistSliderTrack.appendChild(pageDiv);
+                    }
+                    this.methods.goToArtistPage(0);
+                },
+                setupModals() {
+                    const { albumModal, artistModal } = this.elements;
+                    albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeAlbumModal());
+                    albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') this.methods.closeAlbumModal(); });
+                    artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
+                    artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') this.methods.closeArtistModal(); });
+                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal(); this.methods.closeArtistModal(); } });
+                },
+                setupMobileMenu() {
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuCloseButton, mobileMenuPanel } = this.elements;
+                    const openMenu = () => {
+                        mobileMenuOverlay.classList.remove('hidden');
+                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                    };
+                    const closeMenu = () => {
+                        mobileMenuPanel.style.transform = 'translateX(100%)';
+                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                    };
+                    mobileMenuButton.addEventListener('click', openMenu);
+                    mobileMenuCloseButton.addEventListener('click', closeMenu);
+                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+                    document.querySelectorAll('.mobile-nav-header').forEach(header => {
+                        header.addEventListener('click', () => header.nextElementSibling.classList.toggle('hidden'));
+                    });
+                     document.querySelectorAll('#mobile-nav-links a').forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            const href = link.getAttribute('href');
+                            if (href.startsWith('#')) {
+                                e.preventDefault();
+                                closeMenu();
+                                const targetElement = document.querySelector(href);
+                                if (targetElement) setTimeout(() => window.scrollTo({ top: targetElement.offsetTop - 80, behavior: 'smooth' }), 300);
+                            }
+                        });
+                    });
+                },
+                setupGeneralEventListeners() {
+                    this.elements.artistSliderTrack.addEventListener('click', (e) => {
+                        const card = e.target.closest('.artist-card');
+                        if (card && card.dataset.artistName) {
+                            const artist = this.state.artistsData.find(a => a.name === card.dataset.artistName);
+                            if (artist) this.methods.openArtistModal(artist);
+                        }
+                    });
+                    this.elements.artistPrevBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage - 1));
+                    this.elements.artistNextBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage + 1));
+                    let resizeTimeout;
+                    window.addEventListener('resize', () => {
+                        clearTimeout(resizeTimeout);
+                        resizeTimeout = setTimeout(() => {
+                            this.methods.setupArtistSlider();
+                            this.methods.updateLegacyAlbumSliderView();
+                        }, 200);
+                    });
+                    this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+                },
+                openAlbumModal(album) {
+                    const { albumModal } = this.elements;
+                    albumModal.querySelector('#modal-title').textContent = album.albumTitle;
+                    albumModal.querySelector('#modal-artist').textContent = album.artist;
+                    const modalImg = albumModal.querySelector('#modal-album-art');
+                    modalImg.src = album.cover || '';
+                    modalImg.alt = `Cover for ${album.albumTitle}`;
+                    modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
+                    const pivotalTrack = album.pivotalTracks ? album.pivotalTracks[0] : {};
+                    const genreTags = (album.genres || "").split(',').map(g => `<span class="genre-tag" style="background-color: ${this.state.genreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`).join(' ');
+                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-stone-900 mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span></div>`;
+                    const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
+                    analysisWrapper.innerHTML = `<div id="modal-analysis-section"><h5 class="text-2xl font-bold text-white">Key Track: "${pivotalTrack.title}"</h5><p class="liner-notes-text">${pivotalTrack.analysis}</p></div>`;
+                    albumModal.classList.remove('opacity-0', 'pointer-events-none');
+                    albumModal.querySelector('.modal-content').classList.remove('scale-95');
+                },
+                closeAlbumModal(callback) {
+                    const { albumModal } = this.elements;
+                    albumModal.classList.add('opacity-0', 'pointer-events-none');
+                    albumModal.querySelector('.modal-content').classList.add('scale-95');
+                    if (typeof callback === 'function') setTimeout(callback, 300);
+                },
+                openArtistModal(artist) {
+                    const { artistModal } = this.elements;
+                    const profile = artist.profile || {};
+                    artistModal.querySelector('#artist-modal-title').textContent = artist.name;
+                    const body = artistModal.querySelector('#artist-modal-body');
+                    body.innerHTML = `<div class="flex flex-col sm:flex-row gap-6"><div class="w-full sm:w-1/3 flex-shrink-0"><img src="${artist.photo}" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';"><p class="mt-4 text-stone-900 text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p></div><div class="w-full sm:w-2/3"><h4 class="text-2xl text-stone-900 mb-2">Profile</h4><p class="text-base text-stone-700 leading-relaxed">${profile.profile || 'No profile available.'}</p></div></div>`;
+                    artistModal.classList.remove('opacity-0', 'pointer-events-none');
+                    artistModal.querySelector('.modal-content').classList.remove('scale-95');
+                },
+                closeArtistModal(callback) {
+                    const { artistModal } = this.elements;
+                    artistModal.classList.add('opacity-0', 'pointer-events-none');
+                    artistModal.querySelector('.modal-content').classList.add('scale-95');
+                    if (typeof callback === 'function') setTimeout(callback, 300);
+                },
+                populateInstrumentFilter(artists) {
+                    const { instrumentFilter } = this.elements;
+                    if (!instrumentFilter) return;
+                    const instruments = new Set();
+                    artists.forEach(artist => artist.instruments.forEach(inst => instruments.add(inst)));
+                    instrumentFilter.innerHTML = '<option value="all">All Instruments</option>';
+                    Array.from(instruments).sort().forEach(inst => {
+                        const option = document.createElement('option');
+                        option.value = inst;
+                        option.textContent = inst.charAt(0).toUpperCase() + inst.slice(1);
+                        instrumentFilter.appendChild(option);
+                    });
+                },
+                goToArtistPage(pageIndex) {
+                    const { artistSliderTrack, artistPrevBtn, artistNextBtn, artistPageIndicator } = this.elements;
+                    this.state.currentArtistPage = Math.max(0, Math.min(pageIndex, this.state.totalArtistPages - 1));
+                    artistSliderTrack.style.transform = `translateX(-${this.state.currentArtistPage * 100}%)`;
+                    artistPrevBtn.disabled = this.state.currentArtistPage === 0;
+                    artistNextBtn.disabled = this.state.currentArtistPage >= this.state.totalArtistPages - 1;
+                    if (artistPageIndicator) {
+                        artistPageIndicator.textContent = this.state.totalArtistPages > 0 ? `${this.state.currentArtistPage + 1} / ${this.state.totalArtistPages}` : '';
+                    }
+                },
+                setupDraggable(container) {
+                    if (!container) return;
+                    let isDown = false, startX, scrollLeft;
+                    container.addEventListener('mousedown', (e) => { isDown = true; container.style.cursor = 'grabbing'; startX = e.pageX - container.offsetLeft; scrollLeft = container.scrollLeft; });
+                    container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
+                    container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
+                    container.addEventListener('mousemove', (e) => {
+                        if(!isDown) return;
+                        e.preventDefault();
+                        const x = e.pageX - container.offsetLeft;
+                        const walk = (x - startX) * 2;
+                        container.scrollLeft = scrollLeft - walk;
+                    });
+                },
             }
-          ]
-        },
-        {
-          "year": 1972,
-          "artist": "Pharoah Sanders",
-          "albumTitle": "Black Unity",
-          "cover": "images/black-unity.jpg",
-          "genres": [
-            "Spiritual Jazz",
-            "Free Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Black Unity",
-              "recordingDate": "November 24, 1971",
-              "label": "Impulse!",
-              "lineup": "Pharoah Sanders (tenor saxophone), Marvin Peterson (trumpet), Carlos Garnett (tenor saxophone), Joe Bonner (piano), Cecil McBee (bass), Stanley Clarke (bass), Norman Connors (drums), Billy Hart (drums)",
-              "analysis": "A single, continuous 37-minute performance, 'Black Unity' is an epic journey into Afro-centric spiritual jazz. The piece is built on a relentless, infectious African-inspired rhythm played by two bassists and two drummers, creating a powerful, churning groove. Over this, Sanders and the horns deliver ecstatic, high-energy solos that are both a celebration of Black consciousness and a powerful, prayer-like meditation. It is a masterpiece of the genre."
-            }
-          ]
-        },
-        {
-          "year": 1974,
-          "artist": "McCoy Tyner",
-          "albumTitle": "Enlightenment",
-          "cover": "images/enlightenment.jpg",
-          "genres": [
-            "Spiritual Jazz",
-            "Post-Bop"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Walk Spirit, Talk Spirit",
-              "recordingDate": "July 7, 1973",
-              "label": "Milestone",
-              "lineup": "McCoy Tyner (piano), Azar Lawrence (tenor, soprano saxophone), Joony Booth (bass), Alphonse Mouzon (drums)",
-              "analysis": "Recorded live at the Montreux Jazz Festival, this track captures the immense power and spiritual intensity of McCoy Tyner's post-Coltrane work. The performance is a torrent of energy, driven by Tyner's thunderous piano and the explosive drumming of Alphonse Mouzon. The modal framework serves as a launching pad for soaring, transcendent solos from Tyner and saxophonist Azar Lawrence, creating a quintessential example of live spiritual jazz at its most potent."
-            }
-          ]
-        },
-        {
-          "year": 1975,
-          "artist": "Billy Harper",
-          "albumTitle": "Black Saint",
-          "cover": "images/black-saint.jpg",
-          "genres": [
-            "Spiritual Jazz",
-            "Post-Bop"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Black Saint",
-              "recordingDate": "July 21, 1975",
-              "label": "Black Saint",
-              "lineup": "Billy Harper (tenor saxophone), Virgil Jones (trumpet), Joe Bonner (piano), David Friesen (bass), Malcolm Pinson (drums)",
-              "analysis": "The title track from this powerful album is a perfect example of the soulful, intense, and politically charged post-bop that defined the Black Saint record label. Billy Harper's tenor saxophone sound is immense and declarative, a spiritual cry rooted in the language of John Coltrane. The composition itself has a majestic, hymn-like quality, building to a cathartic and uplifting climax. It's a key document of the spiritual jazz movement of the 1970s."
-            }
-          ]
-        },
-        {
-          "year": 1977,
-          "artist": "Don Cherry",
-          "albumTitle": "Don Cherry",
-          "cover": "images/don-cherry2.jpg",
-          "genres": [
-            "Spiritual Jazz",
-            "Jazz-Funk"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Brown Rice",
-              "recordingDate": "1975",
-              "label": "A&M",
-              "lineup": "Don Cherry (trumpet, vocals), Frank Lowe (tenor saxophone), Ricky Cherry (piano), Stanley Clarke (bass), Billy Higgins (drums)",
-              "analysis": "A landmark of world fusion and spiritual jazz, 'Brown Rice' is an infectious and hypnotic groove. Don Cherry blends a funky, electric bass-driven rhythm with influences from Indian and African music, his own pocket trumpet weaving melodic fragments throughout. The track's mantra-like vocals and eclectic instrumentation created a unique, accessible sound that was both deeply spiritual and irresistibly danceable, influencing a generation of artists inside and outside of jazz."
-            }
-          ]
-        },
-        {
-          "year": 1997,
-          "artist": "David S. Ware Quartet",
-          "albumTitle": "Godspelized",
-          "cover": "images/godspelized.jpg",
-          "genres": [
-            "Free Jazz",
-            "Spiritual Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Godspelized",
-              "recordingDate": "October 24, 1996",
-              "label": "DIW",
-              "lineup": "David S. Ware (tenor saxophone), Matthew Shipp (piano), William Parker (bass), Susie Ibarra (drums)",
-              "analysis": "This title track is a monumental performance from one of the most powerful and acclaimed free jazz ensembles of the 1990s. David S. Ware's tenor saxophone playing is a force of nature, a torrent of sound that is both technically astonishing and deeply spiritual. The quartet plays with a near-telepathic intensity, creating a dense and cathartic soundscape that carries the 'fire music' legacy of John Coltrane and Albert Ayler into the modern era."
-            }
-          ]
-        }
-      ]
-    },
-    "The Avant-Garde Path": {
-      "title": "The Avant-Garde Path",
-      "genreAffinity": "Avant-Garde Jazz, Modern Creative, Third Stream",
-      "albums": [
-        {
-          "year": 1972,
-          "artist": "Ornette Coleman",
-          "albumTitle": "Science Fiction",
-          "cover": "images/science-fiction.jpg",
-          "genres": [
-            "Avant-Garde Jazz",
-            "Free Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Science Fiction",
-              "recordingDate": "September 9, 1971",
-              "label": "Columbia",
-              "lineup": "Ornette Coleman (alto saxophone), Don Cherry (pocket trumpet), Charlie Haden (bass), Billy Higgins (drums), Ed Blackwell (drums), with Asha Puthli (vocals)",
-              "analysis": "This track finds Ornette Coleman reuniting his classic quartet and augmenting it with a second drummer and the haunting, otherworldly vocals of Asha Puthli. The result is a surreal and beautiful soundscape that blends the melodic freedom of his early work with a new, atmospheric texture. The piece is a key document of Coleman's evolving harmolodic theory, demonstrating his continued commitment to pushing the boundaries of jazz into new and unexpected territory."
-            }
-          ]
-        },
-        {
-          "year": 1983,
-          "artist": "Anthony Davis",
-          "albumTitle": "Variations in Dream-Time",
-          "cover": "images/variations-in-dream-time.jpg",
-          "genres": [
-            "Avant-Garde Jazz",
-            "Third Stream"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Variations in Dream-Time",
-              "recordingDate": "1982",
-              "label": "India Navigation",
-              "lineup": "Anthony Davis (piano), George Lewis (trombone), Abdul Wadud (cello), and others",
-              "analysis": "A key figure in the 'Third Stream' movement, composer and pianist Anthony Davis masterfully merges the worlds of avant-garde jazz and contemporary classical music. This piece is a complex, through-composed work that utilizes intricate structures and orchestration while still allowing for moments of powerful improvisation. It represents a highly intellectual and sophisticated path for the avant-garde, one rooted in formal composition as much as spontaneous creation."
-            }
-          ]
-        },
-        {
-          "year": 1991,
-          "artist": "Anthony Braxton",
-          "albumTitle": "Willisau (Quartet) 1991",
-          "cover": "images/willisau-quartet-1991.jpg",
-          "genres": [
-            "Avant-Garde Jazz",
-            "Free Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Composition No. 160 (+147+96)",
-              "recordingDate": "June 2, 1991",
-              "label": "hatART",
-              "lineup": "Anthony Braxton (reeds), Marilyn Crispell (piano), Mark Dresser (bass), Gerry Hemingway (drums)",
-              "analysis": "This live recording captures one of Anthony Braxton's most celebrated quartets at the peak of its powers. The performance is a stunning display of his compositional system, where complex, pre-written material serves as a framework for intense and interactive improvisation. The interplay between Braxton's intricate reed work and the explosive, virtuosic piano of Marilyn Crispell is a highlight. It's a masterpiece of structured freedom from a true giant of the avant-garde."
-            }
-          ]
-        },
-        {
-          "year": 1991,
-          "artist": "Sonny Sharrock",
-          "albumTitle": "Ask the Ages",
-          "cover": "images/ask-the-ages.jpg",
-          "genres": [
-            "Avant-Garde Jazz",
-            "Jazz-Rock"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Promises Kept",
-              "recordingDate": "1991",
-              "label": "Axiom",
-              "lineup": "Sonny Sharrock (guitar), Pharoah Sanders (tenor, soprano saxophone), Charnett Moffett (bass), Elvin Jones (drums)",
-              "analysis": "A landmark album that brought the pioneering free jazz guitarist together with a rhythm section of certified legends. 'Promises Kept' is a surprisingly lyrical and beautiful ballad that showcases a more melodic side of Sharrock's playing. The track is defined by the sublime interplay between his guitar and Pharoah Sanders's tender tenor saxophone, all supported by the masterful, textural drumming of Elvin Jones. It's a masterpiece of the late 20th-century avant-garde."
-            }
-          ]
-        },
-        {
-          "year": 1999,
-          "artist": "The Necks",
-          "albumTitle": "Hanging Gardens",
-          "cover": "images/hanging-gardens.jpg",
-          "genres": [
-            "Avant-Garde Jazz",
-            "Ambient Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Hanging Gardens",
-              "recordingDate": "February 1999",
-              "label": "Fish of Milk",
-              "lineup": "Chris Abrahams (piano), Tony Buck (drums), Lloyd Swanton (bass)",
-              "analysis": "This single, hour-long piece is a masterpiece of the Australian trio's unique brand of minimalist, long-form improvisation. The music unfolds with incredible patience, building a hypnotic, trance-like groove from a simple piano motif. The Necks create a sound that is both ambient and intensely focused, blurring the lines between jazz, minimalism, and post-rock. It's a key document of a completely original and influential approach to collective improvisation."
-            }
-          ]
-        },
-        {
-          "year": 2011,
-          "artist": "Matana Roberts",
-          "albumTitle": "Coin Coin Chapter One: Gens de couleur libres",
-          "cover": "images/coin-coin-chapter-one.jpg",
-          "genres": [
-            "Avant-Garde Jazz",
-            "Free Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "pov piti",
-              "recordingDate": "2010",
-              "label": "Constellation",
-              "lineup": "Matana Roberts (alto saxophone, vocals), and a large ensemble",
-              "analysis": "A powerful and ambitious work from a leading voice of the 21st-century avant-garde. This track is part of a larger suite that explores African-American history through a blend of free jazz, folk melodies, spoken word, and field recordings. Roberts uses her alto saxophone to create sounds of raw, visceral emotion, weaving them into a complex historical narrative. It's a key example of how contemporary artists are using avant-garde techniques to engage with history and social commentary."
-            }
-          ]
-        }
-      ]
-    },
-    "The Melodic Path": {
-      "title": "The Melodic Path",
-      "genreAffinity": "ECM Style Jazz, Smooth Jazz, Ambient Jazz",
-      "albums": [
-        {
-          "year": 1972,
-          "artist": "Chick Corea",
-          "albumTitle": "Return to Forever",
-          "cover": "images/return-to-forever.jpg",
-          "genres": [
-            "Jazz Fusion",
-            "ECM Style Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Crystal Silence",
-              "recordingDate": "February 2, 1972",
-              "label": "ECM",
-              "lineup": "Chick Corea (electric piano), Joe Farrell (flute, soprano saxophone), Flora Purim (vocals), Stanley Clarke (bass), Airto Moreira (drums, percussion)",
-              "analysis": "A landmark album that helped define the lyrical, spacious, and beautifully recorded 'ECM sound.' This track is a sublime duet between Chick Corea's shimmering electric piano and Joe Farrell's lyrical flute. The piece is a masterpiece of melodic beauty and interactive improvisation, creating a sound that was both accessible and harmonically sophisticated. It was a key document in the development of a more melodic and atmospheric branch of jazz fusion."
-            }
-          ]
-        },
-        {
-          "year": 1973,
-          "artist": "Paul Bley",
-          "albumTitle": "Open, to Love",
-          "cover": "images/open-to-love.jpg",
-          "genres": [
-            "Cool Jazz",
-            "ECM Style Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Ida Lupino",
-              "recordingDate": "September 11, 1972",
-              "label": "ECM",
-              "lineup": "Paul Bley (piano)",
-              "analysis": "A masterpiece of solo piano, this album is a study in space, touch, and introspection. On this beautiful Carla Bley composition, Paul Bley's performance is sparse and lyrical, letting each note hang in the air. His focus on melody and harmonic color over rhythmic drive was highly influential, helping to define the contemplative and atmospheric aesthetic of the ECM record label and influencing a generation of pianists, including Keith Jarrett."
-            }
-          ]
-        },
-        {
-          "year": 1974,
-          "artist": "Bennie Maupin",
-          "albumTitle": "The Jewel in the Lotus",
-          "cover": "images/the-jewel-in-the-lotus.jpg",
-          "genres": [
-            "Spiritual Jazz",
-            "ECM Style Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "The Jewel in the Lotus",
-              "recordingDate": "March 1974",
-              "label": "ECM",
-              "lineup": "Bennie Maupin (reeds), Herbie Hancock (piano, electric piano), Buster Williams (bass), Freddie Waits (drums), Billy Hart (drums)",
-              "analysis": "A key member of Herbie Hancock's Headhunters, reedist Bennie Maupin revealed a much more introspective side on his debut as a leader. The title track is a beautiful, meditative piece that emphasizes texture and atmosphere over traditional solos. The use of multiple drummers and Maupin's lyrical bass clarinet creates a unique, spiritual, and ambient soundscape that was a key part of the developing ECM aesthetic."
-            }
-          ]
-        },
-        {
-          "year": 1974,
-          "artist": "Jan Garbarek, Keith Jarrett, Palle Danielsson & Jon Christensen",
-          "albumTitle": "Belonging",
-          "cover": "images/belonging.jpg",
-          "genres": [
-            "Post-Bop",
-            "ECM Style Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "'Long As You Know You're Living Yours",
-              "recordingDate": "April 24, 1974",
-              "label": "ECM",
-              "lineup": "Jan Garbarek (tenor, soprano saxophone), Keith Jarrett (piano), Palle Danielsson (bass), Jon Christensen (drums)",
-              "analysis": "A landmark album of European jazz, this track is a perfect example of the 'ECM sound.' The music is defined by its strong, folk-like melodies, gospel-inflected harmonies from pianist Keith Jarrett, and the soaring, lyrical saxophone of Jan Garbarek. The rhythm section provides a fluid, interactive pulse rather than a hard-swinging beat. The result is a sound that is both deeply soulful and beautifully atmospheric, influencing countless musicians."
-            }
-          ]
-        },
-        {
-          "year": 1975,
-          "artist": "Keith Jarrett",
-          "albumTitle": "The Köln Concert",
-          "cover": "images/the-koln-concert.jpg",
-          "genres": [
-            "Cool Jazz",
-            "ECM Style Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Part I",
-              "recordingDate": "January 24, 1975",
-              "label": "ECM",
-              "lineup": "Keith Jarrett (piano)",
-              "analysis": "One of the best-selling jazz albums of all time, this is a landmark recording of a completely improvised solo piano concert. The iconic opening of 'Part I,' with its gospel-tinged, lyrical vamp, became instantly recognizable. Keith Jarrett's performance is a tour de force of spontaneous creation, blending elements of jazz, classical, folk, and gospel music into a deeply personal and emotionally resonant whole. It brought a new level of popularity and artistry to the solo piano format."
-            }
-          ]
-        },
-        {
-          "year": 1978,
-          "artist": "Pat Metheny Group",
-          "albumTitle": "Pat Metheny Group",
-          "cover": "images/pat-metheny-group.jpg",
-          "genres": [
-            "Jazz Fusion",
-            "ECM Style Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Phase Dance",
-              "recordingDate": "January 1978",
-              "label": "ECM",
-              "lineup": "Pat Metheny (guitars), Lyle Mays (piano, keyboards), Mark Egan (bass), Danny Gottlieb (drums)",
-              "analysis": "This track is a definitive statement from the debut album of one of the most popular and influential groups in modern jazz. 'Phase Dance' perfectly encapsulates the band's signature sound: bright, optimistic, and incredibly melodic, with a strong influence from American folk and country music. The intricate, interwoven lines between Pat Metheny's guitar and Lyle Mays's piano created a fresh, panoramic sound that defined a new, highly accessible, and lyrical branch of jazz fusion."
-            }
-          ]
-        }
-      ]
-    },
-    "The Afro-Jazz Path": {
-      "title": "The Afro-Jazz Path",
-      "genreAffinity": "Afro-Jazz, Cape Jazz",
-      "albums": [
-        {
-          "year": 1971,
-          "artist": "Woody Shaw",
-          "albumTitle": "Blackstone Legacy",
-          "cover": "images/blackstone-legacy.jpg",
-          "genres": [
-            "Post-Bop",
-            "Spiritual Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Blackstone Legacy",
-              "recordingDate": "December 8, 1970",
-              "label": "Contemporary",
-              "lineup": "Woody Shaw (trumpet), Gary Bartz (alto, soprano saxophone), Bennie Maupin (tenor saxophone, bass clarinet), George Cables (piano), Ron Carter (bass), Clint Houston (bass), Lenny White (drums)",
-              "analysis": "A powerful statement of Black consciousness and advanced post-bop from trumpeter Woody Shaw. The title track is an epic, modal piece that reflects the political and spiritual energy of the time. Shaw's trumpet playing is virtuosic and harmonically sophisticated, full of his signature wide intervallic leaps. The music is a key document of the era, blending the 'fire music' of the avant-garde with a deep sense of history and purpose."
-            }
-          ]
-        },
-        {
-          "year": 1972,
-          "artist": "The Art Ensemble of Chicago",
-          "albumTitle": "Bap-Tizum",
-          "cover": "images/bap-tizum.jpg",
-          "genres": [
-            "Avant-Garde Jazz",
-            "Afro-Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Odwalla",
-              "recordingDate": "September 9, 1972",
-              "label": "Atlantic",
-              "lineup": "Lester Bowie (trumpet), Roscoe Mitchell (saxophones), Joseph Jarman (saxophones), Malachi Favors Maghostut (bass), Famoudou Don Moye (drums, percussion)",
-              "analysis": "Recorded live at the Ann Arbor Blues & Jazz Festival, this track is a perfect introduction to the Art Ensemble's motto: 'Great Black Music: Ancient to the Future.' The piece is a joyous, celebratory theme that feels like a street parade, driven by an infectious, African-inspired rhythm. The performance showcases their unique blend of free improvisation, deep blues feeling, theatricality, and a vast array of 'little instruments,' creating a sound that is both ancient and avant-garde."
-            }
-          ]
-        },
-        {
-          "year": 1974,
-          "artist": "The Pyramids",
-          "albumTitle": "King of Kings",
-          "cover": "images/king-of-kings.jpg",
-          "genres": [
-            "Spiritual Jazz",
-            "Afro-Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "King of Kings",
-              "recordingDate": "1974",
-              "label": "Pyramid",
-              "lineup": "Idris Ackamoor (alto saxophone), Margo Ackamoor (flute), Kwame 'Kimathi' Asante (bass), Heshima Mark Williams (bass), Bradie Speller (drums)",
-              "analysis": "A key document of the deeply spiritual and Afro-centric free jazz movement that flourished outside of the major record labels. The title track is a hypnotic, ritualistic piece built on churning African rhythms, group chants, and soaring, Coltrane-influenced saxophone. The music of The Pyramids was a powerful expression of Black consciousness and cultural identity, blending free improvisation with a deep connection to African heritage."
-            }
-          ]
-        },
-        {
-          "year": 1979,
-          "artist": "Johnny Dyani Quartet",
-          "albumTitle": "Song for Biko",
-          "cover": "images/song-for-biko.jpg",
-          "genres": [
-            "Cape Jazz",
-            "Free Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Song for Biko",
-              "recordingDate": "July 19, 1978",
-              "label": "SteepleChase",
-              "lineup": "Johnny Dyani (bass), Dudu Pukwana (alto saxophone), Don Cherry (cornet), Makaya Ntshoko (drums)",
-              "analysis": "A powerful and poignant tribute to the anti-apartheid activist Steve Biko, this track is a landmark of 'Cape Jazz.' Led by the great South African bassist Johnny Dyani, the music masterfully blends the joyous, mournful, and resilient sounds of South African township music with the improvisational freedom of the avant-garde. The passionate, blues-drenched alto of Dudu Pukwana and the lyrical cornet of Don Cherry create a performance that is both a lament and a defiant celebration."
-            }
-          ]
-        },
-        {
-          "year": 2018,
-          "artist": "Sons of Kemet",
-          "albumTitle": "Your Queen Is a Reptile",
-          "cover": "images/your-queen-is-a-reptile.jpg",
-          "genres": [
-            "Afro-Jazz",
-            "Jazz Fusion"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "My Queen Is Harriet Tubman",
-              "recordingDate": "2017",
-              "label": "Impulse!",
-              "lineup": "Shabaka Hutchings (tenor saxophone), Theon Cross (tuba), Tom Skinner (drums), Eddie Hick (drums)",
-              "analysis": "A powerful statement from the leaders of the modern London jazz scene. This track is a perfect example of the band's revolutionary sound, which replaces the traditional bass with the booming tuba of Theon Cross and uses two drummers to create dense, propulsive Afro-Caribbean rhythms. Over this, Shabaka Hutchings's tenor saxophone delivers fiery, politically charged improvisations. It's a thrilling reinvention of the jazz quartet for the 21st century."
-            }
-          ]
-        },
-        {
-          "year": 2020,
-          "artist": "Shabaka and the Ancestors",
-          "albumTitle": "We Are Sent Here by History",
-          "cover": "images/we-are-sent-here-by-history.jpg",
-          "genres": [
-            "Spiritual Jazz",
-            "Afro-Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Go My Heart, Go to Heaven",
-              "recordingDate": "2019",
-              "label": "Impulse!",
-              "lineup": "Shabaka Hutchings (tenor saxophone), Mthunzi Mvubu (alto saxophone), Siyabonga Mthembu (vocals), Ariel Zamonsky (bass), Gontse Makhene (percussion), Tumi Mogorosi (drums)",
-              "analysis": "A powerful and politically urgent album from the leader of the London jazz scene. This track is a perfect example of the group's sound, which blends the spiritual fire of 1960s free jazz with the rhythms of South Africa and the Caribbean. Siyabonga Mthembu's vocals act as a kind of griot, telling a story of apocalypse and rebirth, while Shabaka's saxophone delivers a searing, cathartic sermon. It's a key document of modern spiritual and Afro-centric jazz."
-            }
-          ]
-        }
-      ]
-    },
-    "The Neo-Bop Path": {
-      "title": "The Neo-Bop Path",
-      "genreAffinity": "Hard Bop, Post-Bop, Soul Jazz",
-      "albums": [
-        {
-          "year": 1976,
-          "artist": "Ryo Fukui",
-          "albumTitle": "Scenery",
-          "cover": "images/scenery.jpg",
-          "genres": [
-            "Hard Bop",
-            "Post-Bop"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "It Could Happen to You",
-              "recordingDate": "September 7, 1976",
-              "label": "Trio",
-              "lineup": "Ryo Fukui (piano), Satoshi Denpo (bass), Yoshinori Fukui (drums)",
-              "analysis": "A cult classic from the vibrant Japanese jazz scene of the 1970s. This performance is a powerful and swinging take on the hard bop piano trio tradition. Ryo Fukui's playing is deeply influenced by masters like McCoy Tyner and Bill Evans, but he possesses his own soulful, percussive, and intensely swinging style. The album's rediscovery by a new generation of listeners online has made it a beloved and essential document of international hard bop."
-            }
-          ]
-        },
-        {
-          "year": 1976,
-          "artist": "Cedar Walton",
-          "albumTitle": "Eastern Rebellion",
-          "cover": "images/eastern-rebellion.jpg",
-          "genres": [
-            "Hard Bop",
-            "Post-Bop"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Bolivia",
-              "recordingDate": "December 10, 1975",
-              "label": "Timeless",
-              "lineup": "Cedar Walton (piano), George Coleman (tenor saxophone), Sam Jones (bass), Billy Higgins (drums)",
-              "analysis": "This is the debut recording of pianist Cedar Walton's most famous composition, a tune that would go on to become a modern jazz standard. 'Bolivia' is a masterpiece of hard bop writing, with a memorable melody and a sophisticated set of chord changes that are a joy for improvisers to navigate. This original version, featuring the powerful tenor of George Coleman and the impeccable swing of Billy Higgins, is a definitive statement from a master of the genre."
-            }
-          ]
-        },
-        {
-          "year": 1985,
-          "artist": "Wynton Marsalis",
-          "albumTitle": "Black Codes (From the Underground)",
-          "cover": "images/black-codes-from-the-underground.jpg",
-          "genres": [
-            "Post-Bop",
-            "Neo-Bop"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Black Codes",
-              "recordingDate": "January 11, 1985",
-              "label": "Columbia",
-              "lineup": "Wynton Marsalis (trumpet), Branford Marsalis (tenor, soprano saxophone), Kenny Kirkland (piano), Charnett Moffett (bass), Jeff 'Tain' Watts (drums)",
-              "analysis": "A landmark album that announced the arrival of the 'Young Lions' and sparked a revival of acoustic, post-bop jazz in the 1980s. The title track is a complex, high-energy piece that showcases the incredible virtuosity and deep understanding of the tradition possessed by this young group. The music explicitly looks back to the adventurous, sophisticated sound of the mid-60s Miles Davis Quintet, making a powerful case for the enduring relevance of that language."
-            }
-          ]
-        },
-        {
-          "year": 1989,
-          "artist": "Tom Harrell",
-          "albumTitle": "Sail Away",
-          "cover": "images/sail-away.jpg",
-          "genres": [
-            "Post-Bop",
-            "Neo-Bop"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Sail Away",
-              "recordingDate": "March 22, 1989",
-              "label": "Contemporary",
-              "lineup": "Tom Harrell (trumpet, flugelhorn), Joe Lovano (tenor saxophone), James Williams (piano), Ray Drummond (bass), Adam Nussbaum (drums)",
-              "analysis": "A masterpiece of modern post-bop from one of the most lyrical and thoughtful trumpeters in jazz. The title track is a beautiful and evocative composition that showcases Tom Harrell's immense talents as both a writer and an improviser. The interplay between Harrell's warm flugelhorn and Joe Lovano's adventurous tenor saxophone is a highlight. The album is a perfect example of the sophisticated, melodic, and beautifully crafted acoustic jazz being made in the late 1980s."
-            }
-          ]
-        },
-        {
-          "year": 1994,
-          "artist": "Joshua Redman",
-          "albumTitle": "Moodswing",
-          "cover": "images/moodswing.jpg",
-          "genres": [
-            "Post-Bop",
-            "Neo-Bop"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Rejoice",
-              "recordingDate": "March 8, 1994",
-              "label": "Warner Bros.",
-              "lineup": "Joshua Redman (tenor saxophone), Brad Mehldau (piano), Christian McBride (bass), Brian Blade (drums)",
-              "analysis": "This album brought together four of the most important young musicians of their generation, a band that would go on to define the sound of modern jazz. The track 'Rejoice' is a high-energy, swinging piece that showcases the incredible chemistry and virtuosity of the quartet. It's a modern take on the classic tenor-led hard bop tradition, infused with a fresh, contemporary energy. The album was a major statement from the new 'Young Lions' of the 1990s."
-            }
-          ]
-        },
-        {
-          "year": 1997,
-          "artist": "Kenny Garrett",
-          "albumTitle": "Songbook",
-          "cover": "images/songbook.jpg",
-          "genres": [
-            "Post-Bop",
-            "Neo-Bop"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Ms. Baja",
-              "recordingDate": "1997",
-              "label": "Warner Bros.",
-              "lineup": "Kenny Garrett (alto saxophone), Kenny Kirkland (piano), Nat Reeves (bass), Jeff 'Tain' Watts (drums)",
-              "analysis": "A powerful and influential album from a leading voice of his generation. 'Ms. Baja' is a perfect example of Kenny Garrett's signature style: intense, rhythmically driving, and deeply soulful, with a sound that is both modern and firmly rooted in the tradition. The track is propelled by the powerful, polyrhythmic drumming of Jeff 'Tain' Watts and the brilliant piano of Kenny Kirkland. The album, consisting entirely of Garrett's originals, was a major artistic statement."
-            }
-          ]
-        }
-      ]
-    }
-  }
-}
+        };
+        document.addEventListener('DOMContentLoaded', () => LegacyApp.init());
+    </script>
+</body>
+</html>
