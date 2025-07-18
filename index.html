@@ -1314,15 +1314,18 @@
 
                     this.state.albums.forEach(album => {
                         if (album.pivotalTracks && album.pivotalTracks.length > 0) {
-                            // Sort tracks by date to easily find the first and last
                             album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
-                            // **MODIFIED: Use the LAST recording date for sorting the timeline**
                             album.sortingDate = album.pivotalTracks[album.pivotalTracks.length - 1].recordingDate;
+                            
+                            // *** NEW FIX: Update the album's year property based on the sorting date ***
+                            const finalDate = parseDate(album.sortingDate);
+                            if (finalDate) {
+                                album.year = finalDate.getFullYear();
+                            }
                         }
                     });
                     
                     const timelineAlbums = this.state.albums.filter(a => a.year <= 1969);
-                    // **MODIFIED: Sort albums based on the new sortingDate property**
                     timelineAlbums.sort((a,b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
                     this.state.albums = timelineAlbums;
                     
