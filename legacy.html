@@ -104,7 +104,13 @@
             </header>
         </div>
 
-        <main class="pt-12">
+        <main class="-mt-24">
+            <!-- Banner Section -->
+            <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64">
+                <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x256/1c1917/f5f5f4?text=Legacy';">
+                <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
+            </section>
+
             <section id="legacy" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
                     <h2 class="section-header text-5xl">Legacy</h2>
@@ -175,7 +181,7 @@
                 </div>
                  <div>
                     <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</button>
-                    <div class="mobile-submenu pl-4 pt-2 space-y-2">
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
                         <a href="#legacy" class="mobile-nav-link block">Path Timeline</a>
                         <a href="#artists" class="mobile-nav-link block">Legacy Artists</a>
                     </div>
@@ -298,7 +304,7 @@
                         ...artist,
                         instruments: Array.from(artist.instruments),
                         albums: Array.from(artist.albums),
-                        tier: 1 
+                        tier: 1 // All legacy artists are bandleaders in this context
                     }));
                 },
                 setupLegacySection() {
@@ -422,8 +428,14 @@
                 },
                 setupMobileMenu() {
                     const { mobileMenuButton, mobileMenuOverlay, mobileMenuCloseButton } = this.elements;
-                    const openMenu = () => mobileMenuOverlay.classList.remove('hidden');
-                    const closeMenu = () => mobileMenuOverlay.classList.add('hidden');
+                    const openMenu = () => {
+                        mobileMenuOverlay.classList.remove('hidden');
+                        setTimeout(() => { this.elements.mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                    };
+                    const closeMenu = () => {
+                        this.elements.mobileMenuPanel.style.transform = 'translateX(100%)';
+                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                    };
                     mobileMenuButton.addEventListener('click', openMenu);
                     mobileMenuCloseButton.addEventListener('click', closeMenu);
                     document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
