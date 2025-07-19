@@ -88,8 +88,18 @@
             -ms-overflow-style: none; scrollbar-width: none;
         }
         #family-tree-container::-webkit-scrollbar { display: none; }
-        .family-tree { display: flex; flex-direction: column; align-items: center; gap: 60px; padding: 2rem; min-width: 1200px; position: relative; }
-        .tree-level { display: flex; justify-content: center; gap: 40px; width: 100%; }
+        .family-tree { display: inline-flex; flex-direction: row; align-items: flex-start; gap: 20px; padding: 2rem; min-height: 500px; position: relative; }
+        .decade-column {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 40px; padding: 1rem 2rem; border-left: 2px dashed var(--text-muted);
+        }
+        .family-tree > .decade-column:first-child { border-left: none; }
+        .decade-header {
+            font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+            color: var(--text-muted); transform: rotate(-90deg) translateX(-100%);
+            transform-origin: left top; white-space: nowrap; margin-left: -2rem;
+        }
+        .tree-level { display: flex; flex-direction: column; justify-content: center; gap: 20px; position: relative; align-items: center; }
         .genre-node {
             padding: 1rem 1.5rem; border: 2px solid var(--text-main);
             border-radius: 0.25rem; box-shadow: 4px 4px 0px var(--text-main);
@@ -98,9 +108,10 @@
         }
         .genre-node:hover { transform: translateY(-4px) rotate(1deg); box-shadow: 6px 6px 0px var(--accent); }
         .genre-node h4 { font-size: 1.5rem; }
-        .genre-node.subgenre { margin-top: 20px; }
+        .genre-node.subgenre { margin-left: 20px; }
         .genre-node.subgenre h4 { font-size: 1.1rem; }
-        .genre-group { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+        .genre-group { display: flex; align-items: center; gap: 10px; position: relative; }
+        .subgenre-container { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; position: relative; padding-left: 20px; margin-left: 10px; border-left: 2px solid var(--text-muted); }
         #tree-connections {
             position: absolute;
             top: 0;
@@ -520,14 +531,13 @@
                     const treeStructure = [
                         ['Bebop', 'Cool Jazz'],
                         ['Hard Bop', 'Modal Jazz'],
-                        ['Post-Bop', 'Avant-Garde', 'Free Jazz'],
-                        ['Soul Jazz', 'Afro-Jazz', 'Spiritual Jazz', 'Third Stream'],
-                        ['Jazz Fusion', 'Ambient Jazz', 'Jazz-Funk', 'Jazz-Rock'],
-                        ['Modern Creative', 'ECM Style Jazz', 'Smooth Jazz']
+                        ['Post-Bop', 'Avant-Garde', 'Free Jazz', 'Soul Jazz'],
+                        ['Spiritual Jazz', 'Third Stream', 'Afro-Jazz', 'Jazz Fusion'],
+                        ['Jazz-Rock', 'Jazz-Funk', 'Ambient Jazz', 'ECM Style Jazz'],
+                        ['Modern Creative', 'Smooth Jazz', 'Neo-Bop']
                     ];
                     
                     const independentSubgenres = {
-                        'Hard Bop': ['Neo-Bop'],
                         'Afro-Jazz': ['Cape Jazz']
                     };
 
