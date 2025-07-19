@@ -74,30 +74,105 @@
         .dropdown-menu a:hover { background-color: var(--accent); color: var(--bg-main); transform: translateX(5px); }
         .desktop-dropdown-behaviour { display: none; }
         .group:hover .desktop-dropdown-behaviour { display: block; }
-        .genre-card {
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            box-shadow: 4px 4px 0px var(--text-main);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 2rem 1rem;
-            min-height: 120px;
-        }
-        .genre-card:hover {
-            transform: translateY(-4px) rotate(1deg);
-            box-shadow: 6px 6px 0px var(--accent);
-            color: var(--bg-main);
-            background-color: var(--accent) !important;
-        }
         .landmark-album-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0.5rem 1rem;
             list-style-position: inside;
+        }
+
+        /* Family Tree Styles */
+        .family-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 2rem 0;
+        }
+        .tree-level {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        .genre-node {
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            text-align: center;
+            min-width: 150px;
+        }
+        .genre-node:hover {
+            transform: translateY(-4px) rotate(1deg);
+            box-shadow: 6px 6px 0px var(--accent);
+        }
+        .genre-node h4 {
+            font-size: 1.5rem;
+        }
+        .genre-node.subgenre {
+            margin-top: 30px;
+            min-width: 120px;
+        }
+        .genre-node.subgenre h4 {
+            font-size: 1.1rem;
+        }
+        .genre-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        .genre-group::before {
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 25px;
+            background-color: var(--text-muted);
+        }
+        .tree-level > .genre-group:first-child::before, .tree-level > .genre-node:first-child::before {
+             content: '';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 25px;
+            background-color: var(--text-muted);
+        }
+        .subgenre-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            position: relative;
+            padding-top: 25px;
+        }
+        .subgenre-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background-color: var(--text-muted);
+        }
+        .subgenre-container .genre-node::before {
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 25px;
+            background-color: var(--text-muted);
         }
     </style>
 </head>
@@ -185,13 +260,13 @@
                 </div>
             </section>
 
-            <!-- NEW SECTION: GENRE DEFINITIONS -->
+            <!-- GENRE FAMILY TREE SECTION -->
             <section id="legacy-genres" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 class="section-header text-5xl">The New Paths: Genre Definitions</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Learn about the styles that emerged from the golden age.</p>
-                    <div id="genre-definitions-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
-                        <!-- Genre cards will be injected here by JavaScript -->
+                    <h2 class="section-header text-5xl">The Jazz Family Tree</h2>
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the evolution of jazz styles that emerged from the golden age.</p>
+                    <div id="genre-family-tree" class="family-tree">
+                        <!-- Family tree will be injected here by JavaScript -->
                     </div>
                 </div>
             </section>
@@ -327,7 +402,8 @@
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
-                    footerCopyright: document.getElementById('footer-copyright')
+                    footerCopyright: document.getElementById('footer-copyright'),
+                    genreFamilyTree: document.getElementById('genre-family-tree'),
                 };
             },
             fetchData() {
@@ -370,7 +446,7 @@
             initializeAppUI() {
                 this.methods.processArtists();
                 this.methods.setupLegacySection();
-                this.methods.renderGenreDefinitions();
+                this.methods.renderGenreFamilyTree();
                 this.methods.setupArtistSlider();
                 this.methods.setupModals();
                 this.methods.setupMobileMenu();
@@ -505,34 +581,63 @@
                     this.state.currentLegacyAlbumPage += direction;
                     this.methods.updateLegacyAlbumSliderView();
                 },
-                renderGenreDefinitions() {
-                    const { genreData } = this.state;
-                    const grid = document.getElementById('genre-definitions-grid');
-                    if (!genreData || !grid) return;
+                renderGenreFamilyTree() {
+                    const { genreFamilyTree, genreData } = this.elements;
+                    if (!genreFamilyTree || !this.state.genreData.genres) return;
 
-                    const allGenres = [];
-                    Object.entries(genreData.genres).forEach(([genreName, genreDetails]) => {
-                        if (['Soul Jazz', 'Afro-Jazz'].includes(genreName)) {
-                            allGenres.push({ name: genreName, ...genreDetails });
-                        }
-                        if (genreDetails.subgenres) {
-                            Object.entries(genreDetails.subgenres).forEach(([subgenreName, subgenreDetails]) => {
-                                allGenres.push({ name: subgenreName, ...subgenreDetails, parent: genreName, parentColor: genreDetails.color });
-                            });
-                        }
-                    });
+                    const treeStructure = [
+                        ['Bebop', 'Cool Jazz'],
+                        ['Hard Bop', 'Modal Jazz'],
+                        ['Post-Bop', 'Avant-Garde', 'Free Jazz'],
+                        ['Soul Jazz', 'Afro-Jazz', 'Spiritual Jazz', 'Third Stream'],
+                        ['Jazz Fusion', 'Ambient Jazz', 'Jazz-Funk', 'Jazz-Rock'],
+                        ['Modern Creative', 'ECM Style Jazz', 'Smooth Jazz']
+                    ];
                     
-                    allGenres.sort((a, b) => a.name.localeCompare(b.name));
+                    const independentSubgenres = {
+                        'Hard Bop': ['Neo-Bop'],
+                        'Afro-Jazz': ['Cape Jazz']
+                    };
 
-                    grid.innerHTML = allGenres.map(genre => {
-                        const bgColor = genre.color ? `background-color: ${genre.color};` : 'background-color: var(--bg-secondary);';
-                        const colorClass = genre.color ? '' : 'text-stone-900';
-                        return `
-                            <div class="genre-card ${colorClass}" style="${bgColor}" data-genre-name="${genre.name}">
-                                <h4 class="text-3xl font-bold">${genre.name}</h4>
-                            </div>
-                        `;
-                    }).join('');
+                    const findGenreData = (name) => {
+                        for (const [genreKey, genreValue] of Object.entries(this.state.genreData.genres)) {
+                            if (genreKey === name) return { name, ...genreValue };
+                            if (genreValue.subgenres && genreValue.subgenres[name]) {
+                                return { name, ...genreValue.subgenres[name], parent: genreKey };
+                            }
+                        }
+                        return null;
+                    };
+
+                    let treeHtml = '';
+                    treeStructure.forEach(level => {
+                        let levelHtml = '<div class="tree-level">';
+                        level.forEach(genreName => {
+                            const genreInfo = findGenreData(genreName);
+                            if (genreInfo) {
+                                let groupHtml = `<div class="genre-group">`;
+                                groupHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
+                                
+                                if (independentSubgenres[genreName]) {
+                                    let subgenreHtml = '<div class="subgenre-container">';
+                                    independentSubgenres[genreName].forEach(subName => {
+                                        const subInfo = findGenreData(subName);
+                                        if (subInfo) {
+                                            subgenreHtml += `<div class="genre-node subgenre" data-genre-name="${subInfo.name}" style="background-color: ${subInfo.parentColor || 'var(--bg-secondary)'};"><h4>${subInfo.name}</h4></div>`;
+                                        }
+                                    });
+                                    subgenreHtml += '</div>';
+                                    groupHtml += subgenreHtml;
+                                }
+                                groupHtml += `</div>`;
+                                levelHtml += groupHtml;
+                            }
+                        });
+                        levelHtml += '</div>';
+                        treeHtml += levelHtml;
+                    });
+
+                    genreFamilyTree.innerHTML = treeHtml;
                 },
                 setupArtistSlider() {
                     const { artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
@@ -621,8 +726,8 @@
                             if (artist) this.methods.openArtistModal(artist);
                         }
                     });
-                    document.getElementById('genre-definitions-grid').addEventListener('click', (e) => {
-                        const card = e.target.closest('.genre-card');
+                    this.elements.genreFamilyTree.addEventListener('click', (e) => {
+                        const card = e.target.closest('.genre-node');
                         if (card && card.dataset.genreName) {
                             this.methods.openGenreModal(card.dataset.genreName);
                         }
