@@ -419,6 +419,9 @@
                     legacyPrevBtn: document.getElementById('legacy-prev-btn'),
                     legacyNextBtn: document.getElementById('legacy-next-btn'),
                     artistSliderTrack: document.getElementById('artist-slider-track'),
+                    artistSliderContainer: document.getElementById('artist-slider-container'),
+                    artistPrevBtn: document.getElementById('artist-prev-btn'),
+                    artistNextBtn: document.getElementById('artist-next-btn'),
                     artistPaginationControls: document.getElementById('artist-pagination-controls'),
                     artistPageIndicator: document.getElementById('artist-page-indicator'),
                     albumModal: document.getElementById('album-modal'),
@@ -674,6 +677,7 @@
                 setupTreeScrolling() {
                     const { treeContainer, treePrevBtn, treeNextBtn } = this.elements;
                     const checkScroll = () => {
+                        if(!treeContainer) return;
                         if (treeContainer.scrollWidth > treeContainer.clientWidth) {
                             treePrevBtn.classList.remove('hidden');
                             treeNextBtn.classList.remove('hidden');
