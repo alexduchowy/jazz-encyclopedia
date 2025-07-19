@@ -718,6 +718,24 @@
             filter: brightness(95%);
             transform: translateY(-2px);
         }
+
+        /* Mobile Sticky Header fix */
+        @media (max-width: 767px) {
+            #sticky-header-display {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0;
+            }
+            #sticky-year-display {
+                font-size: 2.25rem; /* text-4xl */
+                line-height: 1;
+            }
+            #sticky-era-title {
+                font-size: 1rem; /* text-base */
+                line-height: 1.25;
+                padding-bottom: 0;
+            }
+        }
    
     </style>
 </head>
@@ -1097,7 +1115,6 @@
                     scrollLeftBtn: document.getElementById('scroll-left-btn'),
                     scrollRightBtn: document.getElementById('scroll-right-btn'),
                     genreFilterContainer: document.getElementById('genre-filter-container'),
-                    genreFilterMobile: document.getElementById('genre-filter-mobile'),
                     eraGlossaryContainerMobile: document.getElementById('era-glossary-container-mobile'),
                     eraGlossaryContainerWeb: document.getElementById('era-glossary-container-web'),
                     eraGlossaryList: document.getElementById('era-glossary-list'),
