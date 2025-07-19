@@ -88,7 +88,7 @@
             -ms-overflow-style: none; scrollbar-width: none;
         }
         #family-tree-container::-webkit-scrollbar { display: none; }
-        .family-tree { display: inline-flex; flex-direction: row; align-items: flex-start; gap: 20px; padding: 2rem; min-height: 500px; }
+        .family-tree { display: inline-flex; flex-direction: row; align-items: flex-start; gap: 20px; padding: 2rem; min-height: 500px; position: relative; }
         .decade-column {
             display: flex; flex-direction: column; align-items: center;
             gap: 40px; padding: 1rem 2rem; border-left: 2px dashed var(--text-muted);
@@ -112,6 +112,15 @@
         .genre-node.subgenre h4 { font-size: 1.1rem; }
         .genre-group { display: flex; align-items: center; gap: 10px; position: relative; }
         .subgenre-container { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; position: relative; padding-left: 20px; margin-left: 10px; border-left: 2px solid var(--text-muted); }
+        #tree-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -197,7 +206,9 @@
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the evolution of jazz styles. Click on a genre to learn more.</p>
                     <div id="family-tree-wrapper">
                         <div id="family-tree-container">
-                            <div id="genre-family-tree" class="family-tree"></div>
+                            <div id="genre-family-tree" class="family-tree">
+                                <svg id="tree-connections"></svg>
+                            </div>
                         </div>
                         <button id="tree-prev-btn" class="absolute top-1/2 -translate-y-1/2 left-2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
                         <button id="tree-next-btn" class="absolute top-1/2 -translate-y-1/2 right-2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
@@ -340,6 +351,7 @@
                     treeContainer: document.getElementById('family-tree-container'),
                     treePrevBtn: document.getElementById('tree-prev-btn'),
                     treeNextBtn: document.getElementById('tree-next-btn'),
+                    treeConnections: document.getElementById('tree-connections'),
                 };
             },
             fetchData() {
@@ -579,9 +591,78 @@
                         treeHtml += columnHtml;
                     });
 
+                    genreFamilyTree.innerHTML += treeHtml;
+                    setTimeout(() => {
+                        this.methods.drawTreeConnections();
+                        this.methods.setupTreeScrolling();
+                    }, 100);
+                },
+                drawTreeConnections() {
+                    const { genreFamilyTree, treeConnections } = this.elements;
+                    treeConnections.innerHTML = '';
 
-                    genreFamilyTree.innerHTML = treeHtml;
-                    this.methods.setupTreeScrolling();
+                    const nodes = genreFamilyTree.querySelectorAll('.genre-node');
+                    const nodePositions = new Map();
+                    nodes.forEach(node => {
+                        const name = node.dataset.genreName;
+                        nodePositions.set(name, {
+                            x: node.offsetLeft + node.offsetWidth / 2,
+                            y: node.offsetTop + node.offsetHeight / 2,
+                            left: node.offsetLeft,
+                            right: node.offsetLeft + node.offsetWidth,
+                            top: node.offsetTop,
+                            bottom: node.offsetTop + node.offsetHeight
+                        });
+                    });
+
+                    const connections = [
+                        { from: 'Bebop', to: 'Hard Bop' },
+                        { from: 'Hard Bop', to: 'Post-Bop' },
+                        { from: 'Cool Jazz', to: 'Modal Jazz' },
+                        { from: 'Modal Jazz', to: 'Jazz Fusion' },
+                        { from: ['Avant-Garde', 'Post-Bop'], to: 'Free Jazz' },
+                        { from: ['Avant-Garde', 'Post-Bop'], to: 'Spiritual Jazz' },
+                        { from: ['Cool Jazz', 'Hard Bop'], to: 'Soul Jazz' },
+                        { from: 'Avant-Garde', to: 'Third Stream' },
+                        { from: 'Third Stream', to: 'Modern Creative' },
+                        { from: 'Jazz Fusion', to: 'Jazz-Rock' },
+                        { from: 'Jazz Fusion', to: 'Jazz-Funk' },
+                        { from: ['Jazz Fusion', 'Modal Jazz'], to: 'Ambient Jazz' },
+                        { from: ['Jazz Fusion', 'Modal Jazz'], to: 'ECM Style Jazz' },
+                        { from: 'ECM Style Jazz', to: 'Smooth Jazz' }
+                    ];
+
+                    const svgNS = "http://www.w3.org/2000/svg";
+                    const defs = document.createElementNS(svgNS, 'defs');
+                    defs.innerHTML = `
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="${getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()}" />
+                        </marker>
+                    `;
+                    treeConnections.appendChild(defs);
+                    
+                    treeConnections.setAttribute('width', genreFamilyTree.scrollWidth);
+                    treeConnections.setAttribute('height', genreFamilyTree.scrollHeight);
+
+                    connections.forEach(conn => {
+                        const toNode = nodePositions.get(conn.to);
+                        if (!toNode) return;
+
+                        const fromNodes = Array.isArray(conn.from) ? conn.from.map(f => nodePositions.get(f)) : [nodePositions.get(conn.from)];
+                        
+                        fromNodes.forEach(fromNode => {
+                            if (!fromNode) return;
+                            const path = document.createElementNS(svgNS, 'path');
+                            const midX = fromNode.right + (toNode.left - fromNode.right) / 2;
+                            const d = `M ${fromNode.right} ${fromNode.y} C ${midX} ${fromNode.y}, ${midX} ${toNode.y}, ${toNode.left} ${toNode.y}`;
+                            path.setAttribute('d', d);
+                            path.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim());
+                            path.setAttribute('stroke-width', '2');
+                            path.setAttribute('fill', 'none');
+                            path.setAttribute('marker-end', 'url(#arrowhead)');
+                            treeConnections.appendChild(path);
+                        });
+                    });
                 },
                 setupTreeScrolling() {
                     const { treeContainer, treePrevBtn, treeNextBtn } = this.elements;
@@ -705,6 +786,7 @@
                         resizeTimeout = setTimeout(() => {
                             this.methods.setupArtistSlider();
                             this.methods.updateLegacyAlbumSliderView();
+                            this.methods.drawTreeConnections();
                         }, 200);
                     });
                     this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
