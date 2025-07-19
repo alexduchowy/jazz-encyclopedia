@@ -464,7 +464,7 @@
                     this.initializeAppUI();
                 }).catch(error => {
                     console.error('Error fetching data:', error);
-                    this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2></div>`;
+                    this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2><p class="text-stone-600 mt-2">${error.message}</p></div>`;
                     this.showPage();
                 });
             },
@@ -611,7 +611,7 @@
                     this.methods.updateLegacyAlbumSliderView();
                 },
                 renderGenreFamilyTree() {
-                    const { genreFamilyTree, genreData } = this.elements;
+                    const { genreFamilyTree } = this.elements;
                     if (!genreFamilyTree || !this.state.genreData.genres) return;
 
                     const treeStructure = [
@@ -640,7 +640,7 @@
                     };
 
                     let treeHtml = '';
-                    treeStructure.forEach((level, index) => {
+                    treeStructure.forEach((level) => {
                         let levelHtml = '<div class="tree-level">';
                         level.forEach(genreName => {
                             const genreInfo = findGenreData(genreName);
