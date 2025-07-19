@@ -67,16 +67,29 @@
         .desktop-dropdown-behaviour { display: none; }
         .group:hover .desktop-dropdown-behaviour { display: block; }
         .genre-card {
-            background-color: var(--bg-secondary);
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
             box-shadow: 4px 4px 0px var(--text-main);
-            padding: 1.5rem;
             transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem 1rem;
+            min-height: 120px;
         }
         .genre-card:hover {
             transform: translateY(-4px) rotate(1deg);
             box-shadow: 6px 6px 0px var(--accent);
+            color: var(--bg-main);
+            background-color: var(--accent) !important;
+        }
+        .landmark-album-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem 1rem;
+            list-style-position: inside;
         }
     </style>
 </head>
@@ -209,6 +222,15 @@
             <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
     </div>
+    <div id="genre-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+                 <h3 id="genre-modal-title" class="text-4xl"></h3>
+                 <button id="close-genre-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+             </div>
+             <div id="genre-modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
 
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
@@ -290,6 +312,7 @@
                     artistPageIndicator: document.getElementById('artist-page-indicator'),
                     albumModal: document.getElementById('album-modal'),
                     artistModal: document.getElementById('artist-modal'),
+                    genreModal: document.getElementById('genre-modal'),
                     mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
@@ -306,7 +329,7 @@
                 ]).then(([legacyData, artistProfileData, dbData, genreData]) => {
                     this.state.legacyData = legacyData.paths;
                     this.state.artistProfiles = artistProfileData;
-                    this.state.genreData = genreData.genres;
+                    this.state.genreData = genreData;
                     
                     const normalizeGenres = (album) => {
                         if (typeof album.genres === 'string') {
@@ -478,26 +501,26 @@
                     const grid = document.getElementById('genre-definitions-grid');
                     if (!genreData || !grid) return;
 
-                    const newGenres = [];
-                    Object.entries(genreData).forEach(([genreName, genreDetails]) => {
+                    const allGenres = [];
+                    Object.entries(genreData.genres).forEach(([genreName, genreDetails]) => {
                         if (['Soul Jazz', 'Afro-Jazz'].includes(genreName)) {
-                            newGenres.push({ name: genreName, ...genreDetails });
+                            allGenres.push({ name: genreName, ...genreDetails });
                         }
                         if (genreDetails.subgenres) {
                             Object.entries(genreDetails.subgenres).forEach(([subgenreName, subgenreDetails]) => {
-                                newGenres.push({ name: subgenreName, ...subgenreDetails, parent: genreName });
+                                allGenres.push({ name: subgenreName, ...subgenreDetails, parent: genreName, parentColor: genreDetails.color });
                             });
                         }
                     });
                     
-                    newGenres.sort((a, b) => a.name.localeCompare(b.name));
+                    allGenres.sort((a, b) => a.name.localeCompare(b.name));
 
-                    grid.innerHTML = newGenres.map(genre => {
+                    grid.innerHTML = allGenres.map(genre => {
+                        const bgColor = genre.color ? `background-color: ${genre.color};` : 'background-color: var(--bg-secondary);';
+                        const colorClass = genre.color ? '' : 'text-stone-900';
                         return `
-                            <div class="genre-card">
-                                <h4 class="text-3xl font-bold mb-2">${genre.name}</h4>
-                                ${genre.parent ? `<p class="text-sm text-stone-500 mb-3">A subgenre of <strong>${genre.parent}</strong></p>` : ''}
-                                <p class="text-stone-700 text-base">${genre.profile}</p>
+                            <div class="genre-card ${colorClass}" style="${bgColor}" data-genre-name="${genre.name}">
+                                <h4 class="text-3xl font-bold">${genre.name}</h4>
                             </div>
                         `;
                     }).join('');
@@ -527,23 +550,31 @@
                     this.methods.goToArtistPage(0);
                 },
                 setupModals() {
-                    const { albumModal, artistModal } = this.elements;
+                    const { albumModal, artistModal, genreModal } = this.elements;
                     albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeAlbumModal());
                     albumModal.addEventListener('click', e => { 
                         if (e.target.id === 'album-modal') this.methods.closeAlbumModal(); 
-                        
                         const target = e.target.closest('.clickable-link[data-artist-name]');
                         if (target) {
                             const artistName = target.dataset.artistName;
                             const artist = this.state.artistsData.find(a => a.name === artistName);
-                            if (artist) {
-                                this.methods.closeAlbumModal(() => this.methods.openArtistModal(artist));
-                            }
+                            if (artist) this.methods.closeAlbumModal(() => this.methods.openArtistModal(artist));
                         }
                     });
+                    
                     artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
                     artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') this.methods.closeArtistModal(); });
-                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal(); this.methods.closeArtistModal(); } });
+
+                    genreModal.querySelector('#close-genre-modal').addEventListener('click', () => this.methods.closeGenreModal());
+                    genreModal.addEventListener('click', e => { if (e.target.id === 'genre-modal') this.methods.closeGenreModal(); });
+
+                    document.addEventListener('keydown', e => { 
+                        if (e.key === "Escape") { 
+                            this.methods.closeAlbumModal(); 
+                            this.methods.closeArtistModal();
+                            this.methods.closeGenreModal();
+                        } 
+                    });
                 },
                 setupMobileMenu() {
                     const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
@@ -579,6 +610,12 @@
                         if (card && card.dataset.artistName) {
                             const artist = this.state.artistsData.find(a => a.name === card.dataset.artistName);
                             if (artist) this.methods.openArtistModal(artist);
+                        }
+                    });
+                    document.getElementById('genre-definitions-grid').addEventListener('click', (e) => {
+                        const card = e.target.closest('.genre-card');
+                        if (card && card.dataset.genreName) {
+                            this.methods.openGenreModal(card.dataset.genreName);
                         }
                     });
                     this.elements.artistPrevBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage - 1));
@@ -655,6 +692,56 @@
                     artistModal.classList.add('opacity-0', 'pointer-events-none');
                     artistModal.querySelector('.modal-content').classList.add('scale-95');
                     if (typeof callback === 'function') setTimeout(callback, 300);
+                },
+                openGenreModal(genreName) {
+                    const { genreModal, genreData } = this.elements;
+                    let genreInfo;
+                    let parentGenreName;
+
+                    for (const [key, value] of Object.entries(this.state.genreData.genres)) {
+                        if (key === genreName) {
+                            genreInfo = value;
+                            break;
+                        }
+                        if (value.subgenres && value.subgenres[genreName]) {
+                            genreInfo = value.subgenres[genreName];
+                            parentGenreName = key;
+                            break;
+                        }
+                    }
+                    
+                    if (!genreInfo) return;
+
+                    const titleEl = document.getElementById('genre-modal-title');
+                    titleEl.textContent = genreName;
+                    const bodyEl = document.getElementById('genre-modal-body');
+
+                    const keyArtistsHtml = genreInfo.artists ? `<p class="text-base text-stone-700 leading-relaxed">${genreInfo.artists}</p>` : '';
+                    const landmarkAlbumsHtml = genreInfo.landmarkAlbums ? `<ul class="list-disc list-inside space-y-1 landmark-album-list">${genreInfo.landmarkAlbums.map(a => `<li>${a}</li>`).join('')}</ul>` : '';
+                    const characteristicsHtml = genreInfo.data ? `<ul class="list-disc list-inside space-y-1 text-stone-700">
+                        ${this.state.genreData.features.map((feature, i) => `<li><strong>${feature}:</strong> ${genreInfo.data[i]}</li>`).join('')}
+                    </ul>` : '';
+
+                    bodyEl.innerHTML = `
+                        <div class="space-y-6">
+                            ${parentGenreName ? `<p class="text-sm text-stone-500 -mt-2 mb-4">A subgenre of <strong>${parentGenreName}</strong></p>` : ''}
+                            <div>
+                                <h4 class="text-2xl font-bold text-stone-900 mb-2">Overview</h4>
+                                <p class="text-base text-stone-700 leading-relaxed">${genreInfo.profile || 'No profile available.'}</p>
+                            </div>
+                            ${characteristicsHtml ? `<div><h4 class="text-2xl font-bold text-stone-900 mb-2">Key Characteristics</h4>${characteristicsHtml}</div>` : ''}
+                            ${keyArtistsHtml ? `<div><h4 class="text-2xl font-bold text-stone-900 mb-2">Key Artists</h4>${keyArtistsHtml}</div>` : ''}
+                            ${landmarkAlbumsHtml ? `<div><h4 class="text-2xl font-bold text-stone-900 mb-2">Landmark Albums</h4>${landmarkAlbumsHtml}</div>` : ''}
+                        </div>
+                    `;
+
+                    document.getElementById('genre-modal').classList.remove('opacity-0', 'pointer-events-none');
+                    document.getElementById('genre-modal').querySelector('.modal-content').classList.remove('scale-95');
+                },
+                closeGenreModal() {
+                    const { genreModal } = this.elements;
+                    genreModal.classList.add('opacity-0', 'pointer-events-none');
+                    genreModal.querySelector('.modal-content').classList.add('scale-95');
                 },
                 populateInstrumentFilter(artists) {
                     const { instrumentFilter } = this.elements;
