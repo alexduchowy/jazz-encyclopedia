@@ -82,122 +82,36 @@
         }
 
         /* Family Tree Styles */
-        #family-tree-wrapper {
-            position: relative;
-        }
+        #family-tree-wrapper { position: relative; }
         #family-tree-container {
-            overflow-x: auto;
-            padding: 2rem 0;
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            overflow-x: auto; padding: 2rem 0;
+            -ms-overflow-style: none; scrollbar-width: none;
         }
-        #family-tree-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
+        #family-tree-container::-webkit-scrollbar { display: none; }
+        .family-tree { display: inline-flex; flex-direction: row; align-items: flex-start; gap: 20px; padding: 2rem; min-height: 500px; }
+        .decade-column {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 40px; padding: 1rem 2rem; border-left: 2px dashed var(--text-muted);
         }
-        .family-tree {
-            display: inline-flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 50px;
-            padding: 2rem;
+        .family-tree > .decade-column:first-child { border-left: none; }
+        .decade-header {
+            font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+            color: var(--text-muted); transform: rotate(-90deg) translateX(-100%);
+            transform-origin: left top; white-space: nowrap; margin-left: -2rem;
         }
-        .tree-level {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 20px;
-            position: relative;
-        }
-        .tree-level::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: 100%;
-            transform: translateY(-50%);
-            width: 50px;
-            height: 2px;
-            background-color: var(--text-muted);
-        }
-        .family-tree > .tree-level:first-child::before {
-            display: none;
-        }
+        .tree-level { display: flex; flex-direction: column; justify-content: center; gap: 20px; position: relative; align-items: center; }
         .genre-node {
-            padding: 1rem 1.5rem;
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            box-shadow: 4px 4px 0px var(--text-main);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            text-align: center;
-            min-width: 150px;
+            padding: 1rem 1.5rem; border: 2px solid var(--text-main);
+            border-radius: 0.25rem; box-shadow: 4px 4px 0px var(--text-main);
+            cursor: pointer; transition: all 0.2s ease; position: relative;
+            text-align: center; min-width: 160px; flex-shrink: 0;
         }
-        .genre-node:hover {
-            transform: translateY(-4px) rotate(1deg);
-            box-shadow: 6px 6px 0px var(--accent);
-        }
-        .genre-node h4 {
-            font-size: 1.5rem;
-        }
-        .genre-node.subgenre {
-            margin-left: 30px;
-        }
-        .genre-node.subgenre h4 {
-            font-size: 1.1rem;
-        }
-        .genre-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-        }
-        .genre-group::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: 100%;
-            transform: translateY(-50%);
-            width: 25px;
-            height: 2px;
-            background-color: var(--text-muted);
-        }
-        .tree-level > .genre-node:not(:first-child)::after, .tree-level > .genre-group:not(:first-child)::after {
-            content: '';
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 20px;
-            background-color: var(--text-muted);
-        }
-        .subgenre-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
-            position: relative;
-            padding-left: 25px;
-        }
-        .subgenre-container::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            bottom: 10%;
-            left: 0;
-            width: 2px;
-            background-color: var(--text-muted);
-        }
-        .subgenre-container .genre-node::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: 100%;
-            transform: translateY(-50%);
-            width: 25px;
-            height: 2px;
-            background-color: var(--text-muted);
-        }
+        .genre-node:hover { transform: translateY(-4px) rotate(1deg); box-shadow: 6px 6px 0px var(--accent); }
+        .genre-node h4 { font-size: 1.5rem; }
+        .genre-node.subgenre { margin-left: 20px; }
+        .genre-node.subgenre h4 { font-size: 1.1rem; }
+        .genre-group { display: flex; align-items: center; gap: 10px; position: relative; }
+        .subgenre-container { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; position: relative; padding-left: 20px; margin-left: 10px; border-left: 2px solid var(--text-muted); }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -207,10 +121,7 @@
     <div id="page-content" class="content-hidden">
         <div class="sticky top-0 z-50 h-24">
             <header class="relative container mx-auto h-full">
-                <!-- This is the crooked background. It is positioned absolutely within the header -->
                 <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
-                
-                <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
                 <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                     <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10">
                         <a href="index.html"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
@@ -246,7 +157,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Hamburger Menu Button -->
                     <div class="sm:hidden">
                         <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
                             <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -259,7 +169,6 @@
         </div>
 
         <main class="-mt-24">
-            <!-- Banner Section -->
             <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80">
                 <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Legacy';">
                 <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
@@ -270,9 +179,7 @@
                     <h2 class="section-header text-5xl">Legacy</h2>
                     <p class="text-center text-lg text-stone-600 mb-4 max-w-3xl mx-auto italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
                     <p class="text-left text-base text-stone-700 max-w-4xl mx-auto mb-12">The two decades from 1950 to 1969 were a period of unprecedented creative explosion in jazz. But the story didn't end there. The innovations of these years branched out, creating new musical languages that continue to evolve today. This section explores the primary paths that grew from the fertile ground of the post-bop era, tracing the lineage of modern jazz into the 21st century.</p>
-                    <div id="path-selector-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                        <!-- Path cards will be injected here by JavaScript -->
-                    </div>
+                    <div id="path-selector-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"></div>
                     <div id="legacy-slider-wrapper" class="hidden mt-8 p-6 rounded-lg">
                         <h3 id="legacy-slider-title" class="text-4xl mb-8 text-center transition-colors duration-300"></h3>
                         <div id="legacy-album-slider-container" class="relative">
@@ -284,19 +191,16 @@
                 </div>
             </section>
 
-            <!-- GENRE FAMILY TREE SECTION -->
             <section id="legacy-genres" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 class="section-header text-5xl">The Jazz Family Tree</h2>
+                    <h2 class="section-header text-5xl">Genre Evolution</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the evolution of jazz styles. Click on a genre to learn more.</p>
                     <div id="family-tree-wrapper">
                         <div id="family-tree-container">
-                            <div id="genre-family-tree" class="family-tree">
-                                <!-- Family tree will be injected here by JavaScript -->
-                            </div>
+                            <div id="genre-family-tree" class="family-tree"></div>
                         </div>
-                        <button id="tree-prev-btn" class="absolute top-1/2 -translate-y-1/2 left-0 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-                        <button id="tree-next-btn" class="absolute top-1/2 -translate-y-1/2 right-0 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                        <button id="tree-prev-btn" class="absolute top-1/2 -translate-y-1/2 left-2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                        <button id="tree-next-btn" class="absolute top-1/2 -translate-y-1/2 right-2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
                     </div>
                 </div>
             </section>
@@ -585,10 +489,6 @@
                     legacySliderWrapper.classList.remove('hidden');
                     this.state.currentLegacyAlbumPage = 0;
                     this.methods.updateLegacyAlbumSliderView();
-
-                    const artistNames = [...new Set(pathData.albums.map(a => this.methods.getCanonicalName(a.artist)))];
-                    this.state.currentPathArtists = this.state.artistsData.filter(artist => artistNames.includes(artist.name));
-                    this.methods.setupArtistSlider();
                 },
                 updateLegacyAlbumSliderView() {
                     const { legacyAlbumTrack, legacyPrevBtn, legacyNextBtn } = this.elements;
@@ -617,17 +517,24 @@
                     const { genreFamilyTree } = this.elements;
                     if (!genreFamilyTree || !this.state.genreData.genres) return;
 
-                    const treeStructure = [
-                        ['Bebop', 'Cool Jazz'],
-                        ['Hard Bop', 'Modal Jazz'],
-                        ['Post-Bop', 'Avant-Garde', 'Free Jazz'],
-                        ['Soul Jazz', 'Afro-Jazz', 'Spiritual Jazz', 'Third Stream'],
-                        ['Jazz Fusion', 'Ambient Jazz', 'Jazz-Funk', 'Jazz-Rock'],
-                        ['Modern Creative', 'ECM Style Jazz', 'Smooth Jazz']
-                    ];
+                    const treeStructureByDecade = {
+                        '1950s': [
+                            ['Bebop', 'Cool Jazz'],
+                            ['Hard Bop', 'Modal Jazz']
+                        ],
+                        '1960s': [
+                            ['Post-Bop', 'Avant-Garde', 'Free Jazz'],
+                            ['Soul Jazz', 'Afro-Jazz', 'Spiritual Jazz', 'Third Stream']
+                        ],
+                        '1970s': [
+                             ['Jazz Fusion', 'Jazz-Rock', 'Jazz-Funk', 'Ambient Jazz', 'ECM Style Jazz']
+                        ],
+                        '1980s & Beyond': [
+                            ['Smooth Jazz', 'Modern Creative', 'Neo-Bop']
+                        ]
+                    };
                     
                     const independentSubgenres = {
-                        'Hard Bop': ['Neo-Bop'],
                         'Afro-Jazz': ['Cape Jazz']
                     };
 
@@ -635,41 +542,43 @@
                         for (const [genreKey, genreValue] of Object.entries(this.state.genreData.genres)) {
                             if (genreKey === name) return { name, ...genreValue };
                             if (genreValue.subgenres && genreValue.subgenres[name]) {
-                                const parentColor = genreValue.color || 'var(--bg-secondary)';
-                                return { name, ...genreValue.subgenres[name], parent: genreKey, parentColor };
+                                return { name, ...genreValue.subgenres[name], parent: genreKey, parentColor: genreValue.color };
                             }
                         }
                         return null;
                     };
 
                     let treeHtml = '';
-                    treeStructure.forEach((level) => {
-                        let levelHtml = '<div class="tree-level">';
-                        level.forEach(genreName => {
-                            const genreInfo = findGenreData(genreName);
-                            if (genreInfo) {
-                                if (independentSubgenres[genreName]) {
-                                    let groupHtml = `<div class="genre-group">`;
-                                    groupHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
-                                    let subgenreHtml = '<div class="subgenre-container">';
-                                    independentSubgenres[genreName].forEach(subName => {
-                                        const subInfo = findGenreData(subName);
-                                        if (subInfo) {
-                                            subgenreHtml += `<div class="genre-node subgenre" data-genre-name="${subInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${subInfo.name}</h4></div>`;
-                                        }
-                                    });
-                                    subgenreHtml += '</div>';
-                                    groupHtml += subgenreHtml;
-                                    groupHtml += `</div>`;
-                                    levelHtml += groupHtml;
-                                } else {
-                                    levelHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
+                    Object.entries(treeStructureByDecade).forEach(([decade, levels]) => {
+                        let columnHtml = `<div class="decade-column"><div class="decade-header">${decade}</div><div class="tree-level">`;
+                        levels.forEach(level => {
+                            level.forEach(genreName => {
+                                const genreInfo = findGenreData(genreName);
+                                if (genreInfo) {
+                                    if (independentSubgenres[genreName]) {
+                                        let groupHtml = `<div class="genre-group">`;
+                                        groupHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
+                                        let subgenreHtml = '<div class="subgenre-container">';
+                                        independentSubgenres[genreName].forEach(subName => {
+                                            const subInfo = findGenreData(subName);
+                                            if (subInfo) {
+                                                subgenreHtml += `<div class="genre-node subgenre" data-genre-name="${subInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${subInfo.name}</h4></div>`;
+                                            }
+                                        });
+                                        subgenreHtml += '</div>';
+                                        groupHtml += subgenreHtml;
+                                        groupHtml += `</div>`;
+                                        columnHtml += groupHtml;
+                                    } else {
+                                        columnHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
+                                    }
                                 }
-                            }
+                            });
                         });
-                        levelHtml += '</div>';
-                        treeHtml += levelHtml;
+                        columnHtml += '</div></div>';
+                        treeHtml += columnHtml;
                     });
+
 
                     genreFamilyTree.innerHTML = treeHtml;
                     this.methods.setupTreeScrolling();
@@ -681,7 +590,7 @@
                         if (treeContainer.scrollWidth > treeContainer.clientWidth) {
                             treePrevBtn.classList.remove('hidden');
                             treeNextBtn.classList.remove('hidden');
-                            treePrevBtn.disabled = treeContainer.scrollLeft === 0;
+                            treePrevBtn.disabled = treeContainer.scrollLeft <= 0;
                             treeNextBtn.disabled = treeContainer.scrollLeft >= treeContainer.scrollWidth - treeContainer.clientWidth - 1;
                         } else {
                             treePrevBtn.classList.add('hidden');
@@ -696,7 +605,8 @@
                 },
                 setupArtistSlider() {
                     const { artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
-                    const filteredArtists = [...this.state.currentPathArtists].sort((a, b) => a.name.localeCompare(b.name));
+                    const allLegacyArtists = [...new Set(this.state.allLegacyAlbums.map(a => this.methods.getCanonicalName(a.artist)))];
+                    const filteredArtists = this.state.artistsData.filter(artist => allLegacyArtists.includes(artist.name)).sort((a, b) => a.name.localeCompare(b.name));
                     
                     artistSliderTrack.innerHTML = '';
                     const pageSize = window.innerWidth >= 768 ? 12 : 6;
@@ -793,7 +703,7 @@
                     window.addEventListener('resize', () => {
                         clearTimeout(resizeTimeout);
                         resizeTimeout = setTimeout(() => {
-                            this.methods.setupArtistSlider(this.state.currentPathArtists.map(a => a.name));
+                            this.methods.setupArtistSlider();
                             this.methods.updateLegacyAlbumSliderView();
                         }, 200);
                     });
