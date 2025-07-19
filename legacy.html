@@ -88,10 +88,10 @@
             -ms-overflow-style: none; scrollbar-width: none;
         }
         #family-tree-container::-webkit-scrollbar { display: none; }
-        .family-tree { display: flex; flex-direction: row; align-items: flex-start; gap: 0; padding: 2rem; min-height: 600px; position: relative; }
+        .family-tree { display: inline-flex; flex-direction: row; align-items: flex-start; gap: 40px; padding: 2rem; min-height: 600px; position: relative; }
         .decade-column {
             display: flex; flex-direction: column; align-items: center;
-            gap: 20px; padding: 4rem 2rem 1rem 2rem; border-left: 2px dashed var(--text-muted);
+            gap: 60px; padding: 4rem 2rem 1rem 2rem; border-left: 2px dashed var(--text-muted);
             position: relative;
         }
         .family-tree > .decade-column:first-child { border-left: none; }
@@ -100,7 +100,7 @@
             font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
             color: var(--text-muted); white-space: nowrap;
         }
-        .tree-level { display: flex; flex-direction: column; justify-content: center; gap: 40px; }
+        .tree-level { display: flex; flex-direction: column; justify-content: center; gap: 20px; position: relative; align-items: center; }
         .genre-node {
             padding: 1rem 1.5rem; border: 2px solid var(--text-main);
             border-radius: 0.25rem; box-shadow: 4px 4px 0px var(--text-main);
@@ -110,6 +110,7 @@
         }
         .genre-node:hover { transform: translateY(-4px) rotate(1deg); box-shadow: 6px 6px 0px var(--accent); }
         .genre-node h4 { font-size: 1.5rem; }
+        .subgenre-container { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; position: relative; padding-left: 20px; margin-left: 10px; border-left: 2px solid var(--text-muted); }
         #tree-connections {
             position: absolute;
             top: 0;
