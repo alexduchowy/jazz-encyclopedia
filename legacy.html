@@ -281,8 +281,23 @@
                 ]).then(([legacyData, artistProfileData, dbData]) => {
                     this.state.legacyData = legacyData.paths;
                     this.state.artistProfiles = artistProfileData;
+                    
+                    // Normalize genre data for both datasets to ensure consistency
+                    const normalizeGenres = (album) => {
+                        if (typeof album.genres === 'string') {
+                            album.genres = album.genres.split(',').map(g => g.trim());
+                        } else if (!Array.isArray(album.genres)) {
+                            album.genres = [];
+                        }
+                    };
+
+                    dbData.albums.forEach(normalizeGenres);
                     this.state.fullAlbumDatabase = dbData.albums;
-                    this.state.allLegacyAlbums = Object.values(legacyData.paths).flatMap(path => path.albums);
+
+                    const allLegacyAlbums = Object.values(legacyData.paths).flatMap(path => path.albums);
+                    allLegacyAlbums.forEach(normalizeGenres);
+                    this.state.allLegacyAlbums = allLegacyAlbums;
+
                     this.initializeAppUI();
                 }).catch(error => {
                     console.error('Error fetching data:', error);
@@ -459,7 +474,18 @@
                 setupModals() {
                     const { albumModal, artistModal } = this.elements;
                     albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeAlbumModal());
-                    albumModal.addEventListener('click', e => { if (e.target.id === 'album-modal') this.methods.closeAlbumModal(); });
+                    albumModal.addEventListener('click', e => { 
+                        if (e.target.id === 'album-modal') this.methods.closeAlbumModal(); 
+                        
+                        const target = e.target.closest('.clickable-link[data-artist-name]');
+                        if (target) {
+                            const artistName = target.dataset.artistName;
+                            const artist = this.state.artistsData.find(a => a.name === artistName);
+                            if (artist) {
+                                this.methods.closeAlbumModal(() => this.methods.openArtistModal(artist));
+                            }
+                        }
+                    });
                     artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
                     artistModal.addEventListener('click', e => { if (e.target.id === 'artist-modal') this.methods.closeArtistModal(); });
                     document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeAlbumModal(); this.methods.closeArtistModal(); } });
@@ -515,16 +541,42 @@
                 openAlbumModal(album) {
                     const { albumModal } = this.elements;
                     albumModal.querySelector('#modal-title').textContent = album.albumTitle;
-                    albumModal.querySelector('#modal-artist').textContent = album.artist;
+                    
+                    const artistBtn = albumModal.querySelector('#modal-artist');
+                    artistBtn.textContent = album.artist;
+                    artistBtn.dataset.artistName = album.artist;
+                    artistBtn.className = 'text-xl text-stone-600 bg-transparent border-none p-0 clickable-link';
+                    
                     const modalImg = albumModal.querySelector('#modal-album-art');
                     modalImg.src = album.cover || '';
                     modalImg.alt = `Cover for ${album.albumTitle}`;
                     modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
-                    const pivotalTrack = album.pivotalTracks ? album.pivotalTracks[0] : {};
-                    const genreTags = (album.genres || "").split(',').map(g => `<span class="genre-tag" style="background-color: ${this.state.genreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`).join(' ');
-                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-stone-900 mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span></div>`;
+                    
+                    const pivotalTrack = album.pivotalTracks && album.pivotalTracks.length > 0 ? album.pivotalTracks[0] : {};
+                    
+                    const genreTags = (album.genres || []).map(g => `<span class="genre-tag" style="background-color: ${this.state.genreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`).join(' ');
+
+                    const lineupHtml = (pivotalTrack.lineup || 'N/A').split(/, (?![^()]*\))/).map(personnel => {
+                        const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
+                        if (match && this.state.artistsData.some(a => a.name === this.methods.getCanonicalName(match[1].trim()))) {
+                            const canonicalName = this.methods.getCanonicalName(match[1].trim());
+                            return `<span class="clickable-link" data-artist-name="${canonicalName}">${canonicalName}</span> (${match[2]})`;
+                        }
+                        return personnel;
+                    }).join(', ');
+
+                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-stone-900 mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span><strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span></div>`;
+                    
                     const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
-                    analysisWrapper.innerHTML = `<div id="modal-analysis-section"><h5 class="text-2xl font-bold text-white">Key Track: "${pivotalTrack.title || 'N/A'}"</h5><p class="liner-notes-text">${pivotalTrack.analysis || 'Analysis not available.'}</p></div>`;
+                    const pivotalTracksHtml = (album.pivotalTracks || []).map(track => {
+                        return `<div class="mb-8 last:mb-0">
+                                    <h5 class="text-2xl font-bold text-white">Key Track: "${track.title}"</h5>
+                                    <p class="liner-notes-text">${track.analysis}</p>
+                                </div>`;
+                    }).join('<hr class="border-stone-700 my-8">');
+
+                    analysisWrapper.innerHTML = `<div id="modal-analysis-section">${pivotalTracksHtml || '<p class="liner-notes-text">Analysis not available.</p>'}</div>`;
+                    
                     albumModal.classList.remove('opacity-0', 'pointer-events-none');
                     albumModal.querySelector('.modal-content').classList.remove('scale-95');
                 },
