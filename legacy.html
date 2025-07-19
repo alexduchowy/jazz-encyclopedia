@@ -47,9 +47,17 @@
         @media (max-width: 640px) { .nav-bar-hidden-behaviour { display: none; } }
         #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
-        #path-selector-slider { -ms-overflow-style: none; scrollbar-width: none; }
-        #path-selector-slider::-webkit-scrollbar { display: none; }
-        .path-selector-card { flex-shrink: 0; width: 320px; background-color: var(--bg-secondary); border: 2px solid var(--text-main); border-radius: 0.25rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 4px 4px 0px var(--text-main); overflow: hidden; display: flex; flex-direction: column; }
+        .path-selector-card { 
+            background-color: var(--bg-secondary); 
+            border: 2px solid var(--text-main); 
+            border-radius: 0.25rem; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            box-shadow: 4px 4px 0px var(--text-main); 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+        }
         .path-selector-card-img { height: 160px; width: 100%; object-fit: cover; filter: grayscale(50%); transition: filter 0.3s ease; }
         .path-selector-card:hover .path-selector-card-img, .path-selector-card.active .path-selector-card-img { filter: grayscale(0%); }
         .path-selector-card-content { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; }
@@ -163,7 +171,9 @@
                     <h2 class="section-header text-5xl">Legacy</h2>
                     <p class="text-center text-lg text-stone-600 mb-4 max-w-3xl mx-auto italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
                     <p class="text-left text-base text-stone-700 max-w-4xl mx-auto mb-12">The two decades from 1950 to 1969 were a period of unprecedented creative explosion in jazz. But the story didn't end there. The innovations of these years branched out, creating new musical languages that continue to evolve today. This section explores the primary paths that grew from the fertile ground of the post-bop era, tracing the lineage of modern jazz into the 21st century.</p>
-                    <div id="path-selector-container" class="relative group mb-12"><div id="path-selector-slider" class="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 cursor-grab"></div></div>
+                    <div id="path-selector-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                        <!-- Path cards will be injected here by JavaScript -->
+                    </div>
                     <div id="legacy-slider-wrapper" class="hidden mt-8 p-6 rounded-lg">
                         <h3 id="legacy-slider-title" class="text-4xl mb-8 text-center transition-colors duration-300"></h3>
                         <div id="legacy-album-slider-container" class="relative">
@@ -297,7 +307,7 @@
                 this.elements = {
                     loader: document.getElementById('loader'),
                     pageContent: document.getElementById('page-content'),
-                    pathSelectorSlider: document.getElementById('path-selector-slider'),
+                    pathSelectorGrid: document.getElementById('path-selector-grid'),
                     legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
                     legacySliderTitle: document.getElementById('legacy-slider-title'),
                     legacyAlbumTrack: document.getElementById('legacy-album-track'),
@@ -410,13 +420,12 @@
                 },
                 setupLegacySection() {
                     this.methods.renderPathSelector();
-                    this.methods.setupDraggable(this.elements.pathSelectorSlider);
                     this.elements.legacyPrevBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(-1));
                     this.elements.legacyNextBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(1));
                     const firstPathKey = Object.keys(this.state.legacyData)[0];
                     if (firstPathKey) {
                         this.methods.renderLegacyAlbumSlider(firstPathKey);
-                        const firstCard = this.elements.pathSelectorSlider.querySelector('.path-selector-card');
+                        const firstCard = this.elements.pathSelectorGrid.querySelector('.path-selector-card');
                         if (firstCard) firstCard.classList.add('active');
                     }
                 },
@@ -425,8 +434,8 @@
                     return this.state.genreColorMap[affinity] || this.state.genreColorMap['default'];
                 },
                 renderPathSelector() {
-                    const { pathSelectorSlider } = this.elements;
-                    pathSelectorSlider.innerHTML = '';
+                    const { pathSelectorGrid } = this.elements;
+                    pathSelectorGrid.innerHTML = '';
                     const pathDescriptions = { "The Electric Path": "A high-voltage fusion of jazz improvisation with the raw power of rock and funk.", "The Spiritual Path": "A quest for transcendence through sound, blending jazz with Eastern and African influences.", "The Avant-Garde Path": "A radical deconstruction of traditional music, exploring pure sound, texture, and 'energy playing.'", "The Melodic Path": "Characterized by strong, folk-like melodies and atmospheric soundscapes, favoring lyrical improvisation.", "The Afro-Jazz Path": "A conscious reconnection with the music's African and Caribbean roots, integrating traditional rhythms.", "The Neo-Bop Path": "A powerful revival of the acoustic post-bop tradition that emerged in the 1980s." };
                     Object.entries(this.state.legacyData).forEach(([pathKey, pathData]) => {
                         const card = document.createElement('div');
@@ -437,11 +446,11 @@
                         const imageSlug = pathData.title.replace('The ', '').toLowerCase().replace(/\s+/g, '-');
                         card.innerHTML = `<img src="images/${imageSlug}.jpg" alt="${pathData.title}" class="path-selector-card-img" onerror="this.onerror=null;this.src='https://placehold.co/320x160/1c1917/f5f5f4?text=Path';"><div class="path-selector-card-content"><h4 class="text-3xl font-bold">${pathData.title}</h4><p class="text-sm text-stone-600">${pathDescriptions[pathData.title] || ''}</p></div>`;
                         card.addEventListener('click', () => {
-                            pathSelectorSlider.querySelectorAll('.path-selector-card').forEach(c => c.classList.remove('active'));
+                            pathSelectorGrid.querySelectorAll('.path-selector-card').forEach(c => c.classList.remove('active'));
                             card.classList.add('active');
                             this.methods.renderLegacyAlbumSlider(pathKey);
                         });
-                        pathSelectorSlider.appendChild(card);
+                        pathSelectorGrid.appendChild(card);
                     });
                 },
                 renderLegacyAlbumSlider(pathKey) {
@@ -694,7 +703,7 @@
                     if (typeof callback === 'function') setTimeout(callback, 300);
                 },
                 openGenreModal(genreName) {
-                    const { genreModal, genreData } = this.elements;
+                    const { genreModal } = this.elements;
                     let genreInfo;
                     let parentGenreName;
 
@@ -735,8 +744,8 @@
                         </div>
                     `;
 
-                    document.getElementById('genre-modal').classList.remove('opacity-0', 'pointer-events-none');
-                    document.getElementById('genre-modal').querySelector('.modal-content').classList.remove('scale-95');
+                    genreModal.classList.remove('opacity-0', 'pointer-events-none');
+                    genreModal.querySelector('.modal-content').classList.remove('scale-95');
                 },
                 closeGenreModal() {
                     const { genreModal } = this.elements;
