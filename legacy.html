@@ -4,76 +4,333 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Legacy - Controlled Freedom</title>
+    <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
     
+    <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
+    <!-- Custom CSS Styling -->
     <style>
+        /* Define custom color properties for easy theme management */
         :root {
-            --bg-main: #f5f5f4; --bg-secondary: #e7e5e4; --bg-dark: #1a1a1a; --text-main: #1c1917; --text-muted: #44403c; --accent: #f97316; --accent-dark: #ea580c; --yellow-accent: #facc15;
-            --genre-melodic-path: #64748b; --genre-free-jazz: #fca5a5; --genre-avant-garde: #fecdd3; --genre-jazz-fusion: #a5f3fc; --genre-post-bop: #fed7aa; --genre-hard-bop: #d8b4fe; --genre-default: #e7e5e4;
+            --bg-main: #f5f5f4; /* stone-100 */
+            --bg-secondary: #e7e5e4; /* stone-200 */
+            --bg-dark: #1a1a1a; /* Custom dark gray */
+            --text-main: #1c1917; /* stone-900 */
+            --text-muted: #44403c; /* stone-700 - Darkened for readability */
+            --accent: #f97316; /* orange-500 */
+            --accent-dark: #ea580c; /* orange-600 */
+            --yellow-accent: #facc15; /* yellow-400 */
+
+            /* Genre Colors */
+            --genre-bebop: #C19A6B; /* Pastel Brown */
+            --genre-hard-bop: #d8b4fe; /* purple-300 */
+            --genre-cool-jazz: #93c5fd; /* blue-300 */
+            --genre-modal-jazz: #a7f3d0; /* emerald-200 */
+            --genre-post-bop: #fed7aa; /* orange-200 */
+            --genre-free-jazz: #fca5a5; /* red-300 */
+            --genre-avant-garde: #fecdd3; /* rose-200 */
+            --genre-jazz-fusion: #a5f3fc; /* cyan-200 */
+            --genre-melodic-path: #64748b; /* slate-500, for Legacy section */
+            --genre-default: #e7e5e4; /* stone-200 */
+
+            /* Lighter Era Colors for Timeline Background */
+            --era-cool-light: #dbeafe; /* blue-100 */
+            --era-hard-bop-light: #f3e8ff; /* purple-100 */
+            --era-bebop-light: #EADDCA; /* Lighter Pastel Brown */
+            --era-modal-light: #d1fae5; /* emerald-100 */
+            --era-post-bop-light: #ffedd5; /* orange-100 */
+            --era-free-jazz-light: #fee2e2; /* red-100 */
+            --era-roots-light: #fef9c3; /* yellow-100 */
+            --era-fusion-light: #cffafe; /* cyan-100 */
         }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); }
-        h1, h2, h3, h4, h5 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
-        .nav-link { transition: color 0.2s; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 1.1rem; }
-        .nav-link:hover, .nav-link.active { color: var(--accent); }
-        .section-header { transform: rotate(-1deg); display: inline-block; background-color: var(--accent); color: var(--bg-main); padding: 0.25rem 1rem; margin-bottom: 1rem; }
-        .modal { transition: opacity 0.3s ease; }
-        .modal-content { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
-        .modal.opacity-0 .modal-content { opacity: 0; transform: scale(0.95) translateY(10px); }
-        .legacy-album-card { width: 200px; flex-shrink: 0; background-color: var(--bg-main); border-radius: 0.25rem; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 4px 4px 0px var(--text-main); border: 2px solid var(--text-main); overflow: hidden; }
-        .legacy-album-card:hover { transform: translateY(-5px) rotate(2deg); }
-        .legacy-album-card img { width: 100%; height: 200px; object-fit: cover; filter: grayscale(100%); transition: filter 0.3s ease; }
-        .legacy-album-card:hover img { filter: grayscale(0%); }
-        .artist-card { background-color: var(--bg-main); border-radius: 0.25rem; overflow: hidden; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 4px 4px 0px var(--text-main); border: 2px solid var(--text-main); }
-        .artist-card:hover { transform: translateY(-5px) rotate(2deg); box-shadow: 8px 8px 0px var(--accent) !important; }
-        .artist-card.bandleader { box-shadow: 4px 4px 0px var(--accent); }
-        .artist-card img { width: 100%; height: 224px; object-fit: cover; filter: grayscale(100%); transition: filter 0.3s ease; }
-        .artist-card:hover img { filter: grayscale(0%); }
-        #artist-slider-track { display: flex; transition: transform 0.5s ease-in-out; }
-        .artist-slider-page { width: 100%; flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-        @media (min-width: 768px) { .artist-slider-page { grid-template-columns: repeat(6, 1fr); } }
-        .styled-select select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 1.2em; }
-        #modal-analysis-section { background-color: var(--bg-dark); padding: 1.5rem; margin-top: 2rem; border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); }
-        #modal-analysis-section h5 { color: var(--bg-main); }
-        .liner-notes-text { font-family: 'Lora', serif; font-size: 1rem; line-height: 1.6; color: #d4d4d2; }
-        audio.styled-player { height: 35px; accent-color: var(--accent); }
-        .genre-tag { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; color: var(--text-main); border: 2px solid var(--text-main); }
-        .clickable-link { cursor: pointer; text-decoration: underline; text-decoration-color: var(--accent); }
-        .title-rotate { transform: rotate(-1.5deg); }
-        .nav-bar-hidden-behaviour { display: flex; transform: rotate(-1.5deg); }
-        @media (max-width: 640px) { .nav-bar-hidden-behaviour { display: none; } }
-        #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
-        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
-        .path-selector-card { 
-            background-color: var(--bg-secondary); 
-            border: 2px solid var(--text-main); 
-            border-radius: 0.25rem; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-            box-shadow: 4px 4px 0px var(--text-main); 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
+
+        /* Base body styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
         }
-        .path-selector-card-img { height: 160px; width: 100%; object-fit: cover; filter: grayscale(50%); transition: filter 0.3s ease; }
-        .path-selector-card:hover .path-selector-card-img, .path-selector-card.active .path-selector-card-img { filter: grayscale(0%); }
-        .path-selector-card-content { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; }
-        .path-selector-card:hover { transform: translateY(-4px) rotate(-1deg); box-shadow: 6px 6px 0px var(--text-main); }
-        .path-selector-card.active { transform: translateY(-4px) rotate(-1deg) scale(1.02); border-width: 4px; border-color: var(--path-color, var(--accent)); box-shadow: 8px 8px 0px var(--path-color, var(--accent)); }
-        #legacy-slider-wrapper { background-color: rgba(231, 229, 228, 0.5); transition: background-color 0.5s ease-in-out; }
-        #legacy-album-track { padding: 1rem 0; transition: transform 0.5s ease-in-out; }
-        #loader { position: fixed; inset: 0; background-color: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 100; }
-        .loader-spinner { border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .content-hidden { display: none; }
-        .dropdown-menu { background-color: var(--bg-main); border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); margin-top: 1.75rem; transform: rotate(1.5deg); transform-origin: top left; }
-        .dropdown-menu a { font-family: 'Inter', sans-serif; letter-spacing: normal; font-size: 1rem; display: block; padding: 0.5rem 1.5rem; color: var(--text-muted); transition: all 0.2s; }
-        .dropdown-menu a:hover { background-color: var(--accent); color: var(--bg-main); transform: translateX(5px); }
-        .desktop-dropdown-behaviour { display: none; }
-        .group:hover .desktop-dropdown-behaviour { display: block; }
+        
+        /* Heading font styling with new Bebas Neue font */
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Navigation link transition effects */
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+
+        /* Section header styling */
+        .section-header {
+              transform: rotate(-1deg);
+              display: inline-block;
+              background-color: var(--accent);
+              color: var(--bg-main);
+              padding: 0.25rem 1rem;
+              margin-bottom: 1rem;
+        }
+        
+        /* Modal transition styles */
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .modal.opacity-0 .modal-content {
+              opacity: 0;
+              transform: scale(0.95) translateY(10px);
+        }
+        
+        .legacy-album-card {
+            width: 200px;
+            flex-shrink: 0;
+            background-color: var(--bg-main);
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 4px 4px 0px var(--text-main);
+            border: 2px solid var(--text-main);
+            overflow: hidden;
+        }
+        .legacy-album-card:hover {
+            transform: translateY(-5px) rotate(2deg);
+        }
+        .legacy-album-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+        .legacy-album-card:hover img {
+            filter: grayscale(0%);
+        }
+        .legacy-album-card-info {
+            padding: 0.75rem;
+        }
+        .legacy-album-card-info h5 {
+            color: var(--text-main);
+            font-size: 1.25rem;
+        }
+        .legacy-album-card-info p {
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+        }
+
+        .artist-card {
+            background-color: var(--bg-main);
+            border-radius: 0.25rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 4px 4px 0px var(--text-main);
+            border: 2px solid var(--text-main);
+        }
+        .artist-card:hover {
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 8px 8px 0px var(--accent) !important;
+        }
+        .artist-card.bandleader {
+            box-shadow: 4px 4px 0px var(--accent);
+        }
+        .artist-card img {
+            width: 100%;
+            height: 224px;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+        .artist-card:hover img {
+            filter: grayscale(0%);
+        }
+        #artist-slider-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .artist-slider-page {
+            width: 100%;
+            flex-shrink: 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .artist-slider-page {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+        .styled-select select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1.2em;
+        }
+        #modal-analysis-section {
+            background-color: var(--bg-dark);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
+        }
+        #modal-analysis-section h5 {
+            color: var(--bg-main);
+        }
+        .liner-notes-text {
+            font-family: 'Lora', serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #d4d4d2;
+        }
+        audio.styled-player {
+            height: 35px;
+            accent-color: var(--accent);
+        }
+        .genre-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            border: 2px solid var(--text-main);
+        }
+        .clickable-link {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-color: var(--accent);
+        }
+        .title-rotate {
+            transform: rotate(-1.5deg);
+        }
+        .nav-bar-hidden-behaviour {
+            display: flex;
+            transform: rotate(-1.5deg);
+        }
+        @media (max-width: 640px) {
+            .nav-bar-hidden-behaviour {
+                display: none;
+            }
+        }
+        #mobile-menu-panel {
+            transition: transform 0.3s ease-in-out;
+        }
+        #mobile-menu-overlay.hidden #mobile-menu-panel {
+            transform: translateX(100%);
+        }
+        .path-selector-card {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 0px var(--text-main);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .path-selector-card-img {
+            height: 160px;
+            width: 100%;
+            object-fit: cover;
+            filter: grayscale(50%);
+            transition: filter 0.3s ease;
+        }
+        .path-selector-card:hover .path-selector-card-img,
+        .path-selector-card.active .path-selector-card-img {
+            filter: grayscale(0%);
+        }
+        .path-selector-card-content {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .path-selector-card:hover {
+            transform: translateY(-4px) rotate(-1deg);
+            box-shadow: 6px 6px 0px var(--text-main);
+        }
+        .path-selector-card.active {
+            transform: translateY(-4px) rotate(-1deg) scale(1.02);
+            border-width: 4px;
+            border-color: var(--path-color, var(--accent));
+            box-shadow: 8px 8px 0px var(--path-color, var(--accent));
+        }
+        #legacy-slider-wrapper {
+            background-color: rgba(231, 229, 228, 0.5);
+            transition: background-color 0.5s ease-in-out;
+        }
+        #legacy-album-track {
+            padding: 1rem 0;
+            transition: transform 0.5s ease-in-out;
+        }
+        #loader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .content-hidden {
+            display: none;
+        }
+        .dropdown-menu {
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
+            margin-top: 1.75rem;
+            transform: rotate(1.5deg);
+            transform-origin: top left;
+        }
+        .dropdown-menu a {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: normal;
+            font-size: 1rem;
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .dropdown-menu a:hover {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            transform: translateX(5px);
+        }
+        .desktop-dropdown-behaviour {
+            display: none;
+        }
+        .group:hover .desktop-dropdown-behaviour {
+            display: block;
+        }
         .landmark-album-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -82,35 +339,88 @@
         }
 
         /* Family Tree Styles */
-        #family-tree-wrapper { position: relative; }
-        #family-tree-container {
-            overflow-x: auto; padding: 2rem 0;
-            -ms-overflow-style: none; scrollbar-width: none;
-        }
-        #family-tree-container::-webkit-scrollbar { display: none; }
-        .family-tree { display: inline-flex; flex-direction: row; align-items: flex-start; gap: 40px; padding: 2rem; min-height: 600px; position: relative; }
-        .decade-column {
-            display: flex; flex-direction: column; align-items: center;
-            gap: 60px; padding: 4rem 2rem 1rem 2rem; border-left: 2px dashed var(--text-muted);
+        #family-tree-wrapper {
             position: relative;
         }
-        .family-tree > .decade-column:first-child { border-left: none; }
-        .decade-header {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
-            color: var(--text-muted); white-space: nowrap;
+        #family-tree-container {
+            overflow-x: auto;
+            padding: 2rem 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        .tree-level { display: flex; flex-direction: column; justify-content: center; gap: 20px; position: relative; align-items: center; }
+        #family-tree-container::-webkit-scrollbar {
+            display: none;
+        }
+        .family-tree {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 2rem;
+            min-height: 600px;
+            position: relative;
+        }
+        .decade-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+            padding: 4rem 2rem 1rem 2rem;
+            border-left: 2px dashed var(--text-muted);
+            position: relative;
+        }
+        .family-tree > .decade-column:first-child {
+            border-left: none;
+        }
+        .decade-header {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .tree-level {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            align-items: center;
+        }
         .genre-node {
-            padding: 1rem 1.5rem; border: 2px solid var(--text-main);
-            border-radius: 0.25rem; box-shadow: 4px 4px 0px var(--text-main);
-            cursor: pointer; transition: all 0.2s ease; position: relative;
-            text-align: center; min-width: 160px; flex-shrink: 0; z-index: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            text-align: center;
+            min-width: 160px;
+            flex-shrink: 0;
+            z-index: 1;
             background-color: var(--bg-main);
         }
-        .genre-node:hover { transform: translateY(-4px) rotate(1deg); box-shadow: 6px 6px 0px var(--accent); }
-        .genre-node h4 { font-size: 1.5rem; }
-        .subgenre-container { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; position: relative; padding-left: 20px; margin-left: 10px; border-left: 2px solid var(--text-muted); }
+        .genre-node:hover {
+            transform: translateY(-4px) rotate(1deg);
+            box-shadow: 6px 6px 0px var(--accent);
+        }
+        .genre-node h4 {
+            font-size: 1.5rem;
+        }
+        .subgenre-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+            position: relative;
+            padding-left: 20px;
+            margin-left: 10px;
+            border-left: 2px solid var(--text-muted);
+        }
         #tree-connections {
             position: absolute;
             top: 0;
@@ -150,17 +460,18 @@
                             <a href="legacy.html" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                              <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
                                 <div class="dropdown-menu rounded-sm py-2">
-                                    <a href="legacy.html#legacy">Path Timeline</a>
-                                    <a href="legacy.html#artists">Legacy Artists</a>
+                                    <a href="#legacy">Path Timeline</a>
+                                    <a href="#legacy-genres">Genre Evolution</a>
+                                    <a href="#artists">Artists</a>
                                 </div>
                             </div>
                         </div>
                        <div class="relative group">
-                            <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
+                            <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
                              <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
                                 <div class="dropdown-menu rounded-sm py-2">
-                                    <a href="reviews.html#news">Latest News</a>
-                                    <a href="reviews.html#reviews">Album Reviews</a>
+                                    <a href="reviews.html#news">News</a>
+                                    <a href="reviews.html#reviews">Reviews</a>
                                 </div>
                             </div>
                         </div>
@@ -184,7 +495,7 @@
 
             <section id="legacy" class="pt-12 pb-16 sm:pb-20 bg-stone-100">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
-                    <h2 class="section-header text-5xl">Legacy</h2>
+                    <h2 class="section-header text-5xl">Path Timeline</h2>
                     <p class="text-center text-lg text-stone-600 mb-4 max-w-3xl mx-auto italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
                     <p class="text-left text-base text-stone-700 max-w-4xl mx-auto mb-12">The two decades from 1950 to 1969 were a period of unprecedented creative explosion in jazz. But the story didn't end there. The innovations of these years branched out, creating new musical languages that continue to evolve today. This section explores the primary paths that grew from the fertile ground of the post-bop era, tracing the lineage of modern jazz into the 21st century.</p>
                     <div id="path-selector-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"></div>
@@ -272,29 +583,9 @@
                 </button>
             </div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <div>
-                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Home</button>
-                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
-                        <a href="index.html#overview" class="mobile-nav-link block">Overview</a>
-                        <a href="index.html#timeline" class="mobile-nav-link block">Timeline</a>
-                        <a href="index.html#matrix" class="mobile-nav-link block">Genres</a>
-                        <a href="index.html#artists" class="mobile-nav-link block">Artists</a>
-                    </div>
-                </div>
-                <div>
-                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</button>
-                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
-                        <a href="legacy.html#legacy" class="mobile-nav-link block">Path Timeline</a>
-                        <a href="legacy.html#artists" class="mobile-nav-link block">Legacy Artists</a>
-                    </div>
-                </div>
-                <div>
-                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Reviews</button>
-                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
-                        <a href="reviews.html#news" class="mobile-nav-link block">Latest News</a>
-                        <a href="reviews.html#reviews" class="mobile-nav-link block">Album Reviews</a>
-                    </div>
-                </div>
+                <a href="index.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="legacy.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="reviews.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
             </nav>
         </div>
     </div>
@@ -549,7 +840,8 @@
                     };
 
                     let treeHtml = '';
-                    treeStructure.forEach(level => {
+                    treeStructure.forEach((level, decadeIndex) => {
+                        let columnHtml = `<div class="decade-column"><div class="decade-header">${1950 + decadeIndex * 10}s</div>`;
                         let levelHtml = '<div class="tree-level">';
                         level.forEach(genreName => {
                             const genreInfo = findGenreData(genreName);
@@ -574,10 +866,12 @@
                             }
                         });
                         levelHtml += '</div>';
-                        treeHtml += levelHtml;
+                        columnHtml += levelHtml;
+                        columnHtml += '</div>';
+                        treeHtml += columnHtml;
                     });
 
-                    genreFamilyTree.innerHTML += treeHtml;
+                    genreFamilyTree.innerHTML = treeHtml;
                     setTimeout(() => {
                         this.methods.drawTreeConnections();
                         this.methods.setupTreeScrolling();
@@ -726,19 +1020,9 @@
                     mobileMenuButton.addEventListener('click', openMenu);
                     mobileMenuCloseButton.addEventListener('click', closeMenu);
                     document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
-                    document.querySelectorAll('.mobile-nav-header').forEach(header => {
-                        header.addEventListener('click', () => header.nextElementSibling.classList.toggle('hidden'));
-                    });
-                     document.querySelectorAll('#mobile-nav-links a').forEach(link => {
-                        link.addEventListener('click', (e) => {
-                            const href = link.getAttribute('href');
-                            if (href.startsWith('#')) {
-                                e.preventDefault();
-                                closeMenu();
-                                const targetElement = document.querySelector(href);
-                                if (targetElement) setTimeout(() => window.scrollTo({ top: targetElement.offsetTop - 80, behavior: 'smooth' }), 300);
-                            }
-                        });
+                    
+                    document.querySelectorAll('#mobile-nav-links a').forEach(link => {
+                        link.addEventListener('click', closeMenu);
                     });
                 },
                 setupGeneralEventListeners() {
