@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reviews - Controlled Freedom</title>
+    <title>Blog - Controlled Freedom</title>
+    <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
     
+    <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,17 +18,19 @@
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); }
         h1, h2, h3, h4, h5 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
-        .nav-link { transition: color 0.2s; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 1.2rem; }
+        .nav-link { transition: color 0.2s; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 1.1rem; }
         .nav-link:hover, .nav-link.active { color: var(--accent); }
         .section-header { transform: rotate(-1deg); display: inline-block; background-color: var(--accent); color: var(--bg-main); padding: 0.25rem 1rem; margin-bottom: 1rem; }
         .title-rotate { transform: rotate(-1.5deg); }
         .nav-bar-hidden-behaviour { display: flex; transform: rotate(-1.5deg); }
-        @media (max-width: 768px) { .nav-bar-hidden-behaviour { display: none; } }
+        @media (max-width: 640px) { .nav-bar-hidden-behaviour { display: none; } }
         #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
         .dropdown-menu { background-color: var(--bg-main); border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); margin-top: 1.75rem; transform: rotate(1.5deg); transform-origin: top left; }
         .dropdown-menu a { font-family: 'Inter', sans-serif; letter-spacing: normal; font-size: 1rem; display: block; padding: 0.5rem 1.5rem; color: var(--text-muted); transition: all 0.2s; }
         .dropdown-menu a:hover { background-color: var(--accent); color: var(--bg-main); transform: translateX(5px); }
+        .desktop-dropdown-behaviour { display: none; }
+        .group:hover .desktop-dropdown-behaviour { display: block; }
         #loader { position: fixed; inset: 0; background-color: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 100; }
         .loader-spinner { border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -60,21 +64,34 @@
                     <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
                         <div class="relative group">
                             <a href="index.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                            <div class="absolute hidden group-hover:block pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="index.html#overview">Overview</a><a href="index.html#timeline">Timeline</a><a href="index.html#matrix">Genres</a><a href="index.html#artists">Artists</a></div></div>
+                            <div class="absolute desktop-dropdown-behaviour pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="index.html#overview">Overview</a><a href="index.html#timeline">Timeline</a><a href="index.html#matrix">Genres</a><a href="index.html#artists">Artists</a></div></div>
                         </div>
                         <div class="relative group">
                             <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                            <div class="absolute hidden group-hover:block pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="legacy.html#legacy">Path Timeline</a><a href="legacy.html#artists">Legacy Artists</a></div></div>
+                            <div class="absolute desktop-dropdown-behaviour pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="legacy.html#legacy">Path Timeline</a><a href="legacy.html#legacy-genres">Genre Evolution</a><a href="legacy.html#artists">Artists</a></div></div>
                         </div>
-                        <a href="#" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
+                        <div class="relative group">
+                            <a href="reviews.html" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                             <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
+                                <div class="dropdown-menu rounded-sm py-2">
+                                    <a href="#news">News</a>
+                                    <a href="#reviews">Reviews</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="sm:hidden"><button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
                 </nav>
             </header>
         </div>
 
-        <main class="pt-12">
-            <section id="news" class="py-16 sm:py-20">
+        <main class="-mt-24">
+            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80">
+                <img src="images/bannerblog.png" alt="Blog Banner" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Blog';">
+                <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
+            </section>
+
+            <section id="news" class="pt-12 py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="text-center mb-12">
                         <h2 class="section-header text-5xl">Latest News</h2>
@@ -139,15 +156,9 @@
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
             <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <div>
-                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Home</button>
-                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2"><a href="index.html#overview" class="mobile-nav-link block">Overview</a><a href="index.html#timeline" class="mobile-nav-link block">Timeline</a><a href="index.html#matrix" class="mobile-nav-link block">Genres</a><a href="index.html#artists" class="mobile-nav-link block">Artists</a></div>
-                </div>
-                <div>
-                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Legacy</button>
-                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2"><a href="legacy.html#legacy" class="mobile-nav-link block">Path Timeline</a><a href="legacy.html#artists" class="mobile-nav-link block">Legacy Artists</a></div>
-                </div>
-                <a href="#" class="text-lg font-bold text-orange-500">Reviews</a>
+                <a href="index.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="legacy.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="reviews.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
             </nav>
         </div>
     </div>
@@ -240,17 +251,20 @@
                     </div>`;
             },
             setupMobileMenu() {
-                const { mobileMenuButton, mobileMenuOverlay, mobileMenuCloseButton } = this.elements;
-                const openMenu = () => mobileMenuOverlay.classList.remove('hidden');
-                const closeMenu = () => mobileMenuOverlay.classList.add('hidden');
+                const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
+                const openMenu = () => {
+                    mobileMenuOverlay.classList.remove('hidden');
+                    setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                };
+                const closeMenu = () => {
+                    mobileMenuPanel.style.transform = 'translateX(100%)';
+                    setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                };
                 mobileMenuButton.addEventListener('click', openMenu);
                 mobileMenuCloseButton.addEventListener('click', closeMenu);
                 document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
-                document.querySelectorAll('.mobile-nav-header').forEach(header => {
-                    header.addEventListener('click', () => {
-                        const submenu = header.nextElementSibling;
-                        submenu.classList.toggle('hidden');
-                    });
+                document.querySelectorAll('#mobile-nav-links a').forEach(link => {
+                    link.addEventListener('click', closeMenu);
                 });
             }
         };
