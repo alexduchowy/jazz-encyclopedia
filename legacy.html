@@ -97,7 +97,15 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
+                        <div class="relative group">
+                            <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Reviews</a>
+                            <div class="absolute hidden group-hover:block pt-2 z-10">
+                               <div class="dropdown-menu rounded-sm py-2">
+                                   <a href="reviews.html#news">Latest News</a>
+                                   <a href="reviews.html#reviews">Album Reviews</a>
+                               </div>
+                           </div>
+                        </div>
                     </div>
                     <div class="sm:hidden"><button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
                 </nav>
@@ -105,7 +113,6 @@
         </div>
 
         <main>
-            <!-- Banner Section -->
             <section id="banner" class="relative w-full h-48 md:h-56 lg:h-64 -mb-24">
                 <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x256/1c1917/f5f5f4?text=Legacy';">
                 <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
@@ -186,7 +193,13 @@
                         <a href="#artists" class="mobile-nav-link block">Legacy Artists</a>
                     </div>
                 </div>
-                <a href="reviews.html" class="text-lg font-bold text-stone-900 hover:text-orange-500">Reviews</a>
+                <div>
+                    <button class="mobile-nav-header w-full text-left text-lg font-bold text-stone-900 hover:text-orange-500">Reviews</button>
+                    <div class="mobile-submenu hidden pl-4 pt-2 space-y-2">
+                        <a href="reviews.html#news" class="mobile-nav-link block">Latest News</a>
+                        <a href="reviews.html#reviews" class="mobile-nav-link block">Album Reviews</a>
+                    </div>
+                </div>
             </nav>
         </div>
     </div>
