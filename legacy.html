@@ -66,6 +66,18 @@
         .dropdown-menu a:hover { background-color: var(--accent); color: var(--bg-main); transform: translateX(5px); }
         .desktop-dropdown-behaviour { display: none; }
         .group:hover .desktop-dropdown-behaviour { display: block; }
+        .genre-card {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+        }
+        .genre-card:hover {
+            transform: translateY(-4px) rotate(1deg);
+            box-shadow: 6px 6px 0px var(--accent);
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -146,6 +158,17 @@
                             <button id="legacy-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
                             <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEW SECTION: GENRE DEFINITIONS -->
+            <section id="legacy-genres" class="py-16 sm:py-20">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 class="section-header text-5xl">The New Paths: Genre Definitions</h2>
+                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Learn about the styles that emerged from the golden age.</p>
+                    <div id="genre-definitions-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+                        <!-- Genre cards will be injected here by JavaScript -->
                     </div>
                 </div>
             </section>
@@ -233,6 +256,7 @@
                 artistsData: [],
                 allLegacyAlbums: [],
                 fullAlbumDatabase: [],
+                genreData: {},
                 genreColorMap: { 'Jazz Fusion': 'var(--genre-jazz-fusion)', 'Jazz-Rock': 'var(--genre-jazz-fusion)', 'Jazz-Funk': 'var(--genre-jazz-fusion)', 'Spiritual Jazz': 'var(--genre-free-jazz)', 'Free Jazz': 'var(--genre-free-jazz)', 'Avant-Garde Jazz': 'var(--genre-avant-garde)', 'Modern Creative': 'var(--genre-avant-garde)', 'Third Stream': 'var(--genre-avant-garde)', 'ECM Style Jazz': 'var(--genre-melodic-path)', 'Smooth Jazz': 'var(--genre-melodic-path)', 'Ambient Jazz': 'var(--genre-melodic-path)', 'Afro-Jazz': 'var(--genre-post-bop)', 'Cape Jazz': 'var(--genre-post-bop)', 'Hard Bop': 'var(--genre-hard-bop)', 'Post-Bop': 'var(--genre-post-bop)', 'Neo-Bop': 'var(--genre-hard-bop)', 'default': 'var(--genre-default)' },
                 currentLegacyAlbumPage: 0,
                 legacyAlbumsPerPage: 0,
@@ -277,12 +301,13 @@
                 Promise.all([
                     fetch('legacy.json').then(res => res.json()),
                     fetch('artists.json').then(res => res.json()),
-                    fetch('database.json').then(res => res.json())
-                ]).then(([legacyData, artistProfileData, dbData]) => {
+                    fetch('database.json').then(res => res.json()),
+                    fetch('genres.json').then(res => res.json())
+                ]).then(([legacyData, artistProfileData, dbData, genreData]) => {
                     this.state.legacyData = legacyData.paths;
                     this.state.artistProfiles = artistProfileData;
+                    this.state.genreData = genreData.genres;
                     
-                    // Normalize genre data for both datasets to ensure consistency
                     const normalizeGenres = (album) => {
                         if (typeof album.genres === 'string') {
                             album.genres = album.genres.split(',').map(g => g.trim());
@@ -312,6 +337,7 @@
             initializeAppUI() {
                 this.methods.processArtists();
                 this.methods.setupLegacySection();
+                this.methods.renderGenreDefinitions();
                 this.methods.setupArtistSlider();
                 this.methods.setupModals();
                 this.methods.setupMobileMenu();
@@ -446,6 +472,35 @@
                 moveLegacyAlbumSlide(direction) {
                     this.state.currentLegacyAlbumPage += direction;
                     this.methods.updateLegacyAlbumSliderView();
+                },
+                renderGenreDefinitions() {
+                    const { genreData } = this.state;
+                    const grid = document.getElementById('genre-definitions-grid');
+                    if (!genreData || !grid) return;
+
+                    const newGenres = [];
+                    Object.entries(genreData).forEach(([genreName, genreDetails]) => {
+                        if (['Soul Jazz', 'Afro-Jazz'].includes(genreName)) {
+                            newGenres.push({ name: genreName, ...genreDetails });
+                        }
+                        if (genreDetails.subgenres) {
+                            Object.entries(genreDetails.subgenres).forEach(([subgenreName, subgenreDetails]) => {
+                                newGenres.push({ name: subgenreName, ...subgenreDetails, parent: genreName });
+                            });
+                        }
+                    });
+                    
+                    newGenres.sort((a, b) => a.name.localeCompare(b.name));
+
+                    grid.innerHTML = newGenres.map(genre => {
+                        return `
+                            <div class="genre-card">
+                                <h4 class="text-3xl font-bold mb-2">${genre.name}</h4>
+                                ${genre.parent ? `<p class="text-sm text-stone-500 mb-3">A subgenre of <strong>${genre.parent}</strong></p>` : ''}
+                                <p class="text-stone-700 text-base">${genre.profile}</p>
+                            </div>
+                        `;
+                    }).join('');
                 },
                 setupArtistSlider() {
                     const { artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
