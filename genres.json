@@ -21,7 +21,24 @@
                 "Standard forms (AABA, 12-bar blues), often with catchy, memorable heads"
             ],
             "artists": "Art Blakey, Horace Silver, Clifford Brown, Lee Morgan",
-            "landmarkAlbums": ["Moanin'", "Study in Brown", "Saxophone Colossus", "Monk's Music", "Blue Train", "Giant Steps", "Brilliant Corners", "Song For My Father", "Money Jungle", "Mosaic", "The Sidewinder", "The Blues and the Abstract Truth", "Clifford Brown and Max Roach", "Cool Struttin'", "Soul Station", "The Cooker", "Go", "The Scene Changes"]
+            "landmarkAlbums": ["Moanin'", "Study in Brown", "Saxophone Colossus", "Monk's Music", "Blue Train", "Giant Steps", "Brilliant Corners", "Song For My Father", "Money Jungle", "Mosaic", "The Sidewinder", "The Blues and the Abstract Truth", "Clifford Brown and Max Roach", "Cool Struttin'", "Soul Station", "The Cooker", "Go", "The Scene Changes"],
+            "subgenres": {
+                "Neo-Bop": {
+                    "profile": "A powerful revival of the acoustic post-bop and hard bop traditions that emerged in the 1980s, led by the 'Young Lions.' It emphasized technical virtuosity and a deep reverence for the jazz tradition.",
+                    "artists": "Wynton Marsalis, Kenny Garrett, Joshua Redman"
+                }
+            }
+        },
+        "Soul Jazz": {
+            "profile": "A groove-oriented style that grew out of hard bop, Soul Jazz incorporates strong influences from blues, gospel, and rhythm and blues. It is characterized by its funky rhythms, catchy melodies, and often features the Hammond organ.",
+            "color": "#fde68a",
+            "data": [
+                "Simple, blues and gospel-based chord progressions, often using vamps.",
+                "Funky, danceable grooves with a strong backbeat.",
+                "Simple, memorable, riff-based melodies."
+            ],
+            "artists": "Jimmy Smith, Cannonball Adderley, Stanley Turrentine, Lou Donaldson",
+            "landmarkAlbums": ["The Sermon", "Mercy, Mercy, Mercy!", "The Sidewinder", "Blues Walk"]
         },
         "Cool Jazz": {
             "profile": "A reaction to the frenetic energy of bebop, Cool Jazz emerged in the late 1940s and 50s with a more relaxed, subdued, and lyrical approach. It often featured more complex, written arrangements, softer tones, and influences from classical music, creating a sound of understated elegance.",
@@ -32,7 +49,21 @@
                 "Often employed complex, contrapuntal arrangements and non-standard forms"
             ],
              "artists": "Miles Davis (early), Dave Brubeck, Stan Getz, Gerry Mulligan",
-             "landmarkAlbums": ["Birth of the Cool", "Dexter Blows Hot and Cool", "Portrait in Jazz", "Time Out", "Somethin' Else", "Out of the Cool", "'Round About Midnight", "Everybody Digs Bill Evans"]
+             "landmarkAlbums": ["Birth of the Cool", "Dexter Blows Hot and Cool", "Portrait in Jazz", "Time Out", "Somethin' Else", "Out of the Cool", "'Round About Midnight", "Everybody Digs Bill Evans"],
+             "subgenres": {
+                "ECM Style Jazz": {
+                    "profile": "Characterized by strong, folk-like melodies and atmospheric soundscapes, this style, largely defined by the ECM record label, favors lyrical improvisation and a pristine, spacious sound quality.",
+                    "artists": "Keith Jarrett, Jan Garbarek, Pat Metheny Group"
+                },
+                "Smooth Jazz": {
+                    "profile": "A commercially-oriented evolution of jazz fusion, emphasizing polished production, melodic simplicity, and a relaxed, R&B-influenced groove.",
+                    "artists": "Grover Washington Jr., George Benson"
+                },
+                "Ambient Jazz": {
+                    "profile": "A style that prioritizes texture and mood over traditional melody or rhythm, creating atmospheric soundscapes. It often incorporates electronic elements and was pioneered in works like Miles Davis's 'He Loved Him Madly'.",
+                    "artists": "Miles Davis, Brian Eno"
+                }
+             }
         },
         "Modal Jazz": {
             "profile": "A revolutionary approach pioneered in the late 1950s, Modal Jazz liberated improvisers by focusing on static scales (or modes) for long stretches, rather than rapidly changing chord progressions. This created a more spacious, meditative, and harmonically open soundscape, famously explored on Miles Davis's 'Kind of Blue'.",
@@ -65,7 +96,17 @@
                 "Often features through-composed suites, blending written material with free improvisation."
             ],
             "artists": "Eric Dolphy, Andrew Hill, Grachan Moncur III, Sun Ra",
-            "landmarkAlbums": ["The Black Saint and the Sinner Lady", "Out to Lunch!", "The Shape of Jazz to Come", "Point of Departure", "A Love Supreme", "Karma", "We Insist! Max Roach's Freedom Now Suite", "Change of the Century"]
+            "landmarkAlbums": ["The Black Saint and the Sinner Lady", "Out to Lunch!", "The Shape of Jazz to Come", "Point of Departure", "A Love Supreme", "Karma", "We Insist! Max Roach's Freedom Now Suite", "Change of the Century"],
+            "subgenres": {
+                "Modern Creative": {
+                    "profile": "A contemporary extension of the avant-garde, 'Modern Creative' is an umbrella term for music that freely incorporates elements from all eras of jazz, classical, and world music in highly original and often composed frameworks.",
+                    "artists": "Anthony Braxton, Matana Roberts"
+                },
+                "Third Stream": {
+                    "profile": "A synthesis of jazz and classical music, 'Third Stream' seeks to blend the improvisational and rhythmic vitality of jazz with the compositional forms and instrumentation of the classical tradition.",
+                    "artists": "George Russell, Gil Evans, Anthony Davis"
+                }
+            }
         },
         "Free Jazz": {
             "profile": "The most radical departure of the era, Free Jazz, pioneered by artists like Ornette Coleman, often abandoned preset chord changes, tempos, and forms altogether. The focus shifted to collective, spontaneous improvisation, prioritizing raw energy, texture, and pure sonic expression over traditional musical rules.",
@@ -76,7 +117,13 @@
                 "Open forms, often based on a brief theme or motive, or completely improvised."
             ],
             "artists": "Ornette Coleman, Albert Ayler, Cecil Taylor, Pharoah Sanders",
-            "landmarkAlbums": ["Ascension", "Free Jazz", "Spiritual Unity", "Conquistador!", "Eternal Rhythm", "Compulsion!!!!!", "Black Woman", "The Magic of Ju-Ju"]
+            "landmarkAlbums": ["Ascension", "Free Jazz", "Spiritual Unity", "Conquistador!", "Eternal Rhythm", "Compulsion!!!!!", "Black Woman", "The Magic of Ju-Ju"],
+            "subgenres": {
+                "Spiritual Jazz": {
+                    "profile": "A quest for transcendence through sound, Spiritual Jazz blends the modal and free explorations of John Coltrane with influences from African and Eastern music and a deep sense of religious or cosmic consciousness.",
+                    "artists": "John Coltrane, Alice Coltrane, Pharoah Sanders, Kamasi Washington"
+                }
+            }
         },
         "Jazz Fusion": {
             "profile": "Emerging in the late 1960s, Jazz Fusion plugged jazz into the amplifier, incorporating the powerful rhythms of rock and funk, and the new textures of electric instruments like the Fender Rhodes piano and electric guitar. Led by Miles Davis, this movement created a dynamic, high-energy sound that would define the next decade of jazz.",
@@ -87,7 +134,34 @@
                 "Extended, often through-composed forms, long open improvisations over vamps."
             ],
             "artists": "Miles Davis, Herbie Hancock, Weather Report, Mahavishnu Orchestra",
-             "landmarkAlbums": ["In a Silent Way", "Bitches Brew"]
+             "landmarkAlbums": ["In a Silent Way", "Bitches Brew"],
+             "subgenres": {
+                "Jazz-Funk": {
+                    "profile": "A highly rhythmic and groove-oriented subgenre of fusion, Jazz-Funk emphasizes the deep pocket of funk and R&B, often featuring prominent electric bass lines and soulful horn arrangements.",
+                    "artists": "Herbie Hancock (Headhunters), The Crusaders"
+                },
+                "Jazz-Rock": {
+                    "profile": "A high-voltage fusion that combines the virtuosic improvisation of jazz with the volume, instrumentation, and raw power of rock music, often featuring complex time signatures and extended guitar solos.",
+                    "artists": "The Mahavishnu Orchestra, John Zorn (Naked City)"
+                }
+             }
+        },
+        "Afro-Jazz": {
+            "profile": "A conscious reconnection with the music's African and Caribbean roots, Afro-Jazz integrates traditional rhythms, chants, and instrumentation into a modern jazz framework. It is often politically charged and celebratory.",
+            "color": "var(--genre-post-bop)",
+            "data": [
+                "Often uses modal or simple vamps derived from traditional folk melodies.",
+                "Incorporates African and Caribbean polyrhythms, heavy percussion.",
+                "Often features call-and-response themes and chant-based structures."
+            ],
+            "artists": "Johnny Dyani, Sons of Kemet, Shabaka and the Ancestors",
+            "landmarkAlbums": ["Bap-Tizum", "Song for Biko", "Your Queen Is a Reptile"],
+            "subgenres": {
+                "Cape Jazz": {
+                    "profile": "The distinct and vibrant jazz tradition of South Africa, blending the influence of American jazz with local musical styles like marabi, creating a sound that is both joyous and deeply resilient.",
+                    "artists": "Abdullah Ibrahim (Dollar Brand), Hugh Masekela"
+                }
+            }
         }
     }
 }
