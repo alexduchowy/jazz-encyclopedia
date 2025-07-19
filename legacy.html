@@ -527,12 +527,14 @@
                     const { genreFamilyTree } = this.elements;
                     if (!genreFamilyTree || !this.state.genreData.genres) return;
 
-                    const treeStructureByDecade = {
-                        '1950s': [['Bebop', 'Cool Jazz'], ['Hard Bop', 'Modal Jazz']],
-                        '1960s': [['Post-Bop', 'Avant-Garde', 'Free Jazz', 'Soul Jazz'], ['Spiritual Jazz', 'Third Stream', 'Afro-Jazz']],
-                        '1970s': [['Jazz Fusion', 'Jazz-Rock', 'Jazz-Funk', 'Ambient Jazz', 'ECM Style Jazz']],
-                        '1980s & Beyond': [['Smooth Jazz', 'Modern Creative', 'Neo-Bop']]
-                    };
+                    const treeStructure = [
+                        ['Bebop', 'Cool Jazz'],
+                        ['Hard Bop', 'Modal Jazz'],
+                        ['Post-Bop', 'Avant-Garde', 'Free Jazz', 'Soul Jazz'],
+                        ['Spiritual Jazz', 'Third Stream', 'Afro-Jazz', 'Jazz Fusion'],
+                        ['Jazz-Rock', 'Jazz-Funk', 'Ambient Jazz', 'ECM Style Jazz'],
+                        ['Modern Creative', 'Smooth Jazz', 'Neo-Bop']
+                    ];
                     
                     const independentSubgenres = { 'Afro-Jazz': ['Cape Jazz'] };
 
@@ -547,36 +549,32 @@
                     };
 
                     let treeHtml = '';
-                    Object.entries(treeStructureByDecade).forEach(([decade, levels]) => {
-                        let columnHtml = `<div class="decade-column"><div class="decade-header">${decade}</div>`;
-                        levels.forEach(level => {
-                            columnHtml += '<div class="tree-level">';
-                            level.forEach(genreName => {
-                                const genreInfo = findGenreData(genreName);
-                                if (genreInfo) {
-                                    if (independentSubgenres[genreName]) {
-                                        let groupHtml = `<div class="genre-group">`;
-                                        groupHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
-                                        let subgenreHtml = '<div class="subgenre-container">';
-                                        independentSubgenres[genreName].forEach(subName => {
-                                            const subInfo = findGenreData(subName);
-                                            if (subInfo) {
-                                                subgenreHtml += `<div class="genre-node subgenre" data-genre-name="${subInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${subInfo.name}</h4></div>`;
-                                            }
-                                        });
-                                        subgenreHtml += '</div>';
-                                        groupHtml += subgenreHtml;
-                                        groupHtml += `</div>`;
-                                        columnHtml += groupHtml;
-                                    } else {
-                                        columnHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
-                                    }
+                    treeStructure.forEach(level => {
+                        let levelHtml = '<div class="tree-level">';
+                        level.forEach(genreName => {
+                            const genreInfo = findGenreData(genreName);
+                            if (genreInfo) {
+                                if (independentSubgenres[genreName]) {
+                                    let groupHtml = `<div class="genre-group">`;
+                                    groupHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
+                                    let subgenreHtml = '<div class="subgenre-container">';
+                                    independentSubgenres[genreName].forEach(subName => {
+                                        const subInfo = findGenreData(subName);
+                                        if (subInfo) {
+                                            subgenreHtml += `<div class="genre-node subgenre" data-genre-name="${subInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${subInfo.name}</h4></div>`;
+                                        }
+                                    });
+                                    subgenreHtml += '</div>';
+                                    groupHtml += subgenreHtml;
+                                    groupHtml += `</div>`;
+                                    levelHtml += groupHtml;
+                                } else {
+                                    levelHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
                                 }
-                            });
-                            columnHtml += '</div>';
+                            }
                         });
-                        columnHtml += '</div>';
-                        treeHtml += columnHtml;
+                        levelHtml += '</div>';
+                        treeHtml += levelHtml;
                     });
 
                     genreFamilyTree.innerHTML += treeHtml;
