@@ -492,16 +492,16 @@
         }
         #genre-evolution-chart {
             display: inline-flex;
-            gap: 2rem;
+            gap: 0; /* Let padding on columns handle spacing */
             position: relative;
-            min-height: 600px; /* Ensure enough height for nodes and connections */
+            min-height: 700px; /* Ensure enough height for nodes and connections */
         }
         .evolution-decade-column {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1rem;
-            padding: 4rem 2rem 1rem 2rem;
+            padding: 4rem 3rem; /* Increased padding for more space */
             border-left: 2px dashed var(--text-muted);
             position: relative;
         }
@@ -523,8 +523,14 @@
             flex-direction: column;
             justify-content: space-around;
             gap: 2rem;
-            min-width: 180px;
+            width: 100%;
             height: 100%;
+        }
+        .evolution-genre-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
         }
         .genre-node {
             padding: 0.75rem 1.25rem;
@@ -538,6 +544,7 @@
             flex-shrink: 0;
             z-index: 1;
             background-color: var(--bg-main);
+            min-width: 160px;
         }
         .genre-node:hover {
             transform: translateY(-4px) rotate(1deg);
@@ -1031,26 +1038,50 @@
                     if (!genreEvolutionChart) return;
 
                     const evolutionStructure = {
-                        '1950s': ['Bebop', 'Cool Jazz', 'Hard Bop', 'Modal Jazz'],
-                        '1960s': ['Post-Bop', 'Free Jazz', 'Avant-Garde', 'Third Stream', 'Spiritual Jazz', 'Soul Jazz'],
-                        '1970s': ['Jazz Fusion', 'Jazz-Rock', 'Jazz-Funk', 'Afro-Jazz', 'Cape Jazz', 'Ambient Jazz', 'ECM Style Jazz', 'Modern Creative'],
-                        '1980s & Beyond': ['Smooth Jazz', 'Neo-Bop']
+                        '1950s': [
+                            ['Bebop'],
+                            ['Cool Jazz']
+                        ],
+                        '1960s': [
+                            ['Hard Bop'],
+                            ['Modal Jazz'],
+                            ['Post-Bop'],
+                            ['Avant-Garde'],
+                            ['Soul Jazz']
+                        ],
+                        '1970s': [
+                            ['Free Jazz'],
+                            ['Third Stream'],
+                            ['Spiritual Jazz', 'Afro-Jazz'],
+                            ['Jazz Fusion', 'Jazz-Rock', 'Jazz-Funk'],
+                            ['Ambient Jazz', 'ECM Style Jazz'],
+                            ['Modern Creative']
+                        ],
+                        '1980s & Beyond': [
+                            ['Neo-Bop'],
+                            ['Cape Jazz'],
+                            ['Smooth Jazz']
+                        ]
                     };
 
                     let chartHtml = `<svg id="evolution-connections"></svg>`;
-                    Object.entries(evolutionStructure).forEach(([decade, genres]) => {
+                    Object.entries(evolutionStructure).forEach(([decade, groups]) => {
                         chartHtml += `
                             <div class="evolution-decade-column">
                                 <div class="evolution-decade-header">${decade}</div>
                                 <div class="evolution-nodes-container">
-                                    ${genres.map(genreName => {
-                                        const color = this.state.fullGenreColorMap[genreName] || 'var(--genre-default)';
-                                        return `
-                                            <div class="genre-node" data-genre-name="${genreName}" style="background-color: ${color};">
-                                                <h4>${genreName}</h4>
-                                            </div>
-                                        `;
-                                    }).join('')}
+                                    ${groups.map(group => `
+                                        <div class="evolution-genre-group">
+                                            ${group.map(genreName => {
+                                                const color = this.state.fullGenreColorMap[genreName] || 'var(--genre-default)';
+                                                return `
+                                                    <div class="genre-node" data-genre-name="${genreName}" style="background-color: ${color};">
+                                                        <h4>${genreName}</h4>
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    `).join('')}
                                 </div>
                             </div>
                         `;
@@ -1058,12 +1089,12 @@
                     
                     genreEvolutionChart.innerHTML = chartHtml;
                     
-                    // Use a timeout to ensure DOM is updated before drawing connections
                     setTimeout(() => {
                         this.methods.drawEvolutionConnections();
                         this.methods.setupEvolutionScrolling();
-                    }, 100);
+                    }, 150);
                 },
+
                 drawEvolutionConnections() {
                     const { genreEvolutionChart, evolutionConnections } = this.elements;
                     if (!evolutionConnections) return;
@@ -1088,13 +1119,13 @@
                     const svgNS = "http://www.w3.org/2000/svg";
                     evolutionConnections.innerHTML = `<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="${getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()}" /></marker></defs>`;
                     
-                    const chartRect = genreEvolutionChart.getBoundingClientRect();
                     evolutionConnections.setAttribute('width', genreEvolutionChart.scrollWidth);
                     evolutionConnections.setAttribute('height', genreEvolutionChart.scrollHeight);
                     
                     const nodePositions = new Map();
                     genreEvolutionChart.querySelectorAll('.genre-node').forEach(node => {
                         const rect = node.getBoundingClientRect();
+                        const chartRect = genreEvolutionChart.getBoundingClientRect();
                         nodePositions.set(node.dataset.genreName, {
                             left: node.offsetLeft,
                             right: node.offsetLeft + rect.width,
@@ -1112,7 +1143,7 @@
                         if (fromPoints.length === 0) return;
 
                         const avgY = fromPoints.reduce((sum, p) => sum + p.y, 0) / fromPoints.length;
-                        const mergePointX = toNode.left - 40;
+                        const mergePointX = fromPoints.length > 1 ? toNode.left - 60 : fromPoints[0].x + 30;
 
                         fromPoints.forEach(fromPoint => {
                             const path = document.createElementNS(svgNS, 'path');
@@ -1121,16 +1152,21 @@
                             path.setAttribute('stroke', 'var(--text-muted)');
                             path.setAttribute('stroke-width', '2');
                             path.setAttribute('fill', 'none');
+                            if (fromPoints.length === 1) {
+                                path.setAttribute('marker-end', 'url(#arrowhead)');
+                            }
                             evolutionConnections.appendChild(path);
                         });
 
-                        const finalPath = document.createElementNS(svgNS, 'path');
-                        finalPath.setAttribute('d', `M ${mergePointX} ${avgY} L ${toNode.left} ${toNode.y}`);
-                        finalPath.setAttribute('stroke', 'var(--text-muted)');
-                        finalPath.setAttribute('stroke-width', '2');
-                        finalPath.setAttribute('fill', 'none');
-                        finalPath.setAttribute('marker-end', 'url(#arrowhead)');
-                        evolutionConnections.appendChild(finalPath);
+                        if (fromPoints.length > 1) {
+                            const finalPath = document.createElementNS(svgNS, 'path');
+                            finalPath.setAttribute('d', `M ${mergePointX} ${avgY} L ${toNode.left} ${toNode.y}`);
+                            finalPath.setAttribute('stroke', 'var(--text-muted)');
+                            finalPath.setAttribute('stroke-width', '2');
+                            finalPath.setAttribute('fill', 'none');
+                            finalPath.setAttribute('marker-end', 'url(#arrowhead)');
+                            evolutionConnections.appendChild(finalPath);
+                        }
                     });
                 },
                 setupEvolutionScrolling() {
