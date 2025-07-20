@@ -334,16 +334,20 @@
             state: { reviews: [], allAlbums: [] },
             elements: {},
             init() {
+                this.cacheDOMElements();
+                this.fetchData();
+                this.setupMobileMenu();
+                this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+            },
+            cacheDOMElements() {
                 this.elements = {
                     loader: document.getElementById('loader'), pageContent: document.getElementById('page-content'),
                     reviewList: document.getElementById('review-list'), reviewContentArea: document.getElementById('review-content-area'),
                     mobileMenuButton: document.getElementById('mobile-menu-button'), mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
+                    mobileMenuPanel: document.getElementById('mobile-menu-panel'), // FIX: Added this line
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
                     footerCopyright: document.getElementById('footer-copyright')
                 };
-                this.fetchData();
-                this.setupMobileMenu();
-                this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
             fetchData() {
                 Promise.all([
