@@ -422,8 +422,42 @@
         .content-hidden {
             display: none;
         }
+
+        /* Banner Animation */
+        @keyframes banner-fade-in {
+            from {
+                opacity: 0;
+                transform: scale(1.1);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .banner-animation {
+            animation: banner-fade-in 2s ease-out forwards;
+        }
         
         /* --- LEGACY PAGE SPECIFIC STYLES --- */
+        #path-selector-grid.is-mobile-slider {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+            transition: transform 0.3s ease-in-out;
+        }
+        #path-selector-grid.is-mobile-slider::-webkit-scrollbar {
+            display: none;
+        }
+        #path-selector-grid.is-mobile-slider .path-selector-card {
+            width: 80vw;
+            max-width: 300px;
+            flex-shrink: 0;
+            scroll-snap-align: center;
+        }
         .path-selector-card {
             background-color: var(--bg-secondary);
             border: 2px solid var(--text-main);
@@ -627,7 +661,7 @@
 
         <main class="-mt-24">
             <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden">
-                <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Legacy';">
+                <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover banner-animation" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Legacy';">
                 <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
 
@@ -636,7 +670,20 @@
                     <h2 class="section-header text-5xl">Path Timeline</h2>
                     <p class="text-center text-lg text-stone-600 mb-4 max-w-3xl mx-auto italic">How a golden age splintered into new forms, leaving an indelible mark on music.</p>
                     <p class="text-left text-base text-stone-700 max-w-4xl mx-auto mb-12">The two decades from 1950 to 1969 were a period of unprecedented creative explosion in jazz. But the story didn't end there. The innovations of these years branched out, creating new musical languages that continue to evolve today. This section explores the primary paths that grew from the fertile ground of the post-bop era, tracing the lineage of modern jazz into the 21st century.</p>
-                    <div id="path-selector-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"></div>
+                    
+                    <!-- Path Selector Container -->
+                    <div id="path-selector-container" class="mb-12">
+                        <div id="path-selector-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <!-- Path cards injected by JS -->
+                        </div>
+                        <!-- Mobile Slider Controls -->
+                        <div id="path-slider-controls" class="hidden justify-center items-center gap-4 mt-4">
+                             <button id="path-prev-btn" class="p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                            <span id="path-page-indicator" class="font-bold text-lg text-stone-900"></span>
+                            <button id="path-next-btn" class="p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                        </div>
+                    </div>
+
                     <div id="legacy-slider-wrapper" class="hidden mt-8 p-6 rounded-lg">
                         <h3 id="legacy-slider-title" class="text-4xl mb-8 text-center transition-colors duration-300"></h3>
                         <div id="legacy-album-slider-container" class="relative">
@@ -785,6 +832,7 @@
                 totalLegacyAlbumPages: 0,
                 currentArtistPage: 0,
                 totalArtistPages: 0,
+                currentPathSlide: 0,
             },
             elements: {},
             init() {
@@ -797,6 +845,10 @@
                     loader: document.getElementById('loader'),
                     pageContent: document.getElementById('page-content'),
                     pathSelectorGrid: document.getElementById('path-selector-grid'),
+                    pathSliderControls: document.getElementById('path-slider-controls'),
+                    pathPrevBtn: document.getElementById('path-prev-btn'),
+                    pathNextBtn: document.getElementById('path-next-btn'),
+                    pathPageIndicator: document.getElementById('path-page-indicator'),
                     legacySliderWrapper: document.getElementById('legacy-slider-wrapper'),
                     legacySliderTitle: document.getElementById('legacy-slider-title'),
                     legacyAlbumTrack: document.getElementById('legacy-album-track'),
@@ -817,7 +869,6 @@
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
                     footerCopyright: document.getElementById('footer-copyright'),
-                    // NEW: Genre Evolution Elements
                     genreEvolutionChart: document.getElementById('genre-evolution-chart'),
                     evolutionContainer: document.getElementById('genre-evolution-container'),
                     evolutionPrevBtn: document.getElementById('evolution-prev-btn'),
@@ -866,7 +917,7 @@
                 this.methods.processArtists();
                 this.methods.buildGenreColorMap();
                 this.methods.setupLegacySection();
-                this.methods.renderGenreEvolutionChart(); // UPDATED
+                this.methods.renderGenreEvolutionChart();
                 this.methods.populateInstrumentFilter(this.state.artistsData);
                 this.methods.setupArtistSlider();
                 this.methods.setupModals();
@@ -952,6 +1003,7 @@
                 },
                 setupLegacySection() {
                     this.methods.renderPathSelector();
+                    this.methods.setupPathSlider();
                     this.elements.legacyPrevBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(-1));
                     this.elements.legacyNextBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(1));
                     const firstPathKey = Object.keys(this.state.legacyData)[0];
@@ -984,6 +1036,48 @@
                         });
                         pathSelectorGrid.appendChild(card);
                     });
+                },
+                setupPathSlider() {
+                    const { pathSelectorGrid, pathSliderControls, pathPrevBtn, pathNextBtn, pathPageIndicator } = this.elements;
+                    const isMobile = window.innerWidth < 768;
+
+                    pathSelectorGrid.classList.toggle('is-mobile-slider', isMobile);
+                    pathSliderControls.classList.toggle('hidden', !isMobile);
+                    pathSliderControls.classList.toggle('flex', isMobile);
+
+                    if (!isMobile) {
+                        pathSelectorGrid.style.transform = '';
+                        return;
+                    }
+
+                    const cards = pathSelectorGrid.querySelectorAll('.path-selector-card');
+                    const totalSlides = cards.length;
+
+                    const updateSlider = () => {
+                        const cardWidth = cards[0].offsetWidth;
+                        const gap = 16; // 1rem
+                        const offset = -this.state.currentPathSlide * (cardWidth + gap);
+                        pathSelectorGrid.style.transform = `translateX(${offset}px)`;
+                        pathPageIndicator.textContent = `${this.state.currentPathSlide + 1} / ${totalSlides}`;
+                        pathPrevBtn.disabled = this.state.currentPathSlide === 0;
+                        pathNextBtn.disabled = this.state.currentPathSlide === totalSlides - 1;
+                    };
+
+                    pathPrevBtn.onclick = () => {
+                        if (this.state.currentPathSlide > 0) {
+                            this.state.currentPathSlide--;
+                            updateSlider();
+                        }
+                    };
+                    pathNextBtn.onclick = () => {
+                        if (this.state.currentPathSlide < totalSlides - 1) {
+                            this.state.currentPathSlide++;
+                            updateSlider();
+                        }
+                    };
+                    
+                    this.state.currentPathSlide = 0;
+                    updateSlider();
                 },
                 renderLegacyAlbumSlider(pathKey) {
                     const { legacySliderWrapper, legacySliderTitle, legacyAlbumTrack } = this.elements;
@@ -1311,6 +1405,7 @@
                             this.state.currentArtistPage = 0;
                             this.methods.setupArtistSlider();
                             this.methods.updateLegacyAlbumSliderView();
+                            this.methods.setupPathSlider();
                             this.methods.drawEvolutionConnections();
                             this.methods.setupEvolutionScrolling();
                         }, 200);
