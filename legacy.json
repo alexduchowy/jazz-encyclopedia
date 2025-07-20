@@ -6,6 +6,25 @@
       "albums": [
         {
           "year": 1971,
+          "artist": "Freddie Hubbard",
+          "albumTitle": "Straight Life",
+          "cover": "images/straight-life.jpg",
+          "genres": [
+            "Post-Bop",
+            "Jazz Fusion"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Straight Life",
+              "recordingDate": "November 16, 1970",
+              "label": "CTI",
+              "lineup": "Freddie Hubbard (trumpet), Joe Henderson (tenor saxophone), Herbie Hancock (electric piano), George Benson (guitar), Ron Carter (bass), Jack DeJohnette (drums)",
+              "analysis": "A brilliant transitional album, 'Straight Life' captures a pivotal moment as fiery, acoustic post-bop began to fully embrace electric instrumentation. The 17-minute title track is a marathon of open-ended improvisation, built on a simple, infectious vamp. Herbie Hancock's Fender Rhodes and George Benson's guitar add a new textural dimension, while Hubbard plays with blistering intensity. It's a key document that bridges the gap between the acoustic 60s and the electric 70s."
+            }
+          ]
+        },
+        {
+          "year": 1971,
           "artist": "Miles Davis",
           "albumTitle": "A Tribute to Jack Johnson",
           "cover": "images/a-tribute-to-jack-johnson.jpg",
@@ -63,6 +82,25 @@
         },
         {
           "year": 1973,
+          "artist": "Billy Cobham",
+          "albumTitle": "Spectrum",
+          "cover": "images/spectrum.jpg",
+          "genres": [
+            "Jazz-Rock",
+            "Jazz Fusion"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Stratus",
+              "recordingDate": "May 14, 1973",
+              "label": "Atlantic",
+              "lineup": "Billy Cobham (drums), Tommy Bolin (guitar), Jan Hammer (keyboards, Moog synthesizer), Lee Sklar (electric bass)",
+              "analysis": "A landmark album that set a new standard for fusion drumming. 'Stratus' is a masterclass in funky, powerful, and complex drumming, but it's also an iconic piece of music that has been famously sampled by Massive Attack. The interplay between Cobham's explosive polyrhythms, Tommy Bolin's heavy rock guitar, and Jan Hammer's futuristic synth work created a quintessential piece of high-energy jazz-rock that influenced countless musicians across multiple genres."
+            }
+          ]
+        },
+        {
+          "year": 1973,
           "artist": "Herbie Hancock",
           "albumTitle": "Head Hunters",
           "cover": "images/head-hunters.jpg",
@@ -77,6 +115,25 @@
               "label": "Columbia",
               "lineup": "Herbie Hancock (Fender Rhodes, clavinet, ARP synthesizers), Bennie Maupin (saxophones), Paul Jackson (electric bass), Harvey Mason (drums), Bill Summers (percussion)",
               "analysis": "A landmark of jazz-funk, 'Chameleon' is built on one of the most iconic and infectious bass lines in music history. The track's deep, funky groove, created with electric bass and clavinet, was a deliberate move away from complex jazz harmony toward a more grounded, dance-floor-oriented sound. The album became one of the best-selling jazz records of all time, creating a hugely popular and influential blueprint for the jazz-funk genre."
+            }
+          ]
+        },
+        {
+          "year": 1973,
+          "artist": "Herbie Hancock",
+          "albumTitle": "Sextant",
+          "cover": "images/sextant.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Jazz Fusion"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Hornets",
+              "recordingDate": "1973",
+              "label": "Columbia",
+              "lineup": "Herbie Hancock (keyboards), Bennie Maupin (reeds), Eddie Henderson (trumpet), Julian Priester (trombone), Buster Williams (bass), Billy Hart (drums), Patrick Gleeson (synthesizer)",
+              "analysis": "The final statement from Herbie Hancock's visionary Mwandishi band, 'Sextant' is a deep dive into avant-garde electronic space-jazz. 'Hornets' is a whirlwind of abstract textures, driven by a bubbling, nervous synthesizer rhythm and featuring collective improvisation from the horns. The music is challenging, atmospheric, and sonically inventive, showcasing a much more experimental and less commercial side of fusion. It stands as a key document of the adventurous spirit of early 70s electronic jazz."
             }
           ]
         },
@@ -119,6 +176,43 @@
           ]
         },
         {
+          "year": 1976,
+          "artist": "Jaco Pastorius",
+          "albumTitle": "Jaco Pastorius",
+          "cover": "images/jaco-pastorius.jpg",
+          "genres": [
+            "Jazz Fusion",
+            "Jazz-Funk"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Donna Lee",
+              "recordingDate": "1975",
+              "label": "Epic",
+              "lineup": "Jaco Pastorius (fretless bass), Don Alias (congas)",
+              "analysis": "This debut album single-handedly revolutionized the role of the electric bass in music. The opening track, a stunning solo bass interpretation of a Charlie Parker bebop standard, was a declaration of independence for the instrument. Jaco's flawless execution of the complex melody, combined with his unique, singing fretless tone and rich harmonic substitutions, demonstrated that the bass could be a lead voice of astonishing virtuosity and lyrical power."
+            }
+          ]
+        },
+        {
+          "year": 1976,
+          "artist": "Weather Report",
+          "albumTitle": "Black Market",
+          "cover": "images/black-market.jpg",
+          "genres": [
+            "Jazz Fusion"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Black Market",
+              "recordingDate": "1975",
+              "label": "Columbia",
+              "lineup": "Joe Zawinul (keyboards), Wayne Shorter (saxophones), Alphonso Johnson (bass), Chester Thompson (drums), Narada Michael Walden (drums)",
+              "analysis": "A pivotal album for Weather Report, 'Black Market' marked a shift toward a more groove-oriented and world music-influenced sound. The title track is built on an infectious, celebratory rhythm, with Joe Zawinul's pioneering use of the ARP 2600 synthesizer creating rich, orchestral textures that sounded like nothing else at the time. The album also features the debut of bass prodigy Jaco Pastorius on two tracks, pointing the way toward the band's future commercial peak."
+            }
+          ]
+        },
+        {
           "year": 1978,
           "artist": "Sun Ra",
           "albumTitle": "Lanquidity",
@@ -134,24 +228,6 @@
               "label": "Philly Jazz",
               "lineup": "Sun Ra (organ, electric piano), John Gilmore (tenor saxophone), Marshall Allen (alto saxophone), and members of the Arkestra",
               "analysis": "This track is a unique and surprisingly accessible entry in Sun Ra's vast discography. It finds the Arkestra exploring a deeply funky, noir-ish groove that borders on instrumental R&B. The relaxed, loping rhythm, combined with Sun Ra's spacey keyboard textures and the soulful horn lines, creates a sound that is both mysterious and infectious. It's a key example of Sun Ra's ability to absorb and transform popular music forms into his own cosmic vision."
-            }
-          ]
-        },
-        {
-          "year": 1979,
-          "artist": "Sun Ra and His Arkestra",
-          "albumTitle": "Sleeping Beauty",
-          "cover": "images/sleeping-beauty.jpg",
-          "genres": [
-            "Spiritual Jazz"
-          ],
-          "pivotalTracks": [
-            {
-              "title": "Sleeping Beauty",
-              "recordingDate": "1979",
-              "label": "El Saturn",
-              "lineup": "Sun Ra (piano, organ), John Gilmore (tenor saxophone), Marshall Allen (alto saxophone), and other members of the Arkestra",
-              "analysis": "A departure from his more avant-garde or frenetic work, 'Sleeping Beauty' is one of Sun Ra's most beautiful and meditative recordings. The title track is a lush, atmospheric, and deeply melodic piece that floats on a gentle rhythm. The album showcases a more serene and exotic side of the Arkestra, creating a dreamy, ethereal soundscape that is both calming and spiritually uplifting, a key document of the more tranquil side of spiritual jazz."
             }
           ]
         },
@@ -443,6 +519,24 @@
               "label": "A&M",
               "lineup": "Don Cherry (trumpet, vocals), Frank Lowe (tenor saxophone), Ricky Cherry (piano), Stanley Clarke (bass), Billy Higgins (drums)",
               "analysis": "A landmark of world fusion and spiritual jazz, 'Brown Rice' is an infectious and hypnotic groove. Don Cherry blends a funky, electric bass-driven rhythm with influences from Indian and African music, his own pocket trumpet weaving melodic fragments throughout. The track's mantra-like vocals and eclectic instrumentation created a unique, accessible sound that was both deeply spiritual and irresistibly danceable, influencing a generation of artists inside and outside of jazz."
+            }
+          ]
+        },
+        {
+          "year": 1979,
+          "artist": "Sun Ra and His Arkestra",
+          "albumTitle": "Sleeping Beauty",
+          "cover": "images/sleeping-beauty.jpg",
+          "genres": [
+            "Spiritual Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Sleeping Beauty",
+              "recordingDate": "1979",
+              "label": "El Saturn",
+              "lineup": "Sun Ra (piano, organ), John Gilmore (tenor saxophone), Marshall Allen (alto saxophone), and other members of the Arkestra",
+              "analysis": "A departure from his more avant-garde or frenetic work, 'Sleeping Beauty' is one of Sun Ra's most beautiful and meditative recordings. The title track is a lush, atmospheric, and deeply melodic piece that floats on a gentle rhythm. The album showcases a more serene and exotic side of the Arkestra, creating a dreamy, ethereal soundscape that is both calming and spiritually uplifting, a key document of the more tranquil side of spiritual jazz."
             }
           ]
         },
