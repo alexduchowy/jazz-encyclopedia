@@ -1050,10 +1050,19 @@
                     const cards = Array.from(pathSelectorGrid.children);
                     const totalSlides = cards.length;
 
-                    const updateSlider = () => {
+                    const updateSlider = (updateContent = false) => {
                         pathPageIndicator.textContent = `${this.state.currentPathSlide + 1} / ${totalSlides}`;
                         pathPrevBtn.disabled = this.state.currentPathSlide === 0;
                         pathNextBtn.disabled = this.state.currentPathSlide === totalSlides - 1;
+
+                        if (updateContent) {
+                            const currentCard = cards[this.state.currentPathSlide];
+                            if (currentCard) {
+                                pathSelectorGrid.querySelectorAll('.path-selector-card').forEach(c => c.classList.remove('active'));
+                                currentCard.classList.add('active');
+                                this.methods.renderLegacyAlbumSlider(currentCard.dataset.pathKey);
+                            }
+                        }
                     };
 
                     pathPrevBtn.onclick = () => {
@@ -1061,7 +1070,7 @@
                             this.state.currentPathSlide--;
                             const scrollAmount = cards[this.state.currentPathSlide].offsetLeft - pathSelectorGrid.offsetLeft;
                             pathSelectorGrid.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                            updateSlider();
+                            updateSlider(true);
                         }
                     };
                     pathNextBtn.onclick = () => {
@@ -1069,7 +1078,7 @@
                             this.state.currentPathSlide++;
                             const scrollAmount = cards[this.state.currentPathSlide].offsetLeft - pathSelectorGrid.offsetLeft;
                             pathSelectorGrid.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                            updateSlider();
+                            updateSlider(true);
                         }
                     };
                     
@@ -1612,7 +1621,7 @@
                 },
             }
         };
-        document.addEventListener('DOMContentLoaded', () => LegacyApp.init());
+        document.addEventListener('DOMContentLoaded', () => ReviewsApp.init());
     </script>
 </body>
 </html>
