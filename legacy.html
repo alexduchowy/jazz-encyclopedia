@@ -447,7 +447,7 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
             scroll-snap-type: x mandatory;
-            transition: transform 0.3s ease-in-out;
+            scroll-behavior: smooth; /* Added for smooth scrolling */
         }
         #path-selector-grid.is-mobile-slider::-webkit-scrollbar {
             display: none;
@@ -1050,14 +1050,10 @@
                         return;
                     }
 
-                    const cards = pathSelectorGrid.querySelectorAll('.path-selector-card');
+                    const cards = Array.from(pathSelectorGrid.children);
                     const totalSlides = cards.length;
 
                     const updateSlider = () => {
-                        const cardWidth = cards[0].offsetWidth;
-                        const gap = 16; // 1rem
-                        const offset = -this.state.currentPathSlide * (cardWidth + gap);
-                        pathSelectorGrid.style.transform = `translateX(${offset}px)`;
                         pathPageIndicator.textContent = `${this.state.currentPathSlide + 1} / ${totalSlides}`;
                         pathPrevBtn.disabled = this.state.currentPathSlide === 0;
                         pathNextBtn.disabled = this.state.currentPathSlide === totalSlides - 1;
@@ -1066,12 +1062,16 @@
                     pathPrevBtn.onclick = () => {
                         if (this.state.currentPathSlide > 0) {
                             this.state.currentPathSlide--;
+                            const scrollAmount = cards[this.state.currentPathSlide].offsetLeft - pathSelectorGrid.offsetLeft;
+                            pathSelectorGrid.scrollTo({ left: scrollAmount, behavior: 'smooth' });
                             updateSlider();
                         }
                     };
                     pathNextBtn.onclick = () => {
                         if (this.state.currentPathSlide < totalSlides - 1) {
                             this.state.currentPathSlide++;
+                            const scrollAmount = cards[this.state.currentPathSlide].offsetLeft - pathSelectorGrid.offsetLeft;
+                            pathSelectorGrid.scrollTo({ left: scrollAmount, behavior: 'smooth' });
                             updateSlider();
                         }
                     };
@@ -1133,54 +1133,50 @@
 
                     const evolutionStructure = {
                         '1950s': [
-                            ['Bebop'],
-                            ['Cool Jazz']
+                            [['Bebop'], ['Hard Bop']],
+                            [['Cool Jazz'], ['Modal Jazz']]
                         ],
                         '1960s': [
-                            ['Hard Bop'],
-                            ['Modal Jazz'],
-                            ['Post-Bop'],
-                            ['Avant-Garde'],
-                            ['Soul Jazz']
+                            [['Post-Bop'], ['Free Jazz']],
+                            [['Avant-Garde'], ['Third Stream']],
+                            [['Spiritual Jazz'], ['Afro-Jazz']],
+                            [['Soul Jazz']]
                         ],
                         '1970s': [
-                            ['Free Jazz'],
-                            ['Third Stream'],
-                            ['Spiritual Jazz', 'Afro-Jazz'],
-                            ['Jazz Fusion', 'Jazz-Rock', 'Jazz-Funk'],
-                            ['Ambient Jazz', 'ECM Style Jazz'],
-                            ['Modern Creative']
+                             [['Jazz Fusion'], ['Jazz-Rock', 'Jazz-Funk']],
+                             [['Ambient Jazz', 'ECM Style Jazz']],
+                             [['Modern Creative']],
+                             [['Cape Jazz']]
                         ],
                         '1980s & Beyond': [
-                            ['Neo-Bop'],
-                            ['Cape Jazz'],
-                            ['Smooth Jazz']
+                            [['Smooth Jazz']],
+                            [['Neo-Bop']]
                         ]
                     };
-
+                    
                     let chartHtml = `<svg id="evolution-connections"></svg>`;
-                    Object.entries(evolutionStructure).forEach(([decade, groups]) => {
+                    Object.entries(evolutionStructure).forEach(([decade, columns]) => {
                         chartHtml += `
                             <div class="evolution-decade-column">
                                 <div class="evolution-decade-header">${decade}</div>
                                 <div class="evolution-nodes-container">
-                                    ${groups.map(group => `
+                                    ${columns.map(groups => `
                                         <div class="evolution-genre-group">
-                                            ${group.map(genreName => {
+                                            ${groups.map(group => group.map(genreName => {
                                                 const color = this.state.fullGenreColorMap[genreName] || 'var(--genre-default)';
                                                 return `
                                                     <div class="genre-node" data-genre-name="${genreName}" style="background-color: ${color};">
                                                         <h4>${genreName}</h4>
                                                     </div>
                                                 `;
-                                            }).join('')}
+                                            }).join('')).join('')}
                                         </div>
                                     `).join('')}
                                 </div>
                             </div>
                         `;
                     });
-                    
+
                     genreEvolutionChart.innerHTML = chartHtml;
                     
                     setTimeout(() => {
