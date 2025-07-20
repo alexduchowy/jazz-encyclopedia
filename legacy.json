@@ -586,6 +586,25 @@
       "albums": [
         {
           "year": 1972,
+          "artist": "Charles Mingus",
+          "albumTitle": "Let My Children Hear Music",
+          "cover": "images/let-my-children-hear-music.jpg",
+          "genres": [
+            "Third Stream",
+            "Avant-Garde Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "The Shoes of the Fisherman's Wife Are Some Jive Ass Slippers",
+              "recordingDate": "1971",
+              "label": "Columbia",
+              "lineup": "Charles Mingus (bass, composer), Snooky Young (trumpet), James Moody (tenor saxophone), Charles McPherson (alto saxophone), and a large orchestra",
+              "analysis": "Considered by Mingus to be his most important work, this album is a monumental achievement in orchestral jazz. 'The Shoes...' is a sprawling, complex composition that masterfully blends the language of Duke Ellington with European classical traditions. The piece is a key statement of 'Third Stream' music, showcasing Mingus's ambition to have jazz taken seriously as a compositional art form, using a large orchestra to create a rich and dramatic soundscape."
+            }
+          ]
+        },
+        {
+          "year": 1972,
           "artist": "Ornette Coleman",
           "albumTitle": "Science Fiction",
           "cover": "images/science-fiction.jpg",
@@ -600,6 +619,101 @@
               "label": "Columbia",
               "lineup": "Ornette Coleman (alto saxophone), Don Cherry (pocket trumpet), Charlie Haden (bass), Billy Higgins (drums), Ed Blackwell (drums), with Asha Puthli (vocals)",
               "analysis": "This track finds Ornette Coleman reuniting his classic quartet and augmenting it with a second drummer and the haunting, otherworldly vocals of Asha Puthli. The result is a surreal and beautiful soundscape that blends the melodic freedom of his early work with a new, atmospheric texture. The piece is a key document of Coleman's evolving harmolodic theory, demonstrating his continued commitment to pushing the boundaries of jazz into new and unexpected territory."
+            }
+          ]
+        },
+        {
+          "year": 1973,
+          "artist": "Dave Holland Quartet",
+          "albumTitle": "Conference of the Birds",
+          "cover": "images/conference-of-the-birds.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Post-Bop"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Conference of the Birds",
+              "recordingDate": "November 30, 1972",
+              "label": "ECM",
+              "lineup": "Dave Holland (bass), Sam Rivers (reeds, flute), Anthony Braxton (reeds, flute), Barry Altschul (drums, percussion)",
+              "analysis": "A landmark of piano-less, collective improvisation. This album brings together four masters of the avant-garde in a stunning display of interactive creativity. The title track, inspired by a Persian poem, is a flowing, melodic piece where the lead voice passes seamlessly between the players. The music is a perfect example of 'free' playing that is not chaotic, but rather spacious, lyrical, and deeply collaborative, creating a new and influential model for small-group jazz."
+            }
+          ]
+        },
+        {
+          "year": 1974,
+          "artist": "Sam Rivers",
+          "albumTitle": "Crystals",
+          "cover": "images/crystals.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Third Stream"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Exultation",
+              "recordingDate": "1974",
+              "label": "Impulse!",
+              "lineup": "Sam Rivers (soprano, tenor saxophone, flute), Joe Ferguson (soprano, alto saxophone), Paul Jeffrey (tenor saxophone) and a large orchestra",
+              "analysis": "A masterpiece of large-ensemble free jazz, 'Crystals' showcases Sam Rivers's unique ability to arrange for a massive orchestra while maintaining the spontaneous energy of the avant-garde. The music is dense, powerful, and often dissonant, using the full force of the big band to create overwhelming sonic textures. It stands as a key document of the 1970s movement to apply the language of free jazz to a large-scale, orchestral context."
+            }
+          ]
+        },
+        {
+          "year": 1978,
+          "artist": "Cecil Taylor Unit",
+          "albumTitle": "Cecil Taylor Unit",
+          "cover": "images/cecil-taylor-unit.jpg",
+          "genres": [
+            "Free Jazz",
+            "Avant-Garde Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Idut",
+              "recordingDate": "April 3, 1978",
+              "label": "New World",
+              "lineup": "Cecil Taylor (piano), Raphé Malik (trumpet), Jimmy Lyons (alto saxophone), Ramsey Ameen (violin), Sirone (bass), Ronald Shannon Jackson (drums)",
+              "analysis": "A quintessential performance from one of the most uncompromising and influential groups in free jazz. This album captures the sheer physical power and dense, complex interplay of Cecil Taylor's 'Unit Structures' concept. The music is a continuous, high-energy explosion of sound, centered around Taylor's percussive, cluster-based piano playing and the near-telepathic communication of the ensemble. It is a defining statement of the 'energy music' school of the avant-garde."
+            }
+          ]
+        },
+        {
+          "year": 1979,
+          "artist": "Arthur Blythe",
+          "albumTitle": "Lenox Avenue Breakdown",
+          "cover": "images/lenox-avenue-breakdown.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Jazz-Funk"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Lenox Avenue Breakdown",
+              "recordingDate": "1978",
+              "label": "Columbia",
+              "lineup": "Arthur Blythe (alto saxophone), James Newton (flute), James 'Blood' Ulmer (guitar), Cecil McBee (bass), Jack DeJohnette (drums), Bob Stewart (tuba)",
+              "analysis": "A brilliant fusion of avant-garde sensibilities with an irresistible, funky groove. The title track showcases Arthur Blythe's huge, soulful alto sound against a unique ensemble that replaces the piano with the tuba of Bob Stewart and the jagged, harmolodic guitar of James 'Blood' Ulmer. The result is a sound that is both intellectually challenging and viscerally danceable, a key document of the late 70s 'No Wave' and loft jazz scenes."
+            }
+          ]
+        },
+        {
+          "year": 1982,
+          "artist": "Art Ensemble of Chicago",
+          "albumTitle": "Urban Bushmen",
+          "cover": "images/urban-bushmen.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Free Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "New York is Full of Lonely People",
+              "recordingDate": "May 1980",
+              "label": "ECM",
+              "lineup": "Lester Bowie (trumpet), Roscoe Mitchell (saxophones), Joseph Jarman (saxophones), Malachi Favors Maghostut (bass), Famoudou Don Moye (drums, percussion)",
+              "analysis": "A definitive live document that captures the full theatrical and musical scope of the Art Ensemble. This performance showcases their 'Great Black Music: Ancient to the Future' philosophy, moving seamlessly from fiery, high-energy free jazz to sparse, meditative soundscapes, celebratory marches, and deep blues feeling. The group's use of a vast array of 'little instruments' (bells, whistles, percussion) adds a rich, textural layer, making this a quintessential recording of the avant-garde's most important collective."
             }
           ]
         },
@@ -661,6 +775,25 @@
           ]
         },
         {
+          "year": 1998,
+          "artist": "William Parker & The Little Huey Creative Music Orchestra",
+          "albumTitle": "The Peach Orchard",
+          "cover": "images/the-peach-orchard.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Free Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Leaf Dance",
+              "recordingDate": "February 14, 1998",
+              "label": "AUM Fidelity",
+              "lineup": "William Parker (bass, composer), Rob Brown (alto saxophone), Charles Gayle (tenor saxophone), Hamid Drake (drums), and a large orchestra",
+              "analysis": "A masterpiece of modern large-ensemble free improvisation from a cornerstone of the New York downtown scene. As a composer and conductor, William Parker shapes the collective chaos of his Little Huey Creative Music Orchestra into a powerful, cohesive statement. The music is a torrent of sound, but it's guided by a deep, spiritual, and melodic sensibility rooted in the blues. It's a key document of the continued vitality of the orchestral avant-garde."
+            }
+          ]
+        },
+        {
           "year": 1999,
           "artist": "The Necks",
           "albumTitle": "Hanging Gardens",
@@ -695,6 +828,46 @@
               "label": "Constellation",
               "lineup": "Matana Roberts (alto saxophone, vocals), and a large ensemble",
               "analysis": "A powerful and ambitious work from a leading voice of the 21st-century avant-garde. This track is part of a larger suite that explores African-American history through a blend of free jazz, folk melodies, spoken word, and field recordings. Roberts uses her alto saxophone to create sounds of raw, visceral emotion, weaving them into a complex historical narrative. It's a key example of how contemporary artists are using avant-garde techniques to engage with history and social commentary."
+            }
+          ]
+        },
+        {
+          "year": 2012,
+          "artist": "Wadada Leo Smith",
+          "albumTitle": "Ten Freedom Summers",
+          "cover": "images/ten-freedom-summers.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Third Stream",
+            "Modern Creative"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Emmett Till: Defiant, Fearless",
+              "recordingDate": "November 2011",
+              "label": "Cuneiform",
+              "lineup": "Wadada Leo Smith (trumpet) with his Golden Quartet and the Southwest Chamber Music ensemble",
+              "analysis": "A monumental, 4-disc masterwork, 'Ten Freedom Summers' is a profound meditation on the American Civil Rights Movement. A finalist for the Pulitzer Prize, the work merges Smith's Golden Quartet with a classical chamber orchestra, creating a powerful form of 'black classical music.' The music is narrative and evocative, using the language of the avant-garde to create poignant and powerful portraits of key historical figures and events, cementing Smith's status as a major American composer."
+            }
+          ]
+        },
+        {
+          "year": 2021,
+          "artist": "Floating Points, Pharoah Sanders & The London Symphony Orchestra",
+          "albumTitle": "Promises",
+          "cover": "images/promises.jpg",
+          "genres": [
+            "Ambient Jazz",
+            "Third Stream",
+            "Modern Creative"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Movement 1",
+              "recordingDate": "c. 2019-2020",
+              "label": "Luaka Bop",
+              "lineup": "Pharoah Sanders (tenor saxophone), Sam Shepherd (electronics, keyboards), The London Symphony Orchestra",
+              "analysis": "A breathtaking late-career masterpiece for the legendary Pharoah Sanders and a landmark of contemporary genre-crossing collaboration. The entire album is a single, continuous piece built around a simple, repeating 7-note motif. The magic lies in the interplay between Sanders's warm, spiritual tenor saxophone, the lush, soaring strings of the London Symphony Orchestra, and the subtle, minimalist electronics of Floating Points. It is a work of profound beauty and meditative grace, pushing the boundaries of ambient and spiritual music."
             }
           ]
         }
