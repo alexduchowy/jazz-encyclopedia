@@ -1444,7 +1444,7 @@
                     
                     const genreTags = (album.genres || []).map(g => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}" data-genre-name="${g.trim()}">${g.trim()}</span>`).join(' ');
 
-                    const lineupHtml = (pivotalTrack.lineup || 'N/A').split(/, (?![^()]*\))/).map(personnel => {
+                    const lineupHtml = (pivotalTrack.lineup || 'N/A').split(/,(?![^()]*\))/).map(personnel => {
                         const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
                         if (match && this.state.artistsData.some(a => a.name === this.methods.getCanonicalName(match[1].trim()))) {
                             const canonicalName = this.methods.getCanonicalName(match[1].trim());
@@ -1524,26 +1524,24 @@
                 },
                 openGenreModal(genreName) {
                     const { genreModal } = this.elements;
-                    let genreInfo, parentGenreName;
-                    for (const [key, value] of Object.entries(this.state.genreData.genres)) {
-                        if (key === genreName) { genreInfo = {name: key, ...value}; break; }
-                        if (value.subgenres) {
-                            for (const [subKey, subValue] of Object.entries(value.subgenres)) {
-                                if (subKey === genreName) {
-                                    genreInfo = {name: subKey, ...subValue};
-                                    parentGenreName = key;
-                                    break;
-                                }
-                                if (subValue.subgenres && subValue.subgenres[genreName]) {
-                                     genreInfo = {name: genreName, ...subValue.subgenres[genreName]};
-                                     parentGenreName = subKey;
-                                     break;
-                                }
+                    
+                    const findGenreRecursive = (name, genres, parent = null) => {
+                        for (const [key, value] of Object.entries(genres)) {
+                            if (key === name) {
+                                return { info: { name: key, ...value }, parent: parent };
+                            }
+                            if (value.subgenres) {
+                                const found = findGenreRecursive(name, value.subgenres, key);
+                                if (found) return found;
                             }
                         }
-                         if(genreInfo) break;
-                    }
-                    if (!genreInfo) return;
+                        return null;
+                    };
+
+                    const result = findGenreRecursive(genreName, this.state.genreData.genres);
+                    if (!result) return;
+
+                    const { info: genreInfo, parent: parentGenreName } = result;
 
                     const titleEl = genreModal.querySelector('#genre-modal-title');
                     titleEl.textContent = genreName;
@@ -1621,7 +1619,7 @@
                 },
             }
         };
-        document.addEventListener('DOMContentLoaded', () => ReviewsApp.init());
+        document.addEventListener('DOMContentLoaded', () => LegacyApp.init());
     </script>
 </body>
 </html>
