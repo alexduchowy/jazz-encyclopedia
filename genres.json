@@ -104,7 +104,21 @@
                 },
                 "Third Stream": {
                     "profile": "A synthesis of jazz and classical music, 'Third Stream' seeks to blend the improvisational and rhythmic vitality of jazz with the compositional forms and instrumentation of the classical tradition.",
-                    "artists": "George Russell, Gil Evans, Anthony Davis"
+                    "artists": "George Russell, Gil Evans, Anthony Davis",
+                     "subgenres": {
+                        "Chamber Jazz": {
+                            "profile": "A subgenre of Third Stream that emphasizes intricate arrangements, often for small, acoustic ensembles, drawing heavily on the counterpoint and instrumentation of classical chamber music.",
+                            "artists": "Jimmy Giuffre, Modern Jazz Quartet"
+                        },
+                        "Post-Minimalism": {
+                            "profile": "Drawing from both classical minimalism and Third Stream, this style uses repetitive patterns and steady pulses to create complex, slowly evolving harmonic and rhythmic textures.",
+                            "artists": "Steve Reich, Philip Glass"
+                        }
+                    }
+                },
+                "Experimental Big Band": {
+                    "profile": "Pushing the boundaries of the traditional big band format, this style incorporates avant-garde concepts like free improvisation, extended techniques, and unconventional orchestration.",
+                    "artists": "Sun Ra Arkestra, Jazz Composer's Orchestra"
                 }
             }
         },
@@ -138,11 +152,21 @@
              "subgenres": {
                 "Jazz-Funk": {
                     "profile": "A highly rhythmic and groove-oriented subgenre of fusion, Jazz-Funk emphasizes the deep pocket of funk and R&B, often featuring prominent electric bass lines and soulful horn arrangements.",
-                    "artists": "Herbie Hancock (Headhunters), The Crusaders"
+                    "artists": "Herbie Hancock (Headhunters), The Crusaders",
+                    "subgenres": {
+                        "Nu Jazz": {
+                            "profile": "An umbrella term for jazz from the 1990s onwards that blends jazz elements with other musical styles, such as funk, soul, electronic music, and free improvisation.",
+                            "artists": "St Germain, Bonobo, The Cinematic Orchestra"
+                        }
+                    }
                 },
                 "Jazz-Rock": {
                     "profile": "A high-voltage fusion that combines the virtuosic improvisation of jazz with the volume, instrumentation, and raw power of rock music, often featuring complex time signatures and extended guitar solos.",
                     "artists": "The Mahavishnu Orchestra, John Zorn (Naked City)"
+                },
+                "Indo Jazz": {
+                    "profile": "A fusion of jazz improvisation and harmony with the complex rhythms, scales (ragas), and instrumentation of traditional Indian classical music.",
+                    "artists": "John McLaughlin (Shakti), Joe Harriott"
                 }
              }
         },
@@ -162,6 +186,38 @@
                     "artists": "Abdullah Ibrahim (Dollar Brand), Hugh Masekela"
                 }
             }
+        },
+        "Latin Jazz": {
+            "profile": "A vibrant fusion of jazz with rhythms from Latin America, particularly Cuba and Brazil. It's characterized by its syncopated clavé patterns and extensive percussion sections.",
+            "color": "#fbbf24",
+            "data": [
+                "Jazz harmony (bebop, post-bop) over Latin rhythmic structures.",
+                "Based on clavé patterns; features congas, timbales, bongos.",
+                "Standard jazz forms adapted to Latin grooves."
+            ],
+            "artists": "Dizzy Gillespie, Machito, Tito Puente, Antônio Carlos Jobim"
+        },
+        "Big Band": {
+            "profile": "The dominant form of jazz in the Swing era, characterized by large ensembles playing arranged music. While its peak popularity was pre-1950, it continued to evolve.",
+            "color": "#d1d5db",
+            "data": ["N/A", "N/A", "N/A"],
+            "artists": "Duke Ellington, Count Basie",
+            "subgenres": {
+                "Progressive Big Band": {
+                    "profile": "An evolution of the big band format in the post-bop era, incorporating more complex harmonies, rhythms, and extended forms, often with a focus on ambitious original compositions.",
+                    "artists": "Stan Kenton, Gil Evans, Thad Jones/Mel Lewis Orchestra"
+                }
+            }
+        },
+        "Jazz Rap": {
+            "profile": "A fusion of jazz and hip hop that emerged in the late 1980s and early 90s. It incorporates jazz samples and live instrumentation with rap vocals, often featuring socially conscious or alternative lyrical themes.",
+            "color": "#f87171",
+            "data": [
+                "Based on samples of classic jazz records (hard bop, cool jazz).",
+                "Boom-bap hip hop drum patterns.",
+                "Standard rap verse-chorus structure."
+            ],
+            "artists": "A Tribe Called Quest, De La Soul, Guru (Jazzmatazz)"
         }
     }
 }
