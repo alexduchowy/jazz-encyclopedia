@@ -13,42 +13,201 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
     <style>
+        /* Define custom color properties for easy theme management */
         :root {
-            --bg-main: #f5f5f4; --bg-secondary: #e7e5e4; --text-main: #1c1917; --text-muted: #44403c; --accent: #f97316; --yellow-accent: #facc15;
+            --bg-main: #f5f5f4; /* stone-100 */
+            --bg-secondary: #e7e5e4; /* stone-200 */
+            --bg-dark: #1a1a1a; /* Custom dark gray */
+            --text-main: #1c1917; /* stone-900 */
+            --text-muted: #44403c; /* stone-700 - Darkened for readability */
+            --accent: #f97316; /* orange-500 */
+            --accent-dark: #ea580c; /* orange-600 */
+            --yellow-accent: #facc15; /* yellow-400 */
         }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); }
-        h1, h2, h3, h4, h5 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
-        .nav-link { transition: color 0.2s; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 1.1rem; }
-        .nav-link:hover, .nav-link.active { color: var(--accent); }
-        .section-header { transform: rotate(-1deg); display: inline-block; background-color: var(--accent); color: var(--bg-main); padding: 0.25rem 1rem; margin-bottom: 1rem; }
-        .title-rotate { transform: rotate(-1.5deg); }
-        .nav-bar-hidden-behaviour { display: flex; transform: rotate(-1.5deg); }
-        @media (max-width: 640px) { .nav-bar-hidden-behaviour { display: none; } }
-        #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
-        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
-        .dropdown-menu { background-color: var(--bg-main); border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); margin-top: 1.75rem; transform: rotate(1.5deg); transform-origin: top left; }
-        .dropdown-menu a { font-family: 'Inter', sans-serif; letter-spacing: normal; font-size: 1rem; display: block; padding: 0.5rem 1.5rem; color: var(--text-muted); transition: all 0.2s; }
-        .dropdown-menu a:hover { background-color: var(--accent); color: var(--bg-main); transform: translateX(5px); }
-        .desktop-dropdown-behaviour { display: none; }
-        .group:hover .desktop-dropdown-behaviour { display: block; }
-        #loader { position: fixed; inset: 0; background-color: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 100; }
-        .loader-spinner { border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .content-hidden { display: none; }
-        .news-card { background-color: var(--bg-secondary); border: 2px solid var(--text-main); border-radius: 0.25rem; box-shadow: 4px 4px 0px var(--text-main); transition: all 0.2s ease; }
-        .news-card:hover { transform: translateY(-4px) rotate(-1deg); box-shadow: 6px 6px 0px var(--accent); }
-        .review-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-        @media (min-width: 768px) { .review-grid { grid-template-columns: 250px 1fr; gap: 3rem; } }
-        #review-list { max-height: 80vh; overflow-y: auto; padding-right: 1rem; }
-        .review-list-item { padding: 1rem; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s ease; }
-        .review-list-item:hover { background-color: var(--bg-secondary); border-left-color: var(--accent-dark); }
-        .review-list-item.active { background-color: var(--bg-secondary); border-left-color: var(--accent); }
-        #review-content-area { font-family: 'Lora', serif; }
-        .review-header { border-bottom: 2px solid var(--bg-secondary); padding-bottom: 1rem; margin-bottom: 1.5rem; }
-        .review-title { font-family: 'Lora', serif; font-weight: 600; }
-        .review-body p { margin-bottom: 1.5rem; line-height: 1.7; }
-        .review-rating .star-filled { color: var(--yellow-accent); }
-        .review-rating .star-empty { color: var(--bg-secondary); }
+
+        /* Base body styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+        }
+        
+        /* Heading font styling with new Bebas Neue font */
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Navigation link transition effects */
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+
+        /* Section header styling */
+        .section-header {
+              transform: rotate(-1deg);
+              display: inline-block;
+              background-color: var(--accent);
+              color: var(--bg-main);
+              padding: 0.25rem 1rem;
+              margin-bottom: 1rem;
+        }
+        .title-rotate {
+            transform: rotate(-1.5deg);
+        }
+        .nav-bar-hidden-behaviour {
+            display: flex;
+            transform: rotate(-1.5deg);
+        }
+        @media (max-width: 640px) {
+            .nav-bar-hidden-behaviour {
+                display: none;
+            }
+        }
+        #mobile-menu-panel {
+            transition: transform 0.3s ease-in-out;
+        }
+        #mobile-menu-overlay.hidden #mobile-menu-panel {
+            transform: translateX(100%);
+        }
+        .dropdown-menu {
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
+            margin-top: 1.75rem;
+            transform: rotate(1.5deg);
+            transform-origin: top left;
+        }
+        .dropdown-menu a {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: normal;
+            font-size: 1rem;
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .dropdown-menu a:hover {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            transform: translateX(5px);
+        }
+        .desktop-dropdown-behaviour {
+            display: none;
+        }
+        .group:hover .desktop-dropdown-behaviour {
+            display: block;
+        }
+        #loader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .content-hidden {
+            display: none;
+        }
+
+        /* Banner Animation */
+        @keyframes banner-fade-in {
+            from {
+                opacity: 0;
+                transform: scale(1.1);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .banner-animation {
+            animation: banner-fade-in 2s ease-out forwards;
+        }
+
+        /* Reviews Page Specific Styles */
+        .news-card {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            transition: all 0.2s ease;
+        }
+        .news-card:hover {
+            transform: translateY(-4px) rotate(-1deg);
+            box-shadow: 6px 6px 0px var(--accent);
+        }
+        .review-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .review-grid {
+                grid-template-columns: 250px 1fr;
+                gap: 3rem;
+            }
+        }
+        #review-list {
+            max-height: 80vh;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+        .review-list-item {
+            padding: 1rem;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .review-list-item:hover {
+            background-color: var(--bg-secondary);
+            border-left-color: var(--accent-dark);
+        }
+        .review-list-item.active {
+            background-color: var(--bg-secondary);
+            border-left-color: var(--accent);
+        }
+        #review-content-area {
+            font-family: 'Lora', serif;
+        }
+        .review-header {
+            border-bottom: 2px solid var(--bg-secondary);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .review-title {
+            font-family: 'Lora', serif;
+            font-weight: 600;
+        }
+        .review-body p {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+        .review-rating .star-filled {
+            color: var(--yellow-accent);
+        }
+        .review-rating .star-empty {
+            color: var(--bg-secondary);
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -86,8 +245,8 @@
         </div>
 
         <main class="-mt-24">
-            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80">
-                <img src="images/bannerblog.png" alt="Blog Banner" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Blog';">
+            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden">
+                <img src="images/bannerblog.png" alt="Blog Banner" class="w-full h-full object-cover banner-animation" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Blog';">
                 <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
 
@@ -147,7 +306,14 @@
         </main>
 
         <footer class="bg-stone-900 text-stone-200 py-8">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center"><p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p><div class="mt-6 border-t border-stone-700 pt-6"><p id="footer-copyright" class="text-xs text-stone-400"></p></div></div>
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
+                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
+                <div class="mt-6 border-t border-stone-700 pt-6">
+                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
+                    <p class="text-xs text-stone-500 mt-2">Disclaimer: All music and images are the property of their respective copyright holders. This is a non-profit project for educational purposes only.</p>
+                </div>
+            </div>
         </footer>
     </div>
 
