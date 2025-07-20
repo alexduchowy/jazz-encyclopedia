@@ -100,7 +100,7 @@
             border-bottom: 2px solid var(--bg-secondary);
             text-align: left;
             vertical-align: top;
-            transition: background-color: 0.1s ease-in-out;
+            transition: background-color 0.1s ease-in-out;
         }
         .matrix-table thead th {
             background-color: var(--text-main);
@@ -1533,6 +1533,8 @@
                 buildGenreMatrix() {
                     const { matrixContainer } = this.elements;
                     const { styleMatrix } = this.state;
+                    const excludedGenres = ["Jazz Rap", "Big Band", "Latin Jazz"];
+
                     if (styleMatrix.features && styleMatrix.genres) {
                         const thead = document.createElement('thead');
                         const headerRow = document.createElement('tr');
@@ -1545,18 +1547,56 @@
                         matrixContainer.appendChild(thead);
 
                         const tbody = document.createElement('tbody');
-                        Object.keys(styleMatrix.genres).forEach(genreName => {
-                            const genreData = styleMatrix.genres[genreName];
-                            const row = document.createElement('tr');
-                            row.innerHTML = `<th style="background-color:${genreData.color};">
-                                <button class="genre-header-button" data-genre-name="${genreName}">
-                                    <span>${genreName}</span>
-                                    <svg class="info-icon w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
-                                </button>
-                            </th>` + genreData.data.map(dp => `<td>${dp}</td>`).join('');
-                            tbody.appendChild(row);
+                        Object.keys(styleMatrix.genres)
+                            .filter(genreName => !excludedGenres.includes(genreName))
+                            .forEach(genreName => {
+                                const genreData = styleMatrix.genres[genreName];
+                                const row = document.createElement('tr');
+                                row.innerHTML = `<th style="background-color:${genreData.color};">
+                                    <button class="genre-header-button" data-genre-name="${genreName}">
+                                        <span>${genreName}</span>
+                                        <svg class="info-icon w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                </th>` + genreData.data.map(dp => `<td>${dp}</td>`).join('');
+                                tbody.appendChild(row);
                         });
                         matrixContainer.appendChild(tbody);
+
+                        // Add hover effects
+                        matrixContainer.addEventListener('mouseover', e => {
+                            if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
+                                const cell = e.target;
+                                const row = cell.parentElement;
+                                const colIndex = Array.from(row.children).indexOf(cell);
+                                
+                                // Row hover
+                                row.classList.add('row-hover');
+                                const rowGenreName = row.querySelector('th button')?.dataset.genreName;
+                                if (rowGenreName) {
+                                    const genreData = this.state.styleMatrix.genres[rowGenreName];
+                                    if (genreData) {
+                                        const color = genreData.color.startsWith('var') ? getComputedStyle(document.documentElement).getPropertyValue(genreData.color.match(/--[a-zA-Z-]+/)[0]).trim() : genreData.color;
+                                        row.style.setProperty('--highlight-color', `${color}33`); // Add alpha transparency
+                                    }
+                                }
+
+                                // Column hover
+                                Array.from(matrixContainer.querySelectorAll('tr')).forEach(r => {
+                                    r.children[colIndex].classList.add('col-hover');
+                                });
+                            }
+                        });
+
+                        matrixContainer.addEventListener('mouseout', e => {
+                             if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
+                                Array.from(matrixContainer.querySelectorAll('.row-hover, .col-hover')).forEach(el => {
+                                    el.classList.remove('row-hover', 'col-hover');
+                                    el.style.removeProperty('--highlight-color');
+                                });
+                            }
+                        });
+
+
                     } else {
                         matrixContainer.parentElement.innerHTML = '<p class="text-center p-4 text-stone-500">No genre data available.</p>';
                     }
