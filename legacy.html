@@ -1150,26 +1150,33 @@
                     const { genreEvolutionChart } = this.elements;
                     if (!genreEvolutionChart) return;
 
-                    const evolutionStructure = {
+                     const evolutionStructure = {
                         '1950s': [
                             [['Bebop'], ['Hard Bop']],
-                            [['Cool Jazz'], ['Modal Jazz']]
+                            [['Cool Jazz'], ['Modal Jazz']],
+                            [['Latin Jazz']]
                         ],
                         '1960s': [
                             [['Post-Bop'], ['Free Jazz']],
-                            [['Avant-Garde'], ['Third Stream']],
+                            [['Avant-Garde'], ['Third Stream', 'Experimental Big Band']],
                             [['Spiritual Jazz'], ['Afro-Jazz']],
-                            [['Soul Jazz']]
+                            [['Soul Jazz']],
+                            [['Progressive Big Band']]
                         ],
                         '1970s': [
-                             [['Jazz Fusion'], ['Jazz-Rock', 'Jazz-Funk']],
+                             [['Jazz Fusion'], ['Jazz-Rock', 'Jazz-Funk', 'Indo Jazz']],
                              [['Ambient Jazz', 'ECM Style Jazz']],
                              [['Modern Creative']],
-                             [['Cape Jazz']]
+                             [['Cape Jazz']],
+                             [['Chamber Jazz', 'Post-Minimalism']]
                         ],
                         '1980s & Beyond': [
                             [['Smooth Jazz']],
                             [['Neo-Bop']]
+                        ],
+                        '1990s & Beyond': [
+                            [['Nu Jazz']],
+                            [['Jazz Rap']]
                         ]
                     };
                     
@@ -1213,16 +1220,21 @@
                         { from: 'Cool Jazz', to: 'Modal Jazz' },
                         { from: 'Post-Bop', to: 'Free Jazz' },
                         { from: 'Avant-Garde', to: 'Third Stream' },
+                        { from: 'Avant-Garde', to: 'Experimental Big Band' },
                         { from: ['Avant-Garde', 'Free Jazz'], to: 'Spiritual Jazz' },
                         { from: 'Jazz Fusion', to: 'Jazz-Rock' },
                         { from: 'Jazz Fusion', to: 'Jazz-Funk' },
+                        { from: 'Jazz Fusion', to: 'Indo Jazz' },
                         { from: 'Spiritual Jazz', to: 'Afro-Jazz' },
                         { from: 'Afro-Jazz', to: 'Cape Jazz' },
                         { from: 'Modal Jazz', to: 'Ambient Jazz' },
                         { from: 'Modal Jazz', to: 'ECM Style Jazz' },
                         { from: ['Third Stream', 'Free Jazz'], to: 'Modern Creative' },
                         { from: 'ECM Style Jazz', to: 'Smooth Jazz' },
-                        { from: 'Hard Bop', to: 'Neo-Bop' }
+                        { from: 'Hard Bop', to: 'Neo-Bop' },
+                        { from: 'Third Stream', to: 'Chamber Jazz' },
+                        { from: 'Third Stream', to: 'Post-Minimalism' },
+                        { from: 'Jazz-Funk', to: 'Nu Jazz' }
                     ];
 
                     const svgNS = "http://www.w3.org/2000/svg";
@@ -1528,7 +1540,21 @@
                     let genreInfo, parentGenreName;
                     for (const [key, value] of Object.entries(this.state.genreData.genres)) {
                         if (key === genreName) { genreInfo = {name: key, ...value}; break; }
-                        if (value.subgenres && value.subgenres[genreName]) { genreInfo = {name: genreName, ...value.subgenres[genreName]}; parentGenreName = key; break; }
+                        if (value.subgenres) {
+                            for (const [subKey, subValue] of Object.entries(value.subgenres)) {
+                                if (subKey === genreName) {
+                                    genreInfo = {name: subKey, ...subValue};
+                                    parentGenreName = key;
+                                    break;
+                                }
+                                if (subValue.subgenres && subValue.subgenres[genreName]) {
+                                     genreInfo = {name: genreName, ...subValue.subgenres[genreName]};
+                                     parentGenreName = subKey;
+                                     break;
+                                }
+                            }
+                        }
+                         if(genreInfo) break;
                     }
                     if (!genreInfo) return;
 
