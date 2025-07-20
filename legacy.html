@@ -471,45 +471,44 @@
             transition: transform 0.5s ease-in-out;
         }
         
-        /* Family Tree Styles */
-        #family-tree-wrapper {
+        /* NEW: Genre Evolution Styles */
+        #genre-evolution-wrapper {
             position: relative;
+            padding-bottom: 2rem;
         }
-        #family-tree-container {
+        #genre-evolution-container {
+            display: flex;
             overflow-x: auto;
-            padding: 2rem 0;
+            padding: 2rem 1rem;
             -ms-overflow-style: none;
             scrollbar-width: none;
             cursor: grab;
         }
-        #family-tree-container:active {
+        #genre-evolution-container:active {
             cursor: grabbing;
         }
-        #family-tree-container::-webkit-scrollbar {
+        #genre-evolution-container::-webkit-scrollbar {
             display: none;
         }
-        .family-tree {
+        #genre-evolution-chart {
             display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 40px;
-            padding: 2rem;
-            min-height: 600px;
+            gap: 2rem;
             position: relative;
+            min-height: 600px; /* Ensure enough height for nodes and connections */
         }
-        .decade-column {
+        .evolution-decade-column {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 60px;
+            gap: 1rem;
             padding: 4rem 2rem 1rem 2rem;
             border-left: 2px dashed var(--text-muted);
             position: relative;
         }
-        .family-tree > .decade-column:first-child {
+        #genre-evolution-chart > .evolution-decade-column:first-child {
             border-left: none;
         }
-        .decade-header {
+        .evolution-decade-header {
             position: absolute;
             top: 0;
             left: 50%;
@@ -519,16 +518,16 @@
             color: var(--text-muted);
             white-space: nowrap;
         }
-        .tree-level {
+        .evolution-nodes-container {
             display: flex;
-            flex-direction: row;
-            justify-content: center;
-            gap: 20px;
-            position: relative;
-            align-items: center;
+            flex-direction: column;
+            justify-content: space-around;
+            gap: 2rem;
+            min-width: 180px;
+            height: 100%;
         }
         .genre-node {
-            padding: 1rem 1.5rem;
+            padding: 0.75rem 1.25rem;
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
             box-shadow: 4px 4px 0px var(--text-main);
@@ -536,7 +535,6 @@
             transition: all 0.2s ease;
             position: relative;
             text-align: center;
-            min-width: 160px;
             flex-shrink: 0;
             z-index: 1;
             background-color: var(--bg-main);
@@ -546,19 +544,10 @@
             box-shadow: 6px 6px 0px var(--accent);
         }
         .genre-node h4 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
+            line-height: 1.2;
         }
-        .subgenre-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
-            position: relative;
-            padding-left: 20px;
-            margin-left: 10px;
-            border-left: 2px solid var(--text-muted);
-        }
-        #tree-connections {
+        #evolution-connections {
             position: absolute;
             top: 0;
             left: 0;
@@ -566,6 +555,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
+            overflow: visible;
         }
     </style>
 </head>
@@ -655,14 +645,15 @@
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Genre Evolution</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the evolution of jazz styles. Click on a genre to learn more.</p>
-                    <div id="family-tree-wrapper">
-                        <div id="family-tree-container">
-                            <div id="genre-family-tree" class="family-tree">
-                                <svg id="tree-connections"></svg>
+                    <div id="genre-evolution-wrapper">
+                        <div id="genre-evolution-container">
+                            <div id="genre-evolution-chart">
+                                <!-- Chart will be rendered by JS -->
+                                <svg id="evolution-connections"></svg>
                             </div>
                         </div>
-                        <button id="tree-prev-btn" class="absolute top-1/2 -translate-y-1/2 left-2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-                        <button id="tree-next-btn" class="absolute top-1/2 -translate-y-1/2 right-2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                        <button id="evolution-prev-btn" class="absolute top-1/2 -translate-y-1/2 left-2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                        <button id="evolution-next-btn" class="absolute top-1/2 -translate-y-1/2 right-2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
                     </div>
                 </div>
             </section>
@@ -819,11 +810,12 @@
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
                     footerCopyright: document.getElementById('footer-copyright'),
-                    genreFamilyTree: document.getElementById('genre-family-tree'),
-                    treeContainer: document.getElementById('family-tree-container'),
-                    treePrevBtn: document.getElementById('tree-prev-btn'),
-                    treeNextBtn: document.getElementById('tree-next-btn'),
-                    treeConnections: document.getElementById('tree-connections'),
+                    // NEW: Genre Evolution Elements
+                    genreEvolutionChart: document.getElementById('genre-evolution-chart'),
+                    evolutionContainer: document.getElementById('genre-evolution-container'),
+                    evolutionPrevBtn: document.getElementById('evolution-prev-btn'),
+                    evolutionNextBtn: document.getElementById('evolution-next-btn'),
+                    evolutionConnections: document.getElementById('evolution-connections'),
                 };
             },
             fetchData() {
@@ -867,7 +859,7 @@
                 this.methods.processArtists();
                 this.methods.buildGenreColorMap();
                 this.methods.setupLegacySection();
-                this.methods.renderGenreFamilyTree();
+                this.methods.renderGenreEvolutionChart(); // UPDATED
                 this.methods.populateInstrumentFilter(this.state.artistsData);
                 this.methods.setupArtistSlider();
                 this.methods.setupModals();
@@ -1034,106 +1026,81 @@
                     this.state.currentLegacyAlbumPage += direction;
                     this.methods.updateLegacyAlbumSliderView();
                 },
-                renderGenreFamilyTree() {
-                    const { genreFamilyTree } = this.elements;
-                    if (!genreFamilyTree || !this.state.genreData.genres) return;
+                renderGenreEvolutionChart() {
+                    const { genreEvolutionChart } = this.elements;
+                    if (!genreEvolutionChart) return;
 
-                    const treeStructure = [
-                        ['Bebop', 'Cool Jazz'],
-                        ['Hard Bop', 'Modal Jazz'],
-                        ['Post-Bop', 'Avant-Garde', 'Free Jazz', 'Soul Jazz'],
-                        ['Spiritual Jazz', 'Third Stream', 'Afro-Jazz', 'Jazz Fusion'],
-                        ['Jazz-Rock', 'Jazz-Funk', 'Ambient Jazz', 'ECM Style Jazz'],
-                        ['Modern Creative', 'Smooth Jazz', 'Neo-Bop']
-                    ];
-                    
-                    const independentSubgenres = { 'Afro-Jazz': ['Cape Jazz'] };
-
-                    const findGenreData = (name) => {
-                        for (const [genreKey, genreValue] of Object.entries(this.state.genreData.genres)) {
-                            if (genreKey === name) return { name, ...genreValue };
-                            if (genreValue.subgenres && genreValue.subgenres[name]) {
-                                return { name, ...genreValue.subgenres[name], parent: genreKey, parentColor: genreValue.color };
-                            }
-                        }
-                        return null;
+                    const evolutionStructure = {
+                        '1950s': ['Bebop', 'Cool Jazz', 'Hard Bop', 'Modal Jazz'],
+                        '1960s': ['Post-Bop', 'Free Jazz', 'Avant-Garde', 'Third Stream', 'Spiritual Jazz', 'Soul Jazz'],
+                        '1970s': ['Jazz Fusion', 'Jazz-Rock', 'Jazz-Funk', 'Afro-Jazz', 'Cape Jazz', 'Ambient Jazz', 'ECM Style Jazz', 'Modern Creative'],
+                        '1980s & Beyond': ['Smooth Jazz', 'Neo-Bop']
                     };
 
-                    let treeHtml = '';
-                    treeStructure.forEach((level, decadeIndex) => {
-                        let columnHtml = `<div class="decade-column"><div class="decade-header">${1950 + decadeIndex * 10}s</div>`;
-                        let levelHtml = '<div class="tree-level">';
-                        level.forEach(genreName => {
-                            const genreInfo = findGenreData(genreName);
-                            if (genreInfo) {
-                                if (independentSubgenres[genreName]) {
-                                    let groupHtml = `<div class="genre-group">`;
-                                    groupHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
-                                    let subgenreHtml = '<div class="subgenre-container">';
-                                    independentSubgenres[genreName].forEach(subName => {
-                                        const subInfo = findGenreData(subName);
-                                        if (subInfo) {
-                                            subgenreHtml += `<div class="genre-node subgenre" data-genre-name="${subInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${subInfo.name}</h4></div>`;
-                                        }
-                                    });
-                                    subgenreHtml += '</div>';
-                                    groupHtml += subgenreHtml;
-                                    groupHtml += `</div>`;
-                                    levelHtml += groupHtml;
-                                } else {
-                                    levelHtml += `<div class="genre-node" data-genre-name="${genreInfo.name}" style="background-color: ${genreInfo.color || 'var(--bg-secondary)'};"><h4>${genreInfo.name}</h4></div>`;
-                                }
-                            }
-                        });
-                        levelHtml += '</div>';
-                        columnHtml += levelHtml;
-                        columnHtml += '</div>';
-                        treeHtml += columnHtml;
+                    let chartHtml = `<svg id="evolution-connections"></svg>`;
+                    Object.entries(evolutionStructure).forEach(([decade, genres]) => {
+                        chartHtml += `
+                            <div class="evolution-decade-column">
+                                <div class="evolution-decade-header">${decade}</div>
+                                <div class="evolution-nodes-container">
+                                    ${genres.map(genreName => {
+                                        const color = this.state.fullGenreColorMap[genreName] || 'var(--genre-default)';
+                                        return `
+                                            <div class="genre-node" data-genre-name="${genreName}" style="background-color: ${color};">
+                                                <h4>${genreName}</h4>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        `;
                     });
-
-                    genreFamilyTree.innerHTML = treeHtml;
+                    
+                    genreEvolutionChart.innerHTML = chartHtml;
+                    
+                    // Use a timeout to ensure DOM is updated before drawing connections
                     setTimeout(() => {
-                        this.methods.drawTreeConnections();
-                        this.methods.setupTreeScrolling();
+                        this.methods.drawEvolutionConnections();
+                        this.methods.setupEvolutionScrolling();
                     }, 100);
                 },
-                drawTreeConnections() {
-                    const { genreFamilyTree, treeConnections } = this.elements;
-                    if (!treeConnections) return;
-                    treeConnections.innerHTML = '';
-
-                    const nodes = genreFamilyTree.querySelectorAll('.genre-node');
-                    const nodePositions = new Map();
-                    nodes.forEach(node => {
-                        const name = node.dataset.genreName;
-                        nodePositions.set(name, {
-                            x: node.offsetLeft + node.offsetWidth / 2,
-                            y: node.offsetTop + node.offsetHeight / 2,
-                            left: node.offsetLeft,
-                            right: node.offsetLeft + node.offsetWidth,
-                            top: node.offsetTop,
-                            bottom: node.offsetTop + node.offsetHeight
-                        });
-                    });
+                drawEvolutionConnections() {
+                    const { genreEvolutionChart, evolutionConnections } = this.elements;
+                    if (!evolutionConnections) return;
 
                     const connections = [
-                        { from: 'Bebop', to: 'Hard Bop' }, { from: 'Hard Bop', to: 'Post-Bop' }, { from: 'Post-Bop', to: 'Neo-Bop' },
-                        { from: 'Cool Jazz', to: 'Modal Jazz' }, { from: 'Modal Jazz', to: 'Jazz Fusion' },
-                        { from: ['Avant-Garde', 'Post-Bop'], to: 'Free Jazz' }, { from: ['Avant-Garde', 'Post-Bop'], to: 'Spiritual Jazz' },
-                        { from: ['Cool Jazz', 'Hard Bop'], to: 'Soul Jazz' },
-                        { from: 'Avant-Garde', to: 'Third Stream' }, { from: 'Third Stream', to: 'Modern Creative' },
-                        { from: 'Jazz Fusion', to: 'Jazz-Rock' }, { from: 'Jazz Fusion', to: 'Jazz-Funk' },
-                        { from: ['Jazz Fusion', 'Modal Jazz'], to: 'Ambient Jazz' }, { from: ['Jazz Fusion', 'Modal Jazz'], to: 'ECM Style Jazz' },
-                        { from: 'ECM Style Jazz', to: 'Smooth Jazz' }
+                        { from: 'Bebop', to: 'Hard Bop' },
+                        { from: 'Cool Jazz', to: 'Modal Jazz' },
+                        { from: 'Post-Bop', to: 'Free Jazz' },
+                        { from: 'Avant-Garde', to: 'Third Stream' },
+                        { from: ['Avant-Garde', 'Free Jazz'], to: 'Spiritual Jazz' },
+                        { from: 'Jazz Fusion', to: 'Jazz-Rock' },
+                        { from: 'Jazz Fusion', to: 'Jazz-Funk' },
+                        { from: 'Spiritual Jazz', to: 'Afro-Jazz' },
+                        { from: 'Afro-Jazz', to: 'Cape Jazz' },
+                        { from: 'Modal Jazz', to: 'Ambient Jazz' },
+                        { from: 'Modal Jazz', to: 'ECM Style Jazz' },
+                        { from: ['Third Stream', 'Free Jazz'], to: 'Modern Creative' },
+                        { from: 'ECM Style Jazz', to: 'Smooth Jazz' },
+                        { from: 'Hard Bop', to: 'Neo-Bop' }
                     ];
 
                     const svgNS = "http://www.w3.org/2000/svg";
-                    const defs = document.createElementNS(svgNS, 'defs');
-                    defs.innerHTML = `<marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="${getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()}" /></marker>`;
-                    treeConnections.appendChild(defs);
+                    evolutionConnections.innerHTML = `<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="${getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()}" /></marker></defs>`;
                     
-                    treeConnections.setAttribute('width', genreFamilyTree.scrollWidth);
-                    treeConnections.setAttribute('height', genreFamilyTree.scrollHeight);
+                    const chartRect = genreEvolutionChart.getBoundingClientRect();
+                    evolutionConnections.setAttribute('width', genreEvolutionChart.scrollWidth);
+                    evolutionConnections.setAttribute('height', genreEvolutionChart.scrollHeight);
+                    
+                    const nodePositions = new Map();
+                    genreEvolutionChart.querySelectorAll('.genre-node').forEach(node => {
+                        const rect = node.getBoundingClientRect();
+                        nodePositions.set(node.dataset.genreName, {
+                            left: node.offsetLeft,
+                            right: node.offsetLeft + rect.width,
+                            y: node.offsetTop + rect.height / 2,
+                        });
+                    });
 
                     connections.forEach(conn => {
                         const toNode = nodePositions.get(conn.to);
@@ -1141,39 +1108,48 @@
 
                         const fromNodes = Array.isArray(conn.from) ? conn.from.map(f => nodePositions.get(f)) : [nodePositions.get(conn.from)];
                         
-                        fromNodes.forEach(fromNode => {
-                            if (!fromNode) return;
+                        const fromPoints = fromNodes.filter(Boolean).map(node => ({ x: node.right, y: node.y }));
+                        if (fromPoints.length === 0) return;
+
+                        const avgY = fromPoints.reduce((sum, p) => sum + p.y, 0) / fromPoints.length;
+                        const mergePointX = toNode.left - 40;
+
+                        fromPoints.forEach(fromPoint => {
                             const path = document.createElementNS(svgNS, 'path');
-                            const midX = fromNode.right + (toNode.left - fromNode.right) / 2;
-                            const d = `M ${fromNode.right} ${fromNode.y} C ${midX} ${fromNode.y}, ${midX} ${toNode.y}, ${toNode.left} ${toNode.y}`;
+                            const d = `M ${fromPoint.x} ${fromPoint.y} C ${fromPoint.x + 40} ${fromPoint.y}, ${mergePointX - 40} ${avgY}, ${mergePointX} ${avgY}`;
                             path.setAttribute('d', d);
-                            path.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim());
+                            path.setAttribute('stroke', 'var(--text-muted)');
                             path.setAttribute('stroke-width', '2');
                             path.setAttribute('fill', 'none');
-                            path.setAttribute('marker-end', 'url(#arrowhead)');
-                            treeConnections.appendChild(path);
+                            evolutionConnections.appendChild(path);
                         });
+
+                        const finalPath = document.createElementNS(svgNS, 'path');
+                        finalPath.setAttribute('d', `M ${mergePointX} ${avgY} L ${toNode.left} ${toNode.y}`);
+                        finalPath.setAttribute('stroke', 'var(--text-muted)');
+                        finalPath.setAttribute('stroke-width', '2');
+                        finalPath.setAttribute('fill', 'none');
+                        finalPath.setAttribute('marker-end', 'url(#arrowhead)');
+                        evolutionConnections.appendChild(finalPath);
                     });
                 },
-                setupTreeScrolling() {
-                    const { treeContainer, treePrevBtn, treeNextBtn } = this.elements;
+                setupEvolutionScrolling() {
+                    const { evolutionContainer, evolutionPrevBtn, evolutionNextBtn } = this.elements;
                     const checkScroll = () => {
-                        if(!treeContainer) return;
-                        if (treeContainer.scrollWidth > treeContainer.clientWidth) {
-                            treePrevBtn.classList.remove('hidden');
-                            treeNextBtn.classList.remove('hidden');
-                            treePrevBtn.disabled = treeContainer.scrollLeft <= 0;
-                            treeNextBtn.disabled = treeContainer.scrollLeft >= treeContainer.scrollWidth - treeContainer.clientWidth - 1;
-                        } else {
-                            treePrevBtn.classList.add('hidden');
-                            treeNextBtn.classList.add('hidden');
+                        if (!evolutionContainer) return;
+                        const hasOverflow = evolutionContainer.scrollWidth > evolutionContainer.clientWidth;
+                        evolutionPrevBtn.classList.toggle('hidden', !hasOverflow);
+                        evolutionNextBtn.classList.toggle('hidden', !hasOverflow);
+                        if (hasOverflow) {
+                            evolutionPrevBtn.disabled = evolutionContainer.scrollLeft <= 0;
+                            evolutionNextBtn.disabled = evolutionContainer.scrollLeft >= evolutionContainer.scrollWidth - evolutionContainer.clientWidth - 1;
                         }
                     };
-                    treeContainer.addEventListener('scroll', checkScroll);
+                    evolutionContainer.addEventListener('scroll', checkScroll);
                     window.addEventListener('resize', checkScroll);
-                    treePrevBtn.addEventListener('click', () => treeContainer.scrollBy({ left: -300, behavior: 'smooth' }));
-                    treeNextBtn.addEventListener('click', () => treeContainer.scrollBy({ left: 300, behavior: 'smooth' }));
-                    this.methods.setupDraggable(treeContainer);
+                    evolutionPrevBtn.addEventListener('click', () => evolutionContainer.scrollBy({ left: -300, behavior: 'smooth' }));
+                    evolutionNextBtn.addEventListener('click', () => evolutionContainer.scrollBy({ left: 300, behavior: 'smooth' }));
+                    this.methods.setupDraggable(evolutionContainer);
                     setTimeout(checkScroll, 100);
                 },
                 setupArtistSlider() {
@@ -1195,7 +1171,7 @@
                     artistPaginationControls.classList.toggle('hidden', this.state.totalArtistPages <= 1);
 
                     if (filteredArtists.length === 0) {
-                        artistSliderTrack.innerHTML = `<div class="col-span-full text-center p-8 text-stone-500">No artists found for this instrument.</div>`;
+                        artistSliderTrack.innerHTML = `<div class="artist-slider-page" style="display: block; text-align: center; padding: 2rem;">No artists found for this instrument.</div>`;
                         this.methods.goToArtistPage(0);
                         return;
                     }
@@ -1235,14 +1211,12 @@
                     
                     document.addEventListener('keydown', e => { 
                         if (e.key === "Escape") { 
-                            this.methods.closeAlbumModal(); 
-                            this.methods.closeArtistModal();
-                            this.methods.closeGenreModal();
+                            this.methods.closeAllModals();
                         } 
                     });
                     
                     document.body.addEventListener('click', (e) => {
-                        const target = e.target.closest('.clickable-link');
+                        const target = e.target.closest('.clickable-link, .genre-node');
                         if (!target) return;
 
                         const { artistName, albumTitle, artist, genreName } = target.dataset;
@@ -1288,12 +1262,6 @@
                             if (artist) this.methods.openArtistModal(artist);
                         }
                     });
-                    this.elements.genreFamilyTree.addEventListener('click', (e) => {
-                        const card = e.target.closest('.genre-node');
-                        if (card && card.dataset.genreName) {
-                            this.methods.openGenreModal(card.dataset.genreName);
-                        }
-                    });
                     this.elements.artistPrevBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage - 1));
                     this.elements.artistNextBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage + 1));
                     this.elements.instrumentFilter.addEventListener('change', () => {
@@ -1307,8 +1275,8 @@
                             this.state.currentArtistPage = 0;
                             this.methods.setupArtistSlider();
                             this.methods.updateLegacyAlbumSliderView();
-                            this.methods.drawTreeConnections();
-                            this.methods.setupTreeScrolling();
+                            this.methods.drawEvolutionConnections();
+                            this.methods.setupEvolutionScrolling();
                         }, 200);
                     });
                     this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
