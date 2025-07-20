@@ -6,6 +6,25 @@
       "albums": [
         {
           "year": 1971,
+          "artist": "Miles Davis",
+          "albumTitle": "A Tribute to Jack Johnson",
+          "cover": "images/a-tribute-to-jack-johnson.jpg",
+          "genres": [
+            "Jazz-Rock",
+            "Jazz Fusion"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Right Off",
+              "recordingDate": "April 7, 1970",
+              "label": "Columbia",
+              "lineup": "Miles Davis (trumpet), Steve Grossman (soprano saxophone), John McLaughlin (guitar), Herbie Hancock (organ), Michael Henderson (electric bass), Billy Cobham (drums)",
+              "analysis": "Arguably Miles Davis's most direct and rocking album, 'Right Off' is built on a driving, heavy groove established by John McLaughlin's blues-rock guitar riff and the powerhouse drumming of Billy Cobham. The track is a visceral and aggressive piece of jazz-rock, capturing the raw energy of a jam session. It stands as one of the hardest-rocking documents in the entire jazz fusion canon, showcasing a leaner, more guitar-centric sound compared to the dense funk of other Davis albums from the era."
+            }
+          ]
+        },
+        {
+          "year": 1971,
           "artist": "The Mahavishnu Orchestra",
           "albumTitle": "The Inner Mounting Flame",
           "cover": "images/the-inner-mounting-flame.jpg",
@@ -20,6 +39,25 @@
               "label": "Columbia",
               "lineup": "John McLaughlin (guitar), Rick Laird (bass), Billy Cobham (drums), Jan Hammer (keyboards), Jerry Goodman (violin)",
               "analysis": "This opening track is a cataclysmic explosion that announced the arrival of jazz-rock as a major force. It combines the volume and visceral power of rock with the virtuosic speed of bebop and the complex time signatures of Indian classical music. Billy Cobham's explosive drumming and John McLaughlin's lightning-fast guitar created a sound of unprecedented intensity, setting a new standard for musical virtuosity and defining the jazz fusion movement."
+            }
+          ]
+        },
+        {
+          "year": 1972,
+          "artist": "Miles Davis",
+          "albumTitle": "On the Corner",
+          "cover": "images/on-the-corner.jpg",
+          "genres": [
+            "Jazz-Funk",
+            "Jazz Fusion"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "On the Corner",
+              "recordingDate": "June 1, 1972",
+              "label": "Columbia",
+              "lineup": "Miles Davis (trumpet), Dave Liebman (soprano saxophone), John McLaughlin (guitar), Chick Corea (electric piano), Herbie Hancock (electric piano), Michael Henderson (bass), Jack DeJohnette (drums), Collin Walcott (sitar)",
+              "analysis": "A radical and controversial album, 'On the Corner' saw Miles Davis dive deep into dense, static funk grooves inspired by Sly and the Family Stone and the compositional theories of Karlheinz Stockhausen. The music is built on layers of polyrhythmic percussion and repetitive bass lines, with individual instruments woven into a collective, churning texture. Initially reviled by critics, the album's revolutionary sound would prove massively influential on the development of funk, post-punk, hip hop, and electronic music."
             }
           ]
         },
@@ -62,6 +100,25 @@
           ]
         },
         {
+          "year": 1974,
+          "artist": "Miles Davis",
+          "albumTitle": "Dark Magus",
+          "cover": "images/dark-magus.jpg",
+          "genres": [
+            "Jazz-Rock",
+            "Jazz-Funk"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Moja",
+              "recordingDate": "March 30, 1974",
+              "label": "CBS/Sony",
+              "lineup": "Miles Davis (trumpet), Dave Liebman (soprano, tenor saxophone), Azar Lawrence (tenor saxophone), Pete Cosey (guitar), Reggie Lucas (guitar), Michael Henderson (bass), Al Foster (drums), Mtume (percussion)",
+              "analysis": "Recorded live at Carnegie Hall, 'Dark Magus' captures the raw, uncut, and ferocious energy of Miles Davis's final electric band. The music is a dense and often abrasive onslaught of sound, characterized by deep funk rhythms, dual-guitar attacks, and Miles's searing trumpet filtered through a wah-wah pedal. Pete Cosey's distorted and revolutionary guitar work, in particular, pushed the music into uncharted territory, creating a sound that bordered on noise rock and was a precursor to many future experimental genres."
+            }
+          ]
+        },
+        {
           "year": 1978,
           "artist": "Sun Ra",
           "albumTitle": "Lanquidity",
@@ -95,7 +152,26 @@
               "recordingDate": "1989",
               "label": "Nonesuch",
               "lineup": "John Zorn (alto saxophone), Bill Frisell (guitar), Wayne Horvitz (keyboards), Fred Frith (bass), Joey Baron (drums)",
-              "analysis": "A masterpiece of postmodern deconstruction. John Zorn's Naked City takes the iconic Neal Hefti television theme and violently smashes it together with fragments of hardcore punk, free jazz, and cinematic sound effects. The track's ability to shift genres in a split second became the band's signature, creating a thrilling and often humorous musical collage. It was a key text for the downtown New York scene, breaking down all stylistic barriers."
+              "analysis": "A masterpiece of postmodern deconstruction. John Zorn's Naked City takes the iconic Neal Hefti television theme and violently smashes it together with fragments of hardcore punk, free jazz, and cinematic sound effects. The track's ability to shift genres in a split second became the band's signature, creating a thrilling and often humorous musical collage. It was a key text for the downtown New York scene, a pathbreaking album that broke down all stylistic barriers."
+            }
+          ]
+        },
+        {
+          "year": 2005,
+          "artist": "Electric Masada",
+          "albumTitle": "At the Mountains of Madness",
+          "cover": "images/at-the-mountains-of-madness.jpg",
+          "genres": [
+            "Avant-Garde Jazz",
+            "Jazz-Rock"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Hath-Arob",
+              "recordingDate": "February 28, 2004",
+              "label": "Tzadik",
+              "lineup": "John Zorn (alto saxophone), Marc Ribot (guitar), Jamie Saft (keyboards), Ikue Mori (electronics), Trevor Dunn (bass), Cyro Baptista (percussion), Kenny Wollesen (drums), Joey Baron (drums)",
+              "analysis": "A monumental live document, this album unleashes John Zorn's Masada songbook with the force of a rock band and the unbound chaos of free improvisation. 'Hath-Arob' transforms a traditional-sounding Klezmer melody into a blistering onslaught of sound, driven by dual drummers and the searing guitar of Marc Ribot. The music represents a thrilling, high-voltage extension of the fusion concept, blending Jewish musical traditions with the raw power of noise rock and the avant-garde, creating a sound that is both sacred and profane."
             }
           ]
         },
@@ -594,7 +670,7 @@
               "recordingDate": "2019",
               "label": "Impulse!",
               "lineup": "Shabaka Hutchings (tenor saxophone), Mthunzi Mvubu (alto saxophone), Siyabonga Mthembu (vocals), Ariel Zamonsky (bass), Gontse Makhene (percussion), Tumi Mogorosi (drums)",
-              "analysis": "A powerful and politically urgent album from the leader of the London jazz scene. This track is a perfect example of the group's sound, which blends the spiritual fire of 1960s free jazz with the rhythms of South Africa and the Caribbean. Siyabonga Mthembu's vocals act as a kind of griot, telling a story of apocalypse and rebirth, while Shabaka's saxophone delivers a searing, cathartic sermon. It's a key document of modern spiritual and Afro-centric jazz."
+              "analysis": "A powerful and politically urgent album from the leader of the London jazz scene. This track is a perfect example of the group's sound, which blends the spiritual fire of 1960s free jazz with the rhythms of South Africa and the Caribbean. Siyabonga Mthembu's vocals act as a kind of griot, a storyteller, telling a story of apocalypse and rebirth, while Shabaka's saxophone delivers a searing, cathartic sermon. It's a key document of modern spiritual and Afro-centric jazz."
             }
           ]
         }
