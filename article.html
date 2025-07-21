@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article - Controlled Freedom</title>
+    <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
+    
+    <!-- External Libraries & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #f5f5f4; /* stone-100 */
+            --bg-secondary: #e7e5e4; /* stone-200 */
+            --bg-dark: #1a1a1a; /* Custom dark gray */
+            --text-main: #1c1917; /* stone-900 */
+            --text-muted: #44403c; /* stone-700 */
+            --accent: #f97316; /* orange-500 */
+            --accent-dark: #ea580c; /* orange-600 */
+            --yellow-accent: #facc15; /* yellow-400 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+        }
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+        .title-rotate {
+            transform: rotate(-1.5deg);
+        }
+        .nav-bar-hidden-behaviour {
+            display: flex;
+            transform: rotate(-1.5deg);
+        }
+        @media (max-width: 640px) {
+            .nav-bar-hidden-behaviour {
+                display: none;
+            }
+        }
+        #loader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .content-hidden {
+            display: none;
+        }
+        .article-body {
+            font-family: 'Lora', serif;
+            line-height: 1.8;
+            font-size: 1.125rem; /* 18px */
+        }
+        .article-body p, .article-body ul, .article-body ol {
+            margin-bottom: 1.5rem;
+        }
+        .article-body h2 {
+            font-family: 'Lora', serif;
+            font-weight: 600;
+            font-size: 1.875rem; /* 30px */
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .star-filled {
+            color: var(--yellow-accent);
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-900">
+
+    <div id="loader"><div class="loader-spinner"></div></div>
+
+    <div id="page-content" class="content-hidden">
+        <!-- Sticky Header -->
+        <div class="sticky top-0 z-50 h-24">
+            <header class="relative container mx-auto h-full">
+                <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
+                <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10"><a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a></div>
+                    <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
+                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                        <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                        <a href="/reviews" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                    </div>
+                    <div class="sm:hidden"><button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
+                </nav>
+            </header>
+        </div>
+
+        <main class="py-16 sm:py-20">
+            <div id="article-container" class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+                <!-- Article content will be injected here -->
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-stone-900 text-stone-200 py-8 mt-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
+                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
+                <div class="mt-6 border-t border-stone-700 pt-6">
+                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const ArticleApp = {
+            elements: {},
+            init() {
+                this.cacheDOMElements();
+                this.fetchArticle();
+                this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+            },
+            cacheDOMElements() {
+                this.elements = {
+                    loader: document.getElementById('loader'),
+                    pageContent: document.getElementById('page-content'),
+                    articleContainer: document.getElementById('article-container'),
+                    footerCopyright: document.getElementById('footer-copyright'),
+                };
+            },
+            async fetchArticle() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const articleId = urlParams.get('id');
+
+                if (!articleId) {
+                    this.renderError("No article ID provided.");
+                    this.showPage();
+                    return;
+                }
+
+                // IMPORTANT: Replace this with your actual Firebase config object
+                const firebaseConfig = {
+                  apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
+                  authDomain: "controlled-freedom.firebaseapp.com",
+                  projectId: "controlled-freedom",
+                  storageBucket: "controlled-freedom.appspot.com",
+                  messagingSenderId: "992659637634",
+                  appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
+                  measurementId: "G-ETT07JGVSB"
+                };
+
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                const auth = getAuth(app);
+
+                try {
+                    await signInAnonymously(auth);
+                    const docRef = doc(db, "articles", articleId);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        this.renderArticle(docSnap.data());
+                    } else {
+                        this.renderError("Article not found.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching article:", error);
+                    this.renderError("Could not load the article. Please try again later.");
+                } finally {
+                    this.showPage();
+                }
+            },
+            renderArticle(article) {
+                document.title = `${article.title} - Controlled Freedom`;
+                let headerContent = '';
+                
+                // Check if it's a review to add specific details
+                if (article.type === 'review') {
+                    let starsHtml = '';
+                    for (let i = 1; i <= 5; i++) {
+                        starsHtml += `<svg class="w-6 h-6 ${i <= article.rating ? 'star-filled' : 'text-stone-300'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
+                    }
+                    headerContent = `
+                        <p class="text-2xl text-stone-600">${article.artist}</p>
+                        <h1 class="text-5xl md:text-7xl font-bold text-stone-900 my-2">${article.albumTitle}</h1>
+                        <p class="text-xl text-stone-700 italic">"${article.title}"</p>
+                        <div class="flex items-center justify-center gap-2 mt-4">
+                            <div class="flex" title="Rating: ${article.rating}/5">${starsHtml}</div>
+                            <span class="text-lg text-stone-500 font-semibold">(${article.rating}/5)</span>
+                        </div>
+                    `;
+                } else { // It's a news article
+                    headerContent = `
+                        <h1 class="text-5xl md:text-7xl font-bold text-stone-900 my-2">${article.title}</h1>
+                    `;
+                }
+
+                this.elements.articleContainer.innerHTML = `
+                    <header class="text-center border-b-2 border-stone-200 pb-8 mb-8">
+                        ${headerContent}
+                        <div class="text-center mt-6 text-sm text-stone-500">
+                            <span>By ${article.author || 'Staff'}</span> | <span>Published on ${article.publishDate}</span>
+                        </div>
+                    </header>
+                    <article class="article-body mx-auto max-w-2xl">
+                        ${article.body}
+                    </article>
+                `;
+            },
+            renderError(message) {
+                this.elements.articleContainer.innerHTML = `
+                    <div class="text-center py-16">
+                        <h1 class="text-4xl font-bold text-red-600">Error</h1>
+                        <p class="text-lg text-stone-600 mt-4">${message}</p>
+                        <a href="/reviews" class="inline-block mt-8 px-6 py-3 bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 transition-colors">
+                            &larr; Back to Blog
+                        </a>
+                    </div>
+                `;
+            },
+            showPage() {
+                this.elements.loader.style.display = 'none';
+                this.elements.pageContent.classList.remove('content-hidden');
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => ArticleApp.init());
+    </script>
+</body>
+</html>
