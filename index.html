@@ -43,33 +43,7 @@
         }
         .nav-bar-behaviour { display: none; }
         @media (min-width: 768px) { .nav-bar-behaviour { display: flex; } }
-        .dropdown-menu {
-            position: absolute;
-            display: none;
-            z-index: 50;
-            min-width: 160px;
-            background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-            box-shadow: 4px 4px 0px var(--text-main);
-            border-radius: 0.25rem;
-            margin-top: 0.5rem;
-            transform-origin: top left;
-        }
-        .group:hover .dropdown-menu { display: block; }
-        .dropdown-menu a {
-            font-family: 'Inter', sans-serif;
-            letter-spacing: normal;
-            font-size: 1rem;
-            display: block;
-            padding: 0.5rem 1.5rem;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
-        .dropdown-menu a:hover {
-            background-color: var(--accent);
-            color: var(--bg-main);
-            transform: translateX(5px);
-        }
+        
         #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
         
@@ -134,18 +108,10 @@
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                     <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
                     <div class="nav-bar-behaviour items-center space-x-8">
-                        <div class="relative group">
-                            <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                        </div>
-                        <div class="relative group">
-                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                        </div>
-                       <div class="relative group">
-                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                        </div>
-                         <div class="relative group">
-                            <a href="/reviews" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                        </div>
+                        <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
+                        <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                        <a href="/reviews" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
                     </div>
                      <!-- Hamburger Menu Button -->
                     <div class="md:hidden">
@@ -259,6 +225,12 @@
             elements: {},
             init() {
                 this.cacheDOMElements();
+                // FIX: Bind methods to the app context
+                for (const key in this.methods) {
+                    if (typeof this.methods[key] === 'function') {
+                        this.methods[key] = this.methods[key].bind(this);
+                    }
+                }
                 this.fetchData();
                 this.methods.setupMobileMenu();
                 this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
@@ -326,10 +298,11 @@
                         return;
                     }
                     
-                    // Use date to get a "daily" random album
                     const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
                     const randomIndex = dayOfYear % this.state.allAlbums.length;
                     const album = this.state.allAlbums[randomIndex];
+
+                    const analysisText = album.pivotalTracks ? (album.pivotalTracks[0].analysis || '') : (album.analysis || '');
 
                     this.elements.recommendationContent.innerHTML = `
                         <div class="flex flex-col sm:flex-row gap-6 items-center">
@@ -338,7 +311,7 @@
                                 <p class="text-stone-600">${album.artist}</p>
                                 <h3 class="text-4xl font-bold text-stone-900 my-1">${album.albumTitle}</h3>
                                 <p class="text-stone-600 font-bold">(${album.year})</p>
-                                <p class="mt-2 text-stone-700">${album.pivotalTracks ? album.pivotalTracks[0].analysis.substring(0, 150) : album.analysis.substring(0,150)}...</p>
+                                <p class="mt-2 text-stone-700">${analysisText.substring(0, 150)}...</p>
                             </div>
                         </div>
                     `;
@@ -352,7 +325,7 @@
                     this.state.timelineAlbums.forEach(album => {
                         if (album.pivotalTracks) {
                             album.pivotalTracks.forEach(track => {
-                                const dateParts = track.recordingDate.replace(/,/g, '').split(' ');
+                                const dateParts = (track.recordingDate || '').replace(/,/g, '').split(' ');
                                 if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
                                     matchingTracks.push({ ...track, parentAlbum: album });
                                 }
@@ -403,7 +376,7 @@
                         } else {
                             articlesSnapshot.forEach(doc => {
                                 const article = { id: doc.id, ...doc.data() };
-                                const slug = this.slugify(article.title || article.albumTitle);
+                                const slug = this.methods.slugify(article.title || article.albumTitle);
                                 articlesHtml += `
                                     <a href="/reviews#blog-content" class="block p-3 rounded-md hover:bg-stone-300 transition-colors">
                                         <p class="text-sm font-bold text-orange-600">${article.type === 'review' ? 'Album Review' : 'News'}</p>
