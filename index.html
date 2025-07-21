@@ -27,6 +27,7 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
         h1, h2, h3, h4, h5 {
             font-family: 'Bebas Neue', sans-serif;
@@ -178,8 +179,28 @@
         }
 
         /* Main Background Pattern */
-        main {
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e7e5e4' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        .main-content-wrapper {
+            background-color: #1c1917;
+            background-image:
+                linear-gradient(var(--accent) 2px, transparent 2px),
+                linear-gradient(90deg, var(--accent) 2px, transparent 2px),
+                linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+            background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+            padding: 2rem 0;
+        }
+
+        /* Modal Styles */
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .modal.opacity-0 .modal-content {
+              opacity: 0;
+              transform: scale(0.95) translateY(10px);
         }
     </style>
 </head>
@@ -222,68 +243,70 @@
             </div>
         </section>
 
-        <main class="py-8 sm:py-12">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
-                    <!-- Main Column -->
-                    <div class="lg:col-span-2 space-y-8">
-                        <!-- Recommendation of the Day -->
-                        <div id="recommendation-card" class="dashboard-card">
-                            <h2 class="dashboard-card-header">Recommendation of the Day</h2>
-                            <div id="recommendation-content" class="dashboard-card-content">
-                                <!-- Content injected by JS -->
-                            </div>
-                        </div>
-
-                        <!-- Navigation Cards -->
-                        <div class="grid sm:grid-cols-2 gap-8">
-                            <a href="/timeline" class="dashboard-card group block text-decoration-none">
-                                <h2 class="dashboard-card-header">Jazz Evolution Timeline</h2>
-                                <div class="dashboard-card-content">
-                                    <p>Explore the explosive growth of modern jazz from 1950-1969 through an interactive, chronological timeline of landmark albums.</p>
-                                    <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore Timeline &rarr;</span>
+        <main>
+            <div class="main-content-wrapper">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        
+                        <!-- Main Column -->
+                        <div class="lg:col-span-2 space-y-8">
+                            <!-- Recommendation of the Day -->
+                            <div id="recommendation-card" class="dashboard-card">
+                                <h2 class="dashboard-card-header">Recommendation of the Day</h2>
+                                <div id="recommendation-content" class="dashboard-card-content">
+                                    <!-- Content injected by JS -->
                                 </div>
-                            </a>
-                            <a href="/legacy" class="dashboard-card group block text-decoration-none">
-                                <h2 class="dashboard-card-header">The Legacy of Jazz</h2>
-                                <div class="dashboard-card-content">
-                                    <p>Discover how the sounds of the post-bop era evolved and splintered into new forms, from Jazz Fusion to the Avant-Garde and beyond.</p>
-                                     <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore The Legacy &rarr;</span>
+                            </div>
+
+                            <!-- Navigation Cards -->
+                            <div class="grid sm:grid-cols-2 gap-8">
+                                <a href="/timeline" class="dashboard-card group block text-decoration-none">
+                                    <h2 class="dashboard-card-header">Jazz Evolution Timeline</h2>
+                                    <div class="dashboard-card-content">
+                                        <p>Explore the explosive growth of modern jazz from 1950-1969 through an interactive, chronological timeline of landmark albums.</p>
+                                        <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore Timeline &rarr;</span>
+                                    </div>
+                                </a>
+                                <a href="/legacy" class="dashboard-card group block text-decoration-none">
+                                    <h2 class="dashboard-card-header">The Legacy of Jazz</h2>
+                                    <div class="dashboard-card-content">
+                                        <p>Discover how the sounds of the post-bop era evolved and splintered into new forms, from Jazz Fusion to the Avant-Garde and beyond.</p>
+                                         <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore The Legacy &rarr;</span>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <!-- Latest Review Card -->
+                            <div class="dashboard-card">
+                                <h2 class="dashboard-card-header">Latest From The Archive</h2>
+                                <div id="latest-review" class="dashboard-card-content">
+                                    <!-- Content injected by JS -->
                                 </div>
-                            </a>
+                            </div>
                         </div>
 
-                        <!-- Latest Review Card -->
-                        <div class="dashboard-card">
-                            <h2 class="dashboard-card-header">Latest From The Archive</h2>
-                            <div id="latest-review" class="dashboard-card-content">
-                                <!-- Content injected by JS -->
+                        <!-- Sidebar Column -->
+                        <div class="space-y-8">
+                            <!-- On This Day -->
+                            <div id="on-this-day-card" class="dashboard-card">
+                                 <h2 class="dashboard-card-header">On This Day In Jazz...</h2>
+                                 <div id="on-this-day" class="dashboard-card-content">
+                                    <!-- Content injected by JS -->
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Sidebar Column -->
-                    <div class="space-y-8">
-                        <!-- On This Day -->
-                        <div id="on-this-day-card" class="dashboard-card">
-                             <h2 class="dashboard-card-header">On This Day In Jazz...</h2>
-                             <div id="on-this-day" class="dashboard-card-content">
-                                <!-- Content injected by JS -->
+                            <!-- Latest News -->
+                            <div class="dashboard-card">
+                                <h2 class="dashboard-card-header">News</h2>
+                                <div id="latest-news" class="dashboard-card-content space-y-4">
+                                    <!-- Articles injected by JS -->
+                                </div>
                             </div>
-                        </div>
-                        <!-- Latest News -->
-                        <div class="dashboard-card">
-                            <h2 class="dashboard-card-header">News</h2>
-                            <div id="latest-news" class="dashboard-card-content space-y-4">
-                                <!-- Articles injected by JS -->
-                            </div>
-                        </div>
-                        <!-- Spotify Playlist -->
-                        <div class="dashboard-card">
-                            <h2 class="dashboard-card-header">Curated Playlist</h2>
-                            <div class="dashboard-card-content">
-                                <iframe style="border-radius:8px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            <!-- Spotify Playlist -->
+                            <div class="dashboard-card">
+                                <h2 class="dashboard-card-header">Curated Playlist</h2>
+                                <div class="dashboard-card-content">
+                                    <iframe style="border-radius:8px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -317,6 +340,17 @@
         </div>
     </div>
 
+    <!-- Recommendation Modal -->
+    <div id="recommendation-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+                 <h3 id="recommendation-modal-title" class="text-4xl text-orange-500"></h3>
+                 <button id="close-recommendation-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+             </div>
+             <div id="recommendation-modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -326,11 +360,11 @@
             state: {
                 allAlbums: [],
                 timelineAlbums: [],
+                recommendedAlbum: null,
             },
             elements: {},
             init() {
                 this.cacheDOMElements();
-                // FIX: Bind methods to the app context
                 for (const key in this.methods) {
                     if (typeof this.methods[key] === 'function') {
                         this.methods[key] = this.methods[key].bind(this);
@@ -338,6 +372,7 @@
                 }
                 this.fetchData();
                 this.methods.setupMobileMenu();
+                this.methods.setupRecommendationModal();
                 this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
             cacheDOMElements() {
@@ -353,6 +388,10 @@
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                    recommendationModal: document.getElementById('recommendation-modal'),
+                    recommendationModalTitle: document.getElementById('recommendation-modal-title'),
+                    recommendationModalBody: document.getElementById('recommendation-modal-body'),
+                    closeRecommendationModalBtn: document.getElementById('close-recommendation-modal'),
                 };
             },
             async fetchData() {
@@ -407,20 +446,73 @@
                     const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
                     const randomIndex = dayOfYear % this.state.allAlbums.length;
                     const album = this.state.allAlbums[randomIndex];
+                    this.state.recommendedAlbum = album;
 
-                    const analysisText = album.pivotalTracks ? (album.pivotalTracks[0].analysis || '') : (album.analysis || '');
+                    const analysisText = album.pivotalTracks && album.pivotalTracks.length > 0 ? (album.pivotalTracks[0].analysis || '') : (album.analysis || '');
 
                     this.elements.recommendationContent.innerHTML = `
                         <div class="flex flex-col sm:flex-row gap-6 items-center">
                             <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
-                            <div>
+                            <div class="flex-grow">
                                 <p class="text-stone-600">${album.artist}</p>
                                 <h3 class="text-3xl sm:text-4xl font-bold text-stone-900 my-1">${album.albumTitle}</h3>
                                 <p class="text-stone-600 font-bold">(${album.year})</p>
-                                <p class="mt-2 text-stone-700 text-sm sm:text-base">${analysisText.substring(0, 150)}...</p>
+                                <p class="mt-2 text-stone-700 text-sm sm:text-base">${analysisText.substring(0, 120)}...</p>
+                                <button id="open-recommendation-modal-btn" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Learn More &rarr;</button>
                             </div>
                         </div>
                     `;
+                },
+                setupRecommendationModal() {
+                    const { recommendationModal, closeRecommendationModalBtn, recommendationContent } = this.elements;
+                    
+                    recommendationContent.addEventListener('click', (e) => {
+                        if (e.target.id === 'open-recommendation-modal-btn') {
+                            this.methods.openRecommendationModal();
+                        }
+                    });
+
+                    closeRecommendationModalBtn.addEventListener('click', this.methods.closeRecommendationModal);
+                    recommendationModal.addEventListener('click', (e) => {
+                        if (e.target.id === 'recommendation-modal') {
+                            this.methods.closeRecommendationModal();
+                        }
+                    });
+                },
+                openRecommendationModal() {
+                    const { recommendationModal, recommendationModalTitle, recommendationModalBody } = this.elements;
+                    const album = this.state.recommendedAlbum;
+                    if (!album) return;
+
+                    recommendationModalTitle.textContent = album.albumTitle;
+                    
+                    const analysisHtml = album.pivotalTracks && album.pivotalTracks.length > 0
+                        ? album.pivotalTracks.map(track => `
+                            <div class="mt-4">
+                                <h4 class="text-xl font-bold text-stone-800">Track: ${track.title}</h4>
+                                <p class="text-stone-700 mt-1">${track.analysis}</p>
+                            </div>
+                        `).join('')
+                        : `<p class="text-stone-700 mt-2">${album.analysis || 'No detailed analysis available.'}</p>`;
+
+                    recommendationModalBody.innerHTML = `
+                        <div class="flex flex-col sm:flex-row gap-6">
+                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-48 h-48 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/192x192/1c1917/f5f5f4?text=No+Img';">
+                            <div>
+                                <h3 class="text-3xl font-bold text-stone-900">${album.artist}</h3>
+                                <p class="text-stone-600 font-bold text-lg">(${album.year})</p>
+                                <div class="mt-4">${analysisHtml}</div>
+                            </div>
+                        </div>
+                    `;
+
+                    recommendationModal.classList.remove('opacity-0', 'pointer-events-none');
+                    recommendationModal.querySelector('.modal-content').classList.remove('scale-95');
+                },
+                closeRecommendationModal() {
+                    const { recommendationModal } = this.elements;
+                    recommendationModal.classList.add('opacity-0', 'pointer-events-none');
+                    recommendationModal.querySelector('.modal-content').classList.add('scale-95');
                 },
                 setupOnThisDayFeature() {
                     const today = new Date();
@@ -466,7 +558,6 @@
                         appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
                         measurementId: "G-ETT07JGVSB"
                     };
-                    // Check if Firebase is already initialized
                     const app = window._firebaseApp || initializeApp(firebaseConfig);
                     if (!window._firebaseApp) window._firebaseApp = app;
 
@@ -502,11 +593,11 @@
                                 }
 
                                 if (article.type === 'review' && !reviewFound) {
-                                    const snippet = (article.content || '').replace(/<[^>]+>/g, '').substring(0, 120);
+                                    const snippet = (article.content || '').replace(/<[^>]+>/g, '').substring(0, 150);
                                     reviewHtml = `
-                                        <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-                                            <img src="${article.coverUrl || 'https://placehold.co/160x160/1c1917/f5f5f4?text=Review'}" alt="Cover for ${article.albumTitle}" class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
-                                            <div>
+                                        <div class="flex flex-col sm:flex-row gap-6 items-start">
+                                            <img src="${article.coverUrl || 'https://placehold.co/128x128/1c1917/f5f5f4?text=Review'}" alt="Cover for ${article.albumTitle}" class="w-32 h-32 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
+                                            <div class="flex-grow">
                                                 <p class="text-orange-600 font-bold">Album Review</p>
                                                 <h3 class="text-2xl sm:text-3xl font-bold text-stone-900 my-1">${article.albumTitle}</h3>
                                                 <p class="text-stone-600 font-semibold">By ${article.artist}</p>
