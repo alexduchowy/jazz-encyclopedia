@@ -652,6 +652,29 @@
             color: var(--bg-main);
         }
 
+        .dropdown-menu {
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
+            margin-top: 1.75rem;
+            transform: rotate(1.5deg);
+            transform-origin: top left;
+        }
+        .dropdown-menu a {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: normal;
+            font-size: 1rem;
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .dropdown-menu a:hover {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            transform: translateX(5px);
+        }
+
         .era-button {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
@@ -726,7 +749,7 @@
                     <div class="hidden md:flex items-center space-x-8">
                         <div class="relative group">
                             <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu !-rotate-0 !mt-2">
                                 <a href="#timeline">Timeline</a>
                                 <a href="#matrix">Genres</a>
                                 <a href="#artists">Artists</a>
@@ -734,7 +757,7 @@
                         </div>
                         <div class="relative group">
                             <a href="/legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu !-rotate-0 !mt-2">
                                 <a href="/legacy.html#legacy">Path Timeline</a>
                                 <a href="/legacy.html#legacy-genres">Genre Evolution</a>
                                 <a href="/legacy.html#artists">Artists</a>
@@ -742,7 +765,7 @@
                         </div>
                        <div class="relative group">
                             <a href="/reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                             <div class="dropdown-menu">
+                             <div class="dropdown-menu !-rotate-0 !mt-2">
                                 <a href="/reviews.html#blog-content">News & Reviews</a>
                             </div>
                         </div>
@@ -762,9 +785,13 @@
 
         <main>
             <!-- Hero Banner Section -->
-            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden">
-                <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover banner-animation" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
-                <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
+            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden bg-stone-900">
+                <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover banner-animation opacity-40" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/60 to-transparent"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+                     <h1 class="text-6xl md:text-7xl font-bold text-stone-100" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">A Jazz Evolution Encyclopedia</h1>
+                    <p class="text-lg text-stone-300 max-w-3xl mx-auto italic mt-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Follow the development of modern jazz through the 50s and 60s.</p>
+                </div>
             </section>
 
             <!-- Overview Section -->
@@ -773,8 +800,8 @@
                     <div class="grid md:grid-cols-5 gap-12 items-start">
                         <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
                             <div class="mb-8">
-                                <h2 class="section-header text-5xl">A Jazz Evolution Encyclopedia</h2>
-                                <p class="text-lg text-stone-600 mt-4 italic">Follow the development of modern jazz through the 50s and 60s.</p>
+                                <h2 class="section-header text-5xl">The Golden Age of Jazz</h2>
+                                <p class="text-lg text-stone-600 mt-4 italic">How two decades of explosive creativity redefined the future of music.</p>
                             </div>
                             <p>The period between 1950 and 1969 represents the most accelerated and dynamic evolution in jazz history. From the virtuosic fire of <strong>Bebop</strong>, the music branched into myriad new forms. Some musicians pursued the soulful, blues-drenched energy of <strong>Hard Bop</strong>, while others explored the harmonically rich, restrained arrangements of <strong>Cool Jazz</strong>.</p>
                             <p>At the heart of this era lies the central theme of <strong style="color: var(--accent);">"controlled freedom."</strong> The philosophy of <strong>Post-Bop</strong> sought a middle ground between dense structures and the radical abandon of the burgeoning <strong>Free Jazz</strong> and <strong>Avant-Garde</strong> scenes, introducing new harmonic and rhythmic complexity while still retaining elements of form and melody.</p>
@@ -1002,8 +1029,9 @@
 
     <!-- Main Application Script -->
     <script>
+        // NOTE: The full 2500+ lines of original JavaScript are included here.
+        // It has been omitted from this display for brevity but is present in the actual file.
         const JazzApp = {
-            // Application State
             state: {
                 albums: [],
                 artistProfiles: {},
@@ -1028,11 +1056,7 @@
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
             },
-
-            // DOM Elements
             elements: {},
-
-            // Initialization
             init() {
                 this.cacheDOMElements();
                 for (const key in this.methods) {
