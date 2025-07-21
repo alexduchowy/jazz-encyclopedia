@@ -72,7 +72,6 @@
 
     <div class="container mx-auto p-4 sm:p-8 max-w-4xl">
         <div class="text-center mb-8">
-            <a href="index.html"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20 mx-auto"></a>
             <h1 class="text-4xl mt-4">Content Dashboard</h1>
         </div>
 
@@ -109,8 +108,8 @@
                     <div class="mb-6">
                         <label for="content-type" class="block text-lg font-bold mb-2">Content Type</label>
                         <select id="content-type" class="form-input w-full">
-                            <option value="review">Album Review</option>
-                            <option value="news">News Article</option>
+                            <option value="News">News Article</option>
+                            <option value="Review">Album Review</option>
                         </select>
                     </div>
                     <div class="mb-4">
@@ -119,9 +118,9 @@
                     </div>
                      <div class="mb-4">
                         <label for="image-url" class="block text-lg font-bold mb-2">Image URL</label>
-                        <input type="url" id="image-url" class="form-input w-full" placeholder="https://firebasestorage.googleapis.com/...">
+                        <input type="url" id="image-url" class="form-input w-full" placeholder="https://placehold.co/1200x600/...">
                     </div>
-                    <div id="review-fields">
+                    <div id="review-fields" class="hidden">
                         <div class="grid md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label for="album-title" class="block text-lg font-bold mb-2">Album Title</label>
@@ -138,7 +137,7 @@
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label for="content-body" class="block text-lg font-bold mb-2">Body (use &lt;p&gt; tags for paragraphs)</label>
+                        <label for="content-body" class="block text-lg font-bold mb-2">Body (HTML allowed, e.g., &lt;p&gt; and &lt;b&gt;)</label>
                         <textarea id="content-body" rows="10" class="form-input w-full" required></textarea>
                     </div>
                     <div class="grid md:grid-cols-2 gap-4 mb-6">
@@ -185,7 +184,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const AdminApp = {
             db: null,
@@ -224,6 +223,7 @@
 
             setupFirebase() {
                 try {
+                    // IMPORTANT: Replace with your actual Firebase config
                     const firebaseConfig = {
                       apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                       authDomain: "controlled-freedom.firebaseapp.com",
@@ -263,7 +263,7 @@
                 this.elements.publishForm.addEventListener('submit', this.handlePublishOrUpdate.bind(this));
                 this.elements.cancelEditBtn.addEventListener('click', this.resetForm.bind(this));
                 this.elements.contentTypeSelect.addEventListener('change', () => {
-                    this.elements.reviewFields.style.display = this.elements.contentTypeSelect.value === 'review' ? 'block' : 'none';
+                    this.elements.reviewFields.style.display = this.elements.contentTypeSelect.value === 'Review' ? 'block' : 'none';
                 });
                 document.getElementById('publish-date').valueAsDate = new Date();
                 
@@ -344,14 +344,13 @@
                 const body = document.getElementById('content-body').value;
                 const author = document.getElementById('author').value;
                 
-                // Format date to YYYY-MM-DD for consistency before converting
                 const dateInput = document.getElementById('publish-date').value;
                 const dateObj = new Date(dateInput + 'T00:00:00'); // Avoid timezone issues
                 const publishDate = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                 
                 let data = { type, title, imageUrl, body, author, publishDate };
 
-                if (type === 'review') {
+                if (type === 'Review') {
                     data.albumTitle = document.getElementById('album-title').value;
                     data.artist = document.getElementById('artist').value;
                     data.rating = parseInt(document.getElementById('rating').value);
@@ -360,9 +359,11 @@
             },
 
             listenForContent() {
-                const q = query(collection(this.db, "articles"), orderBy("createdAt", "desc"));
+                const q = query(collection(this.db, "articles"));
                 onSnapshot(q, (querySnapshot) => {
                     this.allArticles = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    // Sort by creation date descending in JavaScript, as orderBy can be complex to set up
+                    this.allArticles.sort((a, b) => (b.createdAt?.toDate() || 0) - (a.createdAt?.toDate() || 0));
                     this.renderContentList(this.allArticles);
                 });
             },
@@ -375,14 +376,15 @@
                 }
                 articles.forEach(article => {
                     const item = document.createElement('div');
-                    item.className = 'bg-stone-200 p-4 rounded-sm border border-stone-300 flex justify-between items-center';
+                    item.className = 'bg-stone-200 p-4 rounded-sm border border-stone-300 flex justify-between items-center flex-wrap gap-2';
                     item.innerHTML = `
                         <div>
-                            <span class="text-xs font-bold uppercase py-1 px-2 rounded-full ${article.type === 'review' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800'}">${article.type}</span>
+                            <span class="text-xs font-bold uppercase py-1 px-2 rounded-full ${article.type === 'Review' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800'}">${article.type}</span>
                             <h4 class="font-bold text-lg mt-1">${article.title}</h4>
                             <p class="text-sm text-stone-600">By ${article.author} on ${article.publishDate}</p>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 flex-shrink-0">
+                            <a href="article-template.html?id=${article.id}" target="_blank" class="view-btn bg-green-500 text-white px-3 py-1 rounded-sm hover:bg-green-600 transition-colors text-sm font-bold no-underline">View</a>
                             <button data-id="${article.id}" class="edit-btn bg-blue-500 text-white px-3 py-1 rounded-sm hover:bg-blue-600 transition-colors text-sm font-bold">Edit</button>
                             <button data-id="${article.id}" class="delete-btn bg-red-500 text-white px-3 py-1 rounded-sm hover:bg-red-600 transition-colors text-sm font-bold">Delete</button>
                         </div>
@@ -419,8 +421,8 @@
                 const day = String(date.getDate()).padStart(2, '0');
                 document.getElementById('publish-date').value = `${year}-${month}-${day}`;
 
-                this.elements.reviewFields.style.display = article.type === 'review' ? 'block' : 'none';
-                if (article.type === 'review') {
+                this.elements.reviewFields.style.display = article.type === 'Review' ? 'block' : 'none';
+                if (article.type === 'Review') {
                     document.getElementById('album-title').value = article.albumTitle;
                     document.getElementById('artist').value = article.artist;
                     document.getElementById('rating').value = article.rating;
@@ -436,7 +438,8 @@
                 this.elements.publishForm.reset();
                 this.elements.editIdInput.value = '';
                 document.getElementById('publish-date').valueAsDate = new Date();
-                this.elements.reviewFields.style.display = 'block';
+                this.elements.reviewFields.style.display = 'none'; // Default to hidden
+                this.elements.contentTypeSelect.value = 'News'; // Default to News
                 this.elements.publishBtn.textContent = 'Publish';
                 this.elements.formTitle.textContent = 'Publish New Content';
                 this.elements.cancelEditBtn.classList.add('hidden');
