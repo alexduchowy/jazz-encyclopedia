@@ -14,54 +14,24 @@
     
     <!-- Custom CSS Styling -->
     <style>
-        /* Define custom color properties for easy theme management */
         :root {
             --bg-main: #f5f5f4; /* stone-100 */
             --bg-secondary: #e7e5e4; /* stone-200 */
             --bg-dark: #1a1a1a; /* Custom dark gray */
             --text-main: #1c1917; /* stone-900 */
-            --text-muted: #44403c; /* stone-700 - Darkened for readability */
+            --text-muted: #44403c; /* stone-700 */
             --accent: #f97316; /* orange-500 */
-            --accent-dark: #ea580c; /* orange-600 */
             --yellow-accent: #facc15; /* yellow-400 */
-
-            /* Genre Colors */
-            --genre-bebop: #C19A6B; /* Pastel Brown */
-            --genre-hard-bop: #d8b4fe; /* purple-300 */
-            --genre-cool-jazz: #93c5fd; /* blue-300 */
-            --genre-modal-jazz: #a7f3d0; /* emerald-200 */
-            --genre-post-bop: #fed7aa; /* orange-200 */
-            --genre-free-jazz: #fca5a5; /* red-300 */
-            --genre-avant-garde: #fecdd3; /* rose-200 */
-            --genre-jazz-fusion: #a5f3fc; /* cyan-200 */
-            --genre-melodic-path: #64748b; /* slate-500, for Legacy section */
-            --genre-default: #e7e5e4; /* stone-200 */
-
-            /* Lighter Era Colors for Timeline Background */
-            --era-cool-light: #dbeafe; /* blue-100 */
-            --era-hard-bop-light: #f3e8ff; /* purple-100 */
-            --era-bebop-light: #EADDCA; /* Lighter Pastel Brown */
-            --era-modal-light: #d1fae5; /* emerald-100 */
-            --era-post-bop-light: #ffedd5; /* orange-100 */
-            --era-free-jazz-light: #fee2e2; /* red-100 */
-            --era-roots-light: #fef9c3; /* yellow-100 */
-            --era-fusion-light: #cffafe; /* cyan-100 */
         }
-
-        /* Base body styling */
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
         }
-        
-        /* Heading font styling with new Bebas Neue font */
         h1, h2, h3, h4, h5 {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
         }
-
-        /* Navigation link transition effects */
         .nav-link {
             transition: color 0.2s;
             font-family: 'Bebas Neue', sans-serif;
@@ -71,8 +41,6 @@
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
         }
-
-        /* Section header styling */
         .section-header {
               transform: rotate(-1deg);
               display: inline-block;
@@ -81,19 +49,178 @@
               padding: 0.25rem 1rem;
               margin-bottom: 1rem;
         }
-        
-        /* Compact Matrix Styling */
-        #genre-matrix-container {
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            overflow: auto; /* Enable scrolling */
-            max-height: 70vh; /* Set a max height */
-            background-color: var(--bg-main);
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #fff;
+            border: 1px solid var(--bg-secondary);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-top: 0.5rem;
+            border-radius: 0.5rem;
+            z-index: 20;
+            min-width: 160px;
+            padding: 0.5rem 0;
         }
+        .group:hover .dropdown-menu { display: block; }
+        .dropdown-menu a {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: normal;
+            font-size: 1rem;
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .dropdown-menu a:hover {
+            background-color: var(--accent);
+            color: var(--bg-main);
+        }
+        #horizontal-timeline-container {
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+            cursor: grab;
+            border: none;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #horizontal-timeline-container:active { cursor: grabbing; }
+        #horizontal-timeline-container::-webkit-scrollbar { display: none; }
+        #timeline-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        #timeline-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: flex-start;
+            padding: 2rem 1rem;
+            padding-top: 5rem;
+            z-index: 2;
+        }
+        .timeline-year-section {
+            display: flex;
+            flex-shrink: 0;
+            flex-direction: column;
+            align-items: center;
+            border-left: 4px dotted #a8a29e;
+            padding: 0 2rem;
+        }
+        .timeline-year-section:first-child { border-left: none; }
+        .timeline-year-header { display: none; }
+        .timeline-album-list {
+            display: grid;
+            grid-template-rows: repeat(2, 1fr);
+            grid-auto-flow: column;
+            gap: 1.5rem;
+            min-height: 520px;
+        }
+        .timeline-album-card {
+            width: 200px;
+            flex-shrink: 0;
+            background-color: var(--bg-main);
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            box-shadow: 4px 4px 0px var(--text-main);
+            border: 2px solid var(--text-main);
+            overflow: hidden;
+            opacity: 1;
+        }
+        .timeline-album-card:hover { transform: translateY(-5px) rotate(2deg); }
+        .timeline-album-card.dimmed { opacity: 0.5; }
+        .timeline-album-card.highlighted {
+            opacity: 1;
+            box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
+        }
+        .timeline-album-card.clicked {
+            transform: translateY(-5px) rotate(2deg) scale(1.05);
+            box-shadow: 8px 8px 0px var(--accent) !important;
+            opacity: 1 !important;
+            z-index: 10;
+        }
+        .timeline-album-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+        .timeline-album-card:hover img, .timeline-album-card.highlighted img, .timeline-album-card.clicked img {
+            filter: grayscale(0%);
+        }
+        .timeline-album-card-info { padding: 0.75rem; }
+        .timeline-album-card-info h5 {
+            color: var(--text-main);
+            font-size: 1.25rem;
+        }
+        .timeline-album-card-info p {
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+        }
+        .artist-card {
+            background-color: var(--bg-main);
+            border-radius: 0.25rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 4px 4px 0px var(--text-main);
+            border: 2px solid var(--text-main);
+        }
+        .artist-card:hover {
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 8px 8px 0px var(--accent) !important;
+        }
+        .artist-card img {
+            width: 100%;
+            height: 224px;
+            object-fit: cover;
+            object-position: center;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+        .artist-card:hover img { filter: grayscale(0%); }
+        #loader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .content-hidden { display: none; }
+        .clickable-link {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-color: var(--accent);
+            transition: color 0.2s;
+        }
+        .clickable-link:hover { color: var(--accent); }
+        .banner-animation { animation: banner-fade-in 2s ease-out forwards; }
+        @keyframes banner-fade-in { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
         .matrix-table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 800px; /* Adjust min-width since a column is removed */
+            min-width: 800px;
         }
         .matrix-table th, .matrix-table td {
             padding: 1rem;
@@ -118,706 +245,47 @@
             z-index: 5;
             border-right: 2px solid var(--bg-secondary);
         }
-        .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        .matrix-table td.col-hover, .matrix-table .row-hover > td {
-            background-color: var(--highlight-color, rgba(0,0,0,0.05)) !important;
-        }
-        .genre-header-button {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            text-align: left;
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            font-size: inherit;
-            font-weight: inherit;
-            color: inherit;
-        }
-        .genre-header-button .info-icon {
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-        .genre-header-button:hover .info-icon {
-            opacity: 1;
-        }
-
-
-        /* Modal transition styles */
-        .modal {
-            transition: opacity 0.3s ease;
-        }
-        .modal-content {
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-        }
-        .modal.opacity-0 .modal-content {
-              opacity: 0;
-              transform: scale(0.95) translateY(10px);
-        }
-        
-        /* Horizontal draggable timeline container */
-        #horizontal-timeline-container {
-            position: relative;
-            width: 100%;
-            overflow-x: auto;
-            cursor: grab;
-            border: none;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        #horizontal-timeline-container:active {
-            cursor: grabbing;
-        }
-        #horizontal-timeline-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Canvas for drawing connection lines */
-        #timeline-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* Allows clicks to pass through to the cards */
-            z-index: 1;
-        }
-        /* Wrapper for all timeline content */
-        #timeline-wrapper {
-            position: relative;
-            display: inline-flex;
-            align-items: flex-start;
-            padding: 2rem 1rem;
-            padding-top: 5rem; /* MODIFIED: Make space for sticky header */
-            z-index: 2; /* Ensure cards are above the canvas */
-        }
-        /* Styling for each year's section in the timeline */
-        .timeline-year-section {
-            display: flex;
-            flex-shrink: 0;
-            flex-direction: column;
-            align-items: center; /* Center pagination controls */
-            border-left: 4px dotted #a8a29e; /* MODIFIED: Darker dotted line (stone-400) */
-            padding: 0 2rem;
-        }
-        .timeline-year-section:first-child {
-            border-left: none;
-        }
-        /* Year header styling */
-        .timeline-year-header {
-           display: none; /* MODIFIED: Hide the inline headers */
-        }
-        /* Grid for album cards within a year */
-        .timeline-album-list {
-            display: grid;
-            grid-template-rows: repeat(2, 1fr);
-            grid-auto-flow: column;
-            gap: 1.5rem;
-            min-height: 520px; /* Adjust height to fit two rows of cards + gap */
-        }
-        /* Individual album card styling */
-        .timeline-album-card, .legacy-album-card {
-            width: 200px;
-            flex-shrink: 0;
-            background-color: var(--bg-main);
-            border-radius: 0.25rem;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-            box-shadow: 4px 4px 0px var(--text-main);
-            border: 2px solid var(--text-main);
-            overflow: hidden;
-            opacity: 1;
-        }
-        .timeline-album-card:hover, .legacy-album-card:hover {
-            transform: translateY(-5px) rotate(2deg);
-        }
-        .timeline-album-card.dimmed {
-            opacity: 0.5;
-        }
-        .timeline-album-card.highlighted {
-            opacity: 1;
-            box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
-        }
-        /* Style for the card that is currently selected/clicked */
-        .timeline-album-card.clicked, .legacy-album-card.clicked {
-            transform: translateY(-5px) rotate(2deg) scale(1.05);
-            box-shadow: 8px 8px 0px var(--accent) !important;
-            opacity: 1 !important;
-            z-index: 10;
-        }
-        .timeline-album-card.landmark-album {
-            border-width: 4px;
-            border-color: var(--landmark-color, var(--accent));
-            box-shadow: 0 0 15px 0px var(--landmark-color, var(--accent));
-        }
-        .timeline-album-card img, .legacy-album-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            filter: grayscale(100%);
-            transition: filter 0.3s ease;
-        }
-        .timeline-album-card:hover img, .timeline-album-card.highlighted img, .timeline-album-card.clicked img,
-        .legacy-album-card:hover img, .legacy-album-card.clicked img {
-            filter: grayscale(0%);
-        }
-        .timeline-album-card-info, .legacy-album-card-info {
-            padding: 0.75rem;
-        }
-        .timeline-album-card-info h5, .legacy-album-card-info h5 {
-            color: var(--text-main);
-            font-size: 1.25rem;
-        }
-        .timeline-album-card-info p, .legacy-album-card-info p {
-            color: var(--text-muted);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-        }
-        /* Artist card styling */
-        .artist-card {
-            background-color: var(--bg-main);
-            border-radius: 0.25rem;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 4px 4px 0px var(--text-main);
-            border: 2px solid var(--text-main);
-            transform: translateZ(0); /* Promotes the element to a new compositing layer */
-            -webkit-backface-visibility: hidden; /* Safari fix for flickering */
-            backface-visibility: hidden; /* Standard fix for flickering */
-        }
-        .artist-card:hover {
-            transform: translateY(-5px) rotate(2deg);
-            box-shadow: 8px 8px 0px var(--accent) !important; /* Ensure hover always wins */
-        }
-        .artist-card.bandleader {
-            box-shadow: 4px 4px 0px var(--accent);
-        }
-        .artist-card.influential-sideman {
-            box-shadow: 4px 4px 0px var(--yellow-accent);
-        }
-        .artist-card .artist-photo-container {
-              height: 224px;
-              width: 100%;
-        }
-        .artist-card img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              object-position: center;
-              filter: grayscale(100%);
-              transition: filter 0.3s ease;
-        }
-         .artist-card:hover img {
-            filter: grayscale(0%);
-        }
-        .artist-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            background-color: #1c1917; /* stone-900 */
-        }
-        .artist-placeholder svg {
-            width: 50%;
-            height: 50%;
-            color: #a8a29e; /* stone-400 */
-        }
-        
-        /* Artist Slider Styling */
-        #artist-slider-container {
-            overflow: hidden;
-        }
-        #artist-slider-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-        .artist-slider-page {
-            width: 100%;
-            flex-shrink: 0;
-            padding: 0 0.5rem; /* Add some padding so cards don't touch edges */
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns */
-            gap: 1.5rem;
-        }
-        @media (min-width: 768px) { /* Tablet and Web: 6 columns */
-            .artist-slider-page {
-                grid-template-columns: repeat(6, 1fr);
-            }
-        }
-        
-        .styled-select select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.7rem center;
-            background-size: 1.2em;
-        }
-
-        /* Modal Night Mode & Player Styles */
-        #modal-analysis-section {
-            background-color: var(--bg-dark);
-            padding: 1.5rem;
-            margin-top: 2rem;
-            border: 2px solid var(--text-main);
-            box-shadow: 4px 4px 0px var(--text-main);
-        }
-        #modal-analysis-section h5 {
-            color: var(--bg-main);
-        }
-        
-        .liner-notes-text {
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #d4d4d2; 
-        }
-        
-        audio.styled-player {
-            height: 35px; 
-            accent-color: var(--accent);
-        }
-
-        /* Genre Filter Checkbox Styling */
-        .genre-checkbox-label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--text-main);
-            border-radius: 9999px;
-            background-color: var(--bg-main);
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-        .genre-checkbox-label input {
-            appearance: none;
-            -webkit-appearance: none;
-            display: none;
-        }
-        .genre-checkbox-label:has(input:checked) {
-            background-color: var(--genre-color, var(--accent));
-            color: var(--text-main);
-        }
-        .genre-checkbox-label:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        /* Scrollbar Marker Styling */
-        #custom-scrollbar-markers {
-            position: absolute;
-            top: -5px; /* Position it slightly above the scrollbar track */
-            left: 0;
-            right: 0;
-            height: 10px;
-            pointer-events: none; /* So it doesn't interfere with clicks on the scrollbar */
-        }
-        .scrollbar-marker {
-            position: absolute;
-            width: 2px;
-            height: 100%;
-            background-color: var(--accent);
-            transform: translateX(-50%); /* Center the marker on its position */
-        }
-        .scrollbar-marker::after {
-            content: attr(data-year);
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 9px;
-            font-weight: bold;
-            color: var(--text-muted);
-        }
-
-        /* Loading indicator styles */
-        #loader {
-            position: fixed;
-            inset: 0;
-            background-color: var(--bg-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-        .loader-spinner {
-            border: 4px solid var(--bg-secondary);
-            border-top: 4px solid var(--accent);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .content-hidden {
-            display: none;
-        }
-        
-        .genre-tag {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-main);
-            border: 2px solid var(--text-main);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* Style for clickable links in modals */
-        .clickable-link {
-            cursor: pointer;
-            text-decoration: underline;
-            text-decoration-color: var(--accent);
-            transition: color 0.2s;
-        }
-        .clickable-link:hover {
-            color: var(--accent);
-        }
-
-        /* Animation for fade-in on scroll */
-        .fade-in-element {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-        }
-        .fade-in-element.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .title-rotate {
-            transform: rotate(-1.5deg);
-        }
-        .nav-bar-hidden-behaviour {
-            display: flex;
-            transform: rotate(-1.5deg);
-        }
-        @media (max-width: 640px) {
-            .nav-bar-hidden-behaviour {
-                display: none;
-            }
-        }
-
-        /* Nudge animation for scroll buttons */
-        @keyframes nudge-right {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(8px); }
-        }
-        .nudge-animation {
-            animation: nudge-right 1.5s ease-in-out 3;
-        }
-
-        /* FIX: New class to handle responsive filters */
-        .desktop-filters-behaviour {
-            display: flex;
-        }
-        @media (max-width: 767px) { /* Below md breakpoint (768px) */
-            .desktop-filters-behaviour {
-                display: none;
-            }
-        }
-        
-        /* FIX: New class to handle dropdown visibility on hover */
-        .desktop-dropdown-behaviour {
-            display: none;
-        }
-        .group:hover .desktop-dropdown-behaviour {
-            display: block;
-        }
-
-        /* Mobile Menu Panel Transition */
-        #mobile-menu-panel {
-            transition: transform 0.3s ease-in-out;
-        }
-        #mobile-menu-overlay.hidden #mobile-menu-panel {
-            transform: translateX(100%);
-        }
-        
-        .landmark-album-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem 1rem;
-            list-style-position: inside;
-        }
-
-        /* Artist Modal Timeline Styles */
-        .artist-modal-timeline {
-            list-style: none;
-            padding-left: 1rem;
-            border-left: 2px solid var(--bg-secondary);
-        }
-        .artist-modal-timeline-item {
-            position: relative;
-            padding-bottom: 1rem;
-            padding-left: 1.5rem;
-        }
-        .artist-modal-timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -0.4rem;
-            top: 0.25rem;
-            width: 0.65rem;
-            height: 0.65rem;
-            border-radius: 9999px;
-            background-color: var(--bg-secondary);
-            border: 2px solid var(--text-main);
-        }
-        .landmark-star {
-            color: var(--yellow-accent);
-            font-size: 1.1em;
-            margin-left: 0.25rem;
-        }
-        
-        /* Era Styling */
-        .era-section {
-            padding-top: 1.5rem;
-            padding-bottom: 2rem;
-            border-left: 4px solid var(--text-main);
-            display: flex;
-            flex-direction: row;
-        }
-        .era-title {
-            display: none; /* Hide the old vertical titles */
-        }
-        .era-content {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-        }
-
-        /* Artist Connection Web Styling */
-        .collaborator-card {
-            cursor: pointer;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-        }
-        .collaborator-card:hover {
-            transform: scale(1.05);
-            opacity: 0.9;
-        }
-
-        /* Known For Box Styling */
-        .known-for-box {
-            background-color: var(--accent);
-            color: var(--bg-main);
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--text-main);
-            box-shadow: 2px 2px 0px var(--text-main);
-            transform: rotate(-2deg);
-            display: inline-block;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        /* Era Glossary Dropdown Styling */
-        .dropdown-btn {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 0.05em;
-            font-size: 1.1rem;
-            padding: 0.5rem 1.5rem;
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            background-color: var(--bg-main);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .dropdown-btn:hover {
-            background-color: var(--accent);
-            color: var(--bg-main);
-        }
-        .dropdown-list {
-            background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            box-shadow: 4px 4px 0px var(--text-main);
-            z-index: 20;
-            width: 300px;
-        }
-        .dropdown-list a {
-            display: block;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.2s ease;
-        }
-        .dropdown-list a:hover {
-            background-color: var(--accent);
-            color: var(--bg-main);
-            transform: translateX(4px);
-        }
-        .dropdown-list a .era-year {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        .dropdown-list a:hover .era-year {
-            color: var(--bg-main);
-        }
-
-        /* NEW: Dropdown Menu Styling */
-        .dropdown-menu {
-            background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-            box-shadow: 4px 4px 0px var(--text-main);
-            margin-top: 1.75rem;
-            transform: rotate(1.5deg);
-            transform-origin: top left;
-        }
-        .dropdown-menu a {
-            font-family: 'Inter', sans-serif;
-            letter-spacing: normal;
-            font-size: 1rem;
-            display: block;
-            padding: 0.5rem 1.5rem;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
-        .dropdown-menu a:hover {
-            background-color: var(--accent);
-            color: var(--bg-main);
-            transform: translateX(5px);
-        }
-
-        .era-button {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 0.05em;
-            font-size: 0.9rem;
-            padding: 0.5rem 0.75rem;
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            color: var(--text-main);
-            font-weight: 600;
-            width: 180px; /* Set a fixed width */
-            height: 50px; /* Set a fixed height */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        .era-button:hover {
-            filter: brightness(95%);
-            transform: translateY(-2px);
-        }
-
-        /* Mobile Sticky Header fix */
-        @media (max-width: 767px) {
-            #sticky-header-display {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0;
-            }
-            #sticky-year-display {
-                font-size: 2.25rem; /* text-4xl */
-                line-height: 1;
-            }
-            #sticky-era-title {
-                font-size: 1rem; /* text-base */
-                line-height: 1.25;
-                padding-bottom: 0;
-            }
-        }
-
-        /* Banner Animation */
-        @keyframes banner-fade-in {
-            from {
-                opacity: 0;
-                transform: scale(1.1);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        .banner-animation {
-            animation: banner-fade-in 2s ease-out forwards;
-        }
-   
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
 
-    <!-- Full-screen loader -->
-    <div id="loader">
-        <div class="loader-spinner"></div>
-    </div>
+    <div id="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
-        <!-- HEADER -->
-        <div class="sticky top-0 z-50 h-24">
-              <header class="relative container mx-auto h-full">
-                    <!-- This is the crooked background. It is positioned absolutely within the header -->
-                    <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
-                    
-                    <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
-                    <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                        <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10">
-                            <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
-                        </div>
-                        <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
-                            <div class="relative group">
-                                <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                                <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
-                                    <div class="dropdown-menu rounded-sm py-2">
-                                        <a href="#timeline">Timeline</a>
-                                        <a href="#matrix">Genres</a>
-                                        <a href="#artists">Artists</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="relative group">
-                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                                 <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
-                                    <div class="dropdown-menu rounded-sm py-2">
-                                        <a href="/legacy#legacy">Path Timeline</a>
-                                        <a href="/legacy#legacy-genres">Genre Evolution</a>
-                                        <a href="/legacy#artists">Artists</a>
-                                    </div>
-                                </div>
-                            </div>
-                           <div class="relative group">
-                                <a href="/reviews" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                                 <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
-                                    <div class="dropdown-menu rounded-sm py-2">
-                                        <a href="/reviews#news">News</a>
-                                        <a href="/reviews#reviews">Reviews</a>
-                                    </div>
-                                </div>
+        <!-- Standardized Sticky Header -->
+        <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
+            <header class="container mx-auto h-full">
+                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                    <div class="hidden md:flex items-center space-x-8">
+                        <div class="relative group">
+                            <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                            <div class="dropdown-menu">
+                                <a href="#timeline">Timeline</a>
+                                <a href="#matrix">Genres</a>
+                                <a href="#artists">Artists</a>
                             </div>
                         </div>
-                        <!-- Hamburger Menu Button -->
-                        <div class="sm:hidden">
-                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
-                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                                </svg>
-                            </button>
+                        <div class="relative group">
+                            <a href="/legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                            <div class="dropdown-menu">
+                                <a href="/legacy.html#path-timeline">Path Timeline</a>
+                                <a href="/legacy.html#genre-evolution">Genre Evolution</a>
+                                <a href="/legacy.html#artists">Artists</a>
+                            </div>
                         </div>
-                    </nav>
-                </header>
+                        <div class="relative group">
+                            <a href="/reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                             <div class="dropdown-menu">
+                                <a href="/reviews.html#blog-content">News & Reviews</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </header>
         </div>
 
-
-        <main class="-mt-24">
+        <main>
             <!-- Hero Banner Section -->
             <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover banner-animation" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
@@ -825,7 +293,7 @@
             </section>
 
             <!-- Overview Section -->
-            <section id="overview" class="pt-12 pb-16 sm:pb-20 bg-stone-100">
+            <section id="overview" class="py-16 sm:py-20 bg-stone-100">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="grid md:grid-cols-5 gap-12 items-start">
                         <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
@@ -838,65 +306,42 @@
                             <p>This application provides an interactive journey through this interconnected history, ordered by recording date—not release date—to understand the influence exercised between all these musicians and <strong>reveal the authentic path of jazz evolution as it happened.</strong></p>
                         </div>
                         <div class="md:col-span-2 mt-8 md:mt-0">
-                             <!-- "ON THIS DAY" FEATURE -->
-                            <div id="on-this-day" class="mb-8">
-                                <!-- Content will be injected by JavaScript -->
-                            </div>
+                            <div id="on-this-day" class="mb-8"></div>
                             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Interactive Timeline Section -->
             <section id="timeline" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Timeline Explorer</h2>
                     <p class="text-center text-lg text-stone-600 mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
-                    
-                    <!-- Timeline Filter Controls -->
                     <div id="timeline-controls" class="space-y-6 mb-8">
                         <div class="md:hidden flex justify-center items-center gap-4">
-                            <!-- Mobile Genre Dropdown -->
                             <div id="genre-filter-container-mobile" class="relative">
                                 <button id="genre-filter-dropdown-btn" class="dropdown-btn">
                                     Filter by Genre
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                 </button>
-                                <div id="genre-filter-list" class="dropdown-list absolute left-0 top-full mt-2 hidden text-left">
-                                    <!-- Genre filter links will be injected here -->
-                                </div>
+                                <div id="genre-filter-list" class="dropdown-list absolute left-0 top-full mt-2 hidden text-left"></div>
                             </div>
-                            <!-- Mobile Era Dropdown -->
                             <div id="era-glossary-container-mobile" class="relative">
                                 <button id="era-glossary-dropdown-btn" class="dropdown-btn">
                                     Jump to Era
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                 </button>
-                                <div id="era-glossary-list" class="dropdown-list absolute left-0 top-full mt-2 hidden text-left">
-                                    <!-- Era glossary links will be injected here -->
-                                </div>
+                                <div id="era-glossary-list" class="dropdown-list absolute left-0 top-full mt-2 hidden text-left"></div>
                             </div>
                         </div>
-
-                        <!-- Web Bubbles -->
-                        <div id="genre-filter-container" class="desktop-filters-behaviour flex-wrap justify-center gap-x-4 gap-y-3">
-                           <!-- Checkboxes will be injected here by JavaScript -->
-                        </div>
-                        
-                        <!-- Web Era Buttons -->
-                        <div id="era-glossary-container-web" class="desktop-filters-behaviour w-full justify-center">
-                             <!-- Content will be injected by JavaScript -->
-                        </div>
+                        <div id="genre-filter-container" class="desktop-filters-behaviour flex-wrap justify-center gap-x-4 gap-y-3"></div>
+                        <div id="era-glossary-container-web" class="desktop-filters-behaviour w-full justify-center"></div>
                     </div>
-
                     <div class="relative group">
-                        <!-- Sticky Year and Era Title Display -->
                         <div id="sticky-header-display" class="absolute top-4 left-1 sm:left-4 flex items-end gap-x-3 pointer-events-none z-10">
                             <div id="sticky-year-display" class="font-black text-orange-500 text-5xl leading-none transition-opacity duration-150"></div>
                             <h3 id="sticky-era-title" class="font-black text-stone-500 text-3xl leading-tight pb-1 transition-opacity duration-300"></h3>
                         </div>
-
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
                             <canvas id="timeline-canvas"></canvas>
                             <div id="timeline-wrapper"></div>
@@ -908,7 +353,6 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
                     </div>
-                    <!-- Custom Scrollbar with Markers -->
                     <div class="mt-6">
                         <div id="custom-scrollbar" class="w-full h-2 bg-stone-300 rounded-full cursor-pointer relative">
                             <div id="custom-scrollbar-markers"></div>
@@ -917,27 +361,19 @@
                     </div>
                 </div>
             </section>
-
-            <!-- Genre Matrix Section -->
             <section id="matrix" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Genres</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Compare the main aspects of each style.</p>
                     <div id="genre-matrix-container" class="matrix-container max-w-6xl mx-auto">
-                        <table id="style-matrix-table" class="matrix-table">
-                            <!-- Table content will be generated here -->
-                        </table>
+                        <table id="style-matrix-table" class="matrix-table"></table>
                     </div>
                 </div>
             </section>
-
-            <!-- Key Artists Grid Section -->
             <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Architects</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined an era.</p>
-                    
-                    <!-- Instrument Filter Dropdown -->
                     <div class="flex justify-center mb-8">
                         <div class="w-full max-w-xs styled-select">
                             <label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label>
@@ -945,15 +381,10 @@
                             </select>
                         </div>
                     </div>
-
-                    <!-- Artist Slider Container -->
                     <div id="artist-slider-wrapper" class="relative">
                         <div id="artist-slider-container" class="min-h-[550px] md:min-h-[580px]">
-                            <div id="artist-slider-track">
-                                <!-- Artist pages will be injected here by JavaScript -->
-                            </div>
+                            <div id="artist-slider-track"></div>
                         </div>
-                         <!-- Artist Pagination Controls -->
                         <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4">
                             <button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -968,7 +399,6 @@
             </section>
         </main>
 
-        <!-- Footer -->
         <footer class="bg-stone-900 text-stone-200 py-8">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
@@ -998,11 +428,8 @@
                     </div>
                     <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
-                <div id="analysis-wrapper" class="relative mt-4">
-                    <!-- Content injected by JS -->
-                </div>
+                <div id="analysis-wrapper" class="relative mt-4"></div>
             </div>
-             <!-- Modal Navigation Footer -->
             <div id="modal-nav-footer" class="flex justify-between items-center p-4 border-t-2 border-stone-900 flex-shrink-0 bg-stone-200">
                 <button id="prev-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous Album</button>
                 <button id="next-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next Album</button>
@@ -1027,7 +454,6 @@
              <div id="genre-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
     </div>
-    <!-- NEW: Path Info Modal -->
     <div id="path-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col transform scale-95">
              <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
@@ -1051,16 +477,14 @@
             </div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
                 <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/reviews" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+                <a href="/legacy.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/reviews.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
             </nav>
         </div>
     </div>
 
-    <!-- Main Application Script -->
     <script>
         const JazzApp = {
-            // Application State
             state: {
                 albums: [],
                 artistProfiles: {},
@@ -1085,11 +509,7 @@
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
             },
-
-            // DOM Elements
             elements: {},
-
-            // Initialization
             init() {
                 this.cacheDOMElements();
                 for (const key in this.methods) {
@@ -1147,12 +567,12 @@
                 Promise.all([
                     fetch('database.json').then(res => res.json()),
                     fetch('artists.json').then(res => res.json()),
-                    fetch('genres.json').then(res => res.json()) // Fetch the new genres.json
+                    fetch('genres.json').then(res => res.json())
                 ])
                 .then(([dbData, artistProfileData, genreData]) => {
                     this.state.albums = dbData.albums;
                     this.state.artistProfiles = artistProfileData;
-                    this.state.styleMatrix = genreData; // Assign genre data to styleMatrix
+                    this.state.styleMatrix = genreData;
                     
                     this.state.albums.forEach(album => {
                         if (typeof album.genres === 'string') {
@@ -1199,8 +619,6 @@
                 this.methods.handlePageLoadAnchorLink();
                 setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 0);
             },
-
-            // Methods Object
             methods: {
                 handlePageLoadAnchorLink() {
                     const hash = window.location.hash;
@@ -1208,7 +626,7 @@
                         setTimeout(() => {
                             const targetElement = document.querySelector(hash);
                             if (targetElement) {
-                                const headerOffset = 96; // Height of the sticky header
+                                const headerOffset = 96;
                                 const elementPosition = targetElement.getBoundingClientRect().top;
                                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -1220,7 +638,6 @@
                         }, 150);
                     }
                 },
-                // --- DATA PROCESSING ---
                 getCanonicalName(name) {
                     if (!name) return '';
                     const trimmedName = name.trim();
@@ -1247,15 +664,12 @@
 
                     this.state.albums.forEach(album => {
                         if (album.pivotalTracks && album.pivotalTracks.length > 0) {
-                            // Sort tracks by date to easily find the first one
                             album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
-                            // **REVERTED: Use the FIRST recording date for sorting the timeline**
                             album.sortingDate = album.pivotalTracks[0].recordingDate;
                         }
                     });
                     
                     const timelineAlbums = this.state.albums.filter(a => a.year <= 1969);
-                    // **REVERTED: Sort albums based on the first recording date**
                     timelineAlbums.sort((a,b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
                     this.state.albums = timelineAlbums;
                     
@@ -1342,8 +756,6 @@
                         }
                     });
                 },
-
-                // --- UI SETUP & RENDERING ---
                 setupFilters() {
                     const { genreFilterContainer, genreFilterList } = this.elements;
                     const allGenresInDB = new Set();
@@ -1353,7 +765,6 @@
                     const excludedGenres = ['Afro-Cuban Jazz', 'Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock', 'ECM Style Jazz', 'Neo-Bop', 'Cape Jazz', 'Vocal Jazz', 'Swing', 'Orchestral Jazz'];
                     const filterableGenres = Array.from(allGenresInDB).filter(genre => !excludedGenres.includes(genre)).sort();
                     
-                    // Web Filters (Checkboxes)
                     genreFilterContainer.innerHTML = '';
                     const allCheckboxLabel = document.createElement('label');
                     allCheckboxLabel.className = 'genre-checkbox-label';
@@ -1380,13 +791,11 @@
                         genreFilterContainer.appendChild(label);
                     });
                     
-                    // Mobile Filter (Dropdown)
                     genreFilterList.innerHTML = `<a href="#" class="genre-filter-link" data-genre="all">All Genres</a>`;
                     filterableGenres.forEach(genre => {
                         genreFilterList.innerHTML += `<a href="#" class="genre-filter-link" data-genre="${genre}">${genre}</a>`;
                     });
 
-                    // Event Listeners
                     const allGenreCheckboxes = genreFilterContainer.querySelectorAll('input[data-genre]');
                     allCheckbox.addEventListener('change', () => {
                         allGenreCheckboxes.forEach(cb => { cb.checked = allCheckbox.checked; });
@@ -1422,22 +831,17 @@
                     const { eraGlossaryList, eraGlossaryContainerWeb } = this.elements;
                     if (!eraGlossaryList || !eraGlossaryContainerWeb) return;
                     
-                    // Mobile Dropdown List
                     eraGlossaryList.innerHTML = this.state.eras.map(era => `
                         <a href="#" class="era-glossary-link" data-start-year="${era.startYear}">
                             <span class="font-bold">${era.title}</span>
                             <span class="era-year block">(${era.startYear} - ${era.endYear})</span>
                         </a>
                     `).join('');
-
-                    // Web Buttons
                     const webButtonsHtml = this.state.eras.map(era => `
                         <button class="era-button" data-start-year="${era.startYear}" style="background-color: ${era.color};">
                             ${era.title}
                         </button>
                     `).join('');
-
-                    // New structure for centered grid layout
                     eraGlossaryContainerWeb.innerHTML = `
                         <div class="flex flex-col items-center w-full">
                             <span class="font-bold text-sm text-stone-600 mb-2">JUMP TO ERA:</span>
@@ -1543,7 +947,7 @@
                             headerRow.innerHTML += `<th class="p-4 font-bold text-2xl text-center">${feature}</th>`;
                         });
                         thead.appendChild(headerRow);
-                        matrixContainer.innerHTML = ''; // Clear previous content
+                        matrixContainer.innerHTML = '';
                         matrixContainer.appendChild(thead);
 
                         const tbody = document.createElement('tbody');
@@ -1561,26 +965,20 @@
                                 tbody.appendChild(row);
                         });
                         matrixContainer.appendChild(tbody);
-
-                        // Add hover effects
                         matrixContainer.addEventListener('mouseover', e => {
                             if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
                                 const cell = e.target;
                                 const row = cell.parentElement;
                                 const colIndex = Array.from(row.children).indexOf(cell);
-                                
-                                // Row hover
                                 row.classList.add('row-hover');
                                 const rowGenreName = row.querySelector('th button')?.dataset.genreName;
                                 if (rowGenreName) {
                                     const genreData = this.state.styleMatrix.genres[rowGenreName];
                                     if (genreData) {
                                         const color = genreData.color.startsWith('var') ? getComputedStyle(document.documentElement).getPropertyValue(genreData.color.match(/--[a-zA-Z-]+/)[0]).trim() : genreData.color;
-                                        row.style.setProperty('--highlight-color', `${color}33`); // Add alpha transparency
+                                        row.style.setProperty('--highlight-color', `${color}33`);
                                     }
                                 }
-
-                                // Column hover
                                 Array.from(matrixContainer.querySelectorAll('tr')).forEach(r => {
                                     r.children[colIndex].classList.add('col-hover');
                                 });
@@ -1602,7 +1000,6 @@
                     }
                 },
                 
-                // --- EVENT LISTENERS & INTERACTIONS ---
                 setupTimelineInteraction() {
                     const { timelineContainer, timelineWrapper, scrollLeftBtn, scrollRightBtn, stickyYearDisplay, stickyEraTitle } = this.elements;
                     const scrollAmount = 400;
@@ -1610,13 +1007,13 @@
                     scrollRightBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
 
                     timelineWrapper.addEventListener('mouseover', (e) => {
-                        if (window.innerWidth < 768) return; // Desktop only
+                        if (window.innerWidth < 768) return;
                         const card = e.target.closest('.timeline-album-card');
 
                         if (card && !card.classList.contains('hidden') && !document.querySelector('.timeline-album-card.clicked')) {
                             const primaryGenre = (card.dataset.genres || '').split(', ')[0];
                             if (primaryGenre === this.state.lastHoveredGenre) {
-                                return; // Same genre, do nothing
+                                return;
                             }
                             this.state.lastHoveredGenre = primaryGenre;
                             this.methods.applyHighlights(card);
@@ -1682,8 +1079,6 @@
                         }
                         this.methods.updateCustomScrollbar();
                     });
-
-                    // Set initial state
                     const firstYearSection = timelineWrapper.querySelector('.timeline-year-section:not([style*="display: none"])');
                     if (firstYearSection) {
                         const firstYear = firstYearSection.id.replace('year-', '');
@@ -1896,7 +1291,7 @@
 
                 setupGeneralEventListeners() {
                     this.elements.instrumentFilter.addEventListener('change', () => {
-                        this.state.currentArtistPage = 0; // Reset page on filter change
+                        this.state.currentArtistPage = 0;
                         this.methods.setupArtistSlider();
                     });
                     
@@ -1917,7 +1312,7 @@
                         resizeTimeout = setTimeout(() => {
                             const currentPage = this.state.currentArtistPage;
                             this.methods.setupArtistSlider();
-                            this.methods.goToArtistPage(currentPage); // Restore current page
+                            this.methods.goToArtistPage(currentPage);
                             this.methods.resizeCanvas();
                             this.methods.updateCustomScrollbar();
                             this.methods.renderScrollbarMarkers();
@@ -1940,7 +1335,6 @@
                                 this.methods.openArtistModal(artist);
                             }
                         }
-                        // Close dropdown if clicking outside
                         if (this.elements.eraGlossaryContainerMobile && !this.elements.eraGlossaryContainerMobile.contains(e.target)) {
                             this.elements.eraGlossaryList.classList.add('hidden');
                         }
@@ -1992,7 +1386,6 @@
                     });
                 },
                 
-                // --- HELPER METHODS ---
                 slugify(name) {
                     if (!name) return '';
                     return name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
@@ -2484,10 +1877,10 @@
                 renderScrollbarMarkers() {
                     const { timelineContainer, timelineWrapper, customScrollbarMarkers } = this.elements;
                     const years = [...new Set(this.state.albums.map(album => album.year))].sort();
-                    customScrollbarMarkers.innerHTML = ''; // Clear existing markers
+                    customScrollbarMarkers.innerHTML = '';
 
                     if (timelineWrapper.scrollWidth <= timelineContainer.clientWidth) {
-                        return; // Don't render if not scrollable
+                        return;
                     }
 
                     years.forEach(year => {
@@ -2549,10 +1942,8 @@
                             if (albumIndex !== -1) {
                                 this.methods.openAlbumModal(this.state.visibleAlbums[albumIndex], albumIndex);
                             } else {
-                                // If not visible, we can still open it by finding it in the main list
                                 const mainIndex = this.state.albums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
                                 if (mainIndex !== -1) {
-                                    // This is a simplified open, as it won't have next/prev context
                                      this.methods.openAlbumModal(this.state.albums[mainIndex], -1);
                                 }
                             }
