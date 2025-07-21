@@ -898,6 +898,25 @@
         },
         {
           "year": 1973,
+          "artist": "Chick Corea and Return to Forever",
+          "albumTitle": "Light as a Feather",
+          "cover": "images/light-as-a-feather.jpg",
+          "genres": [
+            "Jazz Fusion",
+            "ECM Style Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Spain",
+              "recordingDate": "October 1972",
+              "label": "Polydor",
+              "lineup": "Chick Corea (electric piano), Joe Farrell (soprano saxophone), Flora Purim (vocals), Stanley Clarke (bass), Airto Moreira (drums)",
+              "analysis": "A cornerstone of the jazz fusion canon, 'Spain' is one of the most beloved and recognizable jazz compositions ever written. The track famously opens with an adaptation of the adagio from Rodrigo's 'Concierto de Aranjuez' before launching into an infectious, samba-infused rhythm. Featuring Flora Purim's soaring vocals and Chick Corea's brilliant electric piano, the song defined a more accessible, melodic, and Latin-influenced style of fusion that became enormously popular."
+            }
+          ]
+        },
+        {
+          "year": 1973,
           "artist": "Paul Bley",
           "albumTitle": "Open, to Love",
           "cover": "images/open-to-love.jpg",
@@ -912,6 +931,25 @@
               "label": "ECM",
               "lineup": "Paul Bley (piano)",
               "analysis": "A masterpiece of solo piano, this album is a study in space, touch, and introspection. On this beautiful Carla Bley composition, Paul Bley's performance is sparse and lyrical, letting each note hang in the air. His focus on melody and harmonic color over rhythmic drive was highly influential, helping to define the contemplative and atmospheric aesthetic of the ECM record label and influencing a generation of pianists, including Keith Jarrett."
+            }
+          ]
+        },
+        {
+          "year": 1974,
+          "artist": "Eberhard Weber",
+          "albumTitle": "The Colours of Chlöe",
+          "cover": "images/the-colours-of-chloe.jpg",
+          "genres": [
+            "ECM Style Jazz",
+            "Third Stream"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "The Colours of Chlöe",
+              "recordingDate": "December 1973",
+              "label": "ECM",
+              "lineup": "Eberhard Weber (bass, cello), Rainer Brüninghaus (piano, synthesizer), Peter Giger (drums), and cello section from the Südfunk Orchestra",
+              "analysis": "A seminal album that helped establish the signature 'ECM sound.' The title track is a masterclass in texture and mood, blending Eberhard Weber's distinctive, singing electric bass with piano, synthesizer, and a haunting cello section. The music creates a lush, cinematic, and atmospheric soundscape that was revolutionary for its time. It blurred the lines between jazz and classical chamber music, creating a new, influential template for European jazz."
             }
           ]
         },
@@ -955,6 +993,44 @@
         },
         {
           "year": 1975,
+          "artist": "John Abercrombie",
+          "albumTitle": "Timeless",
+          "cover": "images/timeless-john-abercrombie.jpg",
+          "genres": [
+            "Jazz Fusion",
+            "ECM Style Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Timeless",
+              "recordingDate": "June 21, 1974",
+              "label": "ECM",
+              "lineup": "John Abercrombie (guitar), Jan Hammer (organ, synthesizer, piano), Jack DeJohnette (drums)",
+              "analysis": "Guitarist John Abercrombie's debut as a leader is a powerful and dynamic entry in the ECM catalog. The title track is a beautiful, atmospheric piece that floats over Jan Hammer's ethereal synthesizer backdrop. However, the album is most notable for its high-energy fusion, blending the spaciousness of the ECM aesthetic with a more aggressive, rock-influenced sound, largely driven by Hammer's commanding organ and Jack DeJohnette's powerful drumming. It's a key document of the organ trio format in a modern, fusion context."
+            }
+          ]
+        },
+        {
+          "year": 1975,
+          "artist": "Keith Jarrett",
+          "albumTitle": "Death and the Flower",
+          "cover": "images/death-and-the-flower.jpg",
+          "genres": [
+            "Post-Bop",
+            "Avant-Garde Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "Death and the Flower",
+              "recordingDate": "October 9, 1974",
+              "label": "Impulse!",
+              "lineup": "Keith Jarrett (piano, soprano saxophone), Dewey Redman (tenor saxophone), Charlie Haden (bass), Paul Motian (drums), Guilherme Franco (percussion)",
+              "analysis": "A masterpiece from Keith Jarrett's highly influential 'American Quartet.' The album consists of two long, suite-like compositions that seamlessly blend passages of intense, free improvisation with sections of stunning, folk-like melodic beauty. The title track is a journey that moves from a powerful, driving vamp to moments of quiet contemplation and explosive release. It's a quintessential example of the group's ability to explore the avant-garde while remaining deeply rooted in melody and groove."
+            }
+          ]
+        },
+        {
+          "year": 1975,
           "artist": "Keith Jarrett",
           "albumTitle": "The Köln Concert",
           "cover": "images/the-koln-concert.jpg",
@@ -974,6 +1050,25 @@
         },
         {
           "year": 1978,
+          "artist": "Keith Jarrett",
+          "albumTitle": "My Song",
+          "cover": "images/my-song.jpg",
+          "genres": [
+            "ECM Style Jazz",
+            "Post-Bop"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "My Song",
+              "recordingDate": "November 1977",
+              "label": "ECM",
+              "lineup": "Keith Jarrett (piano), Jan Garbarek (tenor, soprano saxophone), Palle Danielsson (bass), Jon Christensen (drums)",
+              "analysis": "The quintessential album from Keith Jarrett's hugely popular 'European Quartet.' The title track is a perfect encapsulation of the group's sound: an incredibly lyrical, almost hymn-like melody, Jarrett's gospel-inflected piano playing, and the soaring, singing tone of Jan Garbarek's saxophone. The album was a defining moment for the ECM label, creating a highly accessible and influential sound that blended folk-like simplicity with sophisticated improvisation."
+            }
+          ]
+        },
+        {
+          "year": 1978,
           "artist": "Pat Metheny Group",
           "albumTitle": "Pat Metheny Group",
           "cover": "images/pat-metheny-group.jpg",
@@ -988,6 +1083,81 @@
               "label": "ECM",
               "lineup": "Pat Metheny (guitars), Lyle Mays (piano, keyboards), Mark Egan (bass), Danny Gottlieb (drums)",
               "analysis": "This track is a definitive statement from the debut album of one of the most popular and influential groups in modern jazz. 'Phase Dance' perfectly encapsulates the band's signature sound: bright, optimistic, and incredibly melodic, with a strong influence from American folk and country music. The intricate, interwoven lines between Pat Metheny's guitar and Lyle Mays's piano created a fresh, panoramic sound that defined a new, highly accessible, and lyrical branch of jazz fusion."
+            }
+          ]
+        },
+        {
+          "year": 1981,
+          "artist": "Pat Metheny & Lyle Mays",
+          "albumTitle": "As Falls Wichita, So Falls Wichita Falls",
+          "cover": "images/as-falls-wichita-so-falls-wichita-falls.jpg",
+          "genres": [
+            "ECM Style Jazz",
+            "Ambient Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "As Falls Wichita, So Falls Wichita Falls",
+              "recordingDate": "September 1980",
+              "label": "ECM",
+              "lineup": "Pat Metheny (guitars), Lyle Mays (piano, synthesizers, autoharp), Naná Vasconcelos (percussion, vocals)",
+              "analysis": "A masterpiece of atmospheric, cinematic jazz. The sprawling, 20-minute title track is less a traditional composition and more of a soundscape. It patiently builds layers of synthesizers, shimmering guitars, wordless vocals, and percussion to create a panoramic and deeply evocative journey. The music blurs the lines between jazz, ambient, and minimalist music, showcasing a more experimental and textural side of Metheny and Mays's partnership."
+            }
+          ]
+        },
+        {
+          "year": 1987,
+          "artist": "Pat Metheny Group",
+          "albumTitle": "Still Life (Talking)",
+          "cover": "images/still-life-talking.jpg",
+          "genres": [
+            "Jazz Fusion",
+            "ECM Style Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "(It's Just) Talk",
+              "recordingDate": "March 1987",
+              "label": "Geffen",
+              "lineup": "Pat Metheny (guitars), Lyle Mays (keyboards), Steve Rodby (bass), Paul Wertico (drums), Armando Marçal (percussion), Mark Ledford (vocals), David Blamires (vocals)",
+              "analysis": "This album saw the Pat Metheny Group fully integrating a bright, Brazilian-influenced sound into their music. '(It's Just) Talk' is a perfect example, with its complex yet effortlessly melodic structure, sophisticated harmonies, and the signature use of wordless vocals as an integral part of the arrangement. The track represents a creative and commercial peak for the group, showcasing a polished and accessible sound that was hugely popular and influential."
+            }
+          ]
+        },
+        {
+          "year": 1999,
+          "artist": "Keith Jarrett",
+          "albumTitle": "The Melody at Night, With You",
+          "cover": "images/the-melody-at-night-with-you.jpg",
+          "genres": [
+            "Cool Jazz"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "I Loves You, Porgy",
+              "recordingDate": "1998",
+              "label": "ECM",
+              "lineup": "Keith Jarrett (piano)",
+              "analysis": "A deeply personal and intimate solo piano album, recorded at Jarrett's home studio while he was recovering from chronic fatigue syndrome. The performances are spare, quiet, and profoundly lyrical, stripping away all virtuosic flair to focus purely on the essence of melody. His take on the classic 'I Loves You, Porgy' is a masterpiece of gentle, understated emotion. The album is a testament to the power of melody and a unique, poignant entry in Jarrett's vast discography."
+            }
+          ]
+        },
+        {
+          "year": 2005,
+          "artist": "Pat Metheny Group",
+          "albumTitle": "The Way Up",
+          "cover": "images/the-way-up.jpg",
+          "genres": [
+            "Jazz Fusion",
+            "Modern Creative"
+          ],
+          "pivotalTracks": [
+            {
+              "title": "The Way Up: Opening",
+              "recordingDate": "2003-2004",
+              "label": "Nonesuch",
+              "lineup": "Pat Metheny (guitars), Lyle Mays (keyboards), Steve Rodby (bass), Antonio Sánchez (drums), Grégoire Maret (harmonica), Cuong Vu (trumpet)",
+              "analysis": "An ambitious and monumental work, 'The Way Up' consists of a single, continuous 68-minute piece of music. This represents the Pat Metheny Group at its most compositionally focused, moving away from the traditional head-solo-head format. The music is dense and complex, built from interlocking parts and recurring motifs that are developed over the course of the album. It's a major statement that pushes the boundaries of long-form composition in a jazz context."
             }
           ]
         }
