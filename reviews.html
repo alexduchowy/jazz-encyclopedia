@@ -95,6 +95,21 @@
             display: none;
         }
 
+        /* Banner Animation */
+        @keyframes banner-fade-in {
+            from {
+                opacity: 0;
+                transform: scale(1.1);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .banner-animation {
+            animation: banner-fade-in 2s ease-out forwards;
+        }
+
         /* Clickable card for news and reviews */
         .article-card {
             display: flex; /* Changed to flex for image layout */
@@ -140,30 +155,37 @@
             </header>
         </div>
 
-        <main class="py-16 sm:py-20">
-            <!-- Combined News and Reviews Section -->
-            <section id="blog-content" class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-                <div class="text-center mb-12">
-                    <h1 class="text-6xl font-bold">From The Archive</h1>
-                    <p class="text-center text-lg text-stone-600 max-w-3xl mx-auto italic mt-2">The latest happenings, releases, and deep dives in the world of jazz.</p>
+        <main class="-mt-24">
+            <!-- RECOVERED: Banner Section with Overlapping Title -->
+            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden bg-stone-900">
+                <img src="images/bannerblog.png" alt="Blog Banner" class="w-full h-full object-cover banner-animation opacity-40" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Blog';">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/60 to-transparent"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+                    <h1 class="text-6xl md:text-7xl font-bold text-stone-100" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">From The Archive</h1>
+                    <p class="text-lg text-stone-300 max-w-3xl mx-auto italic mt-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">The latest happenings, releases, and deep dives in the world of jazz.</p>
                 </div>
+            </section>
 
-                <!-- Two-column layout for News and Reviews -->
-                <div class="grid md:grid-cols-2 gap-12 lg:gap-16">
-                    
-                    <!-- Left Column: News -->
-                    <div>
-                        <h2 class="section-header text-4xl mb-6">Latest News</h2>
-                        <div id="news-list" class="space-y-6">
-                            <!-- News articles will be injected here -->
+            <!-- Combined News and Reviews Section -->
+            <section id="blog-content" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+                    <!-- Two-column layout for News and Reviews -->
+                    <div class="grid md:grid-cols-2 gap-12 lg:gap-16">
+                        
+                        <!-- Left Column: News -->
+                        <div>
+                            <h2 class="section-header text-4xl mb-6">Latest News</h2>
+                            <div id="news-list" class="space-y-6">
+                                <!-- News articles will be injected here -->
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Right Column: Reviews -->
-                    <div>
-                        <h2 class="section-header text-4xl mb-6">Album Reviews</h2>
-                        <div id="reviews-list" class="space-y-6">
-                            <!-- Review articles will be injected here -->
+                        <!-- Right Column: Reviews -->
+                        <div>
+                            <h2 class="section-header text-4xl mb-6">Album Reviews</h2>
+                            <div id="reviews-list" class="space-y-6">
+                                <!-- Review articles will be injected here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -171,7 +193,7 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-stone-900 text-stone-200 py-8 mt-16">
+        <footer class="bg-stone-900 text-stone-200 py-8">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
                 <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
@@ -190,7 +212,7 @@
         import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const BlogApp = {
-            state: { reviews: [], news: [], allAlbums: [] }, // Added allAlbums state
+            state: { reviews: [], news: [], allAlbums: [] },
             elements: {},
             init() {
                 this.cacheDOMElements();
@@ -204,10 +226,8 @@
                     newsList: document.getElementById('news-list'),
                     reviewsList: document.getElementById('reviews-list'), 
                     footerCopyright: document.getElementById('footer-copyright')
-                    // Mobile menu elements omitted for brevity
                 };
             },
-            // Slugify helper function to create URL-friendly strings
             slugify(text) {
                 if (!text) return '';
                 return text.toString().toLowerCase()
@@ -246,7 +266,6 @@
                         else if (article.type === 'news') this.state.news.push(article);
                     });
                     
-                    // Fetch album data for cover art, with error handling
                     const [dbData, legacyData] = await Promise.all([
                         fetch('database.json').then(res => res.json()).catch(() => ({albums: []})),
                         fetch('legacy.json').then(res => res.json()).catch(() => ({paths: {}}))
@@ -258,7 +277,6 @@
 
                 } catch (error) {
                     console.error("Error fetching data: ", error);
-                    // Handle error display
                 }
             },
             showPage() {
@@ -274,7 +292,6 @@
                 newsList.innerHTML = '';
                 reviewsList.innerHTML = '';
 
-                // Render News List
                 if (this.state.news.length === 0) {
                     newsList.innerHTML = '<p class="text-stone-500 italic">No news articles yet.</p>';
                 } else {
@@ -283,7 +300,7 @@
                         const articleSlug = this.slugify(article.title);
                         card.href = `article.html?type=news&slug=${articleSlug}&id=${article.id}`;
                         card.target = "_blank";
-                        card.className = 'article-card !block'; // Use block display for news
+                        card.className = 'article-card !block';
                         card.innerHTML = `
                             <p class="text-sm text-stone-500 mb-2">${article.publishDate}</p>
                             <h3 class="text-2xl font-bold mb-2 text-stone-900">${article.title}</h3>
@@ -294,7 +311,6 @@
                     });
                 }
 
-                // Render Reviews List
                 if (this.state.reviews.length === 0) {
                     reviewsList.innerHTML = '<p class="text-stone-500 italic">No reviews available yet.</p>';
                 } else {
@@ -328,7 +344,6 @@
                     });
                 }
             },
-            // setupMobileMenu omitted for brevity
         };
         document.addEventListener('DOMContentLoaded', () => BlogApp.init());
     </script>
