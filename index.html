@@ -1029,9 +1029,8 @@
 
     <!-- Main Application Script -->
     <script>
-        // NOTE: The full 2500+ lines of original JavaScript are included here.
-        // It has been omitted from this display for brevity but is present in the actual file.
         const JazzApp = {
+            // Application State
             state: {
                 albums: [],
                 artistProfiles: {},
@@ -1056,7 +1055,11 @@
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
             },
+
+            // DOM Elements
             elements: {},
+
+            // Initialization
             init() {
                 this.cacheDOMElements();
                 for (const key in this.methods) {
