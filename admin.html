@@ -217,7 +217,27 @@
 
             setupFirebase() {
                 try {
-                    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
+  authDomain: "controlled-freedom.firebaseapp.com",
+  projectId: "controlled-freedom",
+  storageBucket: "controlled-freedom.firebasestorage.app",
+  messagingSenderId: "992659637634",
+  appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
+  measurementId: "G-ETT07JGVSB"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
                     const app = initializeApp(firebaseConfig);
                     this.db = getFirestore(app);
                     this.auth = getAuth(app);
