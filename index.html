@@ -178,17 +178,15 @@
             }
         }
 
-        /* Main Background Pattern */
+        /* Main Background Pattern - Light Theme */
         .main-content-wrapper {
-            background-color: #1c1917;
-            background-image:
-                linear-gradient(var(--accent) 2px, transparent 2px),
-                linear-gradient(90deg, var(--accent) 2px, transparent 2px),
-                linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
-            background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
-            background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+            background-color: var(--bg-main);
+            background-image:  linear-gradient(135deg, var(--bg-secondary) 25%, transparent 25%), linear-gradient(225deg, var(--bg-secondary) 25%, transparent 25%), linear-gradient(45deg, var(--bg-secondary) 25%, transparent 25%), linear-gradient(315deg, var(--bg-secondary) 25%, var(--bg-main) 25%);
+            background-size: 40px 40px;
+            background-position:  10px 0, 10px 0, 0 0, 0 0;
             padding: 2rem 0;
+            border-top: 2px solid var(--text-main);
+            border-bottom: 2px solid var(--text-main);
         }
 
         /* Modal Styles */
