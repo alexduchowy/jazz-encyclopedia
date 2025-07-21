@@ -103,7 +103,7 @@
                 <button id="logout-btn" class="btn btn-secondary">Sign Out</button>
             </div>
             <div class="bg-white p-8 border-2 border-stone-900 rounded-sm shadow-[8px_8px_0px_var(--text-main)]">
-                <h2 class="text-3xl mb-6 border-b-2 border-stone-200 pb-4">Publish New Content</h2>
+                <h2 id="form-title" class="text-3xl mb-6 border-b-2 border-stone-200 pb-4">Publish New Content</h2>
                 <form id="publish-form">
                     <input type="hidden" id="edit-id">
                     <div class="mb-6">
@@ -181,6 +181,7 @@
         </div>
     </div>
 
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -191,6 +192,7 @@
             auth: null,
             elements: {},
             articleToDeleteId: null,
+            allArticles: [], // Cache for article data
 
             init() {
                 this.cacheDOMElements();
@@ -207,6 +209,7 @@
                     authStatus: document.getElementById('auth-status'),
                     publishForm: document.getElementById('publish-form'),
                     publishStatus: document.getElementById('publish-status'),
+                    formTitle: document.getElementById('form-title'),
                     contentTypeSelect: document.getElementById('content-type'),
                     reviewFields: document.getElementById('review-fields'),
                     contentList: document.getElementById('content-list'),
@@ -340,7 +343,11 @@
                 const imageUrl = document.getElementById('image-url').value;
                 const body = document.getElementById('content-body').value;
                 const author = document.getElementById('author').value;
-                const publishDate = new Date(document.getElementById('publish-date').value).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                
+                // Format date to YYYY-MM-DD for consistency before converting
+                const dateInput = document.getElementById('publish-date').value;
+                const dateObj = new Date(dateInput + 'T00:00:00'); // Avoid timezone issues
+                const publishDate = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                 
                 let data = { type, title, imageUrl, body, author, publishDate };
 
@@ -355,18 +362,18 @@
             listenForContent() {
                 const q = query(collection(this.db, "articles"), orderBy("createdAt", "desc"));
                 onSnapshot(q, (querySnapshot) => {
-                    this.renderContentList(querySnapshot.docs);
+                    this.allArticles = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    this.renderContentList(this.allArticles);
                 });
             },
 
-            renderContentList(docs) {
+            renderContentList(articles) {
                 this.elements.contentList.innerHTML = '';
-                if (docs.length === 0) {
+                if (articles.length === 0) {
                     this.elements.contentList.innerHTML = '<p class="text-stone-500 text-center">No content published yet.</p>';
                     return;
                 }
-                docs.forEach(doc => {
-                    const article = doc.data();
+                articles.forEach(article => {
                     const item = document.createElement('div');
                     item.className = 'bg-stone-200 p-4 rounded-sm border border-stone-300 flex justify-between items-center';
                     item.innerHTML = `
@@ -376,8 +383,8 @@
                             <p class="text-sm text-stone-600">By ${article.author} on ${article.publishDate}</p>
                         </div>
                         <div class="flex gap-2">
-                            <button data-id="${doc.id}" class="edit-btn bg-blue-500 text-white px-3 py-1 rounded-sm hover:bg-blue-600 transition-colors text-sm font-bold">Edit</button>
-                            <button data-id="${doc.id}" class="delete-btn bg-red-500 text-white px-3 py-1 rounded-sm hover:bg-red-600 transition-colors text-sm font-bold">Delete</button>
+                            <button data-id="${article.id}" class="edit-btn bg-blue-500 text-white px-3 py-1 rounded-sm hover:bg-blue-600 transition-colors text-sm font-bold">Edit</button>
+                            <button data-id="${article.id}" class="delete-btn bg-red-500 text-white px-3 py-1 rounded-sm hover:bg-red-600 transition-colors text-sm font-bold">Delete</button>
                         </div>
                     `;
                     this.elements.contentList.appendChild(item);
@@ -394,41 +401,35 @@
                 }
             },
 
-            async populateFormForEdit(id) {
-                try {
-                    const docRef = doc(this.db, "articles", id);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        this.elements.editIdInput.value = id;
-                        this.elements.contentTypeSelect.value = data.type;
-                        document.getElementById('title').value = data.title;
-                        document.getElementById('image-url').value = data.imageUrl || '';
-                        document.getElementById('content-body').value = data.body;
-                        document.getElementById('author').value = data.author;
-                        
-                        const date = new Date(data.publishDate);
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        document.getElementById('publish-date').value = `${year}-${month}-${day}`;
+            populateFormForEdit(id) {
+                const article = this.allArticles.find(a => a.id === id);
+                if (!article) return;
 
-                        this.elements.reviewFields.style.display = data.type === 'review' ? 'block' : 'none';
-                        if (data.type === 'review') {
-                            document.getElementById('album-title').value = data.albumTitle;
-                            document.getElementById('artist').value = data.artist;
-                            document.getElementById('rating').value = data.rating;
-                        }
-                        
-                        this.elements.publishBtn.textContent = 'Update';
-                        this.elements.cancelEditBtn.classList.remove('hidden');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    } else {
-                        console.log("No such document!");
-                    }
-                } catch (error) {
-                    console.error("Error getting document:", error);
+                this.elements.editIdInput.value = id;
+                this.elements.contentTypeSelect.value = article.type;
+                document.getElementById('title').value = article.title;
+                document.getElementById('image-url').value = article.imageUrl || '';
+                document.getElementById('content-body').value = article.body;
+                document.getElementById('author').value = article.author;
+                
+                // Convert "Month Day, Year" back to "YYYY-MM-DD" for the input
+                const date = new Date(article.publishDate);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                document.getElementById('publish-date').value = `${year}-${month}-${day}`;
+
+                this.elements.reviewFields.style.display = article.type === 'review' ? 'block' : 'none';
+                if (article.type === 'review') {
+                    document.getElementById('album-title').value = article.albumTitle;
+                    document.getElementById('artist').value = article.artist;
+                    document.getElementById('rating').value = article.rating;
                 }
+                
+                this.elements.publishBtn.textContent = 'Update';
+                this.elements.formTitle.textContent = 'Edit Content';
+                this.elements.cancelEditBtn.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             },
 
             resetForm() {
@@ -437,6 +438,7 @@
                 document.getElementById('publish-date').valueAsDate = new Date();
                 this.elements.reviewFields.style.display = 'block';
                 this.elements.publishBtn.textContent = 'Publish';
+                this.elements.formTitle.textContent = 'Publish New Content';
                 this.elements.cancelEditBtn.classList.add('hidden');
                 this.elements.publishStatus.textContent = '';
             },
