@@ -284,25 +284,47 @@
             color: var(--accent);
         }
 
-        .title-rotate {
-            transform: rotate(-1.5deg);
+        /* Custom class to manage navigation bar visibility */
+        .nav-bar-behaviour {
+            display: none; /* Hidden on mobile by default */
         }
-        .nav-bar-hidden-behaviour {
-            display: flex;
-            transform: rotate(-1.5deg);
-        }
-        @media (max-width: 640px) {
-            .nav-bar-hidden-behaviour {
-                display: none;
+        @media (min-width: 768px) { /* md breakpoint: visible on desktop */
+            .nav-bar-behaviour {
+                display: flex;
             }
         }
 
-        /* FIX: New class to handle dropdown visibility on hover */
-        .desktop-dropdown-behaviour {
-            display: none;
+        /* Dropdown Menu Styles */
+        .dropdown-menu {
+            position: absolute;
+            display: none; /* Hide by default */
+            z-index: 50;
+            min-width: 160px;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
+            border-radius: 0.25rem;
+            margin-top: 0.5rem; /* Adjust for better positioning */
+            transform-origin: top left;
         }
-        .group:hover .desktop-dropdown-behaviour {
+
+        .group:hover .dropdown-menu {
+            display: block; /* Show on hover */
+        }
+
+        .dropdown-menu a {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: normal;
+            font-size: 1rem;
             display: block;
+            padding: 0.5rem 1.5rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .dropdown-menu a:hover {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            transform: translateX(5px);
         }
 
         /* Mobile Menu Panel Transition */
@@ -370,30 +392,6 @@
             font-family: 'Inter', sans-serif;
             font-weight: 600;
             font-size: 0.9rem;
-        }
-        
-        /* NEW: Dropdown Menu Styling */
-        .dropdown-menu {
-            background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-            box-shadow: 4px 4px 0px var(--text-main);
-            margin-top: 1.75rem;
-            transform: rotate(1.5deg);
-            transform-origin: top left;
-        }
-        .dropdown-menu a {
-            font-family: 'Inter', sans-serif;
-            letter-spacing: normal;
-            font-size: 1rem;
-            display: block;
-            padding: 0.5rem 1.5rem;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
-        .dropdown-menu a:hover {
-            background-color: var(--accent);
-            color: var(--bg-main);
-            transform: translateX(5px);
         }
 
         /* Loading indicator styles */
@@ -608,46 +606,48 @@
     <div id="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
-        <div class="sticky top-0 z-50 h-24">
-              <header class="relative container mx-auto h-full">
-                    <!-- This is the crooked background. It is positioned absolutely within the header -->
-                    <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
-                    
-                    <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
-                    <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                        <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10"><a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a></div>
-                        <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
-                            <div class="relative group">
-                                <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                                <div class="absolute desktop-dropdown-behaviour pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="/#timeline">Timeline</a><a href="/#matrix">Genres</a><a href="/#artists">Artists</a></div></div>
-                            </div>
-                            <div class="relative group">
-                                <a href="/legacy" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                                 <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
-                                    <div class="dropdown-menu rounded-sm py-2">
-                                        <a href="#legacy">Path Timeline</a>
-                                        <a href="#legacy-genres">Genre Evolution</a>
-                                        <a href="#artists">Artists</a>
-                                    </div>
-                                </div>
-                            </div>
-                           <div class="relative group">
-                                <a href="/reviews" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                                 <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
-                                    <div class="dropdown-menu rounded-sm py-2">
-                                        <a href="/reviews#news">News</a>
-                                        <a href="/reviews#reviews">Reviews</a>
-                                    </div>
-                                </div>
+        <!-- HEADER -->
+        <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
+            <header class="container mx-auto h-full">
+                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                    <div class="nav-bar-behaviour items-center space-x-8">
+                        <div class="relative group">
+                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                            <div class="dropdown-menu">
+                                <a href="/#timeline">Timeline</a>
+                                <a href="/#matrix">Genres</a>
+                                <a href="/#artists">Artists</a>
                             </div>
                         </div>
-                        <!-- Hamburger Menu Button -->
-                        <div class="sm:hidden"><button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
-                    </nav>
-                </header>
+                        <div class="relative group">
+                            <a href="/legacy.html" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                            <div class="dropdown-menu">
+                                <a href="/legacy.html#legacy">Path Timeline</a>
+                                <a href="/legacy.html#legacy-genres">Genre Evolution</a>
+                                <a href="/legacy.html#artists">Artists</a>
+                            </div>
+                        </div>
+                       <div class="relative group">
+                            <a href="/reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                             <div class="dropdown-menu">
+                                <a href="/reviews.html#blog-content">News & Reviews</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Hamburger Menu Button -->
+                    <div class="md:hidden">
+                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
+                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </nav>
+            </header>
         </div>
 
-        <main class="-mt-24">
+        <main>
             <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden">
                 <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover banner-animation" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Legacy';">
                 <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
@@ -811,8 +811,8 @@
             <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
                 <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/reviews" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+                <a href="/legacy.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/reviews.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
             </nav>
         </div>
     </div>
