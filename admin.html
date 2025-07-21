@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Controlled Freedom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f5f5f4;
+            --text-main: #1c1917;
+            --accent: #f97316;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .form-input {
+            border: 2px solid var(--text-main);
+            background-color: var(--bg-main);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px #fb923c;
+        }
+        .btn-primary {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+            border: 2px solid var(--text-main);
+            box-shadow: 2px 2px 0px var(--text-main);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px var(--text-main);
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-900">
+
+    <div class="container mx-auto p-4 sm:p-8 max-w-3xl">
+        <div class="text-center mb-8">
+            <a href="index.html"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20 mx-auto"></a>
+            <h1 class="text-4xl mt-4">Content Publisher</h1>
+        </div>
+
+        <div class="bg-white p-8 border-2 border-stone-900 rounded-sm shadow-[8px_8px_0px_var(--text-main)]">
+            <form id="publish-form">
+                <div class="mb-6">
+                    <label for="content-type" class="block text-lg font-bold mb-2">Content Type</label>
+                    <select id="content-type" class="form-input w-full">
+                        <option value="review">Album Review</option>
+                        <option value="news">News Article</option>
+                    </select>
+                </div>
+
+                <!-- Fields for both types -->
+                <div class="mb-4">
+                    <label for="title" class="block text-lg font-bold mb-2">Title</label>
+                    <input type="text" id="title" class="form-input w-full" required>
+                </div>
+                 <div class="mb-4">
+                    <label for="image-url" class="block text-lg font-bold mb-2">Image URL</label>
+                    <input type="url" id="image-url" class="form-input w-full" placeholder="https://placehold.co/600x400...">
+                </div>
+
+                <!-- Review Specific Fields -->
+                <div id="review-fields">
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="album-title" class="block text-lg font-bold mb-2">Album Title</label>
+                            <input type="text" id="album-title" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="artist" class="block text-lg font-bold mb-2">Artist</label>
+                            <input type="text" id="artist" class="form-input w-full">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="rating" class="block text-lg font-bold mb-2">Rating (1-5)</label>
+                        <input type="number" id="rating" class="form-input w-full" min="1" max="5">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="content-body" class="block text-lg font-bold mb-2">Body (use &lt;p&gt; tags for paragraphs)</label>
+                    <textarea id="content-body" rows="10" class="form-input w-full" required></textarea>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label for="author" class="block text-lg font-bold mb-2">Author</label>
+                        <input type="text" id="author" class="form-input w-full" required>
+                    </div>
+                    <div>
+                        <label for="publish-date" class="block text-lg font-bold mb-2">Publish Date</label>
+                        <input type="date" id="publish-date" class="form-input w-full" required>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn-primary">Publish</button>
+                </div>
+            </form>
+            <div id="status-message" class="mt-6 text-center font-bold"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const contentTypeSelect = document.getElementById('content-type');
+        const reviewFields = document.getElementById('review-fields');
+        const form = document.getElementById('publish-form');
+        const statusMessage = document.getElementById('status-message');
+
+        contentTypeSelect.addEventListener('change', () => {
+            reviewFields.style.display = contentTypeSelect.value === 'review' ? 'block' : 'none';
+        });
+        
+        // Set default date
+        document.getElementById('publish-date').valueAsDate = new Date();
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            statusMessage.textContent = 'Publishing...';
+            statusMessage.style.color = 'black';
+
+            const type = contentTypeSelect.value;
+            const title = document.getElementById('title').value;
+            const imageUrl = document.getElementById('image-url').value;
+            const body = document.getElementById('content-body').value;
+            const author = document.getElementById('author').value;
+            const publishDate = new Date(document.getElementById('publish-date').value).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+            let data = {
+                type,
+                title,
+                imageUrl,
+                body,
+                author,
+                publishDate,
+                createdAt: serverTimestamp()
+            };
+
+            if (type === 'review') {
+                data.albumTitle = document.getElementById('album-title').value;
+                data.artist = document.getElementById('artist').value;
+                data.rating = parseInt(document.getElementById('rating').value);
+            }
+
+            try {
+                const docRef = await addDoc(collection(db, "articles"), data);
+                statusMessage.textContent = 'Successfully published!';
+                statusMessage.style.color = 'green';
+                form.reset();
+                document.getElementById('publish-date').valueAsDate = new Date();
+                reviewFields.style.display = 'block';
+
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                statusMessage.textContent = 'Error publishing. Check console for details.';
+                statusMessage.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
