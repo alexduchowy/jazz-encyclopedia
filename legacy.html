@@ -439,26 +439,24 @@
         }
         
         /* --- LEGACY PAGE SPECIFIC STYLES --- */
-        #path-selector-grid.is-mobile-slider {
+        #path-selector-grid {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             padding: 1rem;
             overflow-x: auto;
             -ms-overflow-style: none;
             scrollbar-width: none;
             scroll-snap-type: x mandatory;
-            scroll-behavior: smooth; /* Added for smooth scrolling */
+            scroll-behavior: smooth;
         }
-        #path-selector-grid.is-mobile-slider::-webkit-scrollbar {
+        #path-selector-grid::-webkit-scrollbar {
             display: none;
         }
-        #path-selector-grid.is-mobile-slider .path-selector-card {
+        .path-selector-card {
             width: 80vw;
             max-width: 300px;
             flex-shrink: 0;
             scroll-snap-align: center;
-        }
-        .path-selector-card {
             background-color: var(--bg-secondary);
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
@@ -468,6 +466,11 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+        }
+        @media (min-width: 768px) {
+            .path-selector-card {
+                width: 320px;
+            }
         }
         .path-selector-card-img {
             height: 160px;
@@ -676,11 +679,11 @@
                     
                     <!-- Path Selector Container -->
                     <div id="path-selector-container" class="mb-12">
-                        <div id="path-selector-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div id="path-selector-grid">
                             <!-- Path cards injected by JS -->
                         </div>
                         <!-- Mobile Slider Controls -->
-                        <div id="path-slider-controls" class="hidden justify-center items-center gap-4 mt-4">
+                        <div id="path-slider-controls" class="flex justify-center items-center gap-4 mt-4">
                              <button id="path-prev-btn" class="p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
                             <span id="path-page-indicator" class="font-bold text-lg text-stone-900"></span>
                             <button id="path-next-btn" class="p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
@@ -1036,17 +1039,6 @@
                 },
                 setupPathSlider() {
                     const { pathSelectorGrid, pathSliderControls, pathPrevBtn, pathNextBtn, pathPageIndicator } = this.elements;
-                    const isMobile = window.innerWidth < 768;
-
-                    pathSelectorGrid.classList.toggle('is-mobile-slider', isMobile);
-                    pathSliderControls.classList.toggle('hidden', !isMobile);
-                    pathSliderControls.classList.toggle('flex', isMobile);
-
-                    if (!isMobile) {
-                        pathSelectorGrid.style.transform = '';
-                        return;
-                    }
-
                     const cards = Array.from(pathSelectorGrid.children);
                     const totalSlides = cards.length;
 
@@ -1141,7 +1133,8 @@
                         '1950s': [
                             [['Bebop'], ['Hard Bop']],
                             [['Cool Jazz'], ['Modal Jazz']],
-                            [['Latin Jazz']]
+                            [['Latin Jazz']],
+                            [['Big Band']]
                         ],
                         '1960s': [
                             [['Post-Bop'], ['Free Jazz']],
@@ -1221,7 +1214,8 @@
                         { from: 'Hard Bop', to: 'Neo-Bop' },
                         { from: 'Third Stream', to: 'Chamber Jazz' },
                         { from: 'Third Stream', to: 'Post-Minimalism' },
-                        { from: 'Jazz-Funk', to: 'Nu Jazz' }
+                        { from: 'Jazz-Funk', to: 'Nu Jazz' },
+                        { from: 'Big Band', to: 'Progressive Big Band' }
                     ];
 
                     const svgNS = "http://www.w3.org/2000/svg";
@@ -1444,7 +1438,7 @@
                     
                     const genreTags = (album.genres || []).map(g => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}" data-genre-name="${g.trim()}">${g.trim()}</span>`).join(' ');
 
-                    const lineupHtml = (pivotalTrack.lineup || 'N/A').split(/,(?![^()]*\))/).map(personnel => {
+                    const lineupHtml = (pivotalTrack.lineup || 'N/A').split(/, (?![^()]*\))/).map(personnel => {
                         const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
                         if (match && this.state.artistsData.some(a => a.name === this.methods.getCanonicalName(match[1].trim()))) {
                             const canonicalName = this.methods.getCanonicalName(match[1].trim());
