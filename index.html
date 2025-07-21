@@ -95,6 +95,38 @@
         .content-hidden {
             display: none;
         }
+
+        /* Animated Banner */
+        .banner-container {
+            background: var(--text-main);
+            color: var(--bg-main);
+            text-align: center;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border-radius: 0.5rem;
+            border: 2px solid var(--accent);
+            box-shadow: 6px 6px 0px var(--accent);
+        }
+        .banner-container h2 {
+            font-size: 2rem;
+            animation: text-flicker 4s linear infinite alternate;
+        }
+        @media (min-width: 768px) {
+            .banner-container h2 {
+                font-size: 3rem;
+            }
+        }
+
+        @keyframes text-flicker {
+            0% { opacity: 0.6; text-shadow: 2px 2px 4px var(--accent-dark); }
+            50% { opacity: 1; text-shadow: 0 0 12px var(--yellow-accent); }
+            100% { opacity: 0.7; text-shadow: -2px -2px 4px var(--accent-dark); }
+        }
+
+        /* Main Background Pattern */
+        main {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e7e5e4' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -127,6 +159,12 @@
 
         <main class="py-12 sm:py-16">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- Animated Banner -->
+                <div class="banner-container">
+                    <h2>New ways to discover Jazz History</h2>
+                </div>
+
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
                     <!-- Main Column -->
@@ -156,6 +194,14 @@
                                 </div>
                             </a>
                         </div>
+
+                        <!-- Latest Review Card -->
+                        <div class="dashboard-card">
+                            <h2 class="dashboard-card-header">Latest From The Archive</h2>
+                            <div id="latest-review" class="dashboard-card-content">
+                                <!-- Content injected by JS -->
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Sidebar Column -->
@@ -167,10 +213,10 @@
                                 <!-- Content injected by JS -->
                             </div>
                         </div>
-                        <!-- Latest News & Reviews -->
+                        <!-- Latest News -->
                         <div class="dashboard-card">
-                            <h2 class="dashboard-card-header">Latest From The Archive</h2>
-                            <div id="latest-articles" class="dashboard-card-content space-y-4">
+                            <h2 class="dashboard-card-header">News</h2>
+                            <div id="latest-news" class="dashboard-card-content space-y-4">
                                 <!-- Articles injected by JS -->
                             </div>
                         </div>
@@ -215,7 +261,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const LandingApp = {
             state: {
@@ -241,7 +287,8 @@
                     pageContent: document.getElementById('page-content'),
                     recommendationContent: document.getElementById('recommendation-content'),
                     onThisDayContainer: document.getElementById('on-this-day'),
-                    latestArticles: document.getElementById('latest-articles'),
+                    latestNews: document.getElementById('latest-news'),
+                    latestReview: document.getElementById('latest-review'),
                     footerCopyright: document.getElementById('footer-copyright'),
                     mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
@@ -262,7 +309,7 @@
 
                     this.methods.renderRecommendation();
                     this.methods.setupOnThisDayFeature();
-                    await this.methods.fetchLatestArticles();
+                    await this.methods.fetchNewsAndReview();
 
                     this.showPage();
                 } catch (error) {
@@ -350,7 +397,7 @@
                         this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-stone-600">No landmark tracks were recorded on this day in our database. Check back tomorrow!</p>`;
                     }
                 },
-                async fetchLatestArticles() {
+                async fetchNewsAndReview() {
                     const firebaseConfig = {
                         apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                         authDomain: "controlled-freedom.firebaseapp.com",
@@ -360,36 +407,69 @@
                         appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
                         measurementId: "G-ETT07JGVSB"
                     };
-                    const app = initializeApp(firebaseConfig);
+                    // Check if Firebase is already initialized
+                    const app = window._firebaseApp || initializeApp(firebaseConfig);
+                    if (!window._firebaseApp) window._firebaseApp = app;
+
                     const db = getFirestore(app);
                     const auth = getAuth(app);
 
                     try {
-                        await signInAnonymously(auth);
+                        if (!auth.currentUser) {
+                            await signInAnonymously(auth);
+                        }
                         const articlesRef = collection(db, "articles");
-                        const q = query(articlesRef, orderBy("createdAt", "desc"), limit(5));
+                        const q = query(articlesRef, orderBy("createdAt", "desc"), limit(10));
                         const articlesSnapshot = await getDocs(q);
                         
-                        let articlesHtml = '';
+                        let newsHtml = '';
+                        let reviewHtml = '';
+                        let reviewFound = false;
+
                         if (articlesSnapshot.empty) {
-                            articlesHtml = '<p class="text-stone-500 italic">No articles yet.</p>';
+                            newsHtml = '<p class="text-stone-500 italic">No news yet.</p>';
+                            reviewHtml = '<p class="text-stone-500 italic">No reviews yet.</p>';
                         } else {
                             articlesSnapshot.forEach(doc => {
                                 const article = { id: doc.id, ...doc.data() };
-                                const slug = this.methods.slugify(article.title || article.albumTitle);
-                                articlesHtml += `
-                                    <a href="/reviews#blog-content" class="block p-3 rounded-md hover:bg-stone-300 transition-colors">
-                                        <p class="text-sm font-bold text-orange-600">${article.type === 'review' ? 'Album Review' : 'News'}</p>
-                                        <h4 class="font-bold text-stone-900">${article.title || article.albumTitle}</h4>
-                                        <p class="text-xs text-stone-500">${article.publishDate}</p>
-                                    </a>
-                                `;
+                                
+                                if (article.type === 'news') {
+                                    newsHtml += `
+                                        <a href="/reviews#blog-content" class="block p-3 rounded-md hover:bg-stone-300 transition-colors">
+                                            <h4 class="font-bold text-stone-900">${article.title}</h4>
+                                            <p class="text-xs text-stone-500">${article.publishDate}</p>
+                                        </a>
+                                    `;
+                                }
+
+                                if (article.type === 'review' && !reviewFound) {
+                                    const snippet = (article.content || '').replace(/<[^>]+>/g, '').substring(0, 120);
+                                    reviewHtml = `
+                                        <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                                            <img src="${article.coverUrl || 'https://placehold.co/160x160/1c1917/f5f5f4?text=Review'}" alt="Cover for ${article.albumTitle}" class="w-40 h-40 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
+                                            <div>
+                                                <p class="text-orange-600 font-bold">Album Review</p>
+                                                <h3 class="text-3xl font-bold text-stone-900 my-1">${article.albumTitle}</h3>
+                                                <p class="text-stone-600 font-semibold">By ${article.artist}</p>
+                                                <p class="mt-2 text-stone-700">${snippet}...</p>
+                                                <a href="/reviews#blog-content" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Read Full Review &rarr;</a>
+                                            </div>
+                                        </div>
+                                    `;
+                                    reviewFound = true;
+                                }
                             });
+
+                            if (newsHtml === '') newsHtml = '<p class="text-stone-500 italic">No news articles found.</p>';
+                            if (reviewHtml === '') reviewHtml = '<p class="text-stone-500 italic">No recent reviews found.</p>';
                         }
-                        this.elements.latestArticles.innerHTML = articlesHtml;
+                        this.elements.latestNews.innerHTML = newsHtml;
+                        this.elements.latestReview.innerHTML = reviewHtml;
+
                     } catch (error) {
                         console.error("Error fetching articles:", error);
-                        this.elements.latestArticles.innerHTML = `<p>Could not load latest articles.</p>`;
+                        this.elements.latestNews.innerHTML = `<p>Could not load news.</p>`;
+                        this.elements.latestReview.innerHTML = `<p>Could not load review.</p>`;
                     }
                 },
                 slugify(text) {
