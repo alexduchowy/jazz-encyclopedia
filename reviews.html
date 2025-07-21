@@ -13,48 +13,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
     <style>
-        /* Define custom color properties for easy theme management */
         :root {
-            --bg-main: #f5f5f4; /* stone-100 */
-            --bg-secondary: #e7e5e4; /* stone-200 */
-            --bg-dark: #1a1a1a; /* Custom dark gray */
-            --text-main: #1c1917; /* stone-900 */
-            --text-muted: #44403c; /* stone-700 - Darkened for readability */
-            --accent: #f97316; /* orange-500 */
-            --accent-dark: #ea580c; /* orange-600 */
-            --yellow-accent: #facc15; /* yellow-400 */
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-dark: #1a1a1a;
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --accent: #f97316;
+            --accent-dark: #ea580c;
+            --yellow-accent: #facc15;
         }
-
-        /* Base body styling */
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
         }
-        
-        /* Heading font styling with new Bebas Neue font */
         h1, h2, h3, h4, h5 {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
         }
-
-        /* Navigation link transition effects */
         .nav-link {
             transition: color 0.2s;
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.1em;
             font-size: 1.1rem;
         }
-        .nav-link:hover, .nav-link.active {
-            color: var(--accent);
-        }
+        .nav-link:hover, .nav-link.active { color: var(--accent); }
         .nav-bar-behaviour { display: none; }
         @media (min-width: 768px) { .nav-bar-behaviour { display: flex; } }
-        
         #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
-
-        /* Section header styling */
         .section-header {
               transform: rotate(-1deg);
               display: inline-block;
@@ -63,7 +51,6 @@
               padding: 0.25rem 1rem;
               margin-bottom: 1rem;
         }
-        
         #loader {
             position: fixed;
             inset: 0;
@@ -85,26 +72,12 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .content-hidden {
-            display: none;
-        }
-
-        /* Banner Animation */
+        .content-hidden { display: none; }
         @keyframes banner-fade-in {
-            from {
-                opacity: 0;
-                transform: scale(1.1);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(1.1); }
+            to { opacity: 1; transform: scale(1); }
         }
-        .banner-animation {
-            animation: banner-fade-in 2s ease-out forwards;
-        }
-
-        /* Clickable card for news and reviews */
+        .banner-animation { animation: banner-fade-in 2s ease-out forwards; }
         .article-card {
             display: flex;
             gap: 1rem;
@@ -123,9 +96,7 @@
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
             cursor: pointer;
         }
-        .star-filled {
-            color: var(--yellow-accent);
-        }
+        .star-filled { color: var(--yellow-accent); }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -133,7 +104,7 @@
     <div id="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
-        <!-- Standardized Sticky Header -->
+        <!-- Header remains the same -->
         <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
@@ -144,12 +115,9 @@
                         <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         <a href="/reviews" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
                     </div>
-                    <!-- Hamburger Menu Button -->
                     <div class="md:hidden">
                         <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
-                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
+                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
                     </div>
                 </nav>
@@ -170,23 +138,14 @@
             <!-- Combined News and Reviews Section -->
             <section id="blog-content" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-                    <!-- Two-column layout for News and Reviews -->
                     <div class="grid md:grid-cols-2 gap-12 lg:gap-16">
-                        
-                        <!-- Left Column: News -->
                         <div>
                             <h2 class="section-header text-4xl mb-6">Latest News</h2>
-                            <div id="news-list" class="space-y-6">
-                                <!-- News articles will be injected here -->
-                            </div>
+                            <div id="news-list" class="space-y-6"></div>
                         </div>
-
-                        <!-- Right Column: Reviews -->
                         <div>
                             <h2 class="section-header text-4xl mb-6">Album Reviews</h2>
-                            <div id="reviews-list" class="space-y-6">
-                                <!-- Review articles will be injected here -->
-                            </div>
+                            <div id="reviews-list" class="space-y-6"></div>
                         </div>
                     </div>
                 </div>
@@ -279,8 +238,13 @@
 
                     articlesSnapshot.forEach((doc) => {
                         const article = { id: doc.id, ...doc.data() };
-                        if (article.type === 'review') this.state.reviews.push(article);
-                        else if (article.type === 'news') this.state.news.push(article);
+                        // ** FIX: Convert type to lowercase before checking **
+                        const articleType = article.type ? article.type.toLowerCase() : '';
+                        if (articleType === 'review') {
+                            this.state.reviews.push(article);
+                        } else if (articleType === 'news') {
+                            this.state.news.push(article);
+                        }
                     });
                     
                     const [dbData, legacyData] = await Promise.all([
@@ -336,14 +300,14 @@
                     this.state.news.forEach(article => {
                         const card = document.createElement('a');
                         const articleSlug = this.slugify(article.title);
-                        card.href = `article.html?type=news&slug=${articleSlug}&id=${article.id}`;
+                        card.href = `article-template.html?id=${article.id}`;
                         card.target = "_blank";
                         card.className = 'article-card !block';
                         card.innerHTML = `
                             <div>
                                 <p class="text-sm text-stone-500 mb-2">${article.publishDate}</p>
                                 <h3 class="text-2xl font-bold mb-2 text-stone-900">${article.title}</h3>
-                                <p class="text-stone-700 font-light">${article.body.substring(0, 120)}...</p>
+                                <p class="text-stone-700 font-light">${article.body.substring(0, 120).replace(/<[^>]*>?/gm, '')}...</p>
                                 <span class="inline-block mt-4 font-bold text-orange-600">Read More &rarr;</span>
                             </div>
                         `;
@@ -365,7 +329,7 @@
 
                         const card = document.createElement('a');
                         const reviewSlug = this.slugify(review.albumTitle);
-                        card.href = `article.html?type=review&slug=${reviewSlug}&id=${review.id}`;
+                        card.href = `article-template.html?id=${review.id}`;
                         card.target = "_blank";
                         card.className = 'article-card';
                         card.innerHTML = `
