@@ -144,69 +144,23 @@
             animation: banner-fade-in 2s ease-out forwards;
         }
 
-        /* Reviews Page Specific Styles */
-        .news-card {
-            background-color: var(--bg-secondary);
+        /* NEW: Clickable card for news and reviews */
+        .article-card {
+            display: block;
+            background-color: var(--bg-main);
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
             box-shadow: 4px 4px 0px var(--text-main);
             transition: all 0.2s ease;
+            padding: 1.5rem;
         }
-        .news-card:hover {
+        .article-card:hover {
             transform: translateY(-4px) rotate(-1deg);
             box-shadow: 6px 6px 0px var(--accent);
-        }
-        .review-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-        @media (min-width: 768px) {
-            .review-grid {
-                grid-template-columns: 250px 1fr;
-                gap: 3rem;
-            }
-        }
-        #review-list {
-            max-height: 80vh;
-            overflow-y: auto;
-            padding-right: 1rem;
-        }
-        .review-list-item {
-            padding: 1rem;
             cursor: pointer;
-            border-left: 4px solid transparent;
-            transition: all 0.2s ease;
         }
-        .review-list-item:hover {
-            background-color: var(--bg-secondary);
-            border-left-color: var(--accent-dark);
-        }
-        .review-list-item.active {
-            background-color: var(--bg-secondary);
-            border-left-color: var(--accent);
-        }
-        #review-content-area {
-            font-family: 'Lora', serif;
-        }
-        .review-header {
-            border-bottom: 2px solid var(--bg-secondary);
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .review-title {
-            font-family: 'Lora', serif;
-            font-weight: 600;
-        }
-        .review-body p {
-            margin-bottom: 1.5rem;
-            line-height: 1.7;
-        }
-        .review-rating .star-filled {
+        .star-filled {
             color: var(--yellow-accent);
-        }
-        .review-rating .star-empty {
-            color: var(--bg-secondary);
         }
     </style>
 </head>
@@ -215,6 +169,7 @@
     <div id="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
+        <!-- Sticky Header -->
         <div class="sticky top-0 z-50 h-24">
             <header class="relative container mx-auto h-full">
                 <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
@@ -223,20 +178,12 @@
                     <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
                         <div class="relative group">
                             <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                            <div class="absolute desktop-dropdown-behaviour pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="/#timeline">Timeline</a><a href="/#matrix">Genres</a><a href="/#artists">Artists</a></div></div>
                         </div>
                         <div class="relative group">
                             <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                            <div class="absolute desktop-dropdown-behaviour pt-2 z-10"><div class="dropdown-menu rounded-sm py-2"><a href="/legacy#legacy">Path Timeline</a><a href="/legacy#legacy-genres">Genre Evolution</a><a href="/legacy#artists">Artists</a></div></div>
                         </div>
                         <div class="relative group">
                             <a href="/reviews" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                             <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
-                                <div class="dropdown-menu rounded-sm py-2">
-                                    <a href="#news">News</a>
-                                    <a href="#reviews">Reviews</a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="sm:hidden"><button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
@@ -245,37 +192,44 @@
         </div>
 
         <main class="-mt-24">
+            <!-- Banner Section -->
             <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden">
                 <img src="images/bannerblog.png" alt="Blog Banner" class="w-full h-full object-cover banner-animation" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Blog';">
                 <div class="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-stone-100 to-transparent"></div>
             </section>
 
-            <section id="news" class="pt-12 py-16 sm:py-20">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+            <!-- REDESIGNED: Combined News and Reviews Section -->
+            <section id="blog-content" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
                     <div class="text-center mb-12">
-                        <h2 class="section-header text-5xl">Latest News</h2>
-                        <p class="text-center text-lg text-stone-600 max-w-3xl mx-auto italic">The latest happenings, releases, and discoveries in the world of jazz.</p>
+                        <h1 class="text-6xl font-bold">From The Archive</h1>
+                        <p class="text-center text-lg text-stone-600 max-w-3xl mx-auto italic mt-2">The latest happenings, releases, and deep dives in the world of jazz.</p>
                     </div>
-                    <div id="news-grid" class="grid md:grid-cols-3 gap-8">
-                        <!-- News articles will be injected here -->
-                    </div>
-                </div>
-            </section>
 
-            <section id="reviews" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-                    <div class="text-center mb-12">
-                        <h2 class="section-header text-5xl">Album Reviews</h2>
-                        <p class="text-center text-lg text-stone-600 max-w-3xl mx-auto italic">Deep dives into essential albums from the golden age and beyond.</p>
-                    </div>
-                    <div class="review-grid">
-                        <div class="border-t-2 md:border-t-0 md:border-r-2 border-stone-300"><nav id="review-list" class="space-y-1"></nav></div>
-                        <div id="review-content-area"></div>
+                    <!-- Two-column layout for News and Reviews -->
+                    <div class="grid md:grid-cols-2 gap-12 lg:gap-16">
+                        
+                        <!-- Left Column: News -->
+                        <div>
+                            <h2 class="section-header text-4xl mb-6">Latest News</h2>
+                            <div id="news-list" class="space-y-6">
+                                <!-- News articles will be injected here by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Reviews -->
+                        <div>
+                            <h2 class="section-header text-4xl mb-6">Album Reviews</h2>
+                            <div id="reviews-list" class="space-y-6">
+                                <!-- Review articles will be injected here by JavaScript -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
         </main>
 
+        <!-- Footer -->
         <footer class="bg-stone-900 text-stone-200 py-8">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
@@ -288,6 +242,7 @@
         </footer>
     </div>
 
+    <!-- Mobile Menu -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
@@ -305,8 +260,8 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const ReviewsApp = {
-            state: { reviews: [], news: [], allAlbums: [] },
+        const BlogApp = {
+            state: { reviews: [], news: [] },
             elements: {},
             init() {
                 this.cacheDOMElements();
@@ -318,9 +273,8 @@
                 this.elements = {
                     loader: document.getElementById('loader'), 
                     pageContent: document.getElementById('page-content'),
-                    newsGrid: document.getElementById('news-grid'),
-                    reviewList: document.getElementById('review-list'), 
-                    reviewContentArea: document.getElementById('review-content-area'),
+                    newsList: document.getElementById('news-list'),
+                    reviewsList: document.getElementById('reviews-list'), 
                     mobileMenuButton: document.getElementById('mobile-menu-button'), 
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
@@ -345,7 +299,6 @@
                 const auth = getAuth(app);
 
                 try {
-                    // Sign in anonymously to get read access for public users
                     await signInAnonymously(auth);
 
                     const articlesRef = collection(db, "articles");
@@ -361,14 +314,6 @@
                         }
                     });
                     
-                    // Fetch album data for cover art
-                    const [dbData, legacyData] = await Promise.all([
-                        fetch('database.json').then(res => res.json()),
-                        fetch('legacy.json').then(res => res.json())
-                    ]);
-                    const legacyAlbums = Object.values(legacyData.paths).flatMap(p => p.albums);
-                    this.state.allAlbums = dbData.albums.concat(legacyAlbums);
-
                     this.initializeAppUI();
 
                 } catch (error) {
@@ -382,82 +327,63 @@
                 this.elements.pageContent.classList.remove('content-hidden');
             },
             initializeAppUI() {
-                this.renderNews();
-                this.renderReviewList();
-                if (this.state.reviews.length > 0) {
-                    this.renderReviewContent(0);
-                } else {
-                    this.elements.reviewContentArea.innerHTML = '<p class="text-stone-500">No reviews available yet.</p>';
-                }
+                this.renderLists();
                 this.showPage();
             },
-            renderNews() {
-                const { newsGrid } = this.elements;
-                newsGrid.innerHTML = '';
+            // NEW: Combined rendering function for both lists
+            renderLists() {
+                const { newsList, reviewsList } = this.elements;
+                newsList.innerHTML = '';
+                reviewsList.innerHTML = '';
+
+                // Render News List
                 if (this.state.news.length === 0) {
-                    newsGrid.innerHTML = '<p class="text-stone-500 col-span-full text-center">No news articles yet. Check back soon!</p>';
-                    return;
-                }
-                this.state.news.slice(0, 3).forEach(article => {
-                    const card = document.createElement('div');
-                    card.className = 'news-card';
-                    card.innerHTML = `
-                        <img src="${article.imageUrl || 'https://placehold.co/600x400/a5f3fc/1c1917?text=News'}" alt="${article.title}" class="w-full h-48 object-cover rounded-t-sm">
-                        <div class="p-6">
+                    newsList.innerHTML = '<p class="text-stone-500 italic">No news articles yet. Check back soon!</p>';
+                } else {
+                    this.state.news.forEach(article => {
+                        const card = document.createElement('a');
+                        // NOTE: This link points to a generic article page. You will need to build this page
+                        // to read the 'id' from the URL and display the correct content.
+                        card.href = `article.html?id=${article.id}`;
+                        card.target = "_blank"; // Opens in a new tab
+                        card.className = 'article-card';
+                        card.innerHTML = `
                             <p class="text-sm text-stone-500 mb-2">${article.publishDate}</p>
-                            <h3 class="text-2xl font-bold mb-3">${article.title}</h3>
-                            <p class="text-stone-700">${article.body.substring(0, 100)}...</p>
-                            <a href="#" class="inline-block mt-4 font-bold text-orange-600 hover:text-orange-700">Read More &rarr;</a>
-                        </div>
-                    `;
-                    newsGrid.appendChild(card);
-                });
-            },
-            renderReviewList() {
-                const { reviewList } = this.elements;
-                reviewList.innerHTML = '';
-                 if (this.state.reviews.length === 0) {
-                    reviewList.innerHTML = '<p class="text-stone-500 p-4">No reviews yet.</p>';
-                    return;
-                }
-                this.state.reviews.forEach((review, index) => {
-                    const listItem = document.createElement('div');
-                    listItem.className = 'review-list-item';
-                    listItem.dataset.reviewIndex = index;
-                    listItem.innerHTML = `<h5 class="font-bold text-stone-900">${review.albumTitle}</h5><p class="text-sm text-stone-600">${review.artist}</p>`;
-                    listItem.addEventListener('click', () => this.renderReviewContent(index));
-                    reviewList.appendChild(listItem);
-                });
-            },
-            renderReviewContent(index) {
-                const { reviewList, reviewContentArea } = this.elements;
-                const review = this.state.reviews[index];
-                if (!review) return;
-
-                reviewList.querySelectorAll('.review-list-item').forEach(item => item.classList.remove('active'));
-                reviewList.querySelector(`[data-review-index='${index}']`).classList.add('active');
-
-                const albumData = this.state.allAlbums.find(a => a.albumTitle === review.albumTitle && a.artist === review.artist);
-                const coverImage = albumData ? albumData.cover : review.imageUrl || 'https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';
-
-                let starsHtml = '';
-                for (let i = 1; i <= 5; i++) {
-                    starsHtml += `<svg class="w-5 h-5 ${i <= review.rating ? 'star-filled' : 'star-empty'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
+                            <h3 class="text-2xl font-bold mb-2 text-stone-900">${article.title}</h3>
+                            <p class="text-stone-700 font-light">${article.body.substring(0, 120)}...</p>
+                            <span class="inline-block mt-4 font-bold text-orange-600 hover:text-orange-700">Read More &rarr;</span>
+                        `;
+                        newsList.appendChild(card);
+                    });
                 }
 
-                reviewContentArea.innerHTML = `
-                    <div class="flex flex-col sm:flex-row gap-8 items-start">
-                        <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-full sm:w-1/3 md:w-1/4 h-auto object-cover border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)]" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
-                        <div class="flex-1">
-                            <div class="review-header">
-                                <h3 class="review-title text-4xl lg:text-5xl text-stone-900">${review.title}</h3>
-                                <p class="text-stone-600 mt-2">A review of <strong>${review.albumTitle}</strong> by <strong>${review.artist}</strong></p>
-                                <div class="flex items-center gap-2 mt-3"><div class="review-rating flex">${starsHtml}</div><span class="text-sm text-stone-500 font-semibold">(${review.rating}/5)</span></div>
+                // Render Reviews List
+                if (this.state.reviews.length === 0) {
+                    reviewsList.innerHTML = '<p class="text-stone-500 italic">No reviews available yet.</p>';
+                } else {
+                    this.state.reviews.forEach(review => {
+                        let starsHtml = '';
+                        for (let i = 1; i <= 5; i++) {
+                            starsHtml += `<svg class="w-4 h-4 ${i <= review.rating ? 'star-filled' : 'text-stone-300'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
+                        }
+
+                        const card = document.createElement('a');
+                        card.href = `article.html?id=${review.id}`;
+                        card.target = "_blank";
+                        card.className = 'article-card';
+                        card.innerHTML = `
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm text-stone-500">${review.publishDate}</p>
+                                <div class="flex items-center gap-1.5" title="Rating: ${review.rating}/5">${starsHtml}</div>
                             </div>
-                            <div class="review-body text-stone-800">${review.body}</div>
-                            <div class="text-sm text-right text-stone-500 italic mt-8"><p>Reviewed by ${review.author} on ${review.publishDate}</p></div>
-                        </div>
-                    </div>`;
+                            <h3 class="text-2xl font-bold text-stone-900">${review.albumTitle}</h3>
+                            <p class="text-stone-600 text-lg mb-2">${review.artist}</p>
+                            <p class="text-stone-700 font-light font-serif italic">"${review.title}"</p>
+                            <span class="inline-block mt-4 font-bold text-orange-600 hover:text-orange-700">Read Full Review &rarr;</span>
+                        `;
+                        reviewsList.appendChild(card);
+                    });
+                }
             },
             setupMobileMenu() {
                 const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
@@ -477,7 +403,7 @@
                 });
             }
         };
-        document.addEventListener('DOMContentLoaded', () => ReviewsApp.init());
+        document.addEventListener('DOMContentLoaded', () => BlogApp.init());
     </script>
 </body>
 </html>
