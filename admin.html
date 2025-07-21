@@ -59,6 +59,13 @@
         .modal {
             transition: opacity 0.3s ease;
         }
+        .modal-content {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .modal.hidden .modal-content {
+              opacity: 0;
+              transform: scale(0.95) translateY(10px);
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -98,6 +105,7 @@
             <div class="bg-white p-8 border-2 border-stone-900 rounded-sm shadow-[8px_8px_0px_var(--text-main)]">
                 <h2 class="text-3xl mb-6 border-b-2 border-stone-200 pb-4">Publish New Content</h2>
                 <form id="publish-form">
+                    <input type="hidden" id="edit-id">
                     <div class="mb-6">
                         <label for="content-type" class="block text-lg font-bold mb-2">Content Type</label>
                         <select id="content-type" class="form-input w-full">
@@ -105,18 +113,14 @@
                             <option value="news">News Article</option>
                         </select>
                     </div>
-
-                    <!-- Fields for both types -->
                     <div class="mb-4">
                         <label for="title" class="block text-lg font-bold mb-2">Title</label>
                         <input type="text" id="title" class="form-input w-full" required>
                     </div>
                      <div class="mb-4">
                         <label for="image-url" class="block text-lg font-bold mb-2">Image URL</label>
-                        <input type="url" id="image-url" class="form-input w-full" placeholder="https://placehold.co/600x400...">
+                        <input type="url" id="image-url" class="form-input w-full" placeholder="https://firebasestorage.googleapis.com/...">
                     </div>
-
-                    <!-- Review Specific Fields -->
                     <div id="review-fields">
                         <div class="grid md:grid-cols-2 gap-4 mb-4">
                             <div>
@@ -133,12 +137,10 @@
                             <input type="number" id="rating" class="form-input w-full" min="1" max="5">
                         </div>
                     </div>
-
                     <div class="mb-4">
                         <label for="content-body" class="block text-lg font-bold mb-2">Body (use &lt;p&gt; tags for paragraphs)</label>
                         <textarea id="content-body" rows="10" class="form-input w-full" required></textarea>
                     </div>
-                    
                     <div class="grid md:grid-cols-2 gap-4 mb-6">
                         <div>
                             <label for="author" class="block text-lg font-bold mb-2">Author</label>
@@ -149,9 +151,9 @@
                             <input type="date" id="publish-date" class="form-input w-full" required>
                         </div>
                     </div>
-
-                    <div class="text-center">
-                        <button type="submit" class="btn">Publish</button>
+                    <div class="text-center flex items-center justify-center gap-4">
+                        <button type="submit" id="publish-btn" class="btn">Publish</button>
+                        <button type="button" id="cancel-edit-btn" class="btn btn-secondary hidden">Cancel Edit</button>
                     </div>
                 </form>
                 <div id="publish-status" class="mt-6 text-center font-bold"></div>
@@ -169,7 +171,7 @@
 
     <!-- Delete Confirmation Modal -->
     <div id="delete-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white p-8 rounded-sm border-2 border-stone-900 shadow-lg max-w-sm w-full text-center">
+        <div class="modal-content bg-white p-8 rounded-sm border-2 border-stone-900 shadow-lg max-w-sm w-full text-center">
             <h3 class="text-2xl font-bold mb-4">Are you sure?</h3>
             <p class="text-stone-700 mb-6">This action cannot be undone. The article will be permanently deleted.</p>
             <div class="flex justify-center gap-4">
@@ -179,11 +181,10 @@
         </div>
     </div>
 
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const AdminApp = {
             db: null,
@@ -212,6 +213,9 @@
                     deleteModal: document.getElementById('delete-modal'),
                     confirmDeleteBtn: document.getElementById('confirm-delete-btn'),
                     cancelDeleteBtn: document.getElementById('cancel-delete-btn'),
+                    editIdInput: document.getElementById('edit-id'),
+                    publishBtn: document.getElementById('publish-btn'),
+                    cancelEditBtn: document.getElementById('cancel-edit-btn'),
                 };
             },
 
@@ -253,13 +257,13 @@
             setupEventListeners() {
                 this.elements.loginForm.addEventListener('submit', this.handleLogin.bind(this));
                 this.elements.logoutBtn.addEventListener('click', this.handleLogout.bind(this));
-                this.elements.publishForm.addEventListener('submit', this.handlePublish.bind(this));
+                this.elements.publishForm.addEventListener('submit', this.handlePublishOrUpdate.bind(this));
+                this.elements.cancelEditBtn.addEventListener('click', this.resetForm.bind(this));
                 this.elements.contentTypeSelect.addEventListener('change', () => {
                     this.elements.reviewFields.style.display = this.elements.contentTypeSelect.value === 'review' ? 'block' : 'none';
                 });
                 document.getElementById('publish-date').valueAsDate = new Date();
                 
-                // Modal listeners
                 this.elements.cancelDeleteBtn.addEventListener('click', this.hideDeleteModal.bind(this));
                 this.elements.confirmDeleteBtn.addEventListener('click', this.confirmDelete.bind(this));
                 this.elements.contentList.addEventListener('click', this.handleContentListClick.bind(this));
@@ -286,38 +290,66 @@
                 }
             },
 
-            async handlePublish(e) {
+            async handlePublishOrUpdate(e) {
                 e.preventDefault();
-                this.elements.publishStatus.textContent = 'Publishing...';
-                this.elements.publishStatus.style.color = 'black';
+                const editId = this.elements.editIdInput.value;
+                if (editId) {
+                    await this.updateArticle(editId);
+                } else {
+                    await this.publishArticle();
+                }
+            },
 
+            async publishArticle() {
+                this.elements.publishStatus.textContent = 'Publishing...';
+                const data = this.getFormData();
+                data.createdAt = serverTimestamp();
+
+                try {
+                    await addDoc(collection(this.db, "articles"), data);
+                    this.elements.publishStatus.textContent = 'Successfully published!';
+                    this.elements.publishStatus.style.color = 'green';
+                    this.resetForm();
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                    this.elements.publishStatus.textContent = 'Error publishing. Check console for details.';
+                    this.elements.publishStatus.style.color = 'red';
+                }
+            },
+
+            async updateArticle(id) {
+                this.elements.publishStatus.textContent = 'Updating...';
+                const data = this.getFormData();
+                
+                try {
+                    const docRef = doc(this.db, "articles", id);
+                    await updateDoc(docRef, data);
+                    this.elements.publishStatus.textContent = 'Successfully updated!';
+                    this.elements.publishStatus.style.color = 'green';
+                    this.resetForm();
+                } catch (error) {
+                     console.error("Error updating document: ", error);
+                    this.elements.publishStatus.textContent = 'Error updating. Check console for details.';
+                    this.elements.publishStatus.style.color = 'red';
+                }
+            },
+
+            getFormData() {
                 const type = this.elements.contentTypeSelect.value;
                 const title = document.getElementById('title').value;
                 const imageUrl = document.getElementById('image-url').value;
                 const body = document.getElementById('content-body').value;
                 const author = document.getElementById('author').value;
                 const publishDate = new Date(document.getElementById('publish-date').value).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-                let data = { type, title, imageUrl, body, author, publishDate, createdAt: serverTimestamp() };
+                
+                let data = { type, title, imageUrl, body, author, publishDate };
 
                 if (type === 'review') {
                     data.albumTitle = document.getElementById('album-title').value;
                     data.artist = document.getElementById('artist').value;
                     data.rating = parseInt(document.getElementById('rating').value);
                 }
-
-                try {
-                    await addDoc(collection(this.db, "articles"), data);
-                    this.elements.publishStatus.textContent = 'Successfully published!';
-                    this.elements.publishStatus.style.color = 'green';
-                    this.elements.publishForm.reset();
-                    document.getElementById('publish-date').valueAsDate = new Date();
-                    this.elements.reviewFields.style.display = 'block';
-                } catch (error) {
-                    console.error("Error adding document: ", error);
-                    this.elements.publishStatus.textContent = 'Error publishing. Check console for details.';
-                    this.elements.publishStatus.style.color = 'red';
-                }
+                return data;
             },
 
             listenForContent() {
@@ -343,7 +375,10 @@
                             <h4 class="font-bold text-lg mt-1">${article.title}</h4>
                             <p class="text-sm text-stone-600">By ${article.author} on ${article.publishDate}</p>
                         </div>
-                        <button data-id="${doc.id}" class="delete-btn bg-red-500 text-white px-3 py-1 rounded-sm hover:bg-red-600 transition-colors text-sm font-bold">Delete</button>
+                        <div class="flex gap-2">
+                            <button data-id="${doc.id}" class="edit-btn bg-blue-500 text-white px-3 py-1 rounded-sm hover:bg-blue-600 transition-colors text-sm font-bold">Edit</button>
+                            <button data-id="${doc.id}" class="delete-btn bg-red-500 text-white px-3 py-1 rounded-sm hover:bg-red-600 transition-colors text-sm font-bold">Delete</button>
+                        </div>
                     `;
                     this.elements.contentList.appendChild(item);
                 });
@@ -354,6 +389,56 @@
                     this.articleToDeleteId = e.target.dataset.id;
                     this.showDeleteModal();
                 }
+                if (e.target.classList.contains('edit-btn')) {
+                    this.populateFormForEdit(e.target.dataset.id);
+                }
+            },
+
+            async populateFormForEdit(id) {
+                try {
+                    const docRef = doc(this.db, "articles", id);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        this.elements.editIdInput.value = id;
+                        this.elements.contentTypeSelect.value = data.type;
+                        document.getElementById('title').value = data.title;
+                        document.getElementById('image-url').value = data.imageUrl || '';
+                        document.getElementById('content-body').value = data.body;
+                        document.getElementById('author').value = data.author;
+                        
+                        const date = new Date(data.publishDate);
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        document.getElementById('publish-date').value = `${year}-${month}-${day}`;
+
+                        this.elements.reviewFields.style.display = data.type === 'review' ? 'block' : 'none';
+                        if (data.type === 'review') {
+                            document.getElementById('album-title').value = data.albumTitle;
+                            document.getElementById('artist').value = data.artist;
+                            document.getElementById('rating').value = data.rating;
+                        }
+                        
+                        this.elements.publishBtn.textContent = 'Update';
+                        this.elements.cancelEditBtn.classList.remove('hidden');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        console.log("No such document!");
+                    }
+                } catch (error) {
+                    console.error("Error getting document:", error);
+                }
+            },
+
+            resetForm() {
+                this.elements.publishForm.reset();
+                this.elements.editIdInput.value = '';
+                document.getElementById('publish-date').valueAsDate = new Date();
+                this.elements.reviewFields.style.display = 'block';
+                this.elements.publishBtn.textContent = 'Publish';
+                this.elements.cancelEditBtn.classList.add('hidden');
+                this.elements.publishStatus.textContent = '';
             },
 
             showDeleteModal() {
