@@ -96,31 +96,75 @@
             display: none;
         }
 
-        /* Animated Banner */
-        .banner-container {
-            background: var(--text-main);
-            color: var(--bg-main);
-            text-align: center;
-            padding: 2rem;
+        /* Banner & Typewriter Animation */
+        .banner-section {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            max-height: 400px;
+            overflow: hidden;
+            background-color: var(--bg-dark);
             margin-bottom: 3rem;
             border-radius: 0.5rem;
-            border: 2px solid var(--accent);
-            box-shadow: 6px 6px 0px var(--accent);
-        }
-        .banner-container h2 {
-            font-size: 2rem;
-            animation: text-flicker 4s linear infinite alternate;
-        }
-        @media (min-width: 768px) {
-            .banner-container h2 {
-                font-size: 3rem;
-            }
         }
 
-        @keyframes text-flicker {
-            0% { opacity: 0.6; text-shadow: 2px 2px 4px var(--accent-dark); }
-            50% { opacity: 1; text-shadow: 0 0 12px var(--yellow-accent); }
-            100% { opacity: 0.7; text-shadow: -2px -2px 4px var(--accent-dark); }
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.3;
+            animation: banner-fade-in 2s ease-out forwards;
+        }
+
+        @keyframes banner-fade-in {
+            from { opacity: 0; transform: scale(1.05); }
+            to { opacity: 0.3; transform: scale(1); }
+        }
+
+        .banner-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1rem;
+            color: var(--bg-main);
+        }
+
+        .typewriter h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            overflow: hidden;
+            border-right: .15em solid var(--accent);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .1em;
+            animation:
+                typing 3.5s steps(35, end),
+                blink-caret .75s step-end infinite;
+        }
+
+        /* The typing effect */
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        /* The typewriter cursor effect */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent); }
+        }
+
+        @media (min-width: 768px) {
+            .typewriter h2 {
+                font-size: 3.5rem;
+            }
         }
 
         /* Main Background Pattern */
@@ -161,9 +205,15 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 
                 <!-- Animated Banner -->
-                <div class="banner-container">
-                    <h2>New ways to discover Jazz History</h2>
-                </div>
+                <section class="banner-section">
+                    <img src="images/bannerindex.jpg" alt="A collage of jazz album covers" class="banner-img" onerror="this.style.display='none'">
+                    <div class="banner-overlay">
+                        <div class="typewriter">
+                            <h2>New ways to discover Jazz History</h2>
+                        </div>
+                        <p class="text-lg text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">An interactive dashboard to explore the artists, albums, and stories that shaped the music.</p>
+                    </div>
+                </section>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
