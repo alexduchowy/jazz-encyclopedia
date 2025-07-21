@@ -245,6 +245,12 @@
             z-index: 5;
             border-right: 2px solid var(--bg-secondary);
         }
+         #mobile-menu-panel {
+            transition: transform 0.3s ease-in-out;
+        }
+        #mobile-menu-overlay.hidden #mobile-menu-panel {
+            transform: translateX(100%);
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -280,6 +286,14 @@
                                 <a href="/reviews.html#blog-content">News & Reviews</a>
                             </div>
                         </div>
+                    </div>
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden">
+                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
+                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
                     </div>
                 </nav>
             </header>
@@ -1232,6 +1246,8 @@
                 
                 setupMobileMenu() {
                     const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
+                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
+
                     const openMenu = () => {
                         mobileMenuOverlay.classList.remove('hidden');
                         setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
