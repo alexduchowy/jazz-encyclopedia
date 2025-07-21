@@ -501,19 +501,7 @@
             opacity: 1;
             transform: translateY(0);
         }
-        .title-rotate {
-            transform: rotate(-1.5deg);
-        }
-        .nav-bar-hidden-behaviour {
-            display: flex;
-            transform: rotate(-1.5deg);
-        }
-        @media (max-width: 640px) {
-            .nav-bar-hidden-behaviour {
-                display: none;
-            }
-        }
-
+        
         /* Nudge animation for scroll buttons */
         @keyframes nudge-right {
             0%, 100% { transform: translateX(0); }
@@ -533,14 +521,6 @@
             }
         }
         
-        /* FIX: New class to handle dropdown visibility on hover */
-        .desktop-dropdown-behaviour {
-            display: none;
-        }
-        .group:hover .desktop-dropdown-behaviour {
-            display: block;
-        }
-
         /* Mobile Menu Panel Transition */
         #mobile-menu-panel {
             transition: transform 0.3s ease-in-out;
@@ -672,30 +652,6 @@
             color: var(--bg-main);
         }
 
-        /* NEW: Dropdown Menu Styling */
-        .dropdown-menu {
-            background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-            box-shadow: 4px 4px 0px var(--text-main);
-            margin-top: 1.75rem;
-            transform: rotate(1.5deg);
-            transform-origin: top left;
-        }
-        .dropdown-menu a {
-            font-family: 'Inter', sans-serif;
-            letter-spacing: normal;
-            font-size: 1rem;
-            display: block;
-            padding: 0.5rem 1.5rem;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
-        .dropdown-menu a:hover {
-            background-color: var(--accent);
-            color: var(--bg-main);
-            transform: translateX(5px);
-        }
-
         .era-button {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
@@ -763,61 +719,48 @@
 
     <div id="page-content" class="content-hidden">
         <!-- HEADER -->
-        <div class="sticky top-0 z-50 h-24">
-              <header class="relative container mx-auto h-full">
-                    <!-- This is the crooked background. It is positioned absolutely within the header -->
-                    <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
-                    
-                    <!-- This is the navigation content. It is NOT rotated and sits on top of the background -->
-                    <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                        <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10">
-                            <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
-                        </div>
-                        <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
-                            <div class="relative group">
-                                <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                                <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
-                                    <div class="dropdown-menu rounded-sm py-2">
-                                        <a href="#timeline">Timeline</a>
-                                        <a href="#matrix">Genres</a>
-                                        <a href="#artists">Artists</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="relative group">
-                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                                 <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
-                                    <div class="dropdown-menu rounded-sm py-2">
-                                        <a href="/legacy#legacy">Path Timeline</a>
-                                        <a href="/legacy#legacy-genres">Genre Evolution</a>
-                                        <a href="/legacy#artists">Artists</a>
-                                    </div>
-                                </div>
-                            </div>
-                           <div class="relative group">
-                                <a href="/reviews" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                                 <div class="absolute desktop-dropdown-behaviour pt-2 z-10">
-                                    <div class="dropdown-menu rounded-sm py-2">
-                                        <a href="/reviews#news">News</a>
-                                        <a href="/reviews#reviews">Reviews</a>
-                                    </div>
-                                </div>
+        <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
+            <header class="container mx-auto h-full">
+                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                    <div class="hidden md:flex items-center space-x-8">
+                        <div class="relative group">
+                            <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                            <div class="dropdown-menu">
+                                <a href="#timeline">Timeline</a>
+                                <a href="#matrix">Genres</a>
+                                <a href="#artists">Artists</a>
                             </div>
                         </div>
-                        <!-- Hamburger Menu Button -->
-                        <div class="sm:hidden">
-                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
-                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                                </svg>
-                            </button>
+                        <div class="relative group">
+                            <a href="/legacy.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                            <div class="dropdown-menu">
+                                <a href="/legacy.html#legacy">Path Timeline</a>
+                                <a href="/legacy.html#legacy-genres">Genre Evolution</a>
+                                <a href="/legacy.html#artists">Artists</a>
+                            </div>
                         </div>
-                    </nav>
-                </header>
+                       <div class="relative group">
+                            <a href="/reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                             <div class="dropdown-menu">
+                                <a href="/reviews.html#blog-content">News & Reviews</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Hamburger Menu Button -->
+                    <div class="md:hidden">
+                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
+                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </nav>
+            </header>
         </div>
 
 
-        <main class="-mt-24">
+        <main>
             <!-- Hero Banner Section -->
             <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="w-full h-full object-cover banner-animation" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
@@ -825,7 +768,7 @@
             </section>
 
             <!-- Overview Section -->
-            <section id="overview" class="pt-12 pb-16 sm:pb-20 bg-stone-100">
+            <section id="overview" class="py-16 sm:py-20 bg-stone-100">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="grid md:grid-cols-5 gap-12 items-start">
                         <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
