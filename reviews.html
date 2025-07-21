@@ -58,18 +58,7 @@
               padding: 0.25rem 1rem;
               margin-bottom: 1rem;
         }
-        .title-rotate {
-            transform: rotate(-1.5deg);
-        }
-        .nav-bar-hidden-behaviour {
-            display: flex;
-            transform: rotate(-1.5deg);
-        }
-        @media (max-width: 640px) {
-            .nav-bar-hidden-behaviour {
-                display: none;
-            }
-        }
+        
         #loader {
             position: fixed;
             inset: 0;
@@ -115,18 +104,18 @@
             display: flex;
             gap: 1rem;
             align-items: flex-start;
-            background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            box-shadow: 4px 4px 0px var(--text-main);
+            background-color: #fff;
+            border: 1px solid var(--bg-secondary);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             transition: all 0.2s ease;
             padding: 1rem;
             text-decoration: none;
             color: var(--text-main);
         }
         .article-card:hover {
-            transform: translateY(-4px) rotate(-1deg);
-            box-shadow: 6px 6px 0px var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
             cursor: pointer;
         }
         .star-filled {
@@ -139,18 +128,16 @@
     <div id="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
-        <!-- Sticky Header -->
-        <div class="sticky top-0 z-50 h-24 bg-stone-100">
-            <header class="relative container mx-auto h-full">
-                <div class="absolute inset-x-0 top-4 h-20 bg-stone-100 border-2 border-stone-900" style="transform: rotate(-1.5deg); box-shadow: 5px 5px 0px var(--text-main); z-index: 1;"></div>
-                <nav class="relative z-10 flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <div class="title-rotate flex-shrink-0 mt-12 sm:mt-10"><a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a></div>
-                    <div class="nav-bar-hidden-behaviour sm:items-center sm:space-x-8">
+        <!-- Standardized Sticky Header -->
+        <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
+            <header class="container mx-auto h-full">
+                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                    <div class="flex items-center space-x-8">
                         <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
                         <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         <a href="/reviews" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
                     </div>
-                    <div class="sm:hidden"><button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
                 </nav>
             </header>
         </div>
@@ -167,7 +154,7 @@
             </section>
 
             <!-- Combined News and Reviews Section -->
-            <section id="blog-content" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+            <section id="blog-content" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
                     <!-- Two-column layout for News and Reviews -->
                     <div class="grid md:grid-cols-2 gap-12 lg:gap-16">
@@ -204,8 +191,6 @@
         </footer>
     </div>
 
-    <!-- Mobile Menu (Omitted for brevity, no changes) -->
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -238,7 +223,6 @@
                     .replace(/-+$/, '');
             },
             async fetchData() {
-                // IMPORTANT: Replace this with your actual Firebase config object
                 const firebaseConfig = {
                   apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                   authDomain: "controlled-freedom.firebaseapp.com",
@@ -302,10 +286,12 @@
                         card.target = "_blank";
                         card.className = 'article-card !block';
                         card.innerHTML = `
-                            <p class="text-sm text-stone-500 mb-2">${article.publishDate}</p>
-                            <h3 class="text-2xl font-bold mb-2 text-stone-900">${article.title}</h3>
-                            <p class="text-stone-700 font-light">${article.body.substring(0, 120)}...</p>
-                            <span class="inline-block mt-4 font-bold text-orange-600">Read More &rarr;</span>
+                            <div>
+                                <p class="text-sm text-stone-500 mb-2">${article.publishDate}</p>
+                                <h3 class="text-2xl font-bold mb-2 text-stone-900">${article.title}</h3>
+                                <p class="text-stone-700 font-light">${article.body.substring(0, 120)}...</p>
+                                <span class="inline-block mt-4 font-bold text-orange-600">Read More &rarr;</span>
+                            </div>
                         `;
                         newsList.appendChild(card);
                     });
@@ -329,7 +315,7 @@
                         card.target = "_blank";
                         card.className = 'article-card';
                         card.innerHTML = `
-                            <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-24 h-24 object-cover rounded-sm border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/e7e5e4/1c1917?text=Review';">
+                            <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-24 h-24 object-cover rounded-md border-2 border-stone-200 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/e7e5e4/1c1917?text=Review';">
                             <div class="flex-grow">
                                 <div class="flex items-center justify-between mb-1">
                                     <p class="text-sm text-stone-500">${review.artist}</p>
