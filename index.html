@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controlled Freedom: An Interactive Jazz Encyclopedia</title>
+    <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
+    
+    <!-- External Libraries & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-dark: #1a1a1a;
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --accent: #f97316;
+            --accent-dark: #ea580c;
+            --yellow-accent: #facc15;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+        }
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+        .nav-bar-behaviour { display: none; }
+        @media (min-width: 768px) { .nav-bar-behaviour { display: flex; } }
+        .dropdown-menu {
+            position: absolute;
+            display: none;
+            z-index: 50;
+            min-width: 160px;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
+            border-radius: 0.25rem;
+            margin-top: 0.5rem;
+            transform-origin: top left;
+        }
+        .group:hover .dropdown-menu { display: block; }
+        .dropdown-menu a {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: normal;
+            font-size: 1rem;
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .dropdown-menu a:hover {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            transform: translateX(5px);
+        }
+        #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
+        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
+        
+        /* Dashboard Card Styles */
+        .dashboard-card {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+            border-radius: 0.5rem;
+            box-shadow: 6px 6px 0px var(--text-main);
+            transition: all 0.2s ease-in-out;
+            overflow: hidden;
+        }
+        .dashboard-card:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 4px 4px 0px var(--accent);
+        }
+        .dashboard-card-header {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            padding: 0.75rem 1.25rem;
+            background-color: var(--text-main);
+            color: var(--bg-main);
+            border-bottom: 2px solid var(--text-main);
+        }
+        .dashboard-card-content {
+            padding: 1.25rem;
+        }
+        .loader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .content-hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-900">
+
+    <div id="loader" class="loader"><div class="loader-spinner"></div></div>
+
+    <div id="page-content" class="content-hidden">
+        <!-- Standardized Sticky Header -->
+        <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
+            <header class="container mx-auto h-full">
+                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                    <div class="nav-bar-behaviour items-center space-x-8">
+                        <div class="relative group">
+                            <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                        </div>
+                        <div class="relative group">
+                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
+                        </div>
+                       <div class="relative group">
+                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                        </div>
+                         <div class="relative group">
+                            <a href="/reviews" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                        </div>
+                    </div>
+                     <!-- Hamburger Menu Button -->
+                    <div class="md:hidden">
+                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
+                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </nav>
+            </header>
+        </div>
+
+        <main class="py-12 sm:py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Main Column -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- Recommendation of the Day -->
+                        <div id="recommendation-card" class="dashboard-card">
+                            <h2 class="dashboard-card-header">Recommendation of the Day</h2>
+                            <div id="recommendation-content" class="dashboard-card-content">
+                                <!-- Content injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Navigation Cards -->
+                        <div class="grid sm:grid-cols-2 gap-8">
+                            <a href="/timeline" class="dashboard-card group block text-decoration-none">
+                                <h2 class="dashboard-card-header">Jazz Evolution Timeline</h2>
+                                <div class="dashboard-card-content">
+                                    <p>Explore the explosive growth of modern jazz from 1950-1969 through an interactive, chronological timeline of landmark albums.</p>
+                                    <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore Timeline &rarr;</span>
+                                </div>
+                            </a>
+                            <a href="/legacy" class="dashboard-card group block text-decoration-none">
+                                <h2 class="dashboard-card-header">The Legacy of Jazz</h2>
+                                <div class="dashboard-card-content">
+                                    <p>Discover how the sounds of the post-bop era evolved and splintered into new forms, from Jazz Fusion to the Avant-Garde and beyond.</p>
+                                     <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore The Legacy &rarr;</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Column -->
+                    <div class="space-y-8">
+                        <!-- On This Day -->
+                        <div id="on-this-day-card" class="dashboard-card">
+                             <h2 class="dashboard-card-header">On This Day In Jazz...</h2>
+                             <div id="on-this-day" class="dashboard-card-content">
+                                <!-- Content injected by JS -->
+                            </div>
+                        </div>
+                        <!-- Latest News & Reviews -->
+                        <div class="dashboard-card">
+                            <h2 class="dashboard-card-header">Latest From The Archive</h2>
+                            <div id="latest-articles" class="dashboard-card-content space-y-4">
+                                <!-- Articles injected by JS -->
+                            </div>
+                        </div>
+                        <!-- Spotify Playlist -->
+                        <div class="dashboard-card">
+                            <h2 class="dashboard-card-header">Curated Playlist</h2>
+                            <div class="dashboard-card-content">
+                                <iframe style="border-radius:8px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-stone-900 text-stone-200 py-8 mt-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
+                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
+                <div class="mt-6 border-t border-stone-700 pt-6">
+                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+     <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
+        <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/reviews" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+            </nav>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const LandingApp = {
+            state: {
+                allAlbums: [],
+                timelineAlbums: [],
+            },
+            elements: {},
+            init() {
+                this.cacheDOMElements();
+                this.fetchData();
+                this.methods.setupMobileMenu();
+                this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+            },
+            cacheDOMElements() {
+                this.elements = {
+                    loader: document.getElementById('loader'),
+                    pageContent: document.getElementById('page-content'),
+                    recommendationContent: document.getElementById('recommendation-content'),
+                    onThisDayContainer: document.getElementById('on-this-day'),
+                    latestArticles: document.getElementById('latest-articles'),
+                    footerCopyright: document.getElementById('footer-copyright'),
+                    mobileMenuButton: document.getElementById('mobile-menu-button'),
+                    mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
+                    mobileMenuPanel: document.getElementById('mobile-menu-panel'),
+                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                };
+            },
+            async fetchData() {
+                try {
+                    const [dbData, legacyData] = await Promise.all([
+                        fetch('database.json').then(res => res.json()),
+                        fetch('legacy.json').then(res => res.json())
+                    ]);
+                    
+                    this.state.timelineAlbums = dbData.albums || [];
+                    const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []);
+                    this.state.allAlbums = this.state.timelineAlbums.concat(legacyAlbums);
+
+                    this.methods.renderRecommendation();
+                    this.methods.setupOnThisDayFeature();
+                    await this.methods.fetchLatestArticles();
+
+                    this.showPage();
+                } catch (error) {
+                    console.error("Error fetching page data:", error);
+                    this.elements.pageContent.innerHTML = `<div class="text-center p-8">Error loading page content.</div>`;
+                    this.showPage();
+                }
+            },
+            showPage() {
+                this.elements.loader.style.display = 'none';
+                this.elements.pageContent.classList.remove('content-hidden');
+            },
+            methods: {
+                setupMobileMenu() {
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
+                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
+                    const openMenu = () => {
+                        mobileMenuOverlay.classList.remove('hidden');
+                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                    };
+                    const closeMenu = () => {
+                        mobileMenuPanel.style.transform = 'translateX(100%)';
+                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                    };
+                    mobileMenuButton.addEventListener('click', openMenu);
+                    mobileMenuCloseButton.addEventListener('click', closeMenu);
+                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+                    document.querySelectorAll('#mobile-nav-links a').forEach(link => link.addEventListener('click', closeMenu));
+                },
+                renderRecommendation() {
+                    if (this.state.allAlbums.length === 0) {
+                        this.elements.recommendationContent.innerHTML = `<p>No albums available for recommendation.</p>`;
+                        return;
+                    }
+                    
+                    // Use date to get a "daily" random album
+                    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+                    const randomIndex = dayOfYear % this.state.allAlbums.length;
+                    const album = this.state.allAlbums[randomIndex];
+
+                    this.elements.recommendationContent.innerHTML = `
+                        <div class="flex flex-col sm:flex-row gap-6 items-center">
+                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-40 h-40 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
+                            <div>
+                                <p class="text-stone-600">${album.artist}</p>
+                                <h3 class="text-4xl font-bold text-stone-900 my-1">${album.albumTitle}</h3>
+                                <p class="text-stone-600 font-bold">(${album.year})</p>
+                                <p class="mt-2 text-stone-700">${album.pivotalTracks ? album.pivotalTracks[0].analysis.substring(0, 150) : album.analysis.substring(0,150)}...</p>
+                            </div>
+                        </div>
+                    `;
+                },
+                setupOnThisDayFeature() {
+                    const today = new Date();
+                    const currentMonth = today.toLocaleString('en-US', { month: 'long' });
+                    const currentDay = today.getDate();
+
+                    const matchingTracks = [];
+                    this.state.timelineAlbums.forEach(album => {
+                        if (album.pivotalTracks) {
+                            album.pivotalTracks.forEach(track => {
+                                const dateParts = track.recordingDate.replace(/,/g, '').split(' ');
+                                if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
+                                    matchingTracks.push({ ...track, parentAlbum: album });
+                                }
+                            });
+                        }
+                    });
+
+                    if (matchingTracks.length > 0) {
+                        const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
+                        const album = featured.parentAlbum;
+                        this.elements.onThisDayContainer.innerHTML = `
+                            <div class="flex items-center gap-4">
+                                <img src="${album.cover}" loading="lazy" class="w-20 h-20 object-cover border-2 border-stone-900 rounded-sm flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=No+Img';">
+                                <div>
+                                    <p class="text-sm text-stone-600">On ${currentMonth} ${currentDay}, ${album.year}, the track...</p>
+                                    <p class="text-lg font-bold text-stone-900">"${featured.title}"</p>
+                                    <p class="text-sm text-stone-600">by <strong>${album.artist}</strong> was recorded.</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-stone-600">No landmark tracks were recorded on this day in our database. Check back tomorrow!</p>`;
+                    }
+                },
+                async fetchLatestArticles() {
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
+                        authDomain: "controlled-freedom.firebaseapp.com",
+                        projectId: "controlled-freedom",
+                        storageBucket: "controlled-freedom.appspot.com",
+                        messagingSenderId: "992659637634",
+                        appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
+                        measurementId: "G-ETT07JGVSB"
+                    };
+                    const app = initializeApp(firebaseConfig);
+                    const db = getFirestore(app);
+                    const auth = getAuth(app);
+
+                    try {
+                        await signInAnonymously(auth);
+                        const articlesRef = collection(db, "articles");
+                        const q = query(articlesRef, orderBy("createdAt", "desc"), limit(5));
+                        const articlesSnapshot = await getDocs(q);
+                        
+                        let articlesHtml = '';
+                        if (articlesSnapshot.empty) {
+                            articlesHtml = '<p class="text-stone-500 italic">No articles yet.</p>';
+                        } else {
+                            articlesSnapshot.forEach(doc => {
+                                const article = { id: doc.id, ...doc.data() };
+                                const slug = this.slugify(article.title || article.albumTitle);
+                                articlesHtml += `
+                                    <a href="/reviews#blog-content" class="block p-3 rounded-md hover:bg-stone-300 transition-colors">
+                                        <p class="text-sm font-bold text-orange-600">${article.type === 'review' ? 'Album Review' : 'News'}</p>
+                                        <h4 class="font-bold text-stone-900">${article.title || article.albumTitle}</h4>
+                                        <p class="text-xs text-stone-500">${article.publishDate}</p>
+                                    </a>
+                                `;
+                            });
+                        }
+                        this.elements.latestArticles.innerHTML = articlesHtml;
+                    } catch (error) {
+                        console.error("Error fetching articles:", error);
+                        this.elements.latestArticles.innerHTML = `<p>Could not load latest articles.</p>`;
+                    }
+                },
+                slugify(text) {
+                    if (!text) return '';
+                    return text.toString().toLowerCase()
+                        .replace(/\s+/g, '-')
+                        .replace(/[^\w\-]+/g, '')
+                        .replace(/\-\-+/g, '-')
+                        .replace(/^-+/, '')
+                        .replace(/-+$/, '');
+                },
+            }
+        };
+        document.addEventListener('DOMContentLoaded', () => LandingApp.init());
+    </script>
+</body>
+</html>
