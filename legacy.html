@@ -610,28 +610,28 @@
         <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                    <a href="index.html"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
                     <div class="nav-bar-behaviour items-center space-x-8">
                         <div class="relative group">
-                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                            <a href="index.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
                             <div class="dropdown-menu">
-                                <a href="/#timeline">Timeline</a>
-                                <a href="/#matrix">Genres</a>
-                                <a href="/#artists">Artists</a>
+                                <a href="index.html#timeline">Timeline</a>
+                                <a href="index.html#matrix">Genres</a>
+                                <a href="index.html#artists">Artists</a>
                             </div>
                         </div>
                         <div class="relative group">
-                            <a href="/legacy.html" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                            <a href="legacy.html" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                             <div class="dropdown-menu">
-                                <a href="/legacy.html#legacy">Path Timeline</a>
-                                <a href="/legacy.html#legacy-genres">Genre Evolution</a>
-                                <a href="/legacy.html#artists">Artists</a>
+                                <a href="#legacy">Path Timeline</a>
+                                <a href="#legacy-genres">Genre Evolution</a>
+                                <a href="#artists">Artists</a>
                             </div>
                         </div>
                        <div class="relative group">
-                            <a href="/reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                            <a href="reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
                              <div class="dropdown-menu">
-                                <a href="/reviews.html#blog-content">News & Reviews</a>
+                                <a href="reviews.html#blog-content">News & Reviews</a>
                             </div>
                         </div>
                     </div>
@@ -648,13 +648,19 @@
         </div>
 
         <main>
+             <!-- Hero Banner Section -->
+            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden bg-stone-900">
+                <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover banner-animation opacity-40" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Legacy';">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/60 to-transparent"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+                     <h1 class="text-6xl md:text-7xl font-bold text-stone-100" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">The Legacy of an Era</h1>
+                    <p class="text-lg text-stone-300 max-w-3xl mx-auto italic mt-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">How two decades of explosive creativity redefined the future of music.</p>
+                </div>
+            </section>
+
             <!-- Overview Section -->
-            <section id="overview" class="pt-32 pb-16 sm:pt-40 sm:pb-20 bg-stone-100">
+            <section id="overview" class="py-16 sm:py-20 bg-stone-100">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-                    <div class="text-center mb-12">
-                        <h1 class="section-header text-5xl sm:text-6xl">The Legacy of an Era</h1>
-                        <p class="text-lg text-stone-600 mt-4 italic max-w-3xl mx-auto">How two decades of explosive creativity redefined the future of music.</p>
-                    </div>
                     <div class="grid md:grid-cols-5 gap-12 items-start">
                         <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
                             <p>The story of jazz didn't end in 1969. Instead, the seismic shifts of the post-bop era created a new musical landscape. The period's relentless innovation acted as a creative big bang, sending musicians and ideas hurtling in countless new directions. The structural explorations of Post-Bop, the spiritual depth of Free Jazz, and the raw energy of Avant-Garde became the DNA for future generations.</p>
@@ -805,9 +811,9 @@
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
             <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
-                <a href="/legacy.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/reviews.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+                <a href="index.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="legacy.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="reviews.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
             </nav>
         </div>
     </div>
