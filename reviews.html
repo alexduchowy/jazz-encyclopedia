@@ -285,7 +285,6 @@
             state: { reviews: [], news: [], allAlbums: [] },
             elements: {},
             methods: {
-                 // FIX: Added mobile menu functionality
                  setupMobileMenu() {
                     const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = BlogApp.elements;
                     if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
@@ -309,7 +308,7 @@
             init() {
                 this.cacheDOMElements();
                 this.fetchData();
-                this.methods.setupMobileMenu(); // FIX: Call the setup function
+                this.methods.setupMobileMenu();
                 this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
             cacheDOMElements() {
@@ -319,7 +318,6 @@
                     newsList: document.getElementById('news-list'),
                     reviewsList: document.getElementById('reviews-list'), 
                     footerCopyright: document.getElementById('footer-copyright'),
-                    // FIX: Added elements for mobile menu
                     mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
@@ -369,7 +367,6 @@
 
                 } catch (error) {
                     console.error("Error fetching data: ", error);
-                    // Display a user-friendly error message
                     this.elements.newsList.innerHTML = `<p class="text-red-500">Could not load articles. Please try again later.</p>`;
                     this.elements.reviewsList.innerHTML = `<p class="text-red-500">Could not load reviews. Please try again later.</p>`;
                     this.showPage();
@@ -393,8 +390,7 @@
                 } else {
                     this.state.news.forEach(article => {
                         const card = document.createElement('a');
-                        card.href = `news-article.html?id=${article.id}`;
-                        card.target = "_blank";
+                        card.href = `/news/${article.slug}`;
                         card.className = 'article-card !block';
                         card.innerHTML = `
                             <div>
@@ -421,8 +417,7 @@
                         const coverImage = albumData ? albumData.cover : review.imageUrl || 'https://placehold.co/100x100/e7e5e4/1c1917?text=Review';
 
                         const card = document.createElement('a');
-                        card.href = `article.html?id=${review.id}`;
-                        card.target = "_blank";
+                        card.href = `/reviews/${review.slug}`;
                         card.className = 'article-card';
                         card.innerHTML = `
                             <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-24 h-24 object-cover rounded-md border-2 border-stone-200 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/e7e5e4/1c1917?text=Review';">
