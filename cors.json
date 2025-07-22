@@ -1,7 +1,17 @@
 [
   {
-    "origin": ["https://controlledfreedom.com"],
-    "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "origin": [
+      "https://controlledfreedom.com",
+      "https://www.controlledfreedom.com",
+      "https://controlled-freedom.web.app"
+    ],
+    "method": [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "OPTIONS"
+    ],
     "responseHeader": [
       "Content-Type",
       "Authorization",
