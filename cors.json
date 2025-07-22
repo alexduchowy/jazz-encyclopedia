@@ -1,10 +1,11 @@
 [
   {
-    "origin": ["*"],
-    "method": ["GET", "HEAD", "PUT", "POST", "DELETE"],
+    "origin": ["https://controlledfreedom.com"],
+    "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     "responseHeader": [
       "Content-Type",
-      "Access-Control-Allow-Origin"
+      "Authorization",
+      "X-Goog-Resumable"
     ],
     "maxAgeSeconds": 3600
   }
