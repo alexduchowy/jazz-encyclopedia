@@ -8,7 +8,7 @@
     ],
     "cleanUrls": true,
     "trailingSlash": false,
-        "rewrites": [
+    "rewrites": [
       {
         "source": "/reviews/**",
         "destination": "/article.html"
