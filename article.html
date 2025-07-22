@@ -92,6 +92,50 @@
         .star-filled {
             color: var(--yellow-accent);
         }
+
+        /* NEW STYLES */
+        .dark-box {
+            background-color: var(--bg-dark);
+            color: var(--bg-main);
+            padding: 1.5rem;
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
+            border-radius: 0.25rem;
+        }
+        .dark-box h3 {
+            color: var(--accent);
+        }
+        .dark-box p {
+            color: var(--bg-secondary);
+        }
+        .dark-box .font-bold {
+            color: var(--bg-main);
+        }
+        .liner-notes-text {
+            font-family: 'Lora', serif;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #d4d4d2; 
+        }
+        .liner-notes-text p {
+            margin-bottom: 0;
+        }
+        .rating-highlight {
+            background-color: var(--bg-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            border: 2px solid var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 2px 2px 0px var(--text-main);
+        }
+        .rating-highlight span {
+            font-family: 'Bebas Neue', sans-serif;
+            color: var(--bg-main);
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -262,15 +306,24 @@
                 let contentHtml = '';
 
                 if (article.type === 'review') {
-                    // NEW: Modern two-column layout for reviews
                     const coverImage = albumData?.cover || article.imageUrl || 'https://placehold.co/600x600/e7e5e4/1c1917?text=No+Image';
                     const releaseDate = albumData?.year || 'N/A';
-                    const genre = albumData?.genre || 'N/A';
-                    const labelCountry = (albumData?.label && albumData?.country) ? `${albumData.label} / ${albumData.country}` : 'N/A';
+                    const genre = albumData?.genres?.join(', ') || 'N/A';
+                    const label = albumData?.label || 'N/A';
 
                     let starsHtml = '';
                     for (let i = 1; i <= 5; i++) {
                         starsHtml += `<svg class="w-5 h-5 ${i <= article.rating ? 'star-filled' : 'text-stone-300'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
+                    }
+
+                    let bodyContent = article.body;
+                    let highlightedParagraph = '';
+
+                    if (bodyContent.includes('<highlight>')) {
+                        const parts = bodyContent.split('<highlight>');
+                        bodyContent = parts[0];
+                        const highlightText = parts[1].replace('</highlight>', '');
+                        highlightedParagraph = `<div class="dark-box mt-12"><div class="liner-notes-text">${highlightText}</div></div>`;
                     }
 
                     contentHtml = `
@@ -279,20 +332,20 @@
                             <div class="lg:col-span-1">
                                 <div class="sticky top-28">
                                     <img src="${coverImage}" alt="Cover for ${article.albumTitle}" class="w-full h-auto object-cover rounded-md border-2 border-stone-900 shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x600/e7e5e4/1c1917?text=No+Image';">
-                                    <div class="mt-6 p-4 bg-white rounded-md border border-stone-200">
+                                    <div class="mt-6 dark-box">
                                         <h3 class="text-2xl font-bold mb-4">Album Details</h3>
                                         <div class="space-y-3 text-sm">
                                             <div>
-                                                <p class="font-bold text-stone-600">Release Date:</p>
+                                                <p class="font-bold">Release Date:</p>
                                                 <p>${releaseDate}</p>
                                             </div>
                                             <div>
-                                                <p class="font-bold text-stone-600">Genre:</p>
+                                                <p class="font-bold">Genre:</p>
                                                 <p>${genre}</p>
                                             </div>
                                             <div>
-                                                <p class="font-bold text-stone-600">Label / Country:</p>
-                                                <p>${labelCountry}</p>
+                                                <p class="font-bold">Label:</p>
+                                                <p>${label}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -305,14 +358,18 @@
                                     <p class="text-xl text-stone-600 font-semibold">${article.artist}</p>
                                     <h1 class="text-4xl md:text-5xl font-bold text-stone-900 mt-1">${article.albumTitle}</h1>
                                     <p class="text-lg text-stone-700 italic mt-2">"${article.title}"</p>
-                                    <div class="flex items-center gap-2 mt-4" title="Rating: ${article.rating}/5">${starsHtml}</div>
-                                    <div class="mt-4 text-sm text-stone-500 border-t border-stone-300 pt-4">
+                                    <div class="rating-highlight mt-4" title="Rating: ${article.rating}/5">
+                                        <span>Rating:</span>
+                                        <div class="flex">${starsHtml}</div>
+                                    </div>
+                                    <div class="mt-6 text-sm text-stone-500 border-t border-stone-300 pt-4">
                                         <span>Reviewed by ${article.author || 'Staff'}</span> | <span>Published on ${article.publishDate}</span>
                                     </div>
                                 </header>
                                 <article class="article-body">
-                                    ${article.body}
+                                    ${bodyContent}
                                 </article>
+                                ${highlightedParagraph}
                             </div>
                         </div>
                     `;
