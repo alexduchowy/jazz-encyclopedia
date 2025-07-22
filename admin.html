@@ -153,22 +153,33 @@
                             <!-- Image Upload Section -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Featured Image</label>
-                                <div id="drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer">
-                                    <div id="upload-prompt" class="space-y-1 text-center">
-                                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                                        <div class="flex text-sm text-gray-600"><p class="pl-1">Drag & drop or click to upload</p></div>
-                                        <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                                    </div>
-                                    <div id="upload-progress-container" class="hidden w-full">
-                                        <div class="flex justify-between mb-1"><span class="text-base font-medium text-orange-700">Uploading...</span><span id="upload-progress-text" class="text-sm font-medium text-orange-700">0%</span></div>
-                                        <div class="w-full bg-gray-200 rounded-full h-2.5"><div id="upload-progress-bar" class="bg-orange-600 h-2.5 rounded-full" style="width: 0%"></div></div>
-                                    </div>
-                                    <div id="image-preview-container" class="hidden relative">
-                                        <img id="image-preview" src="" class="max-h-48 rounded-md">
-                                        <button type="button" id="remove-image-btn" class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 leading-none">&times;</button>
+                                <div class="mt-1">
+                                    <div class="flex items-center space-x-4 text-sm">
+                                        <button type="button" id="select-upload-btn" class="font-medium text-orange-600 underline">Upload a file</button>
+                                        <button type="button" id="select-url-btn" class="font-medium text-gray-500 hover:text-orange-600">Use a URL</button>
                                     </div>
                                 </div>
-                                <input id="image-file-input" type="file" class="hidden" accept="image/*">
+                                <div id="upload-container">
+                                    <div id="drop-zone" class="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer">
+                                        <div id="upload-prompt" class="space-y-1 text-center">
+                                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                            <div class="flex text-sm text-gray-600"><p class="pl-1">Drag & drop or click to upload</p></div>
+                                            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                        </div>
+                                        <div id="upload-progress-container" class="hidden w-full">
+                                            <div class="flex justify-between mb-1"><span class="text-base font-medium text-orange-700">Uploading...</span><span id="upload-progress-text" class="text-sm font-medium text-orange-700">0%</span></div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2.5"><div id="upload-progress-bar" class="bg-orange-600 h-2.5 rounded-full" style="width: 0%"></div></div>
+                                        </div>
+                                        <div id="image-preview-container" class="hidden relative">
+                                            <img id="image-preview" src="" class="max-h-48 rounded-md">
+                                            <button type="button" id="remove-image-btn" class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 leading-none">&times;</button>
+                                        </div>
+                                    </div>
+                                    <input id="image-file-input" type="file" class="hidden" accept="image/*">
+                                </div>
+                                <div id="url-container" class="hidden mt-2">
+                                    <input type="url" id="manual-imageUrl" name="manual-imageUrl" placeholder="https://example.com/image.jpg" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                </div>
                                 <input type="hidden" id="imageUrl">
                             </div>
 
@@ -247,6 +258,11 @@
             imagePreview: document.getElementById('image-preview'),
             removeImageBtn: document.getElementById('remove-image-btn'),
             imageUrlInput: document.getElementById('imageUrl'),
+            selectUploadBtn: document.getElementById('select-upload-btn'),
+            selectUrlBtn: document.getElementById('select-url-btn'),
+            uploadContainer: document.getElementById('upload-container'),
+            urlContainer: document.getElementById('url-container'),
+            manualImageUrlInput: document.getElementById('manual-imageUrl'),
         };
 
         const generateSlug = (text) => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
@@ -290,7 +306,7 @@
                 }, 
                 (error) => {
                     console.error("Upload failed:", error);
-                    elements.formError.textContent = "Image upload failed.";
+                    elements.formError.textContent = "Image upload failed. Please check security rules (CORS).";
                     resetUploadUI();
                 }, 
                 () => {
@@ -318,10 +334,7 @@
             if (e.target.files[0]) uploadImage(e.target.files[0]);
         });
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            elements.dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-            });
+            elements.dropZone.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); });
         });
         ['dragenter', 'dragover'].forEach(eventName => {
             elements.dropZone.addEventListener(eventName, () => elements.dropZone.classList.add('dragover'));
@@ -334,6 +347,21 @@
         });
         elements.removeImageBtn.addEventListener('click', resetUploadUI);
 
+        elements.selectUploadBtn.addEventListener('click', () => {
+            elements.uploadContainer.classList.remove('hidden');
+            elements.urlContainer.classList.add('hidden');
+            elements.manualImageUrlInput.value = '';
+            elements.selectUploadBtn.classList.add('text-orange-600', 'underline');
+            elements.selectUrlBtn.classList.remove('text-orange-600', 'underline');
+        });
+
+        elements.selectUrlBtn.addEventListener('click', () => {
+            elements.uploadContainer.classList.add('hidden');
+            elements.urlContainer.classList.remove('hidden');
+            resetUploadUI();
+            elements.selectUrlBtn.classList.add('text-orange-600', 'underline');
+            elements.selectUploadBtn.classList.remove('text-orange-600', 'underline');
+        });
 
         const handleFormSubmit = async (e) => {
             e.preventDefault();
@@ -343,7 +371,13 @@
             const type = elements.articleTypeSelect.value;
             const title = document.getElementById('title').value;
             const body = document.getElementById('body').value;
-            const imageUrl = elements.imageUrlInput.value;
+            
+            let imageUrl = '';
+            if (!elements.urlContainer.classList.contains('hidden')) {
+                imageUrl = elements.manualImageUrlInput.value;
+            } else {
+                imageUrl = elements.imageUrlInput.value;
+            }
 
             const articleData = {
                 type, title, body, imageUrl,
@@ -428,12 +462,11 @@
                 document.getElementById('body').value = article.body;
                 elements.formError.textContent = '';
                 
-                resetUploadUI();
                 if(article.imageUrl) {
-                    elements.imageUrlInput.value = article.imageUrl;
-                    elements.imagePreview.src = article.imageUrl;
-                    elements.uploadPrompt.classList.add('hidden');
-                    elements.imagePreviewContainer.classList.remove('hidden');
+                    elements.selectUrlBtn.click();
+                    elements.manualImageUrlInput.value = article.imageUrl;
+                } else {
+                    elements.selectUploadBtn.click();
                 }
 
                 const isReview = article.type === 'review';
@@ -483,7 +516,7 @@
             elements.reviewFieldsContainer.classList.add('hidden');
             elements.articleTypeSelect.value = 'news';
             elements.formError.textContent = '';
-            resetUploadUI();
+            elements.selectUploadBtn.click();
         };
 
         elements.articlesList.addEventListener('click', (e) => {
