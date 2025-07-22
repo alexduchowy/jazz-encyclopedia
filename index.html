@@ -22,6 +22,16 @@
             --accent: #f97316;
             --accent-dark: #ea580c;
             --yellow-accent: #facc15;
+             /* Genre Colors will be populated by JS but have fallbacks */
+            --genre-bebop: #C19A6B;
+            --genre-hard-bop: #d8b4fe;
+            --genre-cool-jazz: #93c5fd;
+            --genre-modal-jazz: #a7f3d0;
+            --genre-post-bop: #fed7aa;
+            --genre-free-jazz: #fca5a5;
+            --genre-avant-garde: #fecdd3;
+            --genre-jazz-fusion: #a5f3fc;
+            --genre-default: #e7e5e4;
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -392,22 +402,22 @@
         </div>
     </div>
 
-    <!-- Recommendation Modal -->
-    <div id="recommendation-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+    <!-- Universal Album Modal -->
+    <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
                 <div>
-                    <h3 id="recommendation-modal-title" class="text-4xl text-orange-500"></h3>
-                    <a id="recommendation-modal-artist" class="text-xl text-stone-600 clickable-link"></a>
+                    <h3 id="album-modal-title" class="text-4xl text-orange-500"></h3>
+                    <a id="album-modal-artist" class="text-xl text-stone-600 clickable-link"></a>
                 </div>
-                <button id="close-recommendation-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+                <button id="close-album-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
             </div>
-            <div id="recommendation-modal-body" class="p-6 overflow-y-auto">
+            <div id="album-modal-body" class="p-6 overflow-y-auto">
                 <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
                     <div class="w-full md:w-1/3 flex-shrink-0">
-                        <img id="recommendation-modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="Album Art" loading="lazy">
+                        <img id="album-modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="Album Art" loading="lazy">
                     </div>
-                    <div id="recommendation-modal-album-details" class="w-full md:w-2/3">
+                    <div id="album-modal-album-details" class="w-full md:w-2/3">
                         <!-- Details injected by JS -->
                     </div>
                 </div>
@@ -442,7 +452,7 @@
                 }
                 this.fetchData();
                 this.methods.setupMobileMenu();
-                this.methods.setupRecommendationModal();
+                this.methods.setupAlbumModal();
                 this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
             cacheDOMElements() {
@@ -458,14 +468,14 @@
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
-                    recommendationModal: document.getElementById('recommendation-modal'),
-                    recommendationModalTitle: document.getElementById('recommendation-modal-title'),
-                    recommendationModalArtist: document.getElementById('recommendation-modal-artist'),
-                    recommendationModalBody: document.getElementById('recommendation-modal-body'),
-                    recommendationModalAlbumArt: document.getElementById('recommendation-modal-album-art'),
-                    recommendationModalAlbumDetails: document.getElementById('recommendation-modal-album-details'),
-                    analysisWrapper: document.querySelector('#recommendation-modal #analysis-wrapper'),
-                    closeRecommendationModalBtn: document.getElementById('close-recommendation-modal'),
+                    albumModal: document.getElementById('album-modal'),
+                    albumModalTitle: document.getElementById('album-modal-title'),
+                    albumModalArtist: document.getElementById('album-modal-artist'),
+                    albumModalBody: document.getElementById('album-modal-body'),
+                    albumModalAlbumArt: document.getElementById('album-modal-album-art'),
+                    albumModalAlbumDetails: document.getElementById('album-modal-album-details'),
+                    analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
+                    closeAlbumModalBtn: document.getElementById('close-album-modal'),
                 };
             },
             async fetchData() {
@@ -477,8 +487,8 @@
                         fetch('genres.json').then(res => res.json())
                     ]);
                     
-                    const timelineAlbums = dbData.albums || [];
-                    const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []);
+                    const timelineAlbums = (dbData.albums || []).map(a => ({...a, isLegacy: false}));
+                    const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []).map(a => ({...a, isLegacy: true}));
                     this.state.allAlbums = timelineAlbums.concat(legacyAlbums);
                     this.state.genreData = genreData;
 
@@ -542,58 +552,62 @@
                         </div>
                     `;
                 },
-                setupRecommendationModal() {
-                    const { recommendationModal, closeRecommendationModalBtn, recommendationContent, onThisDayContainer } = this.elements;
+                setupAlbumModal() {
+                    const { albumModal, closeAlbumModalBtn, recommendationContent, onThisDayContainer } = this.elements;
                     
                     recommendationContent.addEventListener('click', (e) => {
                         if (e.target.id === 'open-recommendation-modal-btn') {
-                            this.methods.openRecommendationModal(this.state.recommendedAlbum);
+                            this.methods.openAlbumModal(this.state.recommendedAlbum);
                         }
                     });
 
                     onThisDayContainer.addEventListener('click', () => {
                         if (this.state.onThisDayAlbum) {
-                            this.methods.openRecommendationModal(this.state.onThisDayAlbum);
+                            this.methods.openAlbumModal(this.state.onThisDayAlbum);
                         }
                     });
 
-                    closeRecommendationModalBtn.addEventListener('click', this.methods.closeRecommendationModal);
-                    recommendationModal.addEventListener('click', (e) => {
-                        if (e.target.id === 'recommendation-modal') {
-                            this.methods.closeRecommendationModal();
+                    closeAlbumModalBtn.addEventListener('click', this.methods.closeAlbumModal);
+                    albumModal.addEventListener('click', (e) => {
+                        if (e.target.id === 'album-modal') {
+                            this.methods.closeAlbumModal();
                         }
                     });
                 },
-                openRecommendationModal(album) {
+                openAlbumModal(album) {
                     const { 
-                        recommendationModal, recommendationModalTitle, recommendationModalArtist, 
-                        recommendationModalAlbumArt, recommendationModalAlbumDetails, analysisWrapper 
+                        albumModal, albumModalTitle, albumModalArtist, 
+                        albumModalAlbumArt, albumModalAlbumDetails, analysisWrapper 
                     } = this.elements;
                     
                     if (!album) return;
 
-                    recommendationModalTitle.textContent = album.albumTitle;
-                    recommendationModalArtist.textContent = album.artist;
-                    recommendationModalArtist.href = `/timeline#artists`;
+                    albumModalTitle.textContent = album.albumTitle;
+                    albumModalArtist.textContent = album.artist;
+                    albumModalArtist.href = album.isLegacy ? `/legacy#artists` : `/timeline#artists`;
                     
-                    recommendationModalAlbumArt.src = album.cover || '';
-                    recommendationModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
-                    recommendationModalAlbumArt.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
+                    albumModalAlbumArt.src = album.cover || '';
+                    albumModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
+                    albumModalAlbumArt.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
 
                     const pivotalTrack = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks[0] : {};
                     
                     const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A').split(/, (?![^()]*\))/).map(personnel => {
                         const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
                         if (match && this.state.artistsData.some(a => a.name === match[1].trim())) {
-                            return `<a href="/timeline#artists" class="clickable-link">${match[1].trim()}</a> (${match[2]})`;
+                            const artistLink = album.isLegacy ? `/legacy#artists` : `/timeline#artists`;
+                            return `<a href="${artistLink}" class="clickable-link">${match[1].trim()}</a> (${match[2]})`;
                         }
                         return personnel;
                     }).join(', ');
 
-                    const genres = album.genres ? (Array.isArray(album.genres) ? album.genres : album.genres.split(',')) : [];
-                    const genreTags = genres.map(g => `<a href="/timeline#matrix" class="genre-tag" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</a>`).join(' ');
+                    const genres = album.genres ? (Array.isArray(album.genres) ? album.genres : String(album.genres).split(',')) : [];
+                    const genreTags = genres.map(g => {
+                        const genreLink = album.isLegacy ? `/legacy#legacy-genres` : `/timeline#matrix`;
+                        return `<a href="${genreLink}" class="genre-tag" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</a>`
+                    }).join(' ');
 
-                    recommendationModalAlbumDetails.innerHTML = `
+                    albumModalAlbumDetails.innerHTML = `
                         <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
                         <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
                             <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
@@ -612,14 +626,14 @@
                     
                     analysisWrapper.innerHTML = `<div id="modal-analysis-section">${analysisHtml}</div>`;
 
-                    recommendationModal.classList.remove('opacity-0', 'pointer-events-none');
-                    recommendationModal.querySelector('#modal-content').classList.remove('scale-95');
-                    this.elements.recommendationModalBody.scrollTop = 0;
+                    albumModal.classList.remove('opacity-0', 'pointer-events-none');
+                    albumModal.querySelector('#modal-content').classList.remove('scale-95');
+                    this.elements.albumModalBody.scrollTop = 0;
                 },
-                closeRecommendationModal() {
-                    const { recommendationModal } = this.elements;
-                    recommendationModal.classList.add('opacity-0', 'pointer-events-none');
-                    recommendationModal.querySelector('#modal-content').classList.add('scale-95');
+                closeAlbumModal() {
+                    const { albumModal } = this.elements;
+                    albumModal.classList.add('opacity-0', 'pointer-events-none');
+                    albumModal.querySelector('#modal-content').classList.add('scale-95');
                 },
                 setupOnThisDayFeature() {
                     const today = new Date();
@@ -629,7 +643,7 @@
                     const matchingTracks = [];
                     this.state.allAlbums.forEach(album => {
                         const tracks = album.pivotalTracks || (album.recordingDate ? [album] : []);
-                        tracks.forEach(track => {
+                        (tracks || []).forEach(track => {
                             const dateStr = track.recordingDate || '';
                             const dateParts = dateStr.replace(/,/g, '').split(' ');
                             if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
@@ -786,7 +800,7 @@
                     this.state.fullGenreColorMap = { ...baseGenreColors };
                      this.state.allAlbums.forEach(album => {
                         if(album.genres) {
-                             (Array.isArray(album.genres) ? album.genres : album.genres.split(',')).forEach(genre => {
+                             (Array.isArray(album.genres) ? album.genres : String(album.genres).split(',')).forEach(genre => {
                                 const trimmedGenre = genre.trim();
                                 if (!this.state.fullGenreColorMap[trimmedGenre]) {
                                     this.state.fullGenreColorMap[trimmedGenre] = 'var(--bg-secondary)'; // default color
