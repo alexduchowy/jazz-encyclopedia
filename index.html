@@ -211,6 +211,25 @@
               opacity: 0;
               transform: scale(0.95) translateY(10px);
         }
+        
+        /* Modal Night Mode & Player Styles from timeline.html */
+        #modal-analysis-section {
+            background-color: var(--bg-dark);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
+        }
+        #modal-analysis-section h5 {
+            color: var(--bg-main);
+        }
+        
+        .liner-notes-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #d4d4d2; 
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -227,7 +246,7 @@
                         <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
                         <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
                         <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                        <a href="/reviews.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                        <a href="/reviews" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
                     </div>
                      <!-- Hamburger Menu Button -->
                     <div class="md:hidden">
@@ -344,19 +363,34 @@
                 <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
                 <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
                 <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/reviews.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+                <a href="/reviews" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
             </nav>
         </div>
     </div>
 
     <!-- Recommendation Modal -->
     <div id="recommendation-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
-                 <h3 id="recommendation-modal-title" class="text-4xl text-orange-500"></h3>
-                 <button id="close-recommendation-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
-             </div>
-             <div id="recommendation-modal-body" class="p-6 overflow-y-auto"></div>
+        <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+                <div>
+                    <h3 id="recommendation-modal-title" class="text-4xl text-orange-500"></h3>
+                    <p id="recommendation-modal-artist" class="text-xl text-stone-600"></p>
+                </div>
+                <button id="close-recommendation-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+            </div>
+            <div id="recommendation-modal-body" class="p-6 overflow-y-auto">
+                <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/3 flex-shrink-0">
+                        <img id="recommendation-modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="Album Art" loading="lazy">
+                    </div>
+                    <div id="recommendation-modal-album-details" class="w-full md:w-2/3">
+                        <!-- Details injected by JS -->
+                    </div>
+                </div>
+                <div id="analysis-wrapper" class="relative mt-4">
+                    <!-- Analysis injected by JS -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -399,7 +433,11 @@
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
                     recommendationModal: document.getElementById('recommendation-modal'),
                     recommendationModalTitle: document.getElementById('recommendation-modal-title'),
+                    recommendationModalArtist: document.getElementById('recommendation-modal-artist'),
                     recommendationModalBody: document.getElementById('recommendation-modal-body'),
+                    recommendationModalAlbumArt: document.getElementById('recommendation-modal-album-art'),
+                    recommendationModalAlbumDetails: document.getElementById('recommendation-modal-album-details'),
+                    analysisWrapper: document.querySelector('#recommendation-modal #analysis-wrapper'),
                     closeRecommendationModalBtn: document.getElementById('close-recommendation-modal'),
                 };
             },
@@ -489,39 +527,48 @@
                     });
                 },
                 openRecommendationModal() {
-                    const { recommendationModal, recommendationModalTitle, recommendationModalBody } = this.elements;
+                    const { 
+                        recommendationModal, recommendationModalTitle, recommendationModalArtist, 
+                        recommendationModalAlbumArt, recommendationModalAlbumDetails, analysisWrapper 
+                    } = this.elements;
                     const album = this.state.recommendedAlbum;
                     if (!album) return;
 
                     recommendationModalTitle.textContent = album.albumTitle;
+                    recommendationModalArtist.textContent = album.artist;
                     
-                    const analysisHtml = album.pivotalTracks && album.pivotalTracks.length > 0
-                        ? album.pivotalTracks.map(track => `
-                            <div class="mt-4">
-                                <h4 class="text-xl font-bold text-stone-800">Track: ${track.title}</h4>
-                                <p class="text-stone-700 mt-1">${track.analysis}</p>
-                            </div>
-                        `).join('')
-                        : `<p class="text-stone-700 mt-2">${album.analysis || 'No detailed analysis available.'}</p>`;
+                    recommendationModalAlbumArt.src = album.cover || '';
+                    recommendationModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
+                    recommendationModalAlbumArt.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
 
-                    recommendationModalBody.innerHTML = `
-                        <div class="flex flex-col sm:flex-row gap-6">
-                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-48 h-48 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/192x192/1c1917/f5f5f4?text=No+Img';">
-                            <div>
-                                <h3 class="text-3xl font-bold text-stone-900">${album.artist}</h3>
-                                <p class="text-stone-600 font-bold text-lg">(${album.year})</p>
-                                <div class="mt-4">${analysisHtml}</div>
-                            </div>
-                        </div>
-                    `;
+                    const pivotalTrack = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks[0] : {};
+                    
+                    recommendationModalAlbumDetails.innerHTML = `
+                        <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
+                        <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                            <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span>
+                            <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
+                            <strong class="font-bold align-top">Line-Up:</strong> <span>${pivotalTrack.lineup || album.lineup || 'N/A'}</span>
+                        </div>`;
+
+                    const analysisHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) 
+                        ? album.pivotalTracks.map(track => `
+                            <div class="mb-8 last:mb-0">
+                                <h5 class="text-2xl font-bold text-white">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                <p class="liner-notes-text">${track.analysis}</p>
+                            </div>`).join('<hr class="border-stone-700 my-8">')
+                        : `<p class="liner-notes-text">${album.analysis || 'Analysis not available.'}</p>`;
+                    
+                    analysisWrapper.innerHTML = `<div id="modal-analysis-section">${analysisHtml}</div>`;
 
                     recommendationModal.classList.remove('opacity-0', 'pointer-events-none');
-                    recommendationModal.querySelector('.modal-content').classList.remove('scale-95');
+                    recommendationModal.querySelector('#modal-content').classList.remove('scale-95');
+                    this.elements.recommendationModalBody.scrollTop = 0;
                 },
                 closeRecommendationModal() {
                     const { recommendationModal } = this.elements;
                     recommendationModal.classList.add('opacity-0', 'pointer-events-none');
-                    recommendationModal.querySelector('.modal-content').classList.add('scale-95');
+                    recommendationModal.querySelector('#modal-content').classList.add('scale-95');
                 },
                 setupOnThisDayFeature() {
                     const today = new Date();
@@ -669,4 +716,3 @@
     </script>
 </body>
 </html>
-
