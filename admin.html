@@ -71,12 +71,6 @@
             border-radius: 0.5rem;
             margin: 0 auto;
         }
-        #upload-progress-bar {
-            height: 8px;
-            background-color: var(--accent);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -138,9 +132,6 @@
                             <div id="upload-prompt">
                                 <p class="text-stone-600">Drag & drop an image here, or click to select a file.</p>
                                 <p class="text-sm text-stone-500 mt-1">Recommended size: 1200x600 pixels</p>
-                            </div>
-                            <div id="upload-progress-container" class="hidden w-full bg-stone-200 rounded-full mt-2">
-                                <div id="upload-progress-bar" style="width: 0%"></div>
                             </div>
                             <img id="image-preview" class="hidden mt-4">
                         </div>
@@ -208,7 +199,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+        // Import uploadBytes instead of uploadBytesResumable
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         const AdminApp = {
             db: null,
@@ -248,8 +240,6 @@
                     imageUrlInput: document.getElementById('image-url'),
                     imagePreview: document.getElementById('image-preview'),
                     uploadPrompt: document.getElementById('upload-prompt'),
-                    uploadProgressContainer: document.getElementById('upload-progress-container'),
-                    uploadProgressBar: document.getElementById('upload-progress-bar'),
                 };
             },
 
@@ -259,7 +249,7 @@
                       apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                       authDomain: "controlled-freedom.firebaseapp.com",
                       projectId: "controlled-freedom",
-                      storageBucket: "controlled-freedom.appspot.com",
+                      storageBucket: "controlled-freedom.firebasestorage.app", // Corrected bucket name
                       messagingSenderId: "992659637634",
                       appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
                       measurementId: "G-ETT07JGVSB"
@@ -335,11 +325,6 @@
 
             async handlePublishOrUpdate(e) {
                 e.preventDefault();
-                if (this.elements.imageUrlInput.value === '' && this.elements.imageFileInput.value !== '') {
-                    this.elements.publishStatus.textContent = 'Please wait for the image to finish uploading.';
-                    this.elements.publishStatus.style.color = 'red';
-                    return;
-                }
                 const editId = this.elements.editIdInput.value;
                 if (editId) {
                     await this.updateArticle(editId);
@@ -500,9 +485,8 @@
             },
 
             resetImageUploader() {
-                const { uploadPrompt, uploadProgressContainer, imagePreview, imageUrlInput, imageFileInput } = this.elements;
+                const { uploadPrompt, imagePreview, imageUrlInput, imageFileInput } = this.elements;
                 uploadPrompt.classList.remove('hidden');
-                uploadProgressContainer.classList.add('hidden');
                 imagePreview.classList.add('hidden');
                 imagePreview.src = '';
                 imageUrlInput.value = '';
@@ -515,104 +499,51 @@
             handleDrop(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log("File dropped.");
                 this.elements.imageDropZone.classList.remove('dragover');
                 const files = e.dataTransfer.files;
                 if (files.length) this.uploadImage(files[0]);
             },
             
             handleFileSelect(e) {
-                console.log("File selected.");
                 const files = e.target.files;
                 if (files.length) this.uploadImage(files[0]);
             },
 
-            uploadImage(file) {
-                const { publishStatus } = this.elements;
-                console.log("Attempting to upload file:", file.name);
-                publishStatus.textContent = 'Preparing to upload...';
+            async uploadImage(file) {
+                const { publishStatus, uploadPrompt, imagePreview, imageUrlInput } = this.elements;
+                publishStatus.textContent = 'Uploading...';
                 publishStatus.style.color = 'black';
 
                 if (!this.auth.currentUser) {
-                    const msg = "Upload error: Not authenticated. Please log out and log back in.";
-                    console.error(msg);
-                    publishStatus.textContent = msg;
+                    publishStatus.textContent = "Authentication error. Please refresh and log in again.";
                     publishStatus.style.color = 'red';
                     return;
                 }
-                console.log("User is authenticated:", this.auth.currentUser.uid);
-
-                if (!file.type.startsWith('image/')) {
-                    const msg = 'Upload error: Please upload a valid image file (e.g., JPG, PNG, GIF).';
-                    console.error(msg, "File type was:", file.type);
-                    publishStatus.textContent = msg;
-                    publishStatus.style.color = 'red';
-                    return;
-                }
-                console.log("File type is valid.");
-
-                const { uploadPrompt, uploadProgressContainer, uploadProgressBar, imagePreview, imageUrlInput } = this.elements;
 
                 try {
-                    console.log("Creating storage reference...");
                     const storageRef = ref(this.storage, `article-images/${Date.now()}-${file.name}`);
-                    console.log("Storage reference created:", storageRef.fullPath);
+                    
+                    // Use uploadBytes for a simpler upload process
+                    const snapshot = await uploadBytes(storageRef, file);
+                    console.log('Uploaded a blob or file!', snapshot);
 
-                    console.log("Creating upload task...");
-                    const uploadTask = uploadBytesResumable(storageRef, file);
-                    console.log("Upload task created.");
+                    const downloadURL = await getDownloadURL(snapshot.ref);
+                    console.log('File available at', downloadURL);
 
-                    publishStatus.textContent = 'Upload starting...';
+                    imageUrlInput.value = downloadURL;
+                    imagePreview.src = downloadURL;
+                    imagePreview.classList.remove('hidden');
                     uploadPrompt.classList.add('hidden');
-                    uploadProgressContainer.classList.remove('hidden');
-                    uploadProgressBar.style.width = '0%';
+                    publishStatus.textContent = 'Image uploaded successfully!';
+                    publishStatus.style.color = 'green';
 
-                    uploadTask.on('state_changed',
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            console.log('Upload is ' + progress + '% done');
-                            uploadProgressBar.style.width = progress + '%';
-                            publishStatus.textContent = `Uploading: ${Math.round(progress)}%`;
-                            publishStatus.style.color = 'black';
-                        },
-                        (error) => {
-                            console.error("Upload failed with an error event:", error);
-                            let errorMessage = "Image upload failed. Please try again.";
-                            switch (error.code) {
-                                case 'storage/unauthorized':
-                                    errorMessage = "Upload failed: Permission denied. Your security rules may not allow uploads.";
-                                    break;
-                                case 'storage/canceled':
-                                    errorMessage = "Upload was canceled.";
-                                    break;
-                                case 'storage/unknown':
-                                    errorMessage = "An unknown error occurred. Check the browser console for details.";
-                                    break;
-                            }
-                            publishStatus.textContent = errorMessage;
-                            publishStatus.style.color = 'red';
-                            this.resetImageUploader();
-                        },
-                        () => {
-                            console.log("Upload finished. Getting download URL...");
-                            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                                console.log('File available at', downloadURL);
-                                imageUrlInput.value = downloadURL;
-                                imagePreview.src = downloadURL;
-                                imagePreview.classList.remove('hidden');
-                                uploadProgressContainer.classList.add('hidden');
-                                publishStatus.textContent = 'Image uploaded successfully!';
-                                publishStatus.style.color = 'green';
-                            }).catch(err => {
-                                 console.error("Failed to get download URL:", err);
-                                 publishStatus.textContent = "Upload succeeded, but failed to get image URL. Check console.";
-                                 publishStatus.style.color = 'red';
-                            });
-                        }
-                    );
-                } catch (e) {
-                    console.error("A synchronous error occurred during upload setup:", e);
-                    publishStatus.textContent = "A critical error occurred before upload could start. Check console.";
+                } catch (error) {
+                    console.error("Upload failed:", error);
+                    let errorMessage = "Image upload failed. Please try again.";
+                    if (error.code === 'storage/unauthorized') {
+                        errorMessage = "Upload failed: Permission denied. Please check Firebase Storage security rules.";
+                    }
+                    publishStatus.textContent = errorMessage;
                     publishStatus.style.color = 'red';
                     this.resetImageUploader();
                 }
