@@ -426,8 +426,8 @@
         const LandingApp = {
             state: {
                 allAlbums: [],
-                timelineAlbums: [],
                 recommendedAlbum: null,
+                onThisDayAlbum: null,
                 artistsData: [],
                 genreData: {},
                 fullGenreColorMap: {},
@@ -477,9 +477,9 @@
                         fetch('genres.json').then(res => res.json())
                     ]);
                     
-                    this.state.timelineAlbums = dbData.albums || [];
+                    const timelineAlbums = dbData.albums || [];
                     const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []);
-                    this.state.allAlbums = this.state.timelineAlbums.concat(legacyAlbums);
+                    this.state.allAlbums = timelineAlbums.concat(legacyAlbums);
                     this.state.genreData = genreData;
 
                     this.methods.processArtists(artistProfileData);
@@ -543,11 +543,17 @@
                     `;
                 },
                 setupRecommendationModal() {
-                    const { recommendationModal, closeRecommendationModalBtn, recommendationContent } = this.elements;
+                    const { recommendationModal, closeRecommendationModalBtn, recommendationContent, onThisDayContainer } = this.elements;
                     
                     recommendationContent.addEventListener('click', (e) => {
                         if (e.target.id === 'open-recommendation-modal-btn') {
-                            this.methods.openRecommendationModal();
+                            this.methods.openRecommendationModal(this.state.recommendedAlbum);
+                        }
+                    });
+
+                    onThisDayContainer.addEventListener('click', () => {
+                        if (this.state.onThisDayAlbum) {
+                            this.methods.openRecommendationModal(this.state.onThisDayAlbum);
                         }
                     });
 
@@ -558,12 +564,12 @@
                         }
                     });
                 },
-                openRecommendationModal() {
+                openRecommendationModal(album) {
                     const { 
                         recommendationModal, recommendationModalTitle, recommendationModalArtist, 
                         recommendationModalAlbumArt, recommendationModalAlbumDetails, analysisWrapper 
                     } = this.elements;
-                    const album = this.state.recommendedAlbum;
+                    
                     if (!album) return;
 
                     recommendationModalTitle.textContent = album.albumTitle;
@@ -584,7 +590,8 @@
                         return personnel;
                     }).join(', ');
 
-                    const genreTags = (album.genres || []).map(g => `<a href="/timeline#matrix" class="genre-tag" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</a>`).join(' ');
+                    const genres = album.genres ? (Array.isArray(album.genres) ? album.genres : album.genres.split(',')) : [];
+                    const genreTags = genres.map(g => `<a href="/timeline#matrix" class="genre-tag" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</a>`).join(' ');
 
                     recommendationModalAlbumDetails.innerHTML = `
                         <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
@@ -620,22 +627,23 @@
                     const currentDay = today.getDate();
 
                     const matchingTracks = [];
-                    this.state.timelineAlbums.forEach(album => {
-                        if (album.pivotalTracks) {
-                            album.pivotalTracks.forEach(track => {
-                                const dateParts = (track.recordingDate || '').replace(/,/g, '').split(' ');
-                                if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
-                                    matchingTracks.push({ ...track, parentAlbum: album });
-                                }
-                            });
-                        }
+                    this.state.allAlbums.forEach(album => {
+                        const tracks = album.pivotalTracks || (album.recordingDate ? [album] : []);
+                        tracks.forEach(track => {
+                            const dateStr = track.recordingDate || '';
+                            const dateParts = dateStr.replace(/,/g, '').split(' ');
+                            if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
+                                matchingTracks.push({ ...track, parentAlbum: album });
+                            }
+                        });
                     });
 
                     if (matchingTracks.length > 0) {
                         const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
                         const album = featured.parentAlbum;
+                        this.state.onThisDayAlbum = album;
                         this.elements.onThisDayContainer.innerHTML = `
-                            <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-4 cursor-pointer">
                                 <img src="${album.cover}" loading="lazy" class="w-20 h-20 object-cover border-2 border-stone-900 rounded-sm flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=No+Img';">
                                 <div>
                                     <p class="text-sm text-stone-600">On ${currentMonth} ${currentDay}, ${album.year}, the track...</p>
