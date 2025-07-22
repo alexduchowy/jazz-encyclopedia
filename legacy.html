@@ -546,6 +546,7 @@
     <div id="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
+        <!-- Standardized Sticky Header -->
         <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
@@ -556,7 +557,8 @@
                         <a href="/legacy" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         <a href="/reviews" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
                     </div>
-                     <div class="md:hidden">
+                     <!-- Hamburger Menu Button -->
+                    <div class="md:hidden">
                         <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
                             <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -568,6 +570,7 @@
         </div>
 
         <main>
+            <!-- Banner Section -->
             <section class="banner-section">
                 <img src="images/bannerlegacy.png" alt="The Legacy of Jazz" class="banner-img" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Legacy';">
                 <div class="banner-overlay">
@@ -578,15 +581,24 @@
                 </div>
             </section>
 
+            <!-- Overview Section -->
             <section id="overview" class="py-16 sm:py-20 bg-stone-100">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="grid md:grid-cols-5 gap-12 items-start">
                         <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
+                            <div class="mb-8">
+                                <h2 class="section-header text-5xl">The Echoes of Innovation</h2>
+                                <p class="text-lg text-stone-600 mt-4 italic">Tracing the paths of jazz beyond the golden age.</p>
+                            </div>
                             <p>The story of jazz didn't end in 1969. Instead, the seismic shifts of the post-bop era created a new musical landscape. The period's relentless innovation acted as a creative big bang, sending musicians and ideas hurtling in countless new directions. The structural explorations of Post-Bop, the spiritual depth of Free Jazz, and the raw energy of Avant-Garde became the DNA for future generations.</p>
                             <p>From the high-voltage energy of <strong>Jazz Fusion</strong> and the introspective soundscapes of <strong>ECM Style Jazz</strong> to the conscious reconnection with African roots in <strong>Afro-Jazz</strong>, the legacy of this golden age is everywhere. This page explores the primary paths that grew from that fertile ground, tracing the lineage of modern jazz into the 21st century.</p>
                         </div>
-                        <div class="md:col-span-2 mt-8 md:mt-0">
-                             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5KmHPJb9HzTeHpaCDRBkNO?utm_source=generator" width="100%" height="450" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        <div class="md:col-span-2 mt-8 md:mt-0 space-y-8">
+                             <!-- "ON THIS DAY" FEATURE -->
+                            <div id="on-this-day">
+                                <!-- Content will be injected by JavaScript -->
+                            </div>
+                             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5KmHPJb9HzTeHpaCDRBkNO?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
@@ -597,9 +609,12 @@
                     <h2 class="section-header text-5xl">Path Timeline</h2>
                     <p class="text-center text-lg text-stone-600 mb-4 max-w-3xl mx-auto italic">Follow the splintering of the post-bop sound into new forms.</p>
                     
+                    <!-- Path Selector Container -->
                     <div id="path-selector-container" class="mb-12">
                         <div id="path-selector-grid">
-                            </div>
+                            <!-- Path cards injected by JS -->
+                        </div>
+                        <!-- Mobile Slider Controls -->
                         <div id="path-slider-controls" class="flex justify-center items-center gap-4 mt-4">
                              <button id="path-prev-btn" class="p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
                             <span id="path-page-indicator" class="font-bold text-lg text-stone-900"></span>
@@ -625,6 +640,7 @@
                     <div id="genre-evolution-wrapper">
                         <div id="genre-evolution-container">
                             <div id="genre-evolution-chart">
+                                <!-- Chart will be rendered by JS -->
                                 <svg id="evolution-connections"></svg>
                             </div>
                         </div>
@@ -648,9 +664,11 @@
                     <div id="artist-slider-wrapper" class="relative">
                         <div id="artist-slider-container" class="min-h-[300px] md:min-h-[320px]">
                             <div id="artist-slider-track">
-                                </div>
+                                <!-- Artist pages will be injected here by JavaScript -->
+                            </div>
                         </div>
-                         <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4">
+                         <!-- Artist Pagination Controls -->
+                        <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4">
                             <button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                             </button>
@@ -675,6 +693,7 @@
         </footer>
     </div>
     
+    <!-- Modals -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
@@ -692,7 +711,8 @@
                     <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
                 <div id="analysis-wrapper" class="relative mt-4">
-                    </div>
+                    <!-- Content injected by JS -->
+                </div>
             </div>
         </div>
     </div>
@@ -715,6 +735,7 @@
         </div>
     </div>
 
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
@@ -738,6 +759,7 @@
                 fullAlbumDatabase: [],
                 genreData: {},
                 fullGenreColorMap: {},
+                onThisDayAlbum: null,
                 currentLegacyAlbumPage: 0,
                 legacyAlbumsPerPage: 0,
                 totalLegacyAlbumPages: 0,
@@ -759,6 +781,7 @@
                 this.elements = {
                     loader: document.getElementById('loader'),
                     pageContent: document.getElementById('page-content'),
+                    onThisDayContainer: document.getElementById('on-this-day'),
                     pathSelectorGrid: document.getElementById('path-selector-grid'),
                     pathSliderControls: document.getElementById('path-slider-controls'),
                     pathPrevBtn: document.getElementById('path-prev-btn'),
@@ -808,14 +831,11 @@
                         } else if (!Array.isArray(album.genres)) {
                             album.genres = [];
                         }
+                        return album;
                     };
 
-                    dbData.albums.forEach(normalizeGenres);
-                    this.state.fullAlbumDatabase = dbData.albums;
-
-                    const allLegacyAlbums = Object.values(legacyData.paths || {}).flatMap(path => path.albums || []);
-                    allLegacyAlbums.forEach(normalizeGenres);
-                    this.state.allLegacyAlbums = allLegacyAlbums;
+                    this.state.fullAlbumDatabase = (dbData.albums || []).map(normalizeGenres);
+                    this.state.allLegacyAlbums = Object.values(legacyData.paths || {}).flatMap(path => path.albums || []).map(normalizeGenres);
 
                     this.initializeAppUI();
                 }).catch(error => {
@@ -831,6 +851,7 @@
             initializeAppUI() {
                 this.methods.processArtists();
                 this.methods.buildGenreColorMap();
+                this.methods.setupOnThisDayFeature();
                 this.methods.setupLegacySection();
                 this.methods.renderGenreEvolutionChart();
                 this.methods.populateInstrumentFilter(this.state.artistsData);
@@ -915,6 +936,56 @@
                             });
                         }
                     });
+                },
+                setupOnThisDayFeature() {
+                    const { onThisDayContainer } = this.elements;
+                    if (!onThisDayContainer) return;
+
+                    const today = new Date();
+                    const currentMonth = today.toLocaleString('en-US', { month: 'long' });
+                    const currentDay = today.getDate();
+
+                    const matchingTracks = [];
+                    this.state.allLegacyAlbums.forEach(album => {
+                         const tracks = album.pivotalTracks || (album.recordingDate ? [album] : []);
+                        (tracks || []).forEach(track => {
+                            const dateStr = track.recordingDate || '';
+                            const dateParts = dateStr.replace(/,/g, '').split(' ');
+                            if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
+                                matchingTracks.push({ ...track, parentAlbum: album });
+                            }
+                        });
+                    });
+
+                    if (matchingTracks.length > 0) {
+                        const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
+                        const album = featured.parentAlbum;
+                        this.state.onThisDayAlbum = album;
+
+                        onThisDayContainer.innerHTML = `
+                            <div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)] cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] hover:-translate-y-1 transition-all">
+                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
+                                <div class="flex items-center gap-4 mt-2">
+                                    <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-stone-900 rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
+                                    <div>
+                                        <p class="text-sm text-stone-600">On <strong>${currentMonth} ${currentDay}</strong>, ${album.year}, the track...</p>
+                                        <p class="text-lg font-bold text-stone-900">"${featured.title}"</p>
+                                        <p class="text-sm text-stone-600">from <strong>${album.albumTitle}</strong> was recorded.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        onThisDayContainer.addEventListener('click', () => {
+                            this.methods.openAlbumModal(this.state.onThisDayAlbum);
+                        });
+                    } else {
+                        onThisDayContainer.innerHTML = `
+                             <div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)]">
+                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
+                                <p class="text-center text-stone-600 mt-4">No legacy tracks were recorded on this day. Check back tomorrow!</p>
+                            </div>
+                        `;
+                    }
                 },
                 setupLegacySection() {
                     this.methods.renderPathSelector();
@@ -1008,7 +1079,7 @@
                         card.dataset.artist = album.artist;
                         card.innerHTML = `<img src="${album.cover}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="legacy-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
                         card.addEventListener('click', () => {
-                            const fullAlbumData = this.state.fullAlbumDatabase.find(a => a.albumTitle === album.albumTitle && a.artist === album.artist) || this.state.allLegacyAlbums.find(a => a.albumTitle === album.albumTitle && a.artist === album.artist) || album;
+                            const fullAlbumData = this.state.allLegacyAlbums.find(a => a.albumTitle === album.albumTitle && a.artist === album.artist) || album;
                             this.methods.openAlbumModal(fullAlbumData);
                         });
                         legacyAlbumTrack.appendChild(card);
@@ -1280,7 +1351,7 @@
                                 this.methods.closeAllModals(() => this.methods.openArtistModal(artistData));
                             }
                         } else if (albumTitle && artist) {
-                            const albumData = this.state.fullAlbumDatabase.find(a => a.albumTitle === albumTitle && a.artist === artist) || this.state.allLegacyAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
+                            const albumData = this.state.allLegacyAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
                             if (albumData) {
                                 this.methods.closeAllModals(() => this.methods.openAlbumModal(albumData));
                             }
