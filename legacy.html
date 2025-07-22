@@ -6,13 +6,11 @@
     <title>Legacy - Controlled Freedom</title>
     <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
     
-    <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
-    <!-- Custom CSS Styling -->
     <style>
         /* Define custom color properties for easy theme management */
         :root {
@@ -297,19 +295,85 @@
             display: none;
         }
 
-        /* Banner Animation */
-        @keyframes banner-fade-in {
-            from {
-                opacity: 0;
-                transform: scale(1.1);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        /* Banner & Typewriter Animation */
+        .banner-section {
+            position: relative;
+            width: 100%;
+            height: 50vh; /* Adjusted for mobile */
+            max-height: 280px; /* Adjusted for mobile */
+            overflow: hidden;
+            background-color: var(--bg-dark);
         }
-        .banner-animation {
+
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.3;
             animation: banner-fade-in 2s ease-out forwards;
+        }
+
+        @keyframes banner-fade-in {
+            from { opacity: 0; transform: scale(1.05); }
+            to { opacity: 0.3; transform: scale(1); }
+        }
+
+        .banner-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1rem;
+            color: var(--bg-main);
+        }
+
+        .typewriter h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem; /* Mobile font size */
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            overflow: hidden;
+            border-right: .15em solid var(--accent);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .1em;
+            animation:
+                typing 3.5s steps(35, end),
+                blink-caret .75s step-end infinite;
+        }
+        
+        .banner-subtitle {
+            font-size: 0.9rem; /* Mobile font size */
+        }
+
+        /* The typing effect */
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        /* The typewriter cursor effect */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent); }
+        }
+
+        /* Desktop Banner Styles */
+        @media (min-width: 768px) {
+            .banner-section {
+                height: 45vh;
+                max-height: 320px;
+            }
+            .typewriter h1 {
+                font-size: 4.5rem; /* text-7xl */
+            }
+            .banner-subtitle {
+                font-size: 1.125rem; /* text-lg */
+            }
         }
         
         /* --- LEGACY PAGE SPECIFIC STYLES --- */
@@ -482,7 +546,6 @@
     <div id="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
-        <!-- Standardized Sticky Header -->
         <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
@@ -493,8 +556,7 @@
                         <a href="/legacy" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         <a href="/reviews" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
                     </div>
-                     <!-- Hamburger Menu Button -->
-                    <div class="md:hidden">
+                     <div class="md:hidden">
                         <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
                             <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -506,17 +568,16 @@
         </div>
 
         <main>
-            <!-- Banner Section -->
-            <section id="banner" class="relative w-full h-60 md:h-72 lg:h-80 overflow-hidden bg-stone-900">
-                <img src="images/bannerlegacy.png" alt="Legacy of Jazz" class="w-full h-full object-cover banner-animation opacity-40" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Legacy';">
-                <div class="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/60 to-transparent"></div>
-                 <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-                    <h1 class="text-6xl md:text-7xl font-bold text-stone-100" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">The Legacy of an Era</h1>
-                    <p class="text-lg text-stone-300 max-w-3xl mx-auto italic mt-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">How two decades of explosive creativity redefined the future of music.</p>
+            <section class="banner-section">
+                <img src="images/bannerlegacy.png" alt="The Legacy of Jazz" class="banner-img" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Legacy';">
+                <div class="banner-overlay">
+                    <div class="typewriter">
+                        <h1>The Legacy of an Era</h1>
+                    </div>
+                    <p class="banner-subtitle text-stone-300 max-w-3xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">How two decades of explosive creativity redefined the future of music.</p>
                 </div>
             </section>
 
-            <!-- Overview Section -->
             <section id="overview" class="py-16 sm:py-20 bg-stone-100">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="grid md:grid-cols-5 gap-12 items-start">
@@ -536,12 +597,9 @@
                     <h2 class="section-header text-5xl">Path Timeline</h2>
                     <p class="text-center text-lg text-stone-600 mb-4 max-w-3xl mx-auto italic">Follow the splintering of the post-bop sound into new forms.</p>
                     
-                    <!-- Path Selector Container -->
                     <div id="path-selector-container" class="mb-12">
                         <div id="path-selector-grid">
-                            <!-- Path cards injected by JS -->
-                        </div>
-                        <!-- Mobile Slider Controls -->
+                            </div>
                         <div id="path-slider-controls" class="flex justify-center items-center gap-4 mt-4">
                              <button id="path-prev-btn" class="p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
                             <span id="path-page-indicator" class="font-bold text-lg text-stone-900"></span>
@@ -567,7 +625,6 @@
                     <div id="genre-evolution-wrapper">
                         <div id="genre-evolution-container">
                             <div id="genre-evolution-chart">
-                                <!-- Chart will be rendered by JS -->
                                 <svg id="evolution-connections"></svg>
                             </div>
                         </div>
@@ -591,11 +648,9 @@
                     <div id="artist-slider-wrapper" class="relative">
                         <div id="artist-slider-container" class="min-h-[300px] md:min-h-[320px]">
                             <div id="artist-slider-track">
-                                <!-- Artist pages will be injected here by JavaScript -->
-                            </div>
+                                </div>
                         </div>
-                         <!-- Artist Pagination Controls -->
-                        <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4">
+                         <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4">
                             <button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                             </button>
@@ -620,7 +675,6 @@
         </footer>
     </div>
     
-    <!-- Modals -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
@@ -638,8 +692,7 @@
                     <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
                 <div id="analysis-wrapper" class="relative mt-4">
-                    <!-- Content injected by JS -->
-                </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -662,7 +715,6 @@
         </div>
     </div>
 
-    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
