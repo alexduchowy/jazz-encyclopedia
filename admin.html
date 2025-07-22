@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Controlled Freedom</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
+    <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
     <style>
         :root {
             --accent: #f97316;
@@ -17,9 +17,8 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        /* Custom modal for confirmation dialogs */
         .confirm-modal {
-            display: none; /* Hidden by default */
+            display: none;
             position: fixed;
             z-index: 100;
             left: 0;
@@ -42,6 +41,10 @@
             text-align: center;
             box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
         }
+        #drop-zone.dragover {
+            border-color: var(--accent);
+            background-color: #fef3c7;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -59,7 +62,7 @@
     <div id="auth-container" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <div>
-                <img class="mx-auto h-24 w-auto" src="images/logo.svg" alt="Controlled Freedom">
+                <img class="mx-auto h-24 w-auto" src="/images/logo.svg" alt="Controlled Freedom">
                 <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
                     Sign in to your account
                 </h2>
@@ -96,83 +99,102 @@
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Form Column -->
-                <div class="lg:col-span-1">
+                <div class="lg:col-span-2">
                     <div class="bg-white p-6 rounded-lg shadow-lg">
                         <h2 id="form-title" class="text-2xl font-bold mb-6 text-gray-900">Create New Article</h2>
-                        <form id="article-form" class="space-y-4">
+                        <form id="article-form" class="space-y-6">
                             <input type="hidden" id="article-id">
-                            <div>
-                                <label for="article-type" class="block text-sm font-medium text-gray-700">Article Type</label>
-                                <select id="article-type" name="article-type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md">
-                                    <option value="news">News</option>
-                                    <option value="review">Review</option>
-                                </select>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="article-type" class="block text-sm font-medium text-gray-700">Article Type</label>
+                                    <select id="article-type" name="article-type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md">
+                                        <option value="news">News</option>
+                                        <option value="review">Review</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                                    <input type="text" id="title" name="title" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                </div>
                             </div>
-                            <div>
-                                <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-                                <input type="text" id="title" name="title" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
-                            </div>
+                            
                             <!-- Review Specific Fields -->
-                            <div id="review-album-fields" class="hidden space-y-4">
-                                <div>
-                                    <label for="albumTitle" class="block text-sm font-medium text-gray-700">Album Title</label>
-                                    <input type="text" id="albumTitle" name="albumTitle" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                            <div id="review-fields-container" class="hidden space-y-6 pt-6 border-t">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label for="albumTitle" class="block text-sm font-medium text-gray-700">Album Title</label>
+                                        <input type="text" id="albumTitle" name="albumTitle" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="artist" class="block text-sm font-medium text-gray-700">Artist</label>
+                                        <input type="text" id="artist" name="artist" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="rating" class="block text-sm font-medium text-gray-700">Rating (1-5)</label>
+                                        <input type="number" id="rating" name="rating" min="1" max="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label for="artist" class="block text-sm font-medium text-gray-700">Artist</label>
-                                    <input type="text" id="artist" name="artist" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
-                                </div>
-                                <div>
-                                    <label for="rating" class="block text-sm font-medium text-gray-700">Rating (1-5)</label>
-                                    <input type="number" id="rating" name="rating" min="1" max="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label for="releaseDate" class="block text-sm font-medium text-gray-700">Release Date (Year)</label>
+                                        <input type="number" id="releaseDate" name="releaseDate" placeholder="e.g., 1959" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="genre" class="block text-sm font-medium text-gray-700">Genre(s) (comma-separated)</label>
+                                        <input type="text" id="genre" name="genre" placeholder="e.g., Hard Bop, Post-Bop" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="label" class="block text-sm font-medium text-gray-700">Label</label>
+                                        <input type="text" id="label" name="label" placeholder="e.g., Blue Note" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                    </div>
                                 </div>
                             </div>
-                             <!-- NEW Review Detail Fields -->
-                            <div id="review-fields" class="hidden space-y-4">
-                                <div>
-                                    <label for="releaseDate" class="block text-sm font-medium text-gray-700">Release Date (Year)</label>
-                                    <input type="number" id="releaseDate" name="releaseDate" placeholder="e.g., 1959" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
-                                </div>
-                                <div>
-                                    <label for="genre" class="block text-sm font-medium text-gray-700">Genre(s) (comma-separated)</label>
-                                    <input type="text" id="genre" name="genre" placeholder="e.g., Hard Bop, Post-Bop" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
-                                </div>
-                                <div>
-                                    <label for="label" class="block text-sm font-medium text-gray-700">Label</label>
-                                    <input type="text" id="label" name="label" placeholder="e.g., Blue Note" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
-                                </div>
-                            </div>
+
+                            <!-- Image Upload Section -->
                             <div>
-                                <label for="imageUrl" class="block text-sm font-medium text-gray-700">Image URL</label>
-                                <input type="url" id="imageUrl" name="imageUrl" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                <label class="block text-sm font-medium text-gray-700">Featured Image</label>
+                                <div id="drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer">
+                                    <div id="upload-prompt" class="space-y-1 text-center">
+                                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                        <div class="flex text-sm text-gray-600"><p class="pl-1">Drag & drop or click to upload</p></div>
+                                        <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                    </div>
+                                    <div id="upload-progress-container" class="hidden w-full">
+                                        <div class="flex justify-between mb-1"><span class="text-base font-medium text-orange-700">Uploading...</span><span id="upload-progress-text" class="text-sm font-medium text-orange-700">0%</span></div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2.5"><div id="upload-progress-bar" class="bg-orange-600 h-2.5 rounded-full" style="width: 0%"></div></div>
+                                    </div>
+                                    <div id="image-preview-container" class="hidden relative">
+                                        <img id="image-preview" src="" class="max-h-48 rounded-md">
+                                        <button type="button" id="remove-image-btn" class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 leading-none">&times;</button>
+                                    </div>
+                                </div>
+                                <input id="image-file-input" type="file" class="hidden" accept="image/*">
+                                <input type="hidden" id="imageUrl">
                             </div>
+
                             <div>
                                 <label for="body" class="block text-sm font-medium text-gray-700">Body (HTML allowed)</label>
-                                <textarea id="body" name="body" rows="10" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"></textarea>
+                                <textarea id="body" name="body" rows="15" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"></textarea>
                                 <p class="mt-2 text-xs text-gray-500">Wrap the final paragraph in &lt;highlight&gt;...&lt;/highlight&gt; to feature it.</p>
                             </div>
-                            <!-- Form Error Message Display -->
+                            
                             <p id="form-error" class="text-red-500 text-sm h-4"></p>
-                            <div class="flex items-center justify-between">
-                                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                            <div class="flex items-center justify-end gap-4 pt-6 border-t">
+                                <button type="button" id="clear-form-btn" class="text-sm font-medium text-gray-600 hover:text-gray-900">Clear Form</button>
+                                <button type="submit" class="w-1/2 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
                                     Save Article
                                 </button>
-                                <button type="button" id="clear-form-btn" class="ml-4 text-sm text-gray-600 hover:text-gray-900">Clear</button>
                             </div>
                         </form>
                     </div>
                 </div>
 
                 <!-- Articles List Column -->
-                <div class="lg:col-span-2">
+                <div class="lg:col-span-1">
                     <div class="bg-white p-6 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-4 text-gray-900">Existing Articles</h2>
-                        <div id="articles-list" class="space-y-4">
-                            <!-- Loader -->
-                            <div id="list-loader" class="flex justify-center items-center">
-                                <div class="loader h-8 w-8 border-4 rounded-full"></div>
-                            </div>
-                            <!-- Articles will be populated here -->
+                        <div id="articles-list" class="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
+                            <div id="list-loader" class="flex justify-center items-center"><div class="loader h-8 w-8 border-4 rounded-full"></div></div>
                         </div>
                     </div>
                 </div>
@@ -184,6 +206,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
@@ -198,86 +221,132 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
-        // Cache DOM elements
-        const authContainer = document.getElementById('auth-container');
-        const adminPanel = document.getElementById('admin-panel');
-        const loginForm = document.getElementById('login-form');
-        const authError = document.getElementById('auth-error');
-        const logoutBtn = document.getElementById('logout-btn');
-        const articleForm = document.getElementById('article-form');
-        const articlesList = document.getElementById('articles-list');
-        const formTitle = document.getElementById('form-title');
-        const clearFormBtn = document.getElementById('clear-form-btn');
-        const articleTypeSelect = document.getElementById('article-type');
-        const reviewAlbumFields = document.getElementById('review-album-fields');
-        const reviewFields = document.getElementById('review-fields');
-        const confirmModal = document.getElementById('confirm-modal');
-        const formError = document.getElementById('form-error');
-
-        // --- Helper Function to Generate URL Slug ---
-        const generateSlug = (text) => {
-            if (!text) return '';
-            return text.toString().toLowerCase()
-                .replace(/\s+/g, '-')           // Replace spaces with -
-                .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-                .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-                .replace(/^-+/, '')             // Trim - from start of text
-                .replace(/-+$/, '');            // Trim - from end of text
+        const elements = {
+            authContainer: document.getElementById('auth-container'),
+            adminPanel: document.getElementById('admin-panel'),
+            loginForm: document.getElementById('login-form'),
+            authError: document.getElementById('auth-error'),
+            logoutBtn: document.getElementById('logout-btn'),
+            articleForm: document.getElementById('article-form'),
+            articlesList: document.getElementById('articles-list'),
+            formTitle: document.getElementById('form-title'),
+            clearFormBtn: document.getElementById('clear-form-btn'),
+            articleTypeSelect: document.getElementById('article-type'),
+            reviewFieldsContainer: document.getElementById('review-fields-container'),
+            confirmModal: document.getElementById('confirm-modal'),
+            formError: document.getElementById('form-error'),
+            dropZone: document.getElementById('drop-zone'),
+            imageFileInput: document.getElementById('image-file-input'),
+            uploadPrompt: document.getElementById('upload-prompt'),
+            uploadProgressContainer: document.getElementById('upload-progress-container'),
+            uploadProgressBar: document.getElementById('upload-progress-bar'),
+            uploadProgressText: document.getElementById('upload-progress-text'),
+            imagePreviewContainer: document.getElementById('image-preview-container'),
+            imagePreview: document.getElementById('image-preview'),
+            removeImageBtn: document.getElementById('remove-image-btn'),
+            imageUrlInput: document.getElementById('imageUrl'),
         };
 
-        // Auth state listener
+        const generateSlug = (text) => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+
         onAuthStateChanged(auth, user => {
             if (user) {
-                authContainer.classList.add('hidden');
-                adminPanel.classList.remove('hidden');
+                elements.authContainer.classList.add('hidden');
+                elements.adminPanel.classList.remove('hidden');
                 loadArticles();
             } else {
-                authContainer.classList.remove('hidden');
-                adminPanel.classList.add('hidden');
+                elements.authContainer.classList.remove('hidden');
+                elements.adminPanel.classList.add('hidden');
             }
         });
 
-        // Login
-        loginForm.addEventListener('submit', (e) => {
+        elements.loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            authError.textContent = '';
-            const email = loginForm.email.value;
-            const password = loginForm.password.value;
-            signInWithEmailAndPassword(auth, email, password)
-                .catch(error => {
-                    authError.textContent = "Invalid email or password.";
-                });
+            elements.authError.textContent = '';
+            signInWithEmailAndPassword(auth, elements.loginForm.email.value, elements.loginForm.password.value)
+                .catch(error => { elements.authError.textContent = "Invalid email or password."; });
         });
 
-        // Logout
-        logoutBtn.addEventListener('click', () => {
-            signOut(auth);
+        elements.logoutBtn.addEventListener('click', () => signOut(auth));
+        elements.articleTypeSelect.addEventListener('change', () => {
+            elements.reviewFieldsContainer.classList.toggle('hidden', elements.articleTypeSelect.value !== 'review');
         });
 
-        // Toggle review-specific fields based on article type
-        articleTypeSelect.addEventListener('change', (e) => {
-            const isReview = e.target.value === 'review';
-            reviewAlbumFields.classList.toggle('hidden', !isReview);
-            reviewFields.classList.toggle('hidden', !isReview);
-        });
+        const uploadImage = (file) => {
+            const fileName = `${Date.now()}-${file.name}`;
+            const storageRef = ref(storage, `article_images/${fileName}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
 
-        // Handle form submission (Create/Update)
+            elements.uploadPrompt.classList.add('hidden');
+            elements.uploadProgressContainer.classList.remove('hidden');
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    elements.uploadProgressBar.style.width = `${progress}%`;
+                    elements.uploadProgressText.textContent = `${Math.round(progress)}%`;
+                }, 
+                (error) => {
+                    console.error("Upload failed:", error);
+                    elements.formError.textContent = "Image upload failed.";
+                    resetUploadUI();
+                }, 
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        elements.imageUrlInput.value = downloadURL;
+                        elements.imagePreview.src = downloadURL;
+                        elements.uploadProgressContainer.classList.add('hidden');
+                        elements.imagePreviewContainer.classList.remove('hidden');
+                    });
+                }
+            );
+        };
+        
+        const resetUploadUI = () => {
+            elements.uploadPrompt.classList.remove('hidden');
+            elements.uploadProgressContainer.classList.add('hidden');
+            elements.imagePreviewContainer.classList.add('hidden');
+            elements.imagePreview.src = '';
+            elements.imageUrlInput.value = '';
+            elements.imageFileInput.value = '';
+        };
+
+        elements.dropZone.addEventListener('click', () => elements.imageFileInput.click());
+        elements.imageFileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) uploadImage(e.target.files[0]);
+        });
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            elements.dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            elements.dropZone.addEventListener(eventName, () => elements.dropZone.classList.add('dragover'));
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            elements.dropZone.addEventListener(eventName, () => elements.dropZone.classList.remove('dragover'));
+        });
+        elements.dropZone.addEventListener('drop', (e) => {
+            if (e.dataTransfer.files[0]) uploadImage(e.dataTransfer.files[0]);
+        });
+        elements.removeImageBtn.addEventListener('click', resetUploadUI);
+
+
         const handleFormSubmit = async (e) => {
             e.preventDefault();
-            formError.textContent = ''; // Clear previous errors
+            elements.formError.textContent = '';
 
             const id = document.getElementById('article-id').value;
-            const type = articleTypeSelect.value;
+            const type = elements.articleTypeSelect.value;
             const title = document.getElementById('title').value;
             const body = document.getElementById('body').value;
-            const imageUrl = document.getElementById('imageUrl').value;
+            const imageUrl = elements.imageUrlInput.value;
 
             const articleData = {
-                type,
-                title,
-                body,
-                imageUrl,
+                type, title, body, imageUrl,
                 author: auth.currentUser.email,
                 publishDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
                 updatedAt: serverTimestamp()
@@ -285,26 +354,26 @@
 
             if (type === 'review') {
                 const albumTitle = document.getElementById('albumTitle').value;
-                // *** VALIDATION: Ensure Album Title is not empty for reviews ***
                 if (!albumTitle.trim()) {
-                    formError.textContent = 'Album Title is required for a review.';
-                    return; // Stop the submission
+                    elements.formError.textContent = 'Album Title is required for a review.';
+                    return;
                 }
-                articleData.albumTitle = albumTitle;
-                articleData.artist = document.getElementById('artist').value;
-                articleData.rating = parseInt(document.getElementById('rating').value);
-                articleData.year = parseInt(document.getElementById('releaseDate').value) || null;
-                articleData.genres = document.getElementById('genre').value.split(',').map(g => g.trim()).filter(g => g);
-                articleData.label = document.getElementById('label').value;
-                articleData.slug = generateSlug(albumTitle);
+                Object.assign(articleData, {
+                    albumTitle,
+                    artist: document.getElementById('artist').value,
+                    rating: parseInt(document.getElementById('rating').value),
+                    year: parseInt(document.getElementById('releaseDate').value) || null,
+                    genres: document.getElementById('genre').value.split(',').map(g => g.trim()).filter(g => g),
+                    label: document.getElementById('label').value,
+                    slug: generateSlug(albumTitle)
+                });
             } else {
                  articleData.slug = generateSlug(title);
             }
 
             try {
                 if (id) {
-                    const docRef = doc(db, "articles", id);
-                    await updateDoc(docRef, articleData);
+                    await updateDoc(doc(db, "articles", id), articleData);
                 } else {
                     articleData.createdAt = serverTimestamp();
                     await addDoc(collection(db, "articles"), articleData);
@@ -313,23 +382,19 @@
                 await loadArticles();
             } catch (error) {
                 console.error("Error saving article: ", error);
-                formError.textContent = "Could not save article. See console for details.";
+                elements.formError.textContent = "Could not save article. See console for details.";
             }
         };
 
         const loadArticles = async () => {
-            articlesList.innerHTML = `<div id="list-loader" class="flex justify-center items-center"><div class="loader h-8 w-8 border-4 rounded-full"></div></div>`;
+            elements.articlesList.innerHTML = `<div id="list-loader" class="flex justify-center items-center"><div class="loader h-8 w-8 border-4 rounded-full"></div></div>`;
             try {
-                const articlesRef = collection(db, "articles");
-                const q = query(articlesRef, orderBy("updatedAt", "desc"));
+                const q = query(collection(db, "articles"), orderBy("updatedAt", "desc"));
                 const querySnapshot = await getDocs(q);
                 let html = '';
                 querySnapshot.forEach((doc) => {
                     const article = { id: doc.id, ...doc.data() };
-                    const articleUrl = article.type === 'review' 
-                        ? `/reviews/${article.slug}` 
-                        : `/news/${article.slug}`;
-
+                    const articleUrl = article.type === 'review' ? `/reviews/${article.slug}` : `/news/${article.slug}`;
                     html += `
                         <div class="p-4 border rounded-md bg-gray-50">
                             <div class="flex justify-between items-start">
@@ -343,33 +408,36 @@
                                     <button data-id="${article.id}" class="delete-btn text-red-600 hover:text-red-800">Delete</button>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
-                articlesList.innerHTML = html || '<p>No articles found.</p>';
+                elements.articlesList.innerHTML = html || '<p>No articles found.</p>';
             } catch (error) {
                 console.error("Error loading articles:", error);
-                articlesList.innerHTML = '<p class="text-red-500">Could not load articles.</p>';
+                elements.articlesList.innerHTML = '<p class="text-red-500">Could not load articles.</p>';
             }
         };
 
         const editArticle = async (id) => {
-            const docRef = doc(db, "articles", id);
-            const docSnap = await getDoc(docRef);
+            const docSnap = await getDoc(doc(db, "articles", id));
             if (docSnap.exists()) {
                 const article = docSnap.data();
-                formTitle.textContent = "Edit Article";
+                elements.formTitle.textContent = "Edit Article";
                 document.getElementById('article-id').value = id;
-                articleTypeSelect.value = article.type;
+                elements.articleTypeSelect.value = article.type;
                 document.getElementById('title').value = article.title;
                 document.getElementById('body').value = article.body;
-                document.getElementById('imageUrl').value = article.imageUrl || '';
-                formError.textContent = '';
+                elements.formError.textContent = '';
+                
+                resetUploadUI();
+                if(article.imageUrl) {
+                    elements.imageUrlInput.value = article.imageUrl;
+                    elements.imagePreview.src = article.imageUrl;
+                    elements.uploadPrompt.classList.add('hidden');
+                    elements.imagePreviewContainer.classList.remove('hidden');
+                }
 
                 const isReview = article.type === 'review';
-                reviewAlbumFields.classList.toggle('hidden', !isReview);
-                reviewFields.classList.toggle('hidden', !isReview);
-
+                elements.reviewFieldsContainer.classList.toggle('hidden', !isReview);
                 if (isReview) {
                     document.getElementById('albumTitle').value = article.albumTitle || '';
                     document.getElementById('artist').value = article.artist || '';
@@ -385,57 +453,47 @@
         const showConfirmModal = (text) => {
             return new Promise((resolve) => {
                 document.getElementById('confirm-modal-text').textContent = text;
-                confirmModal.style.display = 'flex';
-                
+                elements.confirmModal.style.display = 'flex';
                 const yesBtn = document.getElementById('confirm-yes');
                 const noBtn = document.getElementById('confirm-no');
-
                 const listener = (e) => {
-                    confirmModal.style.display = 'none';
+                    elements.confirmModal.style.display = 'none';
                     yesBtn.removeEventListener('click', listener);
                     noBtn.removeEventListener('click', listener);
                     resolve(e.target === yesBtn);
                 }
-                
                 yesBtn.addEventListener('click', listener);
                 noBtn.addEventListener('click', listener);
             });
         };
 
         const deleteArticle = async (id) => {
-            const confirmed = await showConfirmModal("Are you sure you want to delete this article?");
-            if (confirmed) {
+            if (await showConfirmModal("Are you sure you want to delete this article?")) {
                 try {
                     await deleteDoc(doc(db, "articles", id));
                     await loadArticles();
-                } catch (error) {
-                    console.error("Error deleting article: ", error);
-                }
+                } catch (error) { console.error("Error deleting article: ", error); }
             }
         };
         
         const clearForm = () => {
-            articleForm.reset();
+            elements.articleForm.reset();
             document.getElementById('article-id').value = '';
-            formTitle.textContent = "Create New Article";
-            reviewAlbumFields.classList.add('hidden');
-            reviewFields.classList.add('hidden');
-            articleTypeSelect.value = 'news';
-            formError.textContent = '';
+            elements.formTitle.textContent = "Create New Article";
+            elements.reviewFieldsContainer.classList.add('hidden');
+            elements.articleTypeSelect.value = 'news';
+            elements.formError.textContent = '';
+            resetUploadUI();
         };
 
-        articlesList.addEventListener('click', (e) => {
+        elements.articlesList.addEventListener('click', (e) => {
             const id = e.target.dataset.id;
-            if (e.target.classList.contains('edit-btn')) {
-                editArticle(id);
-            }
-            if (e.target.classList.contains('delete-btn')) {
-                deleteArticle(id);
-            }
+            if (e.target.classList.contains('edit-btn')) editArticle(id);
+            if (e.target.classList.contains('delete-btn')) deleteArticle(id);
         });
 
-        articleForm.addEventListener('submit', handleFormSubmit);
-        clearFormBtn.addEventListener('click', clearForm);
+        elements.articleForm.addEventListener('submit', handleFormSubmit);
+        elements.clearFormBtn.addEventListener('click', clearForm);
 
     </script>
 </body>
