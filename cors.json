@@ -3,7 +3,9 @@
     "origin": [
       "https://controlledfreedom.com",
       "https://www.controlledfreedom.com",
-      "https://controlled-freedom.web.app"
+      "https://controlled-freedom.web.app",
+      "https://*.controlledfreedom.com",
+      "https://*.controlled-freedom.web.app"
     ],
     "method": [
       "GET",
