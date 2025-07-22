@@ -9,14 +9,14 @@
     "cleanUrls": true,
     "trailingSlash": false,
     "rewrites": [
-  {
-    "source": "/reviews/**",
-    "destination": "/article.html"
-  },
-  {
-    "source": "/news/**",
-    "destination": "/article.html"
-  }
-      ]
+      {
+        "source": "/news/**",
+        "destination": "/article.html"
+      },
+      {
+        "source": "/reviews/**",
+        "destination": "/article.html"
+      }
+    ]
   }
 }
