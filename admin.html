@@ -515,69 +515,107 @@
             handleDrop(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                console.log("File dropped.");
                 this.elements.imageDropZone.classList.remove('dragover');
                 const files = e.dataTransfer.files;
                 if (files.length) this.uploadImage(files[0]);
             },
             
             handleFileSelect(e) {
+                console.log("File selected.");
                 const files = e.target.files;
                 if (files.length) this.uploadImage(files[0]);
             },
 
             uploadImage(file) {
-                if (!file.type.startsWith('image/')) {
-                    this.elements.publishStatus.textContent = 'Error: Please upload a valid image file.';
-                    this.elements.publishStatus.style.color = 'red';
+                const { publishStatus } = this.elements;
+                console.log("Attempting to upload file:", file.name);
+                publishStatus.textContent = 'Preparing to upload...';
+                publishStatus.style.color = 'black';
+
+                if (!this.auth.currentUser) {
+                    const msg = "Upload error: Not authenticated. Please log out and log back in.";
+                    console.error(msg);
+                    publishStatus.textContent = msg;
+                    publishStatus.style.color = 'red';
                     return;
                 }
-                const { uploadPrompt, uploadProgressContainer, uploadProgressBar, imagePreview, imageUrlInput, publishStatus } = this.elements;
-                const storageRef = ref(this.storage, `article-images/${Date.now()}-${file.name}`);
-                const uploadTask = uploadBytesResumable(storageRef, file);
+                console.log("User is authenticated:", this.auth.currentUser.uid);
 
-                publishStatus.textContent = '';
-                uploadPrompt.classList.add('hidden');
-                uploadProgressContainer.classList.remove('hidden');
-                uploadProgressBar.style.width = '0%';
+                if (!file.type.startsWith('image/')) {
+                    const msg = 'Upload error: Please upload a valid image file (e.g., JPG, PNG, GIF).';
+                    console.error(msg, "File type was:", file.type);
+                    publishStatus.textContent = msg;
+                    publishStatus.style.color = 'red';
+                    return;
+                }
+                console.log("File type is valid.");
 
-                uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        uploadProgressBar.style.width = progress + '%';
-                    }, 
-                    (error) => {
-                        console.error("Upload failed:", error);
-                        let errorMessage = "Image upload failed. Please try again.";
-                        switch (error.code) {
-                            case 'storage/unauthorized':
-                                errorMessage = "Upload failed: Permission denied. Please check your Firebase Storage security rules.";
-                                break;
-                            case 'storage/canceled':
-                                errorMessage = "Upload was canceled.";
-                                break;
-                            case 'storage/unknown':
-                                errorMessage = "An unknown error occurred. Check the browser console for details.";
-                                break;
+                const { uploadPrompt, uploadProgressContainer, uploadProgressBar, imagePreview, imageUrlInput } = this.elements;
+
+                try {
+                    console.log("Creating storage reference...");
+                    const storageRef = ref(this.storage, `article-images/${Date.now()}-${file.name}`);
+                    console.log("Storage reference created:", storageRef.fullPath);
+
+                    console.log("Creating upload task...");
+                    const uploadTask = uploadBytesResumable(storageRef, file);
+                    console.log("Upload task created.");
+
+                    publishStatus.textContent = 'Upload starting...';
+                    uploadPrompt.classList.add('hidden');
+                    uploadProgressContainer.classList.remove('hidden');
+                    uploadProgressBar.style.width = '0%';
+
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            console.log('Upload is ' + progress + '% done');
+                            uploadProgressBar.style.width = progress + '%';
+                            publishStatus.textContent = `Uploading: ${Math.round(progress)}%`;
+                            publishStatus.style.color = 'black';
+                        },
+                        (error) => {
+                            console.error("Upload failed with an error event:", error);
+                            let errorMessage = "Image upload failed. Please try again.";
+                            switch (error.code) {
+                                case 'storage/unauthorized':
+                                    errorMessage = "Upload failed: Permission denied. Your security rules may not allow uploads.";
+                                    break;
+                                case 'storage/canceled':
+                                    errorMessage = "Upload was canceled.";
+                                    break;
+                                case 'storage/unknown':
+                                    errorMessage = "An unknown error occurred. Check the browser console for details.";
+                                    break;
+                            }
+                            publishStatus.textContent = errorMessage;
+                            publishStatus.style.color = 'red';
+                            this.resetImageUploader();
+                        },
+                        () => {
+                            console.log("Upload finished. Getting download URL...");
+                            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                                console.log('File available at', downloadURL);
+                                imageUrlInput.value = downloadURL;
+                                imagePreview.src = downloadURL;
+                                imagePreview.classList.remove('hidden');
+                                uploadProgressContainer.classList.add('hidden');
+                                publishStatus.textContent = 'Image uploaded successfully!';
+                                publishStatus.style.color = 'green';
+                            }).catch(err => {
+                                 console.error("Failed to get download URL:", err);
+                                 publishStatus.textContent = "Upload succeeded, but failed to get image URL. Check console.";
+                                 publishStatus.style.color = 'red';
+                            });
                         }
-                        publishStatus.textContent = errorMessage;
-                        publishStatus.style.color = 'red';
-                        this.resetImageUploader();
-                    }, 
-                    () => {
-                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                            imageUrlInput.value = downloadURL;
-                            imagePreview.src = downloadURL;
-                            imagePreview.classList.remove('hidden');
-                            uploadProgressContainer.classList.add('hidden');
-                            publishStatus.textContent = 'Image uploaded successfully!';
-                            publishStatus.style.color = 'green';
-                        }).catch(err => {
-                             console.error("Failed to get download URL:", err);
-                             publishStatus.textContent = "Upload succeeded, but failed to get image URL. Check console.";
-                             publishStatus.style.color = 'red';
-                        });
-                    }
-                );
+                    );
+                } catch (e) {
+                    console.error("A synchronous error occurred during upload setup:", e);
+                    publishStatus.textContent = "A critical error occurred before upload could start. Check console.";
+                    publishStatus.style.color = 'red';
+                    this.resetImageUploader();
+                }
             },
 
             showDeleteModal() { this.elements.deleteModal.classList.remove('hidden'); },
