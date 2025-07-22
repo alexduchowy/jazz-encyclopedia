@@ -336,7 +336,8 @@
             async handlePublishOrUpdate(e) {
                 e.preventDefault();
                 if (this.elements.imageUrlInput.value === '' && this.elements.imageFileInput.value !== '') {
-                    alert('Please wait for the image to finish uploading before publishing.');
+                    this.elements.publishStatus.textContent = 'Please wait for the image to finish uploading.';
+                    this.elements.publishStatus.style.color = 'red';
                     return;
                 }
                 const editId = this.elements.editIdInput.value;
@@ -420,14 +421,15 @@
                 articles.forEach(article => {
                     const item = document.createElement('div');
                     item.className = 'bg-stone-200 p-4 rounded-sm border border-stone-300 flex justify-between items-center flex-wrap gap-2';
+                    const link = article.type.toLowerCase() === 'review' ? 'article.html' : 'news-article.html';
                     item.innerHTML = `
                         <div>
-                            <span class="text-xs font-bold uppercase py-1 px-2 rounded-full ${article.type === 'Review' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800'}">${article.type}</span>
+                            <span class="text-xs font-bold uppercase py-1 px-2 rounded-full ${article.type.toLowerCase() === 'review' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800'}">${article.type}</span>
                             <h4 class="font-bold text-lg mt-1">${article.title}</h4>
                             <p class="text-sm text-stone-600">By ${article.author} on ${article.publishDate}</p>
                         </div>
                         <div class="flex gap-2 flex-shrink-0">
-                            <a href="article-template.html?id=${article.id}" target="_blank" class="view-btn bg-green-500 text-white px-3 py-1 rounded-sm hover:bg-green-600 transition-colors text-sm font-bold no-underline">View</a>
+                            <a href="${link}?id=${article.id}" target="_blank" class="view-btn bg-green-500 text-white px-3 py-1 rounded-sm hover:bg-green-600 transition-colors text-sm font-bold no-underline">View</a>
                             <button data-id="${article.id}" class="edit-btn bg-blue-500 text-white px-3 py-1 rounded-sm hover:bg-blue-600 transition-colors text-sm font-bold">Edit</button>
                             <button data-id="${article.id}" class="delete-btn bg-red-500 text-white px-3 py-1 rounded-sm hover:bg-red-600 transition-colors text-sm font-bold">Delete</button>
                         </div>
@@ -525,13 +527,15 @@
 
             uploadImage(file) {
                 if (!file.type.startsWith('image/')) {
-                    alert('Please upload an image file.');
+                    this.elements.publishStatus.textContent = 'Error: Please upload a valid image file.';
+                    this.elements.publishStatus.style.color = 'red';
                     return;
                 }
-                const { uploadPrompt, uploadProgressContainer, uploadProgressBar, imagePreview, imageUrlInput } = this.elements;
+                const { uploadPrompt, uploadProgressContainer, uploadProgressBar, imagePreview, imageUrlInput, publishStatus } = this.elements;
                 const storageRef = ref(this.storage, `article-images/${Date.now()}-${file.name}`);
                 const uploadTask = uploadBytesResumable(storageRef, file);
 
+                publishStatus.textContent = '';
                 uploadPrompt.classList.add('hidden');
                 uploadProgressContainer.classList.remove('hidden');
                 uploadProgressBar.style.width = '0%';
@@ -543,7 +547,20 @@
                     }, 
                     (error) => {
                         console.error("Upload failed:", error);
-                        alert("Image upload failed. Please try again.");
+                        let errorMessage = "Image upload failed. Please try again.";
+                        switch (error.code) {
+                            case 'storage/unauthorized':
+                                errorMessage = "Upload failed: Permission denied. Please check your Firebase Storage security rules.";
+                                break;
+                            case 'storage/canceled':
+                                errorMessage = "Upload was canceled.";
+                                break;
+                            case 'storage/unknown':
+                                errorMessage = "An unknown error occurred. Check the browser console for details.";
+                                break;
+                        }
+                        publishStatus.textContent = errorMessage;
+                        publishStatus.style.color = 'red';
                         this.resetImageUploader();
                     }, 
                     () => {
@@ -552,6 +569,12 @@
                             imagePreview.src = downloadURL;
                             imagePreview.classList.remove('hidden');
                             uploadProgressContainer.classList.add('hidden');
+                            publishStatus.textContent = 'Image uploaded successfully!';
+                            publishStatus.style.color = 'green';
+                        }).catch(err => {
+                             console.error("Failed to get download URL:", err);
+                             publishStatus.textContent = "Upload succeeded, but failed to get image URL. Check console.";
+                             publishStatus.style.color = 'red';
                         });
                     }
                 );
