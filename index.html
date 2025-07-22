@@ -306,7 +306,7 @@
                             <!-- Latest News -->
                             <div class="dashboard-card">
                                 <h2 class="dashboard-card-header">News</h2>
-                                <div id="latest-news" class="dashboard-card-content space-y-4">
+                                <div id="latest-news" class="dashboard-card-content">
                                     <!-- Articles injected by JS -->
                                 </div>
                             </div>
@@ -581,53 +581,81 @@
                         const q = query(articlesRef, orderBy("createdAt", "desc"), limit(10));
                         const articlesSnapshot = await getDocs(q);
                         
-                        let newsHtml = '';
-                        let reviewHtml = '';
-                        let reviewFound = false;
+                        const newsArticles = [];
+                        const reviewArticles = [];
 
                         if (articlesSnapshot.empty) {
-                            newsHtml = '<p class="text-stone-500 italic">No news yet.</p>';
-                            reviewHtml = '<p class="text-stone-500 italic">No reviews yet.</p>';
-                        } else {
-                            articlesSnapshot.forEach(doc => {
-                                const article = { id: doc.id, ...doc.data() };
-                                const articleType = article.type ? article.type.toLowerCase() : '';
-                                
-                                if (articleType === 'news') {
-                                    newsHtml += `
-                                        <a href="news-article.html?id=${article.id}" target="_blank" class="flex items-start gap-4 p-3 rounded-md hover:bg-stone-300 transition-colors no-underline">
-                                            <img src="${article.imageUrl || 'https://placehold.co/80x80/e7e5e4/1c1917?text=News'}" alt="${article.title}" class="w-16 h-16 object-cover rounded-md border-2 border-stone-300 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/e7e5e4/1c1917?text=News';">
-                                            <div class="flex-grow">
-                                                <h4 class="font-bold text-stone-900 leading-tight">${article.title}</h4>
-                                                <p class="text-xs text-stone-500 mt-1">${article.publishDate}</p>
-                                            </div>
-                                        </a>
-                                    `;
-                                }
-
-                                if (articleType === 'review' && !reviewFound) {
-                                    const snippet = (article.body || '').replace(/<[^>]+>/g, '').substring(0, 150);
-                                    reviewHtml = `
-                                        <div class="flex flex-col sm:flex-row gap-6 items-start">
-                                            <img src="${article.imageUrl || 'https://placehold.co/128x128/1c1917/f5f5f4?text=Review'}" alt="Cover for ${article.albumTitle}" class="w-32 h-32 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
-                                            <div class="flex-grow">
-                                                <p class="text-orange-600 font-bold">Album Review</p>
-                                                <h3 class="text-2xl sm:text-3xl font-bold text-stone-900 my-1">${article.albumTitle}</h3>
-                                                <p class="text-stone-600 font-semibold">By ${article.artist}</p>
-                                                <p class="mt-2 text-stone-700 text-sm sm:text-base">${snippet}...</p>
-                                                <a href="article.html?id=${article.id}" target="_blank" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Read Full Review &rarr;</a>
-                                            </div>
-                                        </div>
-                                    `;
-                                    reviewFound = true;
-                                }
-                            });
-
-                            if (newsHtml === '') newsHtml = '<p class="text-stone-500 italic">No news articles found.</p>';
-                            if (reviewHtml === '') reviewHtml = '<p class="text-stone-500 italic">No recent reviews found.</p>';
+                            this.elements.latestNews.innerHTML = '<p class="text-stone-500 italic">No news yet.</p>';
+                            this.elements.latestReview.innerHTML = '<p class="text-stone-500 italic">No reviews yet.</p>';
+                            return;
                         }
-                        this.elements.latestNews.innerHTML = newsHtml;
-                        this.elements.latestReview.innerHTML = reviewHtml;
+
+                        articlesSnapshot.forEach(doc => {
+                            const article = { id: doc.id, ...doc.data() };
+                            const articleType = article.type ? article.type.toLowerCase() : '';
+                            if (articleType === 'news') {
+                                newsArticles.push(article);
+                            } else if (articleType === 'review') {
+                                reviewArticles.push(article);
+                            }
+                        });
+
+                        // Render News Section
+                        if (newsArticles.length > 0) {
+                            const [featuredNews, ...otherNews] = newsArticles;
+                            let newsHtml = '';
+
+                            // Featured Article
+                            const featuredSnippet = (featuredNews.body || '').replace(/<[^>]+>/g, '').substring(0, 80);
+                            newsHtml += `
+                                <a href="news-article.html?id=${featuredNews.id}" target="_blank" class="block mb-6 group no-underline">
+                                    <img src="${featuredNews.imageUrl || 'https://placehold.co/400x200/e7e5e4/1c1917?text=News'}" alt="${featuredNews.title}" class="w-full h-40 object-cover rounded-md mb-3 border-2 border-stone-300" onerror="this.onerror=null;this.src='https://placehold.co/400x200/e7e5e4/1c1917?text=News';">
+                                    <h3 class="text-lg font-bold text-stone-900 group-hover:text-orange-600 transition-colors leading-tight">${featuredNews.title}</h3>
+                                    <p class="text-sm text-stone-600 mt-1">${featuredSnippet}...</p>
+                                    <p class="text-xs text-stone-500 mt-2">${featuredNews.publishDate}</p>
+                                </a>
+                            `;
+
+                            // Other News
+                            if (otherNews.length > 0) {
+                                newsHtml += '<hr class="border-stone-300 my-4">';
+                                const otherNewsListHtml = otherNews.slice(0, 3).map(article => `
+                                    <a href="news-article.html?id=${article.id}" target="_blank" class="flex items-center gap-3 group no-underline">
+                                        <img src="${article.imageUrl || 'https://placehold.co/80x80/e7e5e4/1c1917?text=News'}" alt="${article.title}" class="w-12 h-12 object-cover rounded-md border-2 border-stone-300 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/e7e5e4/1c1917?text=News';">
+                                        <div class="flex-grow">
+                                            <h4 class="font-semibold text-sm leading-tight text-stone-800 group-hover:text-orange-600 transition-colors">${article.title}</h4>
+                                            <p class="text-xs text-stone-500">${article.publishDate}</p>
+                                        </div>
+                                    </a>
+                                `).join('');
+                                newsHtml += `<div class="space-y-4 mt-4">${otherNewsListHtml}</div>`;
+                            }
+
+                            this.elements.latestNews.innerHTML = newsHtml;
+                        } else {
+                            this.elements.latestNews.innerHTML = '<p class="text-stone-500 italic">No news articles found.</p>';
+                        }
+
+                        // Render Review Section
+                        if (reviewArticles.length > 0) {
+                            const latestReview = reviewArticles[0];
+                            const snippet = (latestReview.body || '').replace(/<[^>]+>/g, '').substring(0, 150);
+                            const reviewHtml = `
+                                <div class="flex flex-col sm:flex-row gap-6 items-start">
+                                    <img src="${latestReview.imageUrl || 'https://placehold.co/128x128/1c1917/f5f5f4?text=Review'}" alt="Cover for ${latestReview.albumTitle}" class="w-32 h-32 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
+                                    <div class="flex-grow">
+                                        <p class="text-orange-600 font-bold">Album Review</p>
+                                        <h3 class="text-2xl sm:text-3xl font-bold text-stone-900 my-1">${latestReview.albumTitle}</h3>
+                                        <p class="text-stone-600 font-semibold">By ${latestReview.artist}</p>
+                                        <p class="mt-2 text-stone-700 text-sm sm:text-base">${snippet}...</p>
+                                        <a href="article.html?id=${latestReview.id}" target="_blank" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Read Full Review &rarr;</a>
+                                    </div>
+                                </div>
+                            `;
+                            this.elements.latestReview.innerHTML = reviewHtml;
+                        } else {
+                            this.elements.latestReview.innerHTML = '<p class="text-stone-500 italic">No recent reviews found.</p>';
+                        }
 
                     } catch (error) {
                         console.error("Error fetching articles:", error);
@@ -641,3 +669,4 @@
     </script>
 </body>
 </html>
+
