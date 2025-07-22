@@ -230,6 +230,30 @@
             line-height: 1.6;
             color: #d4d4d2; 
         }
+
+        .genre-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            border: 2px solid var(--text-main);
+            text-decoration: none;
+            display: inline-block;
+        }
+        .genre-tag:hover {
+            filter: brightness(95%);
+        }
+
+        .clickable-link {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-color: var(--accent);
+            transition: color 0.2s;
+        }
+        .clickable-link:hover {
+            color: var(--accent);
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -374,7 +398,7 @@
             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
                 <div>
                     <h3 id="recommendation-modal-title" class="text-4xl text-orange-500"></h3>
-                    <p id="recommendation-modal-artist" class="text-xl text-stone-600"></p>
+                    <a id="recommendation-modal-artist" class="text-xl text-stone-600 clickable-link"></a>
                 </div>
                 <button id="close-recommendation-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
             </div>
@@ -404,6 +428,9 @@
                 allAlbums: [],
                 timelineAlbums: [],
                 recommendedAlbum: null,
+                artistsData: [],
+                genreData: {},
+                fullGenreColorMap: {},
             },
             elements: {},
             init() {
@@ -443,15 +470,20 @@
             },
             async fetchData() {
                 try {
-                    const [dbData, legacyData] = await Promise.all([
+                    const [dbData, legacyData, artistProfileData, genreData] = await Promise.all([
                         fetch('database.json').then(res => res.json()),
-                        fetch('legacy.json').then(res => res.json())
+                        fetch('legacy.json').then(res => res.json()),
+                        fetch('artists.json').then(res => res.json()),
+                        fetch('genres.json').then(res => res.json())
                     ]);
                     
                     this.state.timelineAlbums = dbData.albums || [];
                     const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []);
                     this.state.allAlbums = this.state.timelineAlbums.concat(legacyAlbums);
+                    this.state.genreData = genreData;
 
+                    this.methods.processArtists(artistProfileData);
+                    this.methods.buildGenreColorMap();
                     this.methods.renderRecommendation();
                     this.methods.setupOnThisDayFeature();
                     await this.methods.fetchNewsAndReview();
@@ -536,6 +568,7 @@
 
                     recommendationModalTitle.textContent = album.albumTitle;
                     recommendationModalArtist.textContent = album.artist;
+                    recommendationModalArtist.href = `/timeline#artists`;
                     
                     recommendationModalAlbumArt.src = album.cover || '';
                     recommendationModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
@@ -543,12 +576,23 @@
 
                     const pivotalTrack = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks[0] : {};
                     
+                    const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A').split(/, (?![^()]*\))/).map(personnel => {
+                        const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
+                        if (match && this.state.artistsData.some(a => a.name === match[1].trim())) {
+                            return `<a href="/timeline#artists" class="clickable-link">${match[1].trim()}</a> (${match[2]})`;
+                        }
+                        return personnel;
+                    }).join(', ');
+
+                    const genreTags = (album.genres || []).map(g => `<a href="/timeline#matrix" class="genre-tag" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</a>`).join(' ');
+
                     recommendationModalAlbumDetails.innerHTML = `
                         <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
                         <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                            <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
                             <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span>
                             <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
-                            <strong class="font-bold align-top">Line-Up:</strong> <span>${pivotalTrack.lineup || album.lineup || 'N/A'}</span>
+                            <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
                         </div>`;
 
                     const analysisHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) 
@@ -710,6 +754,39 @@
                         this.elements.latestReview.innerHTML = `<p>Could not load review.</p>`;
                     }
                 },
+                processArtists(artistProfileData) {
+                    const artistsMap = new Map();
+                    this.state.allAlbums.forEach(album => {
+                        const lineup = (album.pivotalTracks && album.pivotalTracks.length > 0 ? album.pivotalTracks[0].lineup : album.lineup) || '';
+                        lineup.split(/,(?![^()]*\))/).forEach(part => {
+                            const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                            if (match) {
+                                const name = match[1].trim();
+                                if (!artistsMap.has(name)) {
+                                    artistsMap.set(name, { name: name });
+                                }
+                            }
+                        });
+                    });
+                    this.state.artistsData = Array.from(artistsMap.values());
+                },
+                buildGenreColorMap() {
+                    const baseGenreColors = this.state.genreData.genres ? Object.keys(this.state.genreData.genres).reduce((acc, genre) => {
+                        acc[genre] = this.state.genreData.genres[genre].color;
+                        return acc;
+                    }, {}) : {};
+                    this.state.fullGenreColorMap = { ...baseGenreColors };
+                     this.state.allAlbums.forEach(album => {
+                        if(album.genres) {
+                             (Array.isArray(album.genres) ? album.genres : album.genres.split(',')).forEach(genre => {
+                                const trimmedGenre = genre.trim();
+                                if (!this.state.fullGenreColorMap[trimmedGenre]) {
+                                    this.state.fullGenreColorMap[trimmedGenre] = 'var(--bg-secondary)'; // default color
+                                }
+                            });
+                        }
+                    });
+                }
             }
         };
         document.addEventListener('DOMContentLoaded', () => LandingApp.init());
