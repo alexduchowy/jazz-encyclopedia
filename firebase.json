@@ -7,6 +7,16 @@
       "**/node_modules/**"
     ],
     "cleanUrls": true,
-    "trailingSlash": false
+    "trailingSlash": false,
+        "rewrites": [
+      {
+        "source": "/reviews/**",
+        "destination": "/article.html"
+      },
+      {
+        "source": "/news/**",
+        "destination": "/news-article.html"
+      }
+    ]
   }
 }
