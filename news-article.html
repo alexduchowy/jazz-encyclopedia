@@ -37,6 +37,12 @@
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
         }
+        .nav-bar-behaviour { display: none; }
+        @media (min-width: 768px) { .nav-bar-behaviour { display: flex; } }
+        
+        #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
+        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
+
         #loader {
             position: fixed;
             inset: 0;
@@ -82,13 +88,22 @@
     <div id="page-content" class="content-hidden">
         <!-- Sticky Header -->
         <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
-            <header class="relative container mx-auto h-full">
+            <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                     <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
-                    <div class="flex items-center space-x-8">
+                    <div class="nav-bar-behaviour items-center space-x-8">
                         <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
                         <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         <a href="/reviews" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                    </div>
+                    <!-- Hamburger Menu Button -->
+                    <div class="md:hidden">
+                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
+                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
                     </div>
                 </nav>
             </header>
@@ -112,16 +127,51 @@
         </footer>
     </div>
 
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
+        <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/reviews" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+            </nav>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const ArticleApp = {
             elements: {},
+            methods: {
+                setupMobileMenu() {
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = ArticleApp.elements;
+                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
+                    const openMenu = () => {
+                        mobileMenuOverlay.classList.remove('hidden');
+                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                    };
+                    const closeMenu = () => {
+                        mobileMenuPanel.style.transform = 'translateX(100%)';
+                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                    };
+                    mobileMenuButton.addEventListener('click', openMenu);
+                    mobileMenuCloseButton.addEventListener('click', closeMenu);
+                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+                    document.querySelectorAll('#mobile-nav-links a').forEach(link => {
+                        link.addEventListener('click', closeMenu);
+                    });
+                }
+            },
             init() {
                 this.cacheDOMElements();
                 this.fetchArticle();
+                this.methods.setupMobileMenu();
                 this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
             cacheDOMElements() {
@@ -130,14 +180,18 @@
                     pageContent: document.getElementById('page-content'),
                     articleContainer: document.getElementById('article-container'),
                     footerCopyright: document.getElementById('footer-copyright'),
+                    mobileMenuButton: document.getElementById('mobile-menu-button'),
+                    mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
+                    mobileMenuPanel: document.getElementById('mobile-menu-panel'),
+                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
                 };
             },
             async fetchArticle() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const articleId = urlParams.get('id');
+                const path = window.location.pathname;
+                const slug = path.substring(path.lastIndexOf('/') + 1);
 
-                if (!articleId) {
-                    this.renderError("No article ID provided.");
+                if (!slug) {
+                    this.renderError("No article specified in the URL.");
                     this.showPage();
                     return;
                 }
@@ -158,11 +212,12 @@
 
                 try {
                     await signInAnonymously(auth);
-                    const docRef = doc(db, "articles", articleId);
-                    const docSnap = await getDoc(docRef);
+                    const articlesRef = collection(db, "articles");
+                    const q = query(articlesRef, where("slug", "==", slug), limit(1));
+                    const querySnapshot = await getDocs(q);
 
-                    if (docSnap.exists()) {
-                        this.renderArticle(docSnap.data());
+                    if (!querySnapshot.empty) {
+                        this.renderArticle(querySnapshot.docs[0].data());
                     } else {
                         this.renderError("Article not found.");
                     }
@@ -191,7 +246,7 @@
                             ${article.body}
                         </article>
                          <div class="text-center mt-16">
-                            <a href="/reviews.html" class="inline-block mt-8 px-6 py-3 bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 no-underline">
+                            <a href="/reviews" class="inline-block mt-8 px-6 py-3 bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 no-underline">
                                 &larr; Back to Blog
                             </a>
                         </div>
@@ -205,7 +260,7 @@
                     <div class="text-center py-16">
                         <h1 class="text-4xl font-bold text-red-600">Error</h1>
                         <p class="text-lg text-stone-600 mt-4">${message}</p>
-                        <a href="/reviews.html" class="inline-block mt-8 px-6 py-3 bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 no-underline">
+                        <a href="/reviews" class="inline-block mt-8 px-6 py-3 bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 no-underline">
                             &larr; Back to Blog
                         </a>
                     </div>
