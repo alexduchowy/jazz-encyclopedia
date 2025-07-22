@@ -1,21 +1,12 @@
 [
   {
-    "origin": [
-      "https://controlledfreedom.com",
-      "https://www.controlledfreedom.com",
-      "https://controlled-freedom.web.app"
-    ],
-    "method": [
-      "GET",
-      "POST",
-      "PUT",
-      "DELETE",
-      "OPTIONS"
-    ],
+    "origin": ["*"],
+    "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     "responseHeader": [
       "Content-Type",
       "Authorization",
-      "X-Goog-Resumable"
+      "X-Goog-Resumable",
+      "Access-Control-Allow-Origin"
     ],
     "maxAgeSeconds": 3600
   }
