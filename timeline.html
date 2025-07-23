@@ -1871,6 +1871,21 @@
                     }
                     this.methods.goToArtistPage(this.state.currentArtistPage);
                 },
+
+                goToArtistPage(pageIndex) {
+                    const { artistSliderTrack, artistPrevBtn, artistNextBtn, artistPageIndicator } = this.elements;
+                    this.state.currentArtistPage = Math.max(0, Math.min(pageIndex, this.state.totalArtistPages - 1));
+                    artistSliderTrack.style.transform = `translateX(-${this.state.currentArtistPage * 100}%)`;
+                    artistPrevBtn.disabled = this.state.currentArtistPage === 0;
+                    artistNextBtn.disabled = this.state.currentArtistPage >= this.state.totalArtistPages - 1;
+                    if (artistPageIndicator) {
+                        if (this.state.totalArtistPages > 0) {
+                            artistPageIndicator.textContent = `${this.state.currentArtistPage + 1} / ${this.state.totalArtistPages}`;
+                        } else {
+                            artistPageIndicator.textContent = '';
+                        }
+                    }
+                },
                 
                 setupMobileMenu() {
                     const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
@@ -2278,6 +2293,12 @@
                     
                     artistModal.classList.remove('opacity-0', 'pointer-events-none');
                     artistModal.querySelector('.modal-content').classList.remove('scale-95');
+                },
+                closeArtistModal(callback) {
+                    const { artistModal } = this.elements;
+                    artistModal.classList.add('opacity-0', 'pointer-events-none');
+                    artistModal.querySelector('.modal-content').classList.add('scale-95');
+                    if (typeof callback === 'function') setTimeout(callback, 300);
                 },
             }
         };
