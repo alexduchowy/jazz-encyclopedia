@@ -140,11 +140,8 @@
             color: var(--bg-main);
         }
         
-        /* UPDATED: Typewriter animation fix */
         .typewriter {
-            width: 100%;
-            max-width: 90vw;
-            margin: 0 auto;
+            display: inline-block; /* Allows the container to size to its content */
         }
 
         .typewriter h2 {
@@ -153,14 +150,14 @@
             font-weight: bold;
             color: #fff;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            overflow: hidden;
+            overflow: hidden; /* Ensures the text is clipped during animation */
             border-right: .15em solid var(--accent);
-            white-space: nowrap;
+            white-space: nowrap; /* Keeps the text on a single line */
             letter-spacing: .1em;
             animation:
-                typing 3.5s steps(35, end),
+                typing 3.5s steps(40, end),
                 blink-caret .75s step-end infinite;
-            width: 100%; /* Animates to this width */
+            max-width: 90vw; /* Prevents it from ever being wider than the viewport */
         }
         
         .banner-subtitle {
@@ -184,6 +181,7 @@
             }
             .typewriter h2 {
                 font-size: 3rem; /* Reduced font size */
+                max-width: none; /* Unset max-width on larger screens */
             }
             .banner-subtitle {
                 font-size: 1.125rem;
@@ -399,64 +397,68 @@
         <main>
             <div class="main-content-wrapper">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <!-- UPDATED: Flattened the grid structure and added desktop grid classes to each card -->
+                    <!-- UPDATED: Reverted to original two-column structure for desktop, mobile order is now handled purely by CSS -->
                     <div id="mobile-card-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         
-                        <!-- Album of the Day -->
-                        <div id="recommendation-card" class="dashboard-card lg:col-span-2">
-                            <h2 class="dashboard-card-header">Album of the Day</h2>
-                            <div id="recommendation-content" class="dashboard-card-content">
-                                <!-- Content injected by JS -->
+                        <!-- Main Column -->
+                        <div class="lg:col-span-2 space-y-8">
+                            <!-- Album of the Day -->
+                            <div id="recommendation-card" class="dashboard-card">
+                                <h2 class="dashboard-card-header">Album of the Day</h2>
+                                <div id="recommendation-content" class="dashboard-card-content">
+                                    <!-- Content injected by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Navigation Cards -->
+                            <div class="grid sm:grid-cols-2 gap-8">
+                                <a href="/timeline" id="timeline-nav-card" class="dashboard-card group block text-decoration-none">
+                                    <h2 class="dashboard-card-header">Jazz Evolution Timeline</h2>
+                                    <div class="dashboard-card-content">
+                                        <p>Explore the explosive growth of modern jazz from 1950-1969 through an interactive, chronological timeline of landmark albums.</p>
+                                        <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore Timeline &rarr;</span>
+                                    </div>
+                                </a>
+                                <a href="/legacy" id="legacy-nav-card" class="dashboard-card group block text-decoration-none">
+                                    <h2 class="dashboard-card-header">The Legacy of Jazz</h2>
+                                    <div class="dashboard-card-content">
+                                        <p>Discover how the sounds of the post-bop era evolved and splintered into new forms, from Jazz Fusion to the Avant-Garde and beyond.</p>
+                                         <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore The Legacy &rarr;</span>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <!-- Latest Review Card -->
+                            <div id="latest-review-card" class="dashboard-card">
+                                <h2 class="dashboard-card-header">Latest From The Archive</h2>
+                                <div id="latest-review" class="dashboard-card-content">
+                                    <!-- Content injected by JS -->
+                                </div>
                             </div>
                         </div>
 
-                        <!-- On This Day -->
-                        <div id="on-this-day-card" class="dashboard-card lg:col-start-3 lg:row-start-1 lg:row-span-2">
-                             <h2 class="dashboard-card-header">On This Day In Jazz...</h2>
-                             <div id="on-this-day" class="dashboard-card-content">
-                                <!-- Content injected by JS -->
+                        <!-- Sidebar Column -->
+                        <div class="space-y-8">
+                            <!-- On This Day -->
+                            <div id="on-this-day-card" class="dashboard-card">
+                                 <h2 class="dashboard-card-header">On This Day In Jazz...</h2>
+                                 <div id="on-this-day" class="dashboard-card-content">
+                                    <!-- Content injected by JS -->
+                                </div>
                             </div>
-                        </div>
-
-                        <!-- Timeline Nav -->
-                        <a href="/timeline" id="timeline-nav-card" class="dashboard-card group block text-decoration-none lg:col-start-1">
-                            <h2 class="dashboard-card-header">Jazz Evolution Timeline</h2>
-                            <div class="dashboard-card-content">
-                                <p>Explore the explosive growth of modern jazz from 1950-1969 through an interactive, chronological timeline of landmark albums.</p>
-                                <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore Timeline &rarr;</span>
+                            <!-- Latest News -->
+                            <div id="news-card" class="dashboard-card">
+                                <h2 class="dashboard-card-header">News</h2>
+                                <div id="latest-news" class="dashboard-card-content">
+                                    <!-- Articles injected by JS -->
+                                </div>
                             </div>
-                        </a>
-
-                        <!-- Legacy Nav -->
-                        <a href="/legacy" id="legacy-nav-card" class="dashboard-card group block text-decoration-none lg:col-start-2">
-                            <h2 class="dashboard-card-header">The Legacy of Jazz</h2>
-                            <div class="dashboard-card-content">
-                                <p>Discover how the sounds of the post-bop era evolved and splintered into new forms, from Jazz Fusion to the Avant-Garde and beyond.</p>
-                                 <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore The Legacy &rarr;</span>
-                            </div>
-                        </a>
-                        
-                        <!-- Latest News -->
-                        <div id="news-card" class="dashboard-card lg:col-start-3 lg:row-start-3">
-                            <h2 class="dashboard-card-header">News</h2>
-                            <div id="latest-news" class="dashboard-card-content">
-                                <!-- Articles injected by JS -->
-                            </div>
-                        </div>
-                        
-                        <!-- Latest Review Card -->
-                        <div id="latest-review-card" class="dashboard-card lg:col-span-2">
-                            <h2 class="dashboard-card-header">Latest From The Archive</h2>
-                            <div id="latest-review" class="dashboard-card-content">
-                                <!-- Content injected by JS -->
-                            </div>
-                        </div>
-
-                        <!-- Spotify Playlist -->
-                        <div id="playlist-card" class="dashboard-card lg:col-start-3 lg:row-start-4">
-                            <h2 class="dashboard-card-header">Curated Playlist</h2>
-                            <div class="dashboard-card-content">
-                                <iframe style="border-radius:8px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            <!-- Spotify Playlist -->
+                            <div id="playlist-card" class="dashboard-card">
+                                <h2 class="dashboard-card-header">Curated Playlist</h2>
+                                <div class="dashboard-card-content">
+                                    <iframe style="border-radius:8px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                                </div>
                             </div>
                         </div>
                     </div>
