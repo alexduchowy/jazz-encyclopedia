@@ -81,12 +81,12 @@
             display: none;
         }
 
-        /* Banner & Typewriter Animation */
+        /* Banner & Typewriter Animation - UPDATED */
         .banner-section {
             position: relative;
             width: 100%;
-            height: 50vh; /* Adjusted for mobile */
-            max-height: 280px; /* Adjusted for mobile */
+            height: 35vh; /* Reduced height */
+            max-height: 200px; /* Reduced max-height */
             overflow: hidden;
             background-color: var(--bg-dark);
         }
@@ -116,9 +116,10 @@
             color: var(--bg-main);
         }
 
-        .typewriter h1 {
+        .typewriter h2 {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 2.5rem; /* Mobile font size */
+            font-size: 1.75rem; /* Reduced font size for mobile */
+            max-width: 90vw;
             font-weight: bold;
             color: #fff;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
@@ -133,7 +134,7 @@
         }
         
         .banner-subtitle {
-            font-size: 0.9rem; /* Mobile font size */
+            font-size: 0.9rem;
         }
 
         /* The typing effect */
@@ -151,14 +152,14 @@
         /* Desktop Banner Styles */
         @media (min-width: 768px) {
             .banner-section {
-                height: 45vh;
-                max-height: 320px;
+                height: 30vh; /* Reduced height */
+                max-height: 250px; /* Reduced max-height */
             }
-            .typewriter h1 {
-                font-size: 4.5rem; /* text-7xl */
+            .typewriter h2 {
+                font-size: 3rem; /* Reduced font size */
             }
             .banner-subtitle {
-                font-size: 1.125rem; /* text-lg */
+                font-size: 1.125rem;
             }
         }
 
@@ -200,6 +201,11 @@
                         <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
                         <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         <a href="/blog" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                        <!-- UPDATED: Added social link -->
+                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600 flex items-center gap-2">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                            <span>@controlledjazz</span>
+                        </a>
                     </div>
                     <!-- Hamburger Menu Button -->
                     <div class="md:hidden">
@@ -214,12 +220,12 @@
         </div>
 
         <main>
-            <!-- Banner Section -->
+            <!-- Banner Section - UPDATED -->
             <section class="banner-section">
                 <img src="images/bannerblog.png" alt="Blog Banner" class="banner-img" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Blog';">
                 <div class="banner-overlay">
                     <div class="typewriter">
-                        <h1>From The Archive</h1>
+                        <h2>From The Archive</h2>
                     </div>
                     <p class="banner-subtitle text-stone-300 max-w-3xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">The latest happenings, releases, and deep dives in the world of jazz.</p>
                 </div>
@@ -272,6 +278,11 @@
                 <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
                 <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+                 <!-- UPDATED: Added social link to mobile menu -->
+                <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    <span>@controlledjazz</span>
+                </a>
             </nav>
         </div>
     </div>
@@ -279,7 +290,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const BlogApp = {
             state: { reviews: [], news: [], allAlbums: [] },
@@ -335,30 +346,35 @@
                   measurementId: "G-ETT07JGVSB"
                 };
                 
-                const app = initializeApp(firebaseConfig);
+                // UPDATED: Prevent re-initializing Firebase app
+                const app = window._firebaseApp || initializeApp(firebaseConfig);
+                if (!window._firebaseApp) {
+                    window._firebaseApp = app;
+                }
+
                 const db = getFirestore(app);
                 const auth = getAuth(app);
 
                 try {
-                    await signInAnonymously(auth);
+                    if (!auth.currentUser) {
+                        await signInAnonymously(auth);
+                    }
 
                     const articlesRef = collection(db, "articles");
-                    const q = query(articlesRef, orderBy("createdAt", "desc"));
+                    // UPDATED: Use a more consistent query with a limit
+                    const q = query(articlesRef, orderBy("updatedAt", "desc"), limit(20));
                     const articlesSnapshot = await getDocs(q);
 
                     articlesSnapshot.forEach((doc) => {
                         const article = { id: doc.id, ...doc.data() };
                         
-                        // **FIX:** Check for essential data before adding the article to the list.
-                        // This prevents broken or incomplete articles from being displayed.
                         if (!article.slug || !article.title || !article.body) {
                             console.warn("Skipping article with missing data:", article.id, article);
-                            return; // Skip this article and go to the next one.
+                            return; 
                         }
 
                         const articleType = article.type ? article.type.toLowerCase() : '';
                         if (articleType === 'review') {
-                            // Reviews need extra fields to render correctly.
                             if (article.albumTitle && article.artist && typeof article.rating === 'number') {
                                 this.state.reviews.push(article);
                             } else {
@@ -407,7 +423,7 @@
                         card.className = 'article-card !block';
                         card.innerHTML = `
                             <div>
-                                <p class="text-sm text-stone-500 mb-2">${article.publishDate}</p>
+                                <p class="text-sm text-stone-500 mb-2">${article.publishDate || new Date(article.updatedAt.seconds * 1000).toLocaleDateString()}</p>
                                 <h3 class="text-2xl font-bold mb-2 text-stone-900">${article.title}</h3>
                                 <p class="text-stone-700 font-light">${article.body.substring(0, 120).replace(/<[^>]*>?/gm, '')}...</p>
                                 <span class="inline-block mt-4 font-bold text-orange-600">Read More &rarr;</span>
@@ -453,3 +469,6 @@
     </script>
 </body>
 </html>
+```
+
+I've applied all the requested changes to the `blog.html` file. Let me know if you need anything el
