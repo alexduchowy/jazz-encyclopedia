@@ -735,13 +735,11 @@
                 padding-bottom: 0;
             }
         }
-
-        /* Banner & Typewriter Animation */
-        .banner-section {
+.banner-section {
             position: relative;
             width: 100%;
-            height: 50vh; /* Adjusted for mobile */
-            max-height: 280px; /* Adjusted for mobile */
+            height: 35vh; /* Reduced height */
+            max-height: 200px; /* Reduced max-height */
             overflow: hidden;
             background-color: var(--bg-dark);
         }
@@ -771,9 +769,10 @@
             color: var(--bg-main);
         }
 
-        .typewriter h1 {
+        .typewriter h2 {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 2.5rem; /* Mobile font size */
+            font-size: 1.75rem; /* Reduced font size for mobile */
+            max-width: 90vw;
             font-weight: bold;
             color: #fff;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
@@ -788,32 +787,29 @@
         }
         
         .banner-subtitle {
-            font-size: 0.9rem; /* Mobile font size */
+            font-size: 0.9rem;
         }
 
-        /* The typing effect */
         @keyframes typing {
             from { width: 0 }
             to { width: 100% }
         }
 
-        /* The typewriter cursor effect */
         @keyframes blink-caret {
             from, to { border-color: transparent }
             50% { border-color: var(--accent); }
         }
 
-        /* Desktop Banner Styles */
         @media (min-width: 768px) {
             .banner-section {
-                height: 45vh;
-                max-height: 320px;
+                height: 30vh; /* Reduced height */
+                max-height: 250px; /* Reduced max-height */
             }
-            .typewriter h1 {
-                font-size: 4.5rem; /* text-7xl */
+            .typewriter h2 {
+                font-size: 3rem; /* Reduced font size */
             }
             .banner-subtitle {
-                font-size: 1.125rem; /* text-lg */
+                font-size: 1.125rem;
             }
         }
    
@@ -832,19 +828,16 @@
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                     <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
-                    <div class="nav-bar-behaviour items-center space-x-8">
-                        <div class="relative group">
-                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                        </div>
-                        <div class="relative group">
-                            <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                        </div>
-                       <div class="relative group">
-                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                        </div>
-                         <div class="relative group">
-                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                        </div>
+<div class="nav-bar-behaviour items-center space-x-8">
+                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                        <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
+                        <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600 flex items-center gap-2">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                            <span>@controlledjazz</span>
+                        </a>
+                    </div>
                     </div>
                     <!-- Hamburger Menu Button -->
                     <div class="md:hidden">
@@ -864,11 +857,11 @@
             <section class="banner-section">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
                 <div class="banner-overlay">
-                    <div class="typewriter">
-                        <h1>A Jazz Evolution Encyclopedia</h1>
-                    </div>
-                    <p class="banner-subtitle text-stone-300 max-w-3xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Follow the development of modern jazz through the 50s and 60s.</p>
+            <div class="typewriter">
+                    <h2>A Jazz Evolution Encyclopedia</h2>
                 </div>
+                <p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">An interactive dashboard to explore the artists, albums, and stories that shaped the music.</p>
+</div>
             </section>
 
             <!-- Overview Section -->
@@ -1853,14 +1846,12 @@
                             if (artist.tier === 1) card.classList.add('bandleader');
                             if (artist.tier === 2) card.classList.add('influential-sideman');
                             card.dataset.artistName = artist.name;
-                            const bornInInfo = artist.profile && artist.profile.bornIn ? `<p class="text-xs text-stone-600 truncate">${artist.profile.bornIn}</p>` : '';
                             card.innerHTML = `
                                 <div class="h-56 bg-stone-900 artist-photo-container">
                                     <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
                                 <div class="p-3">
                                     <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
-                                    ${bornInInfo}
                                 </div>`;
                             pageDiv.appendChild(card);
                         });
