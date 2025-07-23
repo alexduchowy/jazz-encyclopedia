@@ -1853,12 +1853,14 @@
                             if (artist.tier === 1) card.classList.add('bandleader');
                             if (artist.tier === 2) card.classList.add('influential-sideman');
                             card.dataset.artistName = artist.name;
+                            const bornInInfo = artist.profile && artist.profile.bornIn ? `<p class="text-xs text-stone-600 truncate">${artist.profile.bornIn}</p>` : '';
                             card.innerHTML = `
                                 <div class="h-56 bg-stone-900 artist-photo-container">
                                     <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
                                 <div class="p-3">
                                     <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
+                                    ${bornInInfo}
                                 </div>`;
                             pageDiv.appendChild(card);
                         });
@@ -2249,6 +2251,8 @@
                             </div>
                         `;
                     }
+                    
+                    const bornInModalInfo = artist.profile && artist.profile.bornIn ? `<p class="mt-2 text-stone-900 text-sm"><strong class="font-bold">Born:</strong> ${artist.profile.bornIn}</p>` : '';
 
                     body.innerHTML = `
                         <div class="flex flex-col sm:flex-row gap-6">
@@ -2257,6 +2261,7 @@
                                     <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
                                 <p class="mt-4 text-stone-900 text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
+                                ${bornInModalInfo}
                                 ${artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-stone-900 mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
                             </div>
                             <div class="w-full sm:w-2/3">
