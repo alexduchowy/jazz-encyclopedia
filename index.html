@@ -446,7 +446,7 @@
                 <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
                 <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
-                <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                     <span>@controlledjazz</span>
                 </a>
@@ -751,14 +751,9 @@
                 },
                 setupOnThisDayFeature() {
                     const today = new Date();
-                    // DEMO: Forcing a specific date to ensure content is shown
-                    // To use the current date, comment out the line below
-                    today.setMonth(6); today.setDate(21); // July 21st for Sonny Clark
-
                     const currentMonth = today.toLocaleString('en-US', { month: 'long' });
                     const currentDay = today.getDate();
-                    let onThisDayHtml = '';
-
+                    
                     // Find tracks recorded on this day
                     const matchingTracks = [];
                     this.state.allAlbums.forEach(album => {
@@ -793,9 +788,9 @@
                             <div class="on-this-day-item" data-action="open-otd-album-modal">
                                 <img src="${this.state.onThisDayAlbum.cover}" alt="Cover for ${this.state.onThisDayAlbum.albumTitle}">
                                 <div>
-                                    <p class="text-xs text-stone-600 font-bold uppercase tracking-wider">Recorded Today</p>
-                                    <p class="text-lg font-bold text-stone-900 leading-tight">${featured.title}</p>
-                                    <p class="text-sm text-stone-600">${this.state.onThisDayAlbum.artist} (${this.state.onThisDayAlbum.year})</p>
+                                    <p class="text-xs text-stone-600 font-bold uppercase tracking-wider">On ${currentMonth} ${currentDay}, ${this.state.onThisDayAlbum.year}, the track...</p>
+                                    <p class="text-lg font-bold text-stone-900 leading-tight">"${featured.title}"</p>
+                                    <p class="text-sm text-stone-600">from the album <strong>${this.state.onThisDayAlbum.albumTitle}</strong> by <strong>${this.state.onThisDayAlbum.artist}</strong> was recorded.</p>
                                 </div>
                             </div>
                         `);
@@ -808,9 +803,9 @@
                             <div class="on-this-day-item" data-action="open-otd-artist-modal">
                                 <img src="images/${this.methods.slugify(featuredArtist.name)}.jpg" class="artist-photo" alt="Photo of ${featuredArtist.name}" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 <div>
-                                    <p class="text-xs text-stone-600 font-bold uppercase tracking-wider">Born Today</p>
+                                     <p class="text-xs text-stone-600 font-bold uppercase tracking-wider">Born on ${currentMonth} ${currentDay}, ${year}</p>
                                     <p class="text-lg font-bold text-stone-900 leading-tight">${featuredArtist.name}</p>
-                                    <p class="text-sm text-stone-600">(${year})</p>
+                                    <p class="text-sm text-stone-600">${featuredArtist.instruments.slice(0, 2).join(', ')}</p>
                                 </div>
                             </div>
                         `);
