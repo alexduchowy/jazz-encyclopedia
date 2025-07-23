@@ -1446,6 +1446,20 @@
                     this.methods.populateInstrumentFilter(this.state.artistsData);
                 },
 
+                populateInstrumentFilter(artists) {
+                    const { instrumentFilter } = this.elements;
+                    const relevantInstruments = new Set(['alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'tuba', 'vibraphone', 'congas']);
+                    const instrumentsInDataset = new Set();
+                    artists.forEach(artist => artist.instruments.forEach(inst => { if (relevantInstruments.has(inst)) instrumentsInDataset.add(inst); }));
+                    instrumentFilter.innerHTML = '<option value="all">All Instruments</option>';
+                    Array.from(instrumentsInDataset).sort().forEach(instrument => {
+                        const option = document.createElement('option');
+                        option.value = instrument;
+                        option.textContent = instrument.charAt(0).toUpperCase() + instrument.slice(1);
+                        instrumentFilter.appendChild(option);
+                    });
+                },
+
                 renderEraGlossary() {
                     const { eraGlossaryList, eraGlossaryContainerWeb } = this.elements;
                     if (!eraGlossaryList || !eraGlossaryContainerWeb) return;
