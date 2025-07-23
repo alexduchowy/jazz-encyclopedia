@@ -12,16 +12,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
-    <!-- 
-      Custom CSS has been significantly reduced by:
-      1. Replacing many style rules with Tailwind CSS utility classes directly in the HTML.
-      2. Removing redundant or unused CSS.
-      3. Consolidating styles for custom components that cannot be easily replicated with Tailwind alone (e.g., timeline, matrix).
-      4. Using CSS variables only for colors that are dynamically assigned via JavaScript.
-    -->
     <style>
         :root {
-            /* Reduced CSS variables to only those essential for dynamic styling in JS */
+            /* CSS variables for dynamic styling in JS */
             --genre-color: #f97316; /* orange-500 */
             --highlight-color: rgba(0,0,0,0.05);
             --landmark-color: #f97316; /* orange-500 */
@@ -29,6 +22,8 @@
 
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #1c1917; /* stone-900 */
         }
         
         h1, h2, h3, h4, h5, .font-bebas {
@@ -50,12 +45,13 @@
               transform: rotate(-1deg);
         }
         
-        /* Compact Matrix Styling - Kept as custom due to complexity (sticky headers/columns) */
+        /* Compact Matrix Styling */
         #genre-matrix-container {
-            border: 2px solid #1c1917; /* stone-900 */
+            border: 2px solid #1c1917;
             border-radius: 0.25rem;
             overflow: auto;
             max-height: 70vh;
+            background-color: #f5f5f4;
         }
         .matrix-table {
             border-collapse: collapse;
@@ -64,14 +60,14 @@
         }
         .matrix-table th, .matrix-table td {
             padding: 1rem;
-            border-bottom: 2px solid #e7e5e4; /* stone-200 */
+            border-bottom: 2px solid #e7e5e4;
             text-align: left;
             vertical-align: top;
-            transition: background-color 0.1s ease-in-out;
+            transition: background-color: 0.1s ease-in-out;
         }
         .matrix-table thead th {
-            background-color: #1c1917; /* stone-900 */
-            color: #f5f5f4; /* stone-100 */
+            background-color: #1c1917;
+            color: #f5f5f4;
             position: sticky;
             top: 0;
             z-index: 10;
@@ -83,8 +79,8 @@
             position: sticky;
             left: 0;
             z-index: 5;
-            background-color: #f5f5f4; /* stone-100 */
-            border-right: 2px solid #e7e5e4; /* stone-200 */
+            background-color: #f5f5f4;
+            border-right: 2px solid #e7e5e4;
         }
         .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td { border-bottom: none; }
         .matrix-table td.col-hover, .matrix-table .row-hover > td { background-color: var(--highlight-color) !important; }
@@ -116,7 +112,8 @@
             position: relative;
             display: inline-flex;
             align-items: flex-start;
-            padding: 5rem 1rem 2rem 1rem;
+            padding: 2rem 1rem;
+            padding-top: 5rem;
             z-index: 2;
         }
         .timeline-year-section {
@@ -124,10 +121,19 @@
             flex-shrink: 0;
             flex-direction: column;
             align-items: center;
-            border-left: 4px dotted #a8a29e; /* stone-400 */
+            border-left: 4px dotted #a8a29e;
             padding: 0 2rem;
         }
         .timeline-year-section:first-child { border-left: none; }
+        /* FIXED: Restored year header display */
+        .timeline-year-header {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #a8a29e; /* stone-400 */
+            margin-bottom: 1.5rem;
+            display: block;
+        }
         .timeline-album-list {
             display: grid;
             grid-template-rows: repeat(2, 1fr);
@@ -136,46 +142,45 @@
             min-height: 520px;
         }
         .timeline-album-card {
-            box-shadow: 4px 4px 0px #1c1917; /* stone-900 */
+            box-shadow: 4px 4px 0px #1c1917;
         }
         .timeline-album-card:hover { transform: translateY(-5px) rotate(2deg); }
         .timeline-album-card.dimmed { opacity: 0.5; }
         .timeline-album-card.highlighted {
             opacity: 1;
-            box-shadow: 8px 8px 0px var(--highlight-color, #f97316); /* orange-500 */
+            box-shadow: 8px 8px 0px var(--highlight-color, #f97316);
         }
         .timeline-album-card.clicked {
             transform: translateY(-5px) rotate(2deg) scale(1.05);
-            box-shadow: 8px 8px 0px #f97316 !important; /* orange-500 */
+            box-shadow: 8px 8px 0px #f97316 !important;
             opacity: 1 !important;
             z-index: 10;
         }
         .timeline-album-card.landmark-album {
             border-width: 4px;
-            border-color: var(--landmark-color, #f97316); /* orange-500 */
-            box-shadow: 0 0 15px 0px var(--landmark-color, #f97316); /* orange-500 */
+            border-color: var(--landmark-color, #f97316);
+            box-shadow: 0 0 15px 0px var(--landmark-color, #f97316);
         }
-        .timeline-album-card img, .legacy-album-card img {
+        .timeline-album-card img {
             filter: grayscale(100%);
             transition: filter 0.3s ease;
         }
-        .timeline-album-card:hover img, .timeline-album-card.highlighted img, .timeline-album-card.clicked img,
-        .legacy-album-card:hover img, .legacy-album-card.clicked img {
+        .timeline-album-card:hover img, .timeline-album-card.highlighted img, .timeline-album-card.clicked img {
             filter: grayscale(0%);
         }
         
         .artist-card {
-            box-shadow: 4px 4px 0px #1c1917; /* stone-900 */
+            box-shadow: 4px 4px 0px #1c1917;
             transform: translateZ(0);
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
         }
         .artist-card:hover {
             transform: translateY(-5px) rotate(2deg);
-            box-shadow: 8px 8px 0px #f97316 !important; /* orange-500 */
+            box-shadow: 8px 8px 0px #f97316 !important;
         }
-        .artist-card.bandleader { box-shadow: 4px 4px 0px #f97316; /* orange-500 */ }
-        .artist-card.influential-sideman { box-shadow: 4px 4px 0px #facc15; /* yellow-400 */ }
+        .artist-card.bandleader { box-shadow: 4px 4px 0px #f97316; }
+        .artist-card.influential-sideman { box-shadow: 4px 4px 0px #facc15; }
         
         .artist-card img {
               filter: grayscale(100%);
@@ -197,18 +202,18 @@
 
         audio.styled-player {
             height: 35px; 
-            accent-color: #f97316; /* orange-500 */
+            accent-color: #f97316;
         }
 
         .genre-checkbox-label:has(input:checked) {
-            background-color: var(--genre-color, #f97316); /* orange-500 */
+            background-color: var(--genre-color, #f97316);
         }
         
         .scrollbar-marker {
             position: absolute;
             width: 2px;
             height: 100%;
-            background-color: #f97316; /* orange-500 */
+            background-color: #f97316;
             transform: translateX(-50%);
         }
         .scrollbar-marker::after {
@@ -219,12 +224,12 @@
             transform: translateX(-50%);
             font-size: 9px;
             font-weight: bold;
-            color: #44403c; /* stone-700 */
+            color: #44403c;
         }
 
         .loader-spinner {
-            border: 4px solid #e7e5e4; /* stone-200 */
-            border-top: 4px solid #f97316; /* orange-500 */
+            border: 4px solid #e7e5e4;
+            border-top: 4px solid #f97316;
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -238,10 +243,10 @@
         .clickable-link {
             cursor: pointer;
             text-decoration: underline;
-            text-decoration-color: #f97316; /* orange-500 */
+            text-decoration-color: #f97316;
             transition: color 0.2s;
         }
-        .clickable-link:hover { color: #f97316; /* orange-500 */ }
+        .clickable-link:hover { color: #f97316; }
 
         .fade-in-element {
             opacity: 0;
@@ -264,7 +269,7 @@
         .artist-modal-timeline {
             list-style: none;
             padding-left: 1rem;
-            border-left: 2px solid #e7e5e4; /* stone-200 */
+            border-left: 2px solid #e7e5e4;
         }
         .artist-modal-timeline-item { position: relative; padding-bottom: 1rem; padding-left: 1.5rem; }
         .artist-modal-timeline-item::before {
@@ -275,41 +280,32 @@
             width: 0.65rem;
             height: 0.65rem;
             border-radius: 9999px;
-            background-color: #e7e5e4; /* stone-200 */
-            border: 2px solid #1c1917; /* stone-900 */
+            background-color: #e7e5e4;
+            border: 2px solid #1c1917;
         }
-        .landmark-star { color: #facc15; /* yellow-400 */ font-size: 1.1em; margin-left: 0.25rem; }
+        .landmark-star { color: #facc15; font-size: 1.1em; margin-left: 0.25rem; }
         
         .era-section {
-            border-left: 4px solid #1c1917; /* stone-900 */
+            border-left: 4px solid #1c1917;
         }
 
         .known-for-box {
-            background-color: #f97316; /* orange-500 */
-            color: #f5f5f4; /* stone-100 */
-            box-shadow: 2px 2px 0px #1c1917; /* stone-900 */
+            background-color: #f97316;
+            color: #f5f5f4;
+            box-shadow: 2px 2px 0px #1c1917;
             transform: rotate(-2deg);
         }
         
         .dropdown-list {
-            box-shadow: 4px 4px 0px #1c1917; /* stone-900 */
+            box-shadow: 4px 4px 0px #1c1917;
         }
         .dropdown-list a:hover {
-            background-color: #f97316; /* orange-500 */
-            color: #f5f5f4; /* stone-100 */
+            background-color: #f97316;
+            color: #f5f5f4;
             transform: translateX(4px);
         }
-        .dropdown-list a .era-year { color: #44403c; /* stone-700 */ }
-        .dropdown-list a:hover .era-year { color: #f5f5f4; /* stone-100 */ }
-
-        .dropdown-menu {
-            box-shadow: 4px 4px 0px #1c1917; /* stone-900 */
-        }
-        .dropdown-menu a:hover {
-            background-color: #f97316; /* orange-500 */
-            color: #f5f5f4; /* stone-100 */
-            transform: translateX(5px);
-        }
+        .dropdown-list a .era-year { color: #44403c; }
+        .dropdown-list a:hover .era-year { color: #f5f5f4; }
         
         /* Banner & Typewriter Animation */
         .banner-img {
@@ -322,7 +318,7 @@
         }
         .typewriter h1 {
             overflow: hidden;
-            border-right: .15em solid #f97316; /* orange-500 */
+            border-right: .15em solid #f97316;
             white-space: nowrap;
             margin: 0 auto;
             letter-spacing: .1em;
@@ -331,7 +327,7 @@
                 blink-caret .75s step-end infinite;
         }
         @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #f97316; /* orange-500 */ } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #f97316; } }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -341,34 +337,21 @@
         <div class="loader-spinner"></div>
     </div>
 
-    <!-- Replaced many specific classes with Tailwind utilities -->
     <div id="page-content" class="hidden">
         <!-- HEADER -->
         <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                     <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
-                    <!-- Replaced custom '.nav-bar-behaviour' class with Tailwind's responsive classes -->
                     <div class="hidden md:flex items-center space-x-8">
-                        <div class="relative group">
-                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                        </div>
-                        <div class="relative group">
-                            <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                        </div>
-                       <div class="relative group">
-                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                        </div>
-                         <div class="relative group">
-                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                        </div>
+                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
+                        <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
+                       <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
+                         <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
                     </div>
-                    <!-- Hamburger Menu Button -->
                     <div class="md:hidden">
                         <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
-                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
+                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
                     </div>
                 </nav>
@@ -389,10 +372,10 @@
             </section>
 
             <!-- Overview Section -->
-            <section id="overview" class="py-16 sm:py-20 bg-stone-100">
+            <section id="overview" class="py-16 sm:py-20">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="grid md:grid-cols-5 gap-12 items-start">
-                        <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
+                        <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-left">
                             <div class="mb-8">
                                 <h2 class="section-header text-5xl inline-block bg-orange-500 text-stone-100 px-4 py-1 mb-4">The Golden Age of Jazz</h2>
                                 <p class="text-lg text-stone-600 mt-4 italic">How two decades of explosive creativity redefined the future of music.</p>
@@ -417,17 +400,15 @@
                     
                     <div id="timeline-controls" class="space-y-6 mb-8">
                         <div class="md:hidden flex justify-center items-center gap-4">
-                            <!-- Mobile Genre Dropdown -->
-                            <div class="relative group">
-                                <button id="genre-filter-dropdown-btn" class="dropdown-btn font-bebas text-lg px-6 py-2 border-2 border-stone-900 rounded bg-stone-100 transition-all hover:bg-orange-500 hover:text-stone-100 flex items-center gap-2">
+                            <div class="relative">
+                                <button id="genre-filter-dropdown-btn" class="font-bebas text-lg px-6 py-2 border-2 border-stone-900 rounded bg-stone-100 transition-all hover:bg-orange-500 hover:text-stone-100 flex items-center gap-2">
                                     Filter by Genre
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                 </button>
                                 <div id="genre-filter-list" class="dropdown-list hidden absolute left-0 top-full mt-2 text-left bg-stone-100 border-2 border-stone-900 rounded z-20 w-60"></div>
                             </div>
-                            <!-- Mobile Era Dropdown -->
-                            <div class="relative group">
-                                <button id="era-glossary-dropdown-btn" class="dropdown-btn font-bebas text-lg px-6 py-2 border-2 border-stone-900 rounded bg-stone-100 transition-all hover:bg-orange-500 hover:text-stone-100 flex items-center gap-2">
+                            <div class="relative">
+                                <button id="era-glossary-dropdown-btn" class="font-bebas text-lg px-6 py-2 border-2 border-stone-900 rounded bg-stone-100 transition-all hover:bg-orange-500 hover:text-stone-100 flex items-center gap-2">
                                     Jump to Era
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                 </button>
@@ -435,10 +416,7 @@
                             </div>
                         </div>
 
-                        <!-- Web Bubbles -->
                         <div id="genre-filter-container" class="hidden md:flex flex-wrap justify-center gap-x-4 gap-y-3"></div>
-                        
-                        <!-- Web Era Buttons -->
                         <div id="era-glossary-container-web" class="hidden md:block w-full"></div>
                     </div>
 
@@ -459,7 +437,6 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
                     </div>
-                    <!-- Custom Scrollbar with Markers -->
                     <div class="mt-6">
                         <div id="custom-scrollbar" class="w-full h-2 bg-stone-300 rounded-full cursor-pointer relative">
                             <div id="custom-scrollbar-markers" class="absolute top-[-5px] left-0 right-0 h-[10px] pointer-events-none"></div>
@@ -474,7 +451,7 @@
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl inline-block bg-orange-500 text-stone-100 px-4 py-1 mb-4">The Genres</h2>
                     <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Compare the main aspects of each style.</p>
-                    <div id="genre-matrix-container" class="bg-stone-100 max-w-6xl mx-auto">
+                    <div id="genre-matrix-container">
                         <table id="style-matrix-table" class="matrix-table"></table>
                     </div>
                 </div>
@@ -489,12 +466,12 @@
                     <div class="flex justify-center mb-8">
                         <div class="w-full max-w-xs styled-select">
                             <label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label>
-                            <select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold"></select>
+                            <select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold"></select>
                         </div>
                     </div>
 
                     <div id="artist-slider-wrapper" class="relative">
-                        <div id="artist-slider-container" class="overflow-hidden min-h-[550px] md:min-h-[580px]">
+                        <div id="artist-slider-container" class="overflow-hidden min-h-[550px] md:min-h-[280px]">
                             <div id="artist-slider-track" class="flex"></div>
                         </div>
                         <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4">
@@ -525,8 +502,8 @@
     </div>
     
     <!-- Modals -->
-    <div id="album-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
-        <div class="bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95 transition-all duration-300 ease-out">
+    <div id="album-modal" class="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95 transition-all duration-300 ease-out">
             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
                 <div>
                     <h3 id="modal-title" class="text-4xl text-orange-500 font-bebas"></h3>
@@ -535,15 +512,14 @@
                 <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
             </div>
             <div id="modal-body" class="p-6 overflow-y-auto"></div>
-             <!-- Modal Navigation Footer -->
             <div class="flex justify-between items-center p-4 border-t-2 border-stone-900 flex-shrink-0 bg-stone-200">
                 <button id="prev-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous Album</button>
                 <button id="next-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next Album</button>
             </div>
         </div>
     </div>
-    <div id="artist-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
-        <div class="bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95 transition-all duration-300 ease-out">
+    <div id="artist-modal" class="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95 transition-all duration-300 ease-out">
              <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
                  <h3 id="artist-modal-title" class="text-4xl text-orange-500 font-bebas"></h3>
                  <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
@@ -551,8 +527,8 @@
              <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
     </div>
-    <div id="genre-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
-        <div class="bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95 transition-all duration-300 ease-out">
+    <div id="genre-modal" class="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95 transition-all duration-300 ease-out">
              <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
                  <h3 id="genre-modal-title" class="text-4xl font-bebas"></h3>
                  <button id="close-genre-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
@@ -567,9 +543,7 @@
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
             <div class="flex justify-end mb-4">
                 <button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
-                     <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+                     <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
@@ -581,17 +555,8 @@
         </div>
     </div>
 
-    <!-- 
-      Main Application Script - Refactored for conciseness and clarity.
-      1. Used modern JS syntax like optional chaining (?.) and nullish coalescing (??).
-      2. Simplified DOM element selection and manipulation.
-      3. Created helper functions to reduce code repetition (e.g., modal handling).
-      4. Streamlined logic in data processing and rendering functions.
-      5. FIXED: Restored full implementations for all JS methods to prevent errors.
-    -->
     <script>
         const JazzApp = {
-            // Application State
             state: {
                 albums: [],
                 artistProfiles: {},
@@ -599,14 +564,14 @@
                 styleMatrix: {},
                 visibleAlbums: [],
                 eras: [
-                    { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: '#dbeafe' }, // blue-100
-                    { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: '#f3e8ff' }, // purple-100
+                    { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: '#dbeafe' },
+                    { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: '#f3e8ff' },
                     { title: "Hard Bop At Its Peak", startYear: 1957, endYear: 1958, color: '#EADDCA' },
-                    { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: '#d1fae5' }, // emerald-100
-                    { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: '#ffedd5' }, // orange-100
-                    { title: "Spiritual Awakening", startYear: 1964, endYear: 1966, color: '#fee2e2' }, // red-100
-                    { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: '#fef9c3' }, // yellow-100
-                    { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: '#cffafe' }  // cyan-100
+                    { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: '#d1fae5' },
+                    { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: '#ffedd5' },
+                    { title: "Spiritual Awakening", startYear: 1964, endYear: 1966, color: '#fee2e2' },
+                    { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: '#fef9c3' },
+                    { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: '#cffafe' }
                 ],
                 currentVisibleAlbumIndex: -1,
                 currentArtistPage: 0,
@@ -615,15 +580,12 @@
                 lastKnownEraTitle: '',
                 mobileCardSelectedForModal: null,
                 lastHoveredGenre: null,
+                fullGenreColorMap: {},
             },
-
-            // DOM Elements
             elements: {},
 
-            // Initialization
             init() {
                 this.cacheDOMElements();
-                // Bind all methods in the 'methods' object to the JazzApp context
                 Object.keys(this.methods).forEach(key => {
                     if (typeof this.methods[key] === 'function') {
                         this.methods[key] = this.methods[key].bind(this);
@@ -642,13 +604,14 @@
                     'artist-page-indicator', 'style-matrix-table', 'custom-scrollbar', 'custom-scrollbar-thumb',
                     'custom-scrollbar-markers', 'mobile-menu-button', 'mobile-menu-overlay', 'mobile-menu-panel',
                     'mobile-menu-close-button', 'footer-copyright', 'on-this-day', 'genre-filter-dropdown-btn',
-                    'genre-filter-list', 'era-glossary-dropdown-btn'
+                    'genre-filter-list', 'era-glossary-dropdown-btn', 'modal-title', 'modal-artist', 'close-modal', 'modal-body',
+                    'prev-album-btn', 'next-album-btn', 'artist-modal-title', 'close-artist-modal', 'artist-modal-body',
+                    'genre-modal-title', 'close-genre-modal', 'genre-modal-body'
                 ];
                 ids.forEach(id => {
                     const camelCaseId = id.replace(/-(\w)/g, (_, letter) => letter.toUpperCase());
                     this.elements[camelCaseId] = document.getElementById(id);
                 });
-                // Add elements not selected by ID
                 this.elements.sections = document.querySelectorAll('main section[id]');
                 this.elements.navLinks = document.querySelectorAll('header nav a');
                 this.elements.mobileNavLinks = document.querySelectorAll('#mobile-nav-links a');
@@ -674,11 +637,7 @@
                 } catch (error) {
                     console.error('Error fetching data:', error);
                     if (this.elements.pageContent) {
-                        this.elements.pageContent.innerHTML = `<div class="text-center p-8">
-                            <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
-                            <p class="text-stone-600 mt-2">Could not fetch required data. Please check console for details.</p>
-                            <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
-                        </div>`;
+                        this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2><p>Error: ${error.message}</p></div>`;
                     }
                 } finally {
                     this.showPage();
@@ -713,7 +672,6 @@
                 // --- DATA PROCESSING ---
                 processAndSortData() {
                     const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
-                    
                     const parseDate = (dateString) => {
                         if (typeof dateString !== 'string') return null;
                         if (dateString.toLowerCase().startsWith('c.')) {
@@ -726,53 +684,40 @@
                         if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 0, 1);
                         return null;
                     };
-
                     this.state.albums.forEach(album => {
                         if (album.pivotalTracks?.length > 0) {
                             album.pivotalTracks.sort((a,b) => (parseDate(a.recordingDate) ?? 0) - (parseDate(b.recordingDate) ?? 0));
                             album.sortingDate = album.pivotalTracks[0].recordingDate;
                         }
                     });
-                    
                     this.state.albums = this.state.albums
                         .filter(a => a.year <= 1969)
                         .sort((a,b) => (parseDate(a.sortingDate) ?? 0) - (parseDate(b.sortingDate) ?? 0));
-                    
-                    const allTracks = this.state.albums.flatMap(album =>
-                        (album.pivotalTracks || []).map(track => ({ ...track, ...album }))
-                    );
+                    const allTracks = this.state.albums.flatMap(album => (album.pivotalTracks || []).map(track => ({ ...track, ...album })));
                     this.state.artistsData = this.methods.processArtists(allTracks);
                 },
-
                 processArtists(tracks) {
                     const artistsMap = new Map();
                     const { slugify, getCanonicalName } = this.methods;
-
                     tracks.forEach(track => {
                         if (!track.lineup) return;
-                        
                         const trackArtist = getCanonicalName(track.artist);
-                        const lineupParts = track.lineup.split(/,(?![^()]*\))/);
-
-                        lineupParts.forEach(part => {
+                        track.lineup.split(/,(?![^()]*\))/).forEach(part => {
                             const match = part.trim().match(/(.+?)\s\((.+)\)/);
                             if (!match) return;
-
                             let name = getCanonicalName(match[1].trim());
                             if (!artistsMap.has(name)) {
                                 artistsMap.set(name, { 
-                                    name: name, 
+                                    name, 
                                     instruments: new Set(), 
                                     albums: new Set(), 
                                     photo: `images/${slugify(name)}.jpg`, 
                                     isTimelineBandleader: false, 
-                                    profile: this.state.artistProfiles[name] ?? { name: name, profile: 'No profile available.'} 
+                                    profile: this.state.artistProfiles[name] ?? { name, profile: 'No profile available.'} 
                                 });
                             }
                             const artistEntry = artistsMap.get(name);
-                            
                             if (trackArtist.includes(name)) artistEntry.isTimelineBandleader = true;
-                            
                             match[2].split(/, | \/ /).forEach(inst => {
                                 const trimmedInst = inst.trim();
                                 if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
@@ -782,7 +727,6 @@
                             artistEntry.albums.add(track.albumTitle);
                         });
                     });
-                    
                     return Array.from(artistsMap.values()).map(artist => {
                         const albums = Array.from(artist.albums);
                         let tier = 3;
@@ -796,27 +740,24 @@
                 renderTimeline() {
                     const { timelineWrapper } = this.elements;
                     if (!timelineWrapper) return;
-                    timelineWrapper.innerHTML = '<div class="flex-shrink-0 w-px"></div>'; // Start with a spacer
-                    
+                    timelineWrapper.innerHTML = '<div class="flex-shrink-0 w-px"></div>';
                     const erasFragment = document.createDocumentFragment();
                     this.state.eras.forEach(era => {
                         const eraAlbums = this.state.albums.filter(album => album.year >= era.startYear && album.year <= era.endYear);
                         if (eraAlbums.length === 0) return;
-
                         const eraSection = document.createElement('div');
                         eraSection.className = 'era-section flex flex-row items-start';
                         eraSection.style.backgroundColor = era.color;
-
                         const yearsInEra = [...new Set(eraAlbums.map(album => album.year))].sort();
                         yearsInEra.forEach(year => {
                             const yearSection = document.createElement('div');
                             yearSection.className = 'timeline-year-section';
                             yearSection.id = `year-${year}`;
+                            // FIXED: Added year header back
+                            yearSection.innerHTML = `<div class="timeline-year-header">${year}</div>`;
                             const albumList = document.createElement('div');
                             albumList.className = 'timeline-album-list';
-                            
                             eraAlbums.filter(d => d.year === year).forEach(album => albumList.appendChild(this.methods.createAlbumCard(album)));
-                            
                             yearSection.appendChild(albumList);
                             eraSection.appendChild(yearSection);
                         });
@@ -828,11 +769,10 @@
 
                 createAlbumCard(album) {
                     const card = document.createElement('div');
-                    card.className = 'timeline-album-card fade-in-element w-[200px] flex-shrink-0 bg-stone-100 rounded border-2 border-stone-900 overflow-hidden cursor-pointer transition-all duration-200 ease-in-out';
+                    card.className = 'timeline-album-card w-[200px] flex-shrink-0 bg-stone-100 rounded border-2 border-stone-900 overflow-hidden cursor-pointer transition-all duration-200 ease-in-out';
                     card.dataset.albumTitle = album.albumTitle;
                     card.dataset.artist = album.artist;
                     card.dataset.genres = album.genres.join(', ');
-
                     let isLandmark = false, landmarkColor = null;
                     for (const genreName of album.genres) {
                         const genreData = this.state.styleMatrix.genres?.[this.methods.normalizeGenreName(genreName)];
@@ -846,9 +786,8 @@
                         card.classList.add('landmark-album');
                         card.style.setProperty('--landmark-color', landmarkColor);
                     }
-                    
                     card.innerHTML = `
-                        <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" loading="lazy" class="w-full h-[200px] object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
+                        <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" loading="lazy" class="w-full h-[200px] object-cover">
                         <div class="p-3">
                             <h5 class="font-bold truncate font-bebas text-xl">${album.albumTitle}</h5>
                             <p class="truncate text-stone-700 text-sm">${album.artist}</p>
@@ -867,7 +806,6 @@
                     const excludedGenres = ["Jazz Rap", "Big Band", "Latin Jazz"];
                     const features = styleMatrix.features.map(f => `<th class="p-4 font-bold text-2xl text-center font-bebas">${f}</th>`).join('');
                     const header = `<thead><tr><th class="p-4 font-bold text-2xl w-48 text-left font-bebas">Genre</th>${features}</tr></thead>`;
-                    
                     const bodyRows = Object.entries(styleMatrix.genres)
                         .filter(([genreName]) => !excludedGenres.includes(genreName))
                         .map(([genreName, genreData]) => `
@@ -881,7 +819,6 @@
                                 ${genreData.data.map(dp => `<td>${dp}</td>`).join('')}
                             </tr>`
                         ).join('');
-                    
                     styleMatrixTable.innerHTML = `${header}<tbody>${bodyRows}</tbody>`;
                 },
 
@@ -889,23 +826,21 @@
                 setupFilters() {
                     const { genreFilterContainer, genreFilterList } = this.elements;
                     if (!genreFilterContainer || !genreFilterList) return;
-
                     const allGenresInDB = new Set(this.state.albums.flatMap(album => album.genres));
                     const excludedGenres = ['Afro-Cuban Jazz', 'Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock', 'ECM Style Jazz', 'Neo-Bop', 'Cape Jazz', 'Vocal Jazz', 'Swing', 'Orchestral Jazz'];
-                    const filterableGenres = Array.from(allGenresInDB).filter(genre => !excludedGenres.includes(genre)).sort();
-
+                    const filterableGenres = Array.from(allGenresInDB).filter(genre => genre && !excludedGenres.includes(genre)).sort();
                     const createCheckbox = (genre, isAll = false) => {
                         const id = isAll ? 'all-genres-checkbox' : `genre-${this.methods.slugify(genre)}`;
+                        // FIXED: Correctly apply genre color from map
+                        const color = isAll ? '#44403c' : (this.state.fullGenreColorMap[genre] || '#e7e5e4');
                         return `
-                            <label for="${id}" class="genre-checkbox-label flex items-center cursor-pointer text-sm font-semibold px-4 py-2 border-2 border-stone-900 rounded-full bg-stone-100 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md flex-shrink-0" style="--genre-color: ${isAll ? '#44403c' : (this.state.fullGenreColorMap[genre] || '#e7e5e4')};">
+                            <label for="${id}" class="genre-checkbox-label flex items-center cursor-pointer text-sm font-semibold px-4 py-2 border-2 border-stone-900 rounded-full bg-stone-100 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md flex-shrink-0" style="--genre-color: ${color};">
                                 <input type="checkbox" id="${id}" value="${genre}" data-genre="${genre}" class="hidden" checked>
                                 ${genre}
                             </label>`;
                     };
                     genreFilterContainer.innerHTML = createCheckbox('All Genres', true) + filterableGenres.map(g => createCheckbox(g)).join('');
-                    
                     genreFilterList.innerHTML = `<a href="#" class="block p-3 transition-all duration-200" data-genre="all">All Genres</a>` + filterableGenres.map(genre => `<a href="#" class="block p-3 transition-all duration-200" data-genre="${genre}">${genre}</a>`).join('');
-
                     genreFilterContainer.addEventListener('change', this.methods.handleGenreFilterChange);
                     genreFilterList.addEventListener('click', this.methods.handleMobileGenreFilterClick);
                     this.methods.populateInstrumentFilter();
@@ -916,7 +851,6 @@
                     if (!genreFilterContainer) return;
                     const allCheckbox = genreFilterContainer.querySelector('#all-genres-checkbox');
                     const genreCheckboxes = genreFilterContainer.querySelectorAll('input[data-genre]:not(#all-genres-checkbox)');
-                    
                     if (e.target === allCheckbox) {
                         genreCheckboxes.forEach(cb => { cb.checked = allCheckbox.checked; });
                     } else if (allCheckbox) {
@@ -944,7 +878,6 @@
                 filterTimeline() {
                     const selectedGenres = Array.from(this.elements.genreFilterContainer?.querySelectorAll('input[data-genre]:checked') ?? []).map(input => input.value);
                     this.state.visibleAlbums = this.state.albums.filter(album => album.genres.some(genre => selectedGenres.includes(genre)));
-                    
                     document.querySelectorAll('.timeline-album-card').forEach(card => {
                         card.classList.toggle('hidden', !this.state.visibleAlbums.some(a => a.albumTitle === card.dataset.albumTitle && a.artist === card.dataset.artist));
                     });
@@ -954,7 +887,6 @@
                     document.querySelectorAll('.era-section').forEach(eraSection => {
                         eraSection.style.display = eraSection.querySelector('.timeline-year-section[style*="display: flex"]') ? 'flex' : 'none';
                     });
-                    
                     setTimeout(() => {
                         this.methods.resizeCanvas();
                         this.methods.renderScrollbarMarkers();
@@ -964,34 +896,28 @@
 
                 // --- MODALS ---
                 setupModals() {
-                    this.elements.albumModal?.querySelector('#close-modal')?.addEventListener('click', () => this.methods.closeModal('albumModal'));
-                    this.elements.artistModal?.querySelector('#close-artist-modal')?.addEventListener('click', () => this.methods.closeModal('artistModal'));
-                    this.elements.genreModal?.querySelector('#close-genre-modal')?.addEventListener('click', () => this.methods.closeModal('genreModal'));
+                    this.elements.closeModal?.addEventListener('click', () => this.methods.closeModal('albumModal'));
+                    this.elements.closeArtistModal?.addEventListener('click', () => this.methods.closeModal('artistModal'));
+                    this.elements.closeGenreModal?.addEventListener('click', () => this.methods.closeModal('genreModal'));
                     
                     ['albumModal', 'artistModal', 'genreModal'].forEach(modalId => {
                         this.elements[modalId]?.addEventListener('click', e => {
-                            // Close modal if the background is clicked, not the content
-                            if (e.target === this.elements[modalId]) {
-                                this.methods.closeModal(modalId);
-                            }
+                            if (e.target === this.elements[modalId]) this.methods.closeModal(modalId);
                         });
                     });
                     
                     document.addEventListener('keydown', e => {
                         if (e.key === "Escape") {
-                            this.methods.closeModal('albumModal');
-                            this.methods.closeModal('artistModal');
-                            this.methods.closeModal('genreModal');
+                            ['albumModal', 'artistModal', 'genreModal'].forEach(id => this.methods.closeModal(id));
                         }
                     });
 
-                    document.getElementById('prev-album-btn')?.addEventListener('click', () => this.methods.navigateAlbum(-1));
-                    document.getElementById('next-album-btn')?.addEventListener('click', () => this.methods.navigateAlbum(1));
+                    this.elements.prevAlbumBtn?.addEventListener('click', () => this.methods.navigateAlbum(-1));
+                    this.elements.nextAlbumBtn?.addEventListener('click', () => this.methods.navigateAlbum(1));
                     
                     document.body.addEventListener('click', e => {
                         const link = e.target.closest('.clickable-link');
                         if (!link) return;
-
                         const { artistName, genreName, albumTitle, artist } = link.dataset;
                         if (artistName) {
                             const artistData = this.state.artistsData.find(a => a.name === artistName);
@@ -999,9 +925,17 @@
                         } else if (genreName) {
                             this.methods.openGenreModal(genreName);
                         } else if (albumTitle && artist) {
-                            const albumData = this.state.visibleAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
-                            if (albumData) this.methods.openAlbumModal(albumData, this.state.visibleAlbums.indexOf(albumData));
+                            const albumData = this.state.albums.find(a => a.albumTitle === albumTitle && a.artist === artist);
+                            if (albumData) {
+                                const visibleIndex = this.state.visibleAlbums.indexOf(albumData);
+                                this.methods.openAlbumModal(albumData, visibleIndex);
+                            }
                         }
+                    });
+
+                    this.elements.styleMatrixTable?.addEventListener('click', e => {
+                        const btn = e.target.closest('.genre-header-button');
+                        if (btn?.dataset.genreName) this.methods.openGenreModal(btn.dataset.genreName);
                     });
                 },
 
@@ -1009,56 +943,46 @@
                     const modal = this.elements[modalId];
                     if (!modal) return;
                     modal.classList.remove('opacity-0', 'pointer-events-none');
-                    modal.querySelector('.transform')?.classList.remove('scale-95');
+                    modal.querySelector('.modal-content')?.classList.remove('scale-95');
                     const body = modal.querySelector('.overflow-y-auto');
                     if (body) body.scrollTop = 0;
                 },
 
-                closeModal(modalId, callback) {
+                closeModal(modalId) {
                     const modal = this.elements[modalId];
                     if (!modal || modal.classList.contains('opacity-0')) return;
-                    
                     modal.classList.add('opacity-0', 'pointer-events-none');
-                    modal.querySelector('.transform')?.classList.add('scale-95');
-                    
+                    modal.querySelector('.modal-content')?.classList.add('scale-95');
                     if (modalId === 'albumModal') {
                         modal.querySelectorAll('audio').forEach(audio => audio.pause());
                         document.querySelector('.timeline-album-card.clicked')?.classList.remove('clicked');
                         this.methods.applyHighlights(null);
-                        this.state.lastHoveredGenre = null;
                     }
-                    if (typeof callback === 'function') setTimeout(callback, 300);
                 },
 
                 openAlbumModal(album, index) {
-                    this.closeModal('artistModal');
-                    this.closeModal('genreModal');
-                    
+                    ['artistModal', 'genreModal'].forEach(id => this.methods.closeModal(id));
                     this.state.currentVisibleAlbumIndex = index;
-                    const { albumModal } = this.elements;
+                    const { albumModal, modalTitle, modalArtist, modalBody, prevAlbumBtn, nextAlbumBtn } = this.elements;
                     if (!albumModal) return;
                     
                     document.querySelector('.timeline-album-card.clicked')?.classList.remove('clicked');
                     try {
                         const cardSelector = `.timeline-album-card[data-album-title="${album.albumTitle.replace(/"/g, '\\"')}"][data-artist="${album.artist.replace(/"/g, '\\"')}"]`;
                         document.querySelector(cardSelector)?.classList.add('clicked');
-                    } catch (e) {
-                        console.error("Could not find album card to highlight:", e);
-                    }
+                    } catch (e) { console.error("Could not find album card to highlight:", e); }
                     
-                    albumModal.querySelector('#modal-title').textContent = album.albumTitle;
-                    const artistBtn = albumModal.querySelector('#modal-artist');
-                    artistBtn.textContent = album.artist;
-                    artistBtn.className = 'text-xl text-stone-600 bg-transparent border-none p-0 clickable-link';
-                    artistBtn.dataset.artistName = album.artist;
+                    modalTitle.textContent = album.albumTitle;
+                    modalArtist.textContent = album.artist;
+                    modalArtist.className = 'text-xl text-stone-600 bg-transparent border-none p-0 clickable-link';
+                    modalArtist.dataset.artistName = album.artist;
 
                     const pivotalTrack = album.pivotalTracks?.[0] ?? {};
                     const genreTags = album.genres.map(genre => `<span class="genre-tag clickable-link px-3 py-1 rounded-full text-sm font-semibold border-2 border-stone-900" style="background-color: ${this.state.fullGenreColorMap[genre] || '#e7e5e4'}" data-genre-name="${genre}">${genre}</span>`).join(' ');
-                    const lineupHtml = (pivotalTrack.lineup ?? 'N/A').split(/, (?![^()]*\))/).map(personnel => {
-                        const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
+                    const lineupHtml = (pivotalTrack.lineup ?? 'N/A').split(/, (?![^()]*\))/).map(p => {
+                        const match = p.trim().match(/(.+?)\s\((.+)\)/);
                         return (match && this.state.artistsData.some(a => a.name === match[1].trim()))
-                            ? `<span class="clickable-link" data-artist-name="${match[1].trim()}">${match[1].trim()}</span> (${match[2]})`
-                            : personnel;
+                            ? `<span class="clickable-link" data-artist-name="${match[1].trim()}">${match[1].trim()}</span> (${match[2]})` : p;
                     }).join(', ');
 
                     const analysisHtml = (album.pivotalTracks || []).map(track => {
@@ -1066,22 +990,18 @@
                         return `<div class="mb-8 last:mb-0">
                                     <div class="flex justify-between items-center gap-4 flex-wrap">
                                         <h5 class="text-2xl font-bold text-white flex-1 min-w-0 font-bebas">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
-                                        <div id="player-container-${songFileName}" class="w-full sm:w-52 h-[35px]">
-                                            <audio controls class="styled-player w-full" src="songs/${songFileName}.mp3" preload="none" onerror="this.parentElement.innerHTML = '<div class=\\'w-full h-full flex items-center justify-center bg-stone-700 text-stone-400 text-sm rounded\\'>Preview N/A</div>'"></audio>
-                                        </div>
+                                        <div class="w-full sm:w-52 h-[35px]"><audio controls class="styled-player w-full" src="songs/${songFileName}.mp3" preload="none" onerror="this.parentElement.innerHTML = '<div class=\\'w-full h-full flex items-center justify-center bg-stone-700 text-stone-400 text-sm rounded\\'>Preview N/A</div>'"></audio></div>
                                     </div>
                                     <p class="font-sans text-base leading-relaxed text-stone-300">${track.analysis}</p>
                                 </div>`;
                     }).join('<hr class="border-stone-700 my-8">');
 
-                    albumModal.querySelector('#modal-body').innerHTML = `
+                    modalBody.innerHTML = `
                         <div class="flex flex-col md:flex-row gap-6">
-                            <div class="w-full md:w-1/3 flex-shrink-0">
-                                <img src="${album.cover || ''}" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';">
-                            </div>
+                            <div class="w-full md:w-1/3 flex-shrink-0"><img src="${album.cover || ''}" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';"></div>
                             <div class="w-full md:w-2/3">
                                 <h4 class="text-3xl text-stone-900 mb-4 font-bebas">Album Details</h4>
-                                <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                                <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base">
                                     <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
                                     <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span>
                                     <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
@@ -1089,56 +1009,31 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="relative mt-4">
-                           <div class="bg-gray-900 p-6 mt-8 border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917]">
-                                ${analysisHtml}
-                           </div>
-                        </div>`;
+                        <div class="relative mt-4"><div class="bg-gray-900 p-6 mt-8 border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917]">${analysisHtml}</div></div>`;
                     
-                    albumModal.querySelector('#modal-body').addEventListener('play', e => {
-                        if (e.target.tagName === 'AUDIO') {
-                            document.querySelectorAll('audio').forEach(p => { if (p !== e.target) p.pause(); });
-                        }
+                    modalBody.addEventListener('play', e => {
+                        if (e.target.tagName === 'AUDIO') document.querySelectorAll('audio').forEach(p => { if (p !== e.target) p.pause(); });
                     }, true);
 
-                    document.getElementById('prev-album-btn').disabled = index <= 0;
-                    document.getElementById('next-album-btn').disabled = index < 0 || index >= this.state.visibleAlbums.length - 1;
-
+                    prevAlbumBtn.disabled = index <= 0;
+                    nextAlbumBtn.disabled = index < 0 || index >= this.state.visibleAlbums.length - 1;
                     this.methods.openModal('albumModal');
                 },
                 
                 openArtistModal(artist) {
-                    this.closeModal('albumModal');
-                    this.closeModal('genreModal');
-                    
-                    const { artistModal } = this.elements;
+                    ['albumModal', 'genreModal'].forEach(id => this.methods.closeModal(id));
+                    const { artistModal, artistModalTitle, artistModalBody } = this.elements;
                     if (!artistModal) return;
-                    artistModal.querySelector('#artist-modal-title').textContent = artist.name;
-                    const body = artistModal.querySelector('#artist-modal-body');
-
+                    artistModalTitle.textContent = artist.name;
                     const isLandmark = (albumTitle) => Object.values(this.state.styleMatrix.genres ?? {}).some(g => g.landmarkAlbums?.some(t => t.toLowerCase() === albumTitle.toLowerCase()));
-                    
                     const albumTimelineHtml = artist.albums
-                        .map(title => this.state.albums.find(a => a.albumTitle === title))
-                        .filter(Boolean).sort((a, b) => a.year - b.year)
-                        .map(album => `
-                            <li class="artist-modal-timeline-item">
-                                <strong class="text-stone-600">${album.year}:</strong> 
-                                <span class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</span>
-                                ${isLandmark(album.albumTitle) ? '<span class="landmark-star">★</span>' : ''}
-                            </li>`
-                        ).join('');
-
+                        .map(title => this.state.albums.find(a => a.albumTitle === title)).filter(Boolean).sort((a, b) => a.year - b.year)
+                        .map(album => `<li class="artist-modal-timeline-item"><strong class="text-stone-600">${album.year}:</strong> <span class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</span>${isLandmark(album.albumTitle) ? '<span class="landmark-star">★</span>' : ''}</li>`).join('');
                     const topCollaboratorsHtml = this.methods.getTopCollaborators(artist.name).map(name => {
-                        const collaborator = this.state.artistsData.find(a => a.name === name);
-                        return collaborator ? `
-                            <div class="collaborator-card text-center cursor-pointer transition-transform hover:scale-105" data-artist-name="${collaborator.name}">
-                                <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 shadow-md" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
-                                <p class="mt-2 text-sm font-bold text-stone-700">${collaborator.name}</p>
-                            </div>` : '';
+                        const c = this.state.artistsData.find(a => a.name === name);
+                        return c ? `<div class="collaborator-card text-center cursor-pointer transition-transform hover:scale-105" data-artist-name="${c.name}"><img src="${c.photo || ''}" alt="${c.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 shadow-md" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';"><p class="mt-2 text-sm font-bold text-stone-700">${c.name}</p></div>` : '';
                     }).join('');
-
-                    body.innerHTML = `
+                    artistModalBody.innerHTML = `
                         <div class="flex flex-col sm:flex-row gap-6">
                             <div class="w-full sm:w-1/3 flex-shrink-0">
                                 <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
@@ -1152,42 +1047,29 @@
                                 <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml}</ul>
                             </div>
                         </div>
-                        ${topCollaboratorsHtml ? `<div class="mt-6 pt-4 border-t-2 border-stone-200"><h4 class="text-2xl text-stone-900 mb-4 text-center font-bebas">Top Collaborators</h4><div class="grid grid-cols-3 gap-4">${topCollaboratorsHtml}</div></div>` : ''}
-                    `;
-                    
+                        ${topCollaboratorsHtml ? `<div class="mt-6 pt-4 border-t-2 border-stone-200"><h4 class="text-2xl text-stone-900 mb-4 text-center font-bebas">Top Collaborators</h4><div class="grid grid-cols-3 gap-4">${topCollaboratorsHtml}</div></div>` : ''}`;
                     this.methods.openModal('artistModal');
                 },
                 
                 openGenreModal(genreName) {
-                    this.closeModal('albumModal');
-                    this.closeModal('artistModal');
-                    
-                    const { genreModal } = this.elements;
+                    ['albumModal', 'artistModal'].forEach(id => this.methods.closeModal(id));
+                    const { genreModal, genreModalTitle, genreModalBody } = this.elements;
                     if (!genreModal) return;
                     const genreData = this.state.styleMatrix.genres?.[genreName];
                     if (!genreData) return;
-
-                    const titleEl = genreModal.querySelector('#genre-modal-title');
-                    titleEl.textContent = genreName;
-                    titleEl.style.color = genreData.color.startsWith('var') ? getComputedStyle(document.documentElement).getPropertyValue(genreData.color.match(/--[a-zA-Z-]+/)?.[0]).trim() : genreData.color;
-
+                    genreModalTitle.textContent = genreName;
+                    genreModalTitle.style.color = genreData.color.startsWith('var') ? getComputedStyle(document.documentElement).getPropertyValue(genreData.color.match(/--[a-zA-Z-]+/)?.[0]).trim() : genreData.color;
                     const landmarkAlbums = (genreData.landmarkAlbums || []).map(title => this.state.albums.find(a => a.albumTitle.toLowerCase() === title.toLowerCase())).filter(Boolean);
                     const keyArtists = new Set([...genreData.artists.split(', ').map(n => n.trim()), ...landmarkAlbums.map(a => a.artist.trim())]);
-                    
-                    const keyArtistsHtml = Array.from(keyArtists).sort()
-                        .filter(name => this.state.artistsData.some(a => a.name === name))
-                        .map(name => `<span class="clickable-link" data-artist-name="${name}">${name}</span>`).join(', ');
-
+                    const keyArtistsHtml = Array.from(keyArtists).sort().filter(name => this.state.artistsData.some(a => a.name === name)).map(name => `<span class="clickable-link" data-artist-name="${name}">${name}</span>`).join(', ');
                     const landmarkAlbumsHtml = landmarkAlbums.map(album => `<li><span class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</span></li>`).join('');
-
-                    genreModal.querySelector('#genre-modal-body').innerHTML = `
+                    genreModalBody.innerHTML = `
                         <div class="space-y-6">
                             <div><h4 class="text-2xl font-bold text-stone-900 mb-2 font-bebas">Overview</h4><p class="text-base text-stone-700 leading-relaxed">${genreData.profile || ''}</p></div>
                             <div><h4 class="text-2xl font-bold text-stone-900 mb-2 font-bebas">Key Characteristics</h4><ul class="list-disc list-inside space-y-1 text-stone-700"><li><strong>Harmony:</strong> ${genreData.data[0]}</li><li><strong>Rhythm:</strong> ${genreData.data[1]}</li><li><strong>Form:</strong> ${genreData.data[2]}</li></ul></div>
                             <div><h4 class="text-2xl font-bold text-stone-900 mb-2 font-bebas">Key Artists</h4><p class="text-base text-stone-700 leading-relaxed">${keyArtistsHtml}</p></div>
                             ${landmarkAlbumsHtml ? `<div><h4 class="text-2xl font-bold text-stone-900 mb-2 font-bebas">Landmark Albums</h4><ul class="list-disc list-inside space-y-1 grid grid-cols-2 gap-x-4">${landmarkAlbumsHtml}</ul></div>` : ''}
                         </div>`;
-                    
                     this.methods.openModal('genreModal');
                 },
 
@@ -1198,79 +1080,55 @@
                     }
                 },
                 
-                // --- FULLY IMPLEMENTED HELPER METHODS ---
+                // --- HELPER METHODS ---
                 getCanonicalName: (name) => !name ? '' : name.trim().replace('Roland Kirk', 'Rahsaan Roland Kirk').replace('Anthony Williams', 'Tony Williams'),
                 slugify: (name) => !name ? '' : name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
                 normalizeGenreName: (genreName) => genreName === "Avant-Garde Jazz" ? "Avant-Garde" : genreName,
                 
                 buildGenreColorMap() {
-                    this.state.fullGenreColorMap = {};
-                    if (!this.state.styleMatrix.genres) return;
-                    Object.entries(this.state.styleMatrix.genres).forEach(([name, data]) => {
-                        this.state.fullGenreColorMap[name] = data.color;
-                    });
-                    this.state.fullGenreColorMap['Free Jazz'] = '#fca5a5';
-                    this.state.fullGenreColorMap['Avant-Garde Jazz'] = '#fecdd3';
-                    this.state.fullGenreColorMap['Jazz Fusion'] = '#a5f3fc';
+                    const genreColors = this.state.styleMatrix.genres ? Object.entries(this.state.styleMatrix.genres).reduce((acc, [name, data]) => {
+                        acc[name] = data.color;
+                        return acc;
+                    }, {}) : {};
+                    this.state.fullGenreColorMap = {
+                        ...genreColors,
+                        'Free Jazz': '#fca5a5',
+                        'Avant-Garde Jazz': '#fecdd3',
+                        'Jazz Fusion': '#a5f3fc'
+                    };
                 },
 
                 renderEraGlossary() {
                     const { eraGlossaryList, eraGlossaryContainerWeb } = this.elements;
                     if (!eraGlossaryList || !eraGlossaryContainerWeb) return;
-                    
-                    eraGlossaryList.innerHTML = this.state.eras.map(era => `
-                        <a href="#" class="era-glossary-link block p-3 transition-all duration-200" data-start-year="${era.startYear}">
-                            <span class="font-bold">${era.title}</span>
-                            <span class="era-year block font-bebas text-sm">(${era.startYear} - ${era.endYear})</span>
-                        </a>
-                    `).join('');
-
-                    const webButtonsHtml = this.state.eras.map(era => `
-                        <button class="era-button font-bebas text-sm p-2 border-2 border-stone-900 rounded transition-all duration-200 cursor-pointer text-stone-900 font-semibold w-[180px] h-[50px] flex items-center justify-center text-center hover:brightness-95 hover:-translate-y-0.5" data-start-year="${era.startYear}" style="background-color: ${era.color};">
-                            ${era.title}
-                        </button>
-                    `).join('');
-                    eraGlossaryContainerWeb.innerHTML = `
-                        <div class="flex flex-col items-center w-full">
-                            <span class="font-bold text-sm text-stone-600 mb-2">JUMP TO ERA:</span>
-                            <div class="grid grid-cols-4 gap-x-3 gap-y-2" style="width: 740px;">
-                                ${webButtonsHtml}
-                            </div>
-                        </div>
-                    `;
+                    eraGlossaryList.innerHTML = this.state.eras.map(era => `<a href="#" class="era-glossary-link block p-3 transition-all duration-200" data-start-year="${era.startYear}"><span class="font-bold">${era.title}</span><span class="era-year block font-bebas text-sm">(${era.startYear} - ${era.endYear})</span></a>`).join('');
+                    const webButtonsHtml = this.state.eras.map(era => `<button class="font-bebas text-sm p-2 border-2 border-stone-900 rounded transition-all duration-200 cursor-pointer text-stone-900 font-semibold w-[180px] h-[50px] flex items-center justify-center text-center hover:brightness-95 hover:-translate-y-0.5" data-start-year="${era.startYear}" style="background-color: ${era.color};">${era.title}</button>`).join('');
+                    eraGlossaryContainerWeb.innerHTML = `<div class="flex flex-col items-center w-full"><span class="font-bold text-sm text-stone-600 mb-2">JUMP TO ERA:</span><div class="grid grid-cols-4 gap-x-3 gap-y-2" style="width: 740px;">${webButtonsHtml}</div></div>`;
                 },
 
                 setupArtistSlider(startPage = 0) {
                     const { instrumentFilter, artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
-                    if (!instrumentFilter || !artistSliderTrack || !artistPaginationControls || !artistPageIndicator) return;
-
+                    if (!instrumentFilter || !artistSliderTrack) return;
                     const selectedInstrument = instrumentFilter.value;
                     const filteredArtists = (selectedInstrument === 'all' ? [...this.state.artistsData] : this.state.artistsData.filter(artist => artist.instruments.includes(selectedInstrument)))
                         .sort((a, b) => (a.tier - b.tier) || a.name.localeCompare(b.name));
-
                     artistSliderTrack.innerHTML = '';
                     const pageSize = window.innerWidth >= 768 ? 12 : 6;
                     this.state.totalArtistPages = Math.ceil(filteredArtists.length / pageSize);
                     artistPaginationControls.classList.toggle('hidden', this.state.totalArtistPages <= 1);
-
                     for (let i = 0; i < this.state.totalArtistPages; i++) {
                         const pageDiv = document.createElement('div');
                         pageDiv.className = 'artist-slider-page w-full flex-shrink-0 p-2 grid grid-cols-3 md:grid-cols-6 gap-6';
-                        const pageArtists = filteredArtists.slice(i * pageSize, (i + 1) * pageSize);
-                        pageArtists.forEach(artist => {
+                        filteredArtists.slice(i * pageSize, (i + 1) * pageSize).forEach(artist => {
                             const card = document.createElement('div');
-                            card.className = 'artist-card transition-transform transition-shadow duration-200 ease-in-out cursor-pointer border-2 border-stone-900 rounded overflow-hidden';
+                            card.className = 'artist-card transition-all duration-200 cursor-pointer border-2 border-stone-900 rounded overflow-hidden';
                             if (artist.tier === 1) card.classList.add('bandleader');
                             if (artist.tier === 2) card.classList.add('influential-sideman');
                             card.dataset.artistName = artist.name;
+                            // FIXED: Removed born in date from card
                             card.innerHTML = `
-                                <div class="h-56 bg-stone-900">
-                                    <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
-                                </div>
-                                <div class="p-3">
-                                    <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
-                                    ${artist.profile?.bornIn ? `<p class="text-xs text-stone-600 truncate">${artist.profile.bornIn}</p>` : ''}
-                                </div>`;
+                                <div class="h-56 bg-stone-900"><img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover"></div>
+                                <div class="p-3"><h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4></div>`;
                             pageDiv.appendChild(card);
                         });
                         artistSliderTrack.appendChild(pageDiv);
@@ -1291,14 +1149,8 @@
                 setupMobileMenu() {
                     const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton, mobileNavLinks } = this.elements;
                     if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
-                    const openMenu = () => {
-                        mobileMenuOverlay.classList.remove('hidden');
-                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
-                    };
-                    const closeMenu = () => {
-                        mobileMenuPanel.style.transform = 'translateX(100%)';
-                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
-                    };
+                    const openMenu = () => { mobileMenuOverlay.classList.remove('hidden'); setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10); };
+                    const closeMenu = () => { mobileMenuPanel.style.transform = 'translateX(100%)'; setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300); };
                     mobileMenuButton.addEventListener('click', openMenu);
                     mobileMenuCloseButton.addEventListener('click', closeMenu);
                     mobileMenuOverlay.querySelector('#mobile-menu-bg')?.addEventListener('click', closeMenu);
@@ -1306,80 +1158,29 @@
                 },
 
                 setupScrollObservers() {
-                    const fadeElements = document.querySelectorAll('.fade-in-element');
                     const scrollObserver = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) entry.target.classList.add('is-visible');
-                        });
+                        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); });
                     }, { threshold: 0.1 });
-                    fadeElements.forEach(el => scrollObserver.observe(el));
-
-                    const observerOptions = { root: null, rootMargin: '0px 0px -50% 0px', threshold: 0 };
-                    const sectionObserver = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                const id = entry.target.getAttribute('id');
-                                this.elements.navLinks.forEach(link => {
-                                    link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
-                                });
-                                this.elements.mobileNavLinks.forEach(link => {
-                                    link.classList.toggle('text-orange-500', link.getAttribute('href') === `#${id}`);
-                                });
-                            }
-                        });
-                    }, observerOptions);
-                    this.elements.sections.forEach(section => { if (section.id) sectionObserver.observe(section); });
+                    document.querySelectorAll('.fade-in-element').forEach(el => scrollObserver.observe(el));
                 },
 
                 setupGeneralEventListeners() {
-                    this.elements.instrumentFilter?.addEventListener('change', () => {
-                        this.state.currentArtistPage = 0;
-                        this.methods.setupArtistSlider();
-                    });
-                    this.elements.artistSliderTrack?.addEventListener('click', e => {
-                        const card = e.target.closest('.artist-card[data-artist-name]');
-                        if (card) {
-                            const artist = this.state.artistsData.find(a => a.name === card.dataset.artistName);
-                            if (artist) this.methods.openArtistModal(artist);
-                        }
-                    });
+                    this.elements.instrumentFilter?.addEventListener('change', () => { this.state.currentArtistPage = 0; this.methods.setupArtistSlider(); });
                     this.elements.artistPrevBtn?.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage - 1));
                     this.elements.artistNextBtn?.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage + 1));
-                    
-                    let resizeTimeout;
-                    window.addEventListener('resize', () => {
-                        clearTimeout(resizeTimeout);
-                        resizeTimeout = setTimeout(() => {
-                            this.methods.setupArtistSlider(this.state.currentArtistPage);
-                            this.methods.resizeCanvas();
-                            this.methods.updateCustomScrollbar();
-                            this.methods.renderScrollbarMarkers();
-                        }, 200);
-                    });
-                    
+                    window.addEventListener('resize', () => { clearTimeout(this._resizeTimeout); this._resizeTimeout = setTimeout(() => { this.methods.setupArtistSlider(this.state.currentArtistPage); this.methods.resizeCanvas(); this.methods.updateCustomScrollbar(); this.methods.renderScrollbarMarkers(); }, 200); });
                     if (this.elements.footerCopyright) this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
                     this.elements.scrollRightBtn?.classList.add('nudge-animation');
                     this.methods.setupDraggable(this.elements.timelineContainer);
                     this.methods.setupCustomScrollbarInteraction();
                     this.methods.setupGlossaryInteraction();
-
-                    document.body.addEventListener('click', e => {
-                        if (this.elements.eraGlossaryList && !e.target.closest('#era-glossary-dropdown-btn, #era-glossary-list')) {
-                            this.elements.eraGlossaryList.classList.add('hidden');
-                        }
-                        if (this.elements.genreFilterList && !e.target.closest('#genre-filter-dropdown-btn, #genre-filter-list')) {
-                            this.elements.genreFilterList.classList.add('hidden');
-                        }
-                    });
                 },
                 
                 setupTimelineInteraction() {
                     const { timelineContainer, timelineWrapper, scrollLeftBtn, scrollRightBtn, stickyYearDisplay, stickyEraTitle } = this.elements;
-                    if (!timelineContainer || !timelineWrapper || !scrollLeftBtn || !scrollRightBtn) return;
-
-                    scrollLeftBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: -400, behavior: 'smooth' }));
-                    scrollRightBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: 400, behavior: 'smooth' }));
-
+                    if (!timelineContainer || !timelineWrapper) return;
+                    scrollLeftBtn?.addEventListener('click', () => timelineContainer.scrollBy({ left: -400, behavior: 'smooth' }));
+                    scrollRightBtn?.addEventListener('click', () => timelineContainer.scrollBy({ left: 400, behavior: 'smooth' }));
                     timelineWrapper.addEventListener('mouseover', e => {
                         if (window.innerWidth < 768) return;
                         const card = e.target.closest('.timeline-album-card:not(.hidden)');
@@ -1391,7 +1192,6 @@
                             }
                         }
                     });
-
                     timelineWrapper.addEventListener('click', e => {
                         const card = e.target.closest('.timeline-album-card:not(.hidden)');
                         if (!card) {
@@ -1402,8 +1202,7 @@
                             return;
                         }
                         const album = this.state.visibleAlbums.find(a => a.albumTitle === card.dataset.albumTitle && a.artist === card.dataset.artist);
-                        const albumIndex = this.state.visibleAlbums.indexOf(album);
-
+                        const albumIndex = album ? this.state.visibleAlbums.indexOf(album) : -1;
                         if (window.innerWidth < 768) {
                             if (this.state.mobileCardSelectedForModal === card) {
                                 if (album) this.methods.openAlbumModal(album, albumIndex);
@@ -1416,7 +1215,6 @@
                             if (album) this.methods.openAlbumModal(album, albumIndex);
                         }
                     });
-                    
                     timelineContainer.addEventListener('scroll', () => {
                         let currentYear = '';
                         for (const section of timelineWrapper.querySelectorAll('.timeline-year-section')) {
@@ -1437,11 +1235,9 @@
                 applyHighlights(selectedCard) {
                     document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.remove('dimmed', 'highlighted'));
                     if (!selectedCard) return;
-                    
                     document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.add('dimmed'));
                     const primaryGenre = selectedCard.dataset.genres.split(', ')[0];
                     const highlightColor = this.state.fullGenreColorMap[primaryGenre] || '#f97316';
-                    
                     document.querySelectorAll('.timeline-album-card:not(.hidden)').forEach(card => {
                         if (card.dataset.genres.includes(primaryGenre)) {
                             card.classList.remove('dimmed');
@@ -1456,10 +1252,7 @@
                         setTimeout(() => {
                             const targetElement = document.querySelector(window.location.hash);
                             if (targetElement) {
-                                const headerOffset = 96;
-                                const elementPosition = targetElement.getBoundingClientRect().top;
-                                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                                window.scrollTo({ top: targetElement.getBoundingClientRect().top + window.pageYOffset - 96, behavior: 'smooth' });
                             }
                         }, 150);
                     }
@@ -1483,8 +1276,7 @@
                         if(!isDown) return;
                         e.preventDefault();
                         const x = e.pageX - container.offsetLeft;
-                        const walk = (x - startX) * 2;
-                        container.scrollLeft = scrollLeft - walk;
+                        container.scrollLeft = scrollLeft - (x - startX) * 2;
                     });
                 },
 
@@ -1492,9 +1284,7 @@
                     const { timelineContainer, eraGlossaryList, eraGlossaryContainerWeb, genreFilterDropdownBtn, genreFilterList, eraGlossaryDropdownBtn } = this.elements;
                     const handleEraClick = (year) => {
                         const yearSection = document.querySelector(`#year-${year}`);
-                        if (yearSection) {
-                            timelineContainer.scrollTo({ left: yearSection.offsetLeft - 30, behavior: 'smooth' });
-                        }
+                        if (yearSection) timelineContainer.scrollTo({ left: yearSection.offsetLeft - 30, behavior: 'smooth' });
                     };
                     eraGlossaryDropdownBtn?.addEventListener('click', (e) => { e.stopPropagation(); eraGlossaryList.classList.toggle('hidden'); });
                     genreFilterDropdownBtn?.addEventListener('click', (e) => { e.stopPropagation(); genreFilterList.classList.toggle('hidden'); });
@@ -1507,7 +1297,7 @@
                         }
                     });
                     eraGlossaryContainerWeb?.addEventListener('click', (e) => {
-                        const button = e.target.closest('.era-button');
+                        const button = e.target.closest('button');
                         if (button?.dataset.startYear) handleEraClick(button.dataset.startYear);
                     });
                 },
@@ -1524,20 +1314,15 @@
                 getTopCollaborators(artistName) {
                     const collaborations = new Map();
                     const canonicalArtistName = this.methods.getCanonicalName(artistName);
-
                     this.state.albums.forEach(album => {
                         album.pivotalTracks?.forEach(track => {
                             if (!track.lineup) return;
-                            const lineupParts = track.lineup.split(/,(?![^()]*\))/);
-                            const trackArtists = lineupParts.map(part => {
+                            const trackArtists = track.lineup.split(/,(?![^()]*\))/).map(part => {
                                 const match = part.trim().match(/(.+?)\s\((.+)\)/);
                                 return match ? this.methods.getCanonicalName(match[1].trim()) : null;
                             }).filter(Boolean);
-
                             if (trackArtists.includes(canonicalArtistName)) {
-                                trackArtists.forEach(cName => {
-                                    if (cName !== canonicalArtistName) collaborations.set(cName, (collaborations.get(cName) || 0) + 1);
-                                });
+                                trackArtists.forEach(cName => { if (cName !== canonicalArtistName) collaborations.set(cName, (collaborations.get(cName) || 0) + 1); });
                             }
                         });
                     });
@@ -1548,13 +1333,9 @@
                     const { timelineContainer, customScrollbar, customScrollbarThumb } = this.elements;
                     if (!timelineContainer || !customScrollbar || !customScrollbarThumb) return;
                     const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
-                    if (scrollableWidth <= 0) {
-                        customScrollbar.style.display = 'none';
-                        return;
-                    }
-                    customScrollbar.style.display = 'block';
-                    const scrollPercentage = timelineContainer.scrollLeft / scrollableWidth;
-                    const thumbWidthPercentage = timelineContainer.clientWidth / timelineContainer.scrollWidth;
+                    customScrollbar.style.display = scrollableWidth <= 0 ? 'none' : 'block';
+                    const scrollPercentage = scrollableWidth > 0 ? timelineContainer.scrollLeft / scrollableWidth : 0;
+                    const thumbWidthPercentage = timelineContainer.scrollWidth > 0 ? timelineContainer.clientWidth / timelineContainer.scrollWidth : 1;
                     customScrollbarThumb.style.width = `${thumbWidthPercentage * 100}%`;
                     customScrollbarThumb.style.left = `${scrollPercentage * (100 - thumbWidthPercentage * 100)}%`;
                 },
@@ -1562,28 +1343,17 @@
                 setupCustomScrollbarInteraction() {
                     const { customScrollbar, customScrollbarThumb, timelineContainer } = this.elements;
                     if (!customScrollbar || !customScrollbarThumb || !timelineContainer) return;
-
                     let isDraggingThumb = false, thumbStartX, thumbStartScrollLeft;
-                    customScrollbarThumb.addEventListener('mousedown', (e) => {
-                        isDraggingThumb = true;
-                        thumbStartX = e.clientX;
-                        thumbStartScrollLeft = timelineContainer.scrollLeft;
-                        document.body.style.cursor = 'grabbing';
-                        document.body.style.userSelect = 'none';
-                    });
+                    customScrollbarThumb.addEventListener('mousedown', (e) => { isDraggingThumb = true; thumbStartX = e.clientX; thumbStartScrollLeft = timelineContainer.scrollLeft; document.body.style.cursor = 'grabbing'; document.body.style.userSelect = 'none'; });
                     document.addEventListener('mousemove', (e) => {
                         if (!isDraggingThumb) return;
                         e.preventDefault();
                         const dx = e.clientX - thumbStartX;
                         const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
                         const scrollbarWidth = customScrollbar.clientWidth - customScrollbarThumb.clientWidth;
-                        timelineContainer.scrollLeft = thumbStartScrollLeft + (dx / scrollbarWidth) * scrollableWidth;
+                        if (scrollbarWidth > 0) timelineContainer.scrollLeft = thumbStartScrollLeft + (dx / scrollbarWidth) * scrollableWidth;
                     });
-                    document.addEventListener('mouseup', () => {
-                        isDraggingThumb = false;
-                        document.body.style.cursor = '';
-                        document.body.style.userSelect = '';
-                    });
+                    document.addEventListener('mouseup', () => { isDraggingThumb = false; document.body.style.cursor = ''; document.body.style.userSelect = ''; });
                     customScrollbar.addEventListener('click', (e) => {
                         if (e.target === customScrollbar) {
                             const scrollbarRect = customScrollbar.getBoundingClientRect();
@@ -1596,10 +1366,8 @@
                 renderScrollbarMarkers() {
                     const { timelineContainer, timelineWrapper, customScrollbarMarkers } = this.elements;
                     if (!timelineContainer || !timelineWrapper || !customScrollbarMarkers) return;
-                    
                     customScrollbarMarkers.innerHTML = '';
                     if (timelineWrapper.scrollWidth <= timelineContainer.clientWidth) return;
-
                     const years = [...new Set(this.state.albums.map(album => album.year))].sort();
                     years.forEach(year => {
                         const yearSection = document.getElementById(`year-${year}`);
@@ -1618,18 +1386,13 @@
                 setupOnThisDayFeature() {
                     const { onThisDayContainer } = this.elements;
                     if (!onThisDayContainer) return;
-
                     const today = new Date();
                     const currentMonth = today.toLocaleString('en-US', { month: 'long' });
                     const currentDay = today.getDate();
-
-                    const matchingTracks = this.state.albums.flatMap(album => 
-                        (album.pivotalTracks || []).filter(track => {
-                            const dateParts = track.recordingDate.replace(/,/g, '').split(' ');
-                            return dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay;
-                        }).map(track => ({ ...track, parentAlbum: album }))
-                    );
-
+                    const matchingTracks = this.state.albums.flatMap(album => (album.pivotalTracks || []).filter(track => {
+                        const dateParts = track.recordingDate.replace(/,/g, '').split(' ');
+                        return dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay;
+                    }).map(track => ({ ...track, parentAlbum: album })));
                     if (matchingTracks.length > 0) {
                         const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
                         const album = featured.parentAlbum;
@@ -1640,14 +1403,14 @@
                                     <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-stone-900 rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
                                     <div>
                                         <p class="text-sm text-stone-600">On <strong>${currentMonth} ${currentDay}, ${album.year}</strong>, the track...</p>
-                                        <p class="text-lg font-bold text-stone-900">"${featured.title}"</p>
+                                        <p class="text-lg font-bold">"${featured.title}"</p>
                                         <p class="text-sm text-stone-600">from <strong>${album.albumTitle}</strong> by <strong>${album.artist}</strong> was recorded.</p>
                                     </div>
                                 </div>
                             </div>`;
                         onThisDayContainer.addEventListener('click', () => {
                             const albumIndex = this.state.visibleAlbums.findIndex(a => a.albumTitle === album.albumTitle);
-                            this.methods.openAlbumModal(album, albumIndex);
+                            this.methods.openAlbumModal(album, albumIndex > -1 ? albumIndex : this.state.albums.indexOf(album));
                         });
                     } else {
                         onThisDayContainer.innerHTML = `
