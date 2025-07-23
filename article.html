@@ -89,6 +89,15 @@
             margin-top: 2.5rem;
             margin-bottom: 1rem;
         }
+        /* Style for images embedded in the article body */
+        .article-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin: 2.5rem auto;
+            display: block;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
         .star-filled {
             color: var(--yellow-accent);
         }
@@ -153,6 +162,10 @@
                         <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
                         <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         <a href="/blog" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600 flex items-center gap-2">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                            <span>@controlledjazz</span>
+                        </a>
                     </div>
                     <!-- Hamburger Menu Button -->
                     <div class="md:hidden">
@@ -194,6 +207,10 @@
                 <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
                 <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+                <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    <span>@controlledjazz</span>
+                </a>
             </nav>
         </div>
     </div>
@@ -264,12 +281,18 @@
                   measurementId: "G-ETT07JGVSB"
                 };
 
-                const app = initializeApp(firebaseConfig);
+                const app = window._firebaseApp || initializeApp(firebaseConfig);
+                if (!window._firebaseApp) {
+                    window._firebaseApp = app;
+                }
+                
                 const db = getFirestore(app);
                 const auth = getAuth(app);
 
                 try {
-                    await signInAnonymously(auth);
+                    if (!auth.currentUser) {
+                        await signInAnonymously(auth);
+                    }
                     
                     // Query for the article with the matching slug
                     const articlesRef = collection(db, "articles");
@@ -313,7 +336,6 @@
 
                 if (article.type === 'review') {
                     let coverImage = albumData?.cover || article.imageUrl || 'https://placehold.co/600x600/e7e5e4/1c1917?text=No+Image';
-                    // *** FIX: Prepend slash to relative image paths to make them absolute ***
                     if (coverImage && !coverImage.startsWith('http') && !coverImage.startsWith('/')) {
                         coverImage = '/' + coverImage;
                     }
@@ -381,8 +403,7 @@
                         </div>
                     `;
                 } else {
-                    // Single-column layout for news
-                    const articleImageHtml = article.imageUrl ? `<img src="${article.imageUrl}" alt="${article.title}" class="w-full max-w-3xl mx-auto h-auto object-cover rounded-lg shadow-md mb-12" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1c1917/f5f5f4?text=News';">` : '';
+                    // UPDATED: Single-column layout for news now renders body directly, no separate image
                     contentHtml = `
                         <div class="max-w-4xl mx-auto">
                             <header class="text-center mb-12">
@@ -391,7 +412,6 @@
                                     <span>By ${article.author || 'Staff'}</span> | <span>Published on ${article.publishDate}</span>
                                 </div>
                             </header>
-                            ${articleImageHtml}
                             <article class="article-body mx-auto max-w-2xl mt-8">
                                 ${article.body}
                             </article>
