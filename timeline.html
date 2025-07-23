@@ -10,7 +10,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Removed 'Lora' font as it was not used in the CSS, reducing the initial load size. -->
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
     <!-- 
@@ -588,6 +587,7 @@
       2. Simplified DOM element selection and manipulation.
       3. Created helper functions to reduce code repetition (e.g., modal handling).
       4. Streamlined logic in data processing and rendering functions.
+      5. FIXED: Restored full implementations for all JS methods to prevent errors.
     -->
     <script>
         const JazzApp = {
@@ -645,11 +645,13 @@
                     'genre-filter-list', 'era-glossary-dropdown-btn'
                 ];
                 ids.forEach(id => {
-                    this.elements[id.replace(/-(\w)/g, (match, letter) => letter.toUpperCase())] = document.getElementById(id);
+                    const camelCaseId = id.replace(/-(\w)/g, (_, letter) => letter.toUpperCase());
+                    this.elements[camelCaseId] = document.getElementById(id);
                 });
                 // Add elements not selected by ID
                 this.elements.sections = document.querySelectorAll('main section[id]');
                 this.elements.navLinks = document.querySelectorAll('header nav a');
+                this.elements.mobileNavLinks = document.querySelectorAll('#mobile-nav-links a');
             },
 
             async fetchData() {
@@ -671,19 +673,21 @@
 
                 } catch (error) {
                     console.error('Error fetching data:', error);
-                    this.elements.pageContent.innerHTML = `<div class="text-center p-8">
-                        <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
-                        <p class="text-stone-600 mt-2">Could not fetch required data. Please check console for details.</p>
-                        <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
-                    </div>`;
+                    if (this.elements.pageContent) {
+                        this.elements.pageContent.innerHTML = `<div class="text-center p-8">
+                            <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
+                            <p class="text-stone-600 mt-2">Could not fetch required data. Please check console for details.</p>
+                            <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
+                        </div>`;
+                    }
                 } finally {
                     this.showPage();
                 }
             },
             
             showPage() {
-                this.elements.loader.style.display = 'none';
-                this.elements.pageContent.classList.remove('hidden');
+                if (this.elements.loader) this.elements.loader.style.display = 'none';
+                if (this.elements.pageContent) this.elements.pageContent.classList.remove('hidden');
             },
 
             initializeAppUI() {
@@ -702,8 +706,7 @@
                 this.methods.renderScrollbarMarkers();
                 this.methods.setupOnThisDayFeature();
                 this.methods.handlePageLoadAnchorLink();
-                // Ensure scroll position is at the start on load
-                setTimeout(() => { if (this.elements.timelineContainer) this.elements.timelineContainer.scrollLeft = 0; }, 0);
+                setTimeout(() => { if (this.elements.timelineContainer) this.elements.timelineContainer.scrollLeft = 0; }, 50);
             },
 
             methods: {
@@ -792,6 +795,7 @@
                 // --- UI RENDERING ---
                 renderTimeline() {
                     const { timelineWrapper } = this.elements;
+                    if (!timelineWrapper) return;
                     timelineWrapper.innerHTML = '<div class="flex-shrink-0 w-px"></div>'; // Start with a spacer
                     
                     const erasFragment = document.createDocumentFragment();
@@ -824,7 +828,7 @@
 
                 createAlbumCard(album) {
                     const card = document.createElement('div');
-                    card.className = 'timeline-album-card fade-in-element w-[200px] flex-shrink-0 bg-stone-100 rounded border-2 border-stone-900 overflow-hidden cursor-pointer transition-transform transition-shadow duration-200 ease-in-out';
+                    card.className = 'timeline-album-card fade-in-element w-[200px] flex-shrink-0 bg-stone-100 rounded border-2 border-stone-900 overflow-hidden cursor-pointer transition-all duration-200 ease-in-out';
                     card.dataset.albumTitle = album.albumTitle;
                     card.dataset.artist = album.artist;
                     card.dataset.genres = album.genres.join(', ');
@@ -854,6 +858,7 @@
 
                 buildGenreMatrix() {
                     const { styleMatrixTable } = this.elements;
+                    if (!styleMatrixTable) return;
                     const { styleMatrix } = this.state;
                     if (!styleMatrix?.features || !styleMatrix?.genres) {
                         styleMatrixTable.parentElement.innerHTML = '<p class="text-center p-4 text-stone-500">No genre data available.</p>';
@@ -883,6 +888,8 @@
                 // --- FILTERS & INTERACTIONS ---
                 setupFilters() {
                     const { genreFilterContainer, genreFilterList } = this.elements;
+                    if (!genreFilterContainer || !genreFilterList) return;
+
                     const allGenresInDB = new Set(this.state.albums.flatMap(album => album.genres));
                     const excludedGenres = ['Afro-Cuban Jazz', 'Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock', 'ECM Style Jazz', 'Neo-Bop', 'Cape Jazz', 'Vocal Jazz', 'Swing', 'Orchestral Jazz'];
                     const filterableGenres = Array.from(allGenresInDB).filter(genre => !excludedGenres.includes(genre)).sort();
@@ -906,12 +913,13 @@
                 
                 handleGenreFilterChange(e) {
                     const { genreFilterContainer } = this.elements;
+                    if (!genreFilterContainer) return;
                     const allCheckbox = genreFilterContainer.querySelector('#all-genres-checkbox');
                     const genreCheckboxes = genreFilterContainer.querySelectorAll('input[data-genre]:not(#all-genres-checkbox)');
                     
                     if (e.target === allCheckbox) {
                         genreCheckboxes.forEach(cb => { cb.checked = allCheckbox.checked; });
-                    } else {
+                    } else if (allCheckbox) {
                         allCheckbox.checked = Array.from(genreCheckboxes).every(cb => cb.checked);
                     }
                     this.methods.filterTimeline();
@@ -922,17 +930,19 @@
                     const link = e.target.closest('[data-genre]');
                     if (link) {
                         const selectedGenre = link.dataset.genre;
-                        const allCheckboxes = this.elements.genreFilterContainer.querySelectorAll('input[type="checkbox"]');
-                        allCheckboxes.forEach(cb => {
-                            cb.checked = (selectedGenre === 'all' || cb.value === selectedGenre || cb.id === 'all-genres-checkbox' && selectedGenre === 'all');
-                        });
+                        const allCheckboxes = this.elements.genreFilterContainer?.querySelectorAll('input[type="checkbox"]');
+                        if (allCheckboxes) {
+                            allCheckboxes.forEach(cb => {
+                                cb.checked = (selectedGenre === 'all' || cb.value === selectedGenre || (cb.id === 'all-genres-checkbox' && selectedGenre === 'all'));
+                            });
+                        }
                         this.methods.filterTimeline();
-                        this.elements.genreFilterList.classList.add('hidden');
+                        this.elements.genreFilterList?.classList.add('hidden');
                     }
                 },
                 
                 filterTimeline() {
-                    const selectedGenres = Array.from(this.elements.genreFilterContainer.querySelectorAll('input[data-genre]:checked')).map(input => input.value);
+                    const selectedGenres = Array.from(this.elements.genreFilterContainer?.querySelectorAll('input[data-genre]:checked') ?? []).map(input => input.value);
                     this.state.visibleAlbums = this.state.albums.filter(album => album.genres.some(genre => selectedGenres.includes(genre)));
                     
                     document.querySelectorAll('.timeline-album-card').forEach(card => {
@@ -945,7 +955,6 @@
                         eraSection.style.display = eraSection.querySelector('.timeline-year-section[style*="display: flex"]') ? 'flex' : 'none';
                     });
                     
-                    // Defer canvas resize and marker rendering to ensure layout is updated
                     setTimeout(() => {
                         this.methods.resizeCanvas();
                         this.methods.renderScrollbarMarkers();
@@ -955,13 +964,16 @@
 
                 // --- MODALS ---
                 setupModals() {
-                    this.elements.albumModal.querySelector('#close-modal').addEventListener('click', () => this.methods.closeModal('albumModal'));
-                    this.elements.artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeModal('artistModal'));
-                    this.elements.genreModal.querySelector('#close-genre-modal').addEventListener('click', () => this.methods.closeModal('genreModal'));
+                    this.elements.albumModal?.querySelector('#close-modal')?.addEventListener('click', () => this.methods.closeModal('albumModal'));
+                    this.elements.artistModal?.querySelector('#close-artist-modal')?.addEventListener('click', () => this.methods.closeModal('artistModal'));
+                    this.elements.genreModal?.querySelector('#close-genre-modal')?.addEventListener('click', () => this.methods.closeModal('genreModal'));
                     
                     ['albumModal', 'artistModal', 'genreModal'].forEach(modalId => {
-                        this.elements[modalId].addEventListener('click', e => {
-                            if (e.target.id === modalId) this.methods.closeModal(modalId);
+                        this.elements[modalId]?.addEventListener('click', e => {
+                            // Close modal if the background is clicked, not the content
+                            if (e.target === this.elements[modalId]) {
+                                this.methods.closeModal(modalId);
+                            }
                         });
                     });
                     
@@ -973,8 +985,8 @@
                         }
                     });
 
-                    document.getElementById('prev-album-btn').addEventListener('click', () => this.methods.navigateAlbum(-1));
-                    document.getElementById('next-album-btn').addEventListener('click', () => this.methods.navigateAlbum(1));
+                    document.getElementById('prev-album-btn')?.addEventListener('click', () => this.methods.navigateAlbum(-1));
+                    document.getElementById('next-album-btn')?.addEventListener('click', () => this.methods.navigateAlbum(1));
                     
                     document.body.addEventListener('click', e => {
                         const link = e.target.closest('.clickable-link');
@@ -1024,10 +1036,15 @@
                     
                     this.state.currentVisibleAlbumIndex = index;
                     const { albumModal } = this.elements;
+                    if (!albumModal) return;
                     
                     document.querySelector('.timeline-album-card.clicked')?.classList.remove('clicked');
-                    const cardSelector = `.timeline-album-card[data-album-title="${album.albumTitle.replace(/"/g, '\\"')}"][data-artist="${album.artist.replace(/"/g, '\\"')}"]`;
-                    document.querySelector(cardSelector)?.classList.add('clicked');
+                    try {
+                        const cardSelector = `.timeline-album-card[data-album-title="${album.albumTitle.replace(/"/g, '\\"')}"][data-artist="${album.artist.replace(/"/g, '\\"')}"]`;
+                        document.querySelector(cardSelector)?.classList.add('clicked');
+                    } catch (e) {
+                        console.error("Could not find album card to highlight:", e);
+                    }
                     
                     albumModal.querySelector('#modal-title').textContent = album.albumTitle;
                     const artistBtn = albumModal.querySelector('#modal-artist');
@@ -1095,6 +1112,7 @@
                     this.closeModal('genreModal');
                     
                     const { artistModal } = this.elements;
+                    if (!artistModal) return;
                     artistModal.querySelector('#artist-modal-title').textContent = artist.name;
                     const body = artistModal.querySelector('#artist-modal-body');
 
@@ -1129,7 +1147,7 @@
                                 ${artist.profile?.knownFor ? `<div class="mt-6"><h4 class="text-xl text-stone-900 mb-2 transform -rotate-1 font-bebas">Known For...</h4><div class="known-for-box inline-block p-2 px-4 border-2 border-stone-900 font-semibold text-sm">${artist.profile.knownFor}</div></div>` : ''}
                             </div>
                             <div class="w-full sm:w-2/3">
-                                ${artist.profile?.profile !== 'No profile available.' ? `<h4 class="text-2xl text-stone-900 mb-2 font-bebas">Profile</h4><p class="text-base text-stone-700 leading-relaxed mb-4">${artist.profile.profile}</p>` : ''}
+                                ${artist.profile?.profile && artist.profile.profile !== 'No profile available.' ? `<h4 class="text-2xl text-stone-900 mb-2 font-bebas">Profile</h4><p class="text-base text-stone-700 leading-relaxed mb-4">${artist.profile.profile}</p>` : ''}
                                 <h4 class="text-2xl text-stone-900 mb-3 font-bebas">Key Album Appearances</h4>
                                 <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml}</ul>
                             </div>
@@ -1145,6 +1163,7 @@
                     this.closeModal('artistModal');
                     
                     const { genreModal } = this.elements;
+                    if (!genreModal) return;
                     const genreData = this.state.styleMatrix.genres?.[genreName];
                     if (!genreData) return;
 
@@ -1179,21 +1198,153 @@
                     }
                 },
                 
-                // --- EVENT LISTENERS & HELPERS ---
+                // --- FULLY IMPLEMENTED HELPER METHODS ---
+                getCanonicalName: (name) => !name ? '' : name.trim().replace('Roland Kirk', 'Rahsaan Roland Kirk').replace('Anthony Williams', 'Tony Williams'),
+                slugify: (name) => !name ? '' : name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
+                normalizeGenreName: (genreName) => genreName === "Avant-Garde Jazz" ? "Avant-Garde" : genreName,
+                
+                buildGenreColorMap() {
+                    this.state.fullGenreColorMap = {};
+                    if (!this.state.styleMatrix.genres) return;
+                    Object.entries(this.state.styleMatrix.genres).forEach(([name, data]) => {
+                        this.state.fullGenreColorMap[name] = data.color;
+                    });
+                    this.state.fullGenreColorMap['Free Jazz'] = '#fca5a5';
+                    this.state.fullGenreColorMap['Avant-Garde Jazz'] = '#fecdd3';
+                    this.state.fullGenreColorMap['Jazz Fusion'] = '#a5f3fc';
+                },
+
+                renderEraGlossary() {
+                    const { eraGlossaryList, eraGlossaryContainerWeb } = this.elements;
+                    if (!eraGlossaryList || !eraGlossaryContainerWeb) return;
+                    
+                    eraGlossaryList.innerHTML = this.state.eras.map(era => `
+                        <a href="#" class="era-glossary-link block p-3 transition-all duration-200" data-start-year="${era.startYear}">
+                            <span class="font-bold">${era.title}</span>
+                            <span class="era-year block font-bebas text-sm">(${era.startYear} - ${era.endYear})</span>
+                        </a>
+                    `).join('');
+
+                    const webButtonsHtml = this.state.eras.map(era => `
+                        <button class="era-button font-bebas text-sm p-2 border-2 border-stone-900 rounded transition-all duration-200 cursor-pointer text-stone-900 font-semibold w-[180px] h-[50px] flex items-center justify-center text-center hover:brightness-95 hover:-translate-y-0.5" data-start-year="${era.startYear}" style="background-color: ${era.color};">
+                            ${era.title}
+                        </button>
+                    `).join('');
+                    eraGlossaryContainerWeb.innerHTML = `
+                        <div class="flex flex-col items-center w-full">
+                            <span class="font-bold text-sm text-stone-600 mb-2">JUMP TO ERA:</span>
+                            <div class="grid grid-cols-4 gap-x-3 gap-y-2" style="width: 740px;">
+                                ${webButtonsHtml}
+                            </div>
+                        </div>
+                    `;
+                },
+
+                setupArtistSlider(startPage = 0) {
+                    const { instrumentFilter, artistSliderTrack, artistPaginationControls, artistPageIndicator } = this.elements;
+                    if (!instrumentFilter || !artistSliderTrack || !artistPaginationControls || !artistPageIndicator) return;
+
+                    const selectedInstrument = instrumentFilter.value;
+                    const filteredArtists = (selectedInstrument === 'all' ? [...this.state.artistsData] : this.state.artistsData.filter(artist => artist.instruments.includes(selectedInstrument)))
+                        .sort((a, b) => (a.tier - b.tier) || a.name.localeCompare(b.name));
+
+                    artistSliderTrack.innerHTML = '';
+                    const pageSize = window.innerWidth >= 768 ? 12 : 6;
+                    this.state.totalArtistPages = Math.ceil(filteredArtists.length / pageSize);
+                    artistPaginationControls.classList.toggle('hidden', this.state.totalArtistPages <= 1);
+
+                    for (let i = 0; i < this.state.totalArtistPages; i++) {
+                        const pageDiv = document.createElement('div');
+                        pageDiv.className = 'artist-slider-page w-full flex-shrink-0 p-2 grid grid-cols-3 md:grid-cols-6 gap-6';
+                        const pageArtists = filteredArtists.slice(i * pageSize, (i + 1) * pageSize);
+                        pageArtists.forEach(artist => {
+                            const card = document.createElement('div');
+                            card.className = 'artist-card transition-transform transition-shadow duration-200 ease-in-out cursor-pointer border-2 border-stone-900 rounded overflow-hidden';
+                            if (artist.tier === 1) card.classList.add('bandleader');
+                            if (artist.tier === 2) card.classList.add('influential-sideman');
+                            card.dataset.artistName = artist.name;
+                            card.innerHTML = `
+                                <div class="h-56 bg-stone-900">
+                                    <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                </div>
+                                <div class="p-3">
+                                    <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
+                                    ${artist.profile?.bornIn ? `<p class="text-xs text-stone-600 truncate">${artist.profile.bornIn}</p>` : ''}
+                                </div>`;
+                            pageDiv.appendChild(card);
+                        });
+                        artistSliderTrack.appendChild(pageDiv);
+                    }
+                    this.methods.goToArtistPage(startPage);
+                },
+
+                goToArtistPage(pageIndex) {
+                    const { artistSliderTrack, artistPrevBtn, artistNextBtn, artistPageIndicator } = this.elements;
+                    if (!artistSliderTrack || !artistPrevBtn || !artistNextBtn || !artistPageIndicator) return;
+                    this.state.currentArtistPage = Math.max(0, Math.min(pageIndex, this.state.totalArtistPages - 1));
+                    artistSliderTrack.style.transform = `translateX(-${this.state.currentArtistPage * 100}%)`;
+                    artistPrevBtn.disabled = this.state.currentArtistPage === 0;
+                    artistNextBtn.disabled = this.state.currentArtistPage >= this.state.totalArtistPages - 1;
+                    artistPageIndicator.textContent = this.state.totalArtistPages > 0 ? `${this.state.currentArtistPage + 1} / ${this.state.totalArtistPages}` : '';
+                },
+
+                setupMobileMenu() {
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton, mobileNavLinks } = this.elements;
+                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
+                    const openMenu = () => {
+                        mobileMenuOverlay.classList.remove('hidden');
+                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                    };
+                    const closeMenu = () => {
+                        mobileMenuPanel.style.transform = 'translateX(100%)';
+                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                    };
+                    mobileMenuButton.addEventListener('click', openMenu);
+                    mobileMenuCloseButton.addEventListener('click', closeMenu);
+                    mobileMenuOverlay.querySelector('#mobile-menu-bg')?.addEventListener('click', closeMenu);
+                    mobileNavLinks.forEach(link => link.addEventListener('click', closeMenu));
+                },
+
+                setupScrollObservers() {
+                    const fadeElements = document.querySelectorAll('.fade-in-element');
+                    const scrollObserver = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) entry.target.classList.add('is-visible');
+                        });
+                    }, { threshold: 0.1 });
+                    fadeElements.forEach(el => scrollObserver.observe(el));
+
+                    const observerOptions = { root: null, rootMargin: '0px 0px -50% 0px', threshold: 0 };
+                    const sectionObserver = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const id = entry.target.getAttribute('id');
+                                this.elements.navLinks.forEach(link => {
+                                    link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                                });
+                                this.elements.mobileNavLinks.forEach(link => {
+                                    link.classList.toggle('text-orange-500', link.getAttribute('href') === `#${id}`);
+                                });
+                            }
+                        });
+                    }, observerOptions);
+                    this.elements.sections.forEach(section => { if (section.id) sectionObserver.observe(section); });
+                },
+
                 setupGeneralEventListeners() {
-                    this.elements.instrumentFilter.addEventListener('change', () => {
+                    this.elements.instrumentFilter?.addEventListener('change', () => {
                         this.state.currentArtistPage = 0;
                         this.methods.setupArtistSlider();
                     });
-                    this.elements.artistSliderTrack.addEventListener('click', e => {
+                    this.elements.artistSliderTrack?.addEventListener('click', e => {
                         const card = e.target.closest('.artist-card[data-artist-name]');
                         if (card) {
                             const artist = this.state.artistsData.find(a => a.name === card.dataset.artistName);
                             if (artist) this.methods.openArtistModal(artist);
                         }
                     });
-                    this.elements.artistPrevBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage - 1));
-                    this.elements.artistNextBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage + 1));
+                    this.elements.artistPrevBtn?.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage - 1));
+                    this.elements.artistNextBtn?.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage + 1));
                     
                     let resizeTimeout;
                     window.addEventListener('resize', () => {
@@ -1206,7 +1357,7 @@
                         }, 200);
                     });
                     
-                    this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+                    if (this.elements.footerCopyright) this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
                     this.elements.scrollRightBtn?.classList.add('nudge-animation');
                     this.methods.setupDraggable(this.elements.timelineContainer);
                     this.methods.setupCustomScrollbarInteraction();
@@ -1221,15 +1372,11 @@
                         }
                     });
                 },
-
-                // Other helper methods would be here, simplified and combined where possible...
-                // For brevity, including a few key ones that were refactored.
-                getCanonicalName: (name) => !name ? '' : name.trim().replace('Roland Kirk', 'Rahsaan Roland Kirk').replace('Anthony Williams', 'Tony Williams'),
-                slugify: (name) => !name ? '' : name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
-                normalizeGenreName: (genreName) => genreName === "Avant-Garde Jazz" ? "Avant-Garde" : genreName,
                 
                 setupTimelineInteraction() {
                     const { timelineContainer, timelineWrapper, scrollLeftBtn, scrollRightBtn, stickyYearDisplay, stickyEraTitle } = this.elements;
+                    if (!timelineContainer || !timelineWrapper || !scrollLeftBtn || !scrollRightBtn) return;
+
                     scrollLeftBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: -400, behavior: 'smooth' }));
                     scrollRightBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: 400, behavior: 'smooth' }));
 
@@ -1280,8 +1427,8 @@
                         if (currentYear && currentYear !== this.state.lastKnownYear) {
                             this.state.lastKnownYear = currentYear;
                             const currentEra = this.state.eras.find(era => currentYear >= era.startYear && currentYear <= era.endYear);
-                            stickyYearDisplay.textContent = currentYear;
-                            if (currentEra) stickyEraTitle.textContent = `— ${currentEra.title}`;
+                            if(stickyYearDisplay) stickyYearDisplay.textContent = currentYear;
+                            if(stickyEraTitle && currentEra) stickyEraTitle.textContent = `— ${currentEra.title}`;
                         }
                         this.methods.updateCustomScrollbar();
                     }, { passive: true });
@@ -1303,42 +1450,215 @@
                         }
                     });
                 },
+
+                handlePageLoadAnchorLink() {
+                    if (window.location.hash) {
+                        setTimeout(() => {
+                            const targetElement = document.querySelector(window.location.hash);
+                            if (targetElement) {
+                                const headerOffset = 96;
+                                const elementPosition = targetElement.getBoundingClientRect().top;
+                                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                            }
+                        }, 150);
+                    }
+                },
+
+                resizeCanvas() {
+                    const { timelineCanvas, timelineWrapper } = this.elements;
+                    if (timelineCanvas && timelineWrapper) {
+                        timelineCanvas.width = timelineWrapper.scrollWidth;
+                        timelineCanvas.height = timelineWrapper.offsetHeight;
+                    }
+                },
+
+                setupDraggable(container) {
+                    if (!container) return;
+                    let isDown = false, startX, scrollLeft;
+                    container.addEventListener('mousedown', (e) => { isDown = true; container.style.cursor = 'grabbing'; startX = e.pageX - container.offsetLeft; scrollLeft = container.scrollLeft; });
+                    container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
+                    container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
+                    container.addEventListener('mousemove', (e) => {
+                        if(!isDown) return;
+                        e.preventDefault();
+                        const x = e.pageX - container.offsetLeft;
+                        const walk = (x - startX) * 2;
+                        container.scrollLeft = scrollLeft - walk;
+                    });
+                },
+
+                setupGlossaryInteraction() {
+                    const { timelineContainer, eraGlossaryList, eraGlossaryContainerWeb, genreFilterDropdownBtn, genreFilterList, eraGlossaryDropdownBtn } = this.elements;
+                    const handleEraClick = (year) => {
+                        const yearSection = document.querySelector(`#year-${year}`);
+                        if (yearSection) {
+                            timelineContainer.scrollTo({ left: yearSection.offsetLeft - 30, behavior: 'smooth' });
+                        }
+                    };
+                    eraGlossaryDropdownBtn?.addEventListener('click', (e) => { e.stopPropagation(); eraGlossaryList.classList.toggle('hidden'); });
+                    genreFilterDropdownBtn?.addEventListener('click', (e) => { e.stopPropagation(); genreFilterList.classList.toggle('hidden'); });
+                    eraGlossaryList?.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const link = e.target.closest('.era-glossary-link');
+                        if (link?.dataset.startYear) {
+                            handleEraClick(link.dataset.startYear);
+                            eraGlossaryList.classList.add('hidden');
+                        }
+                    });
+                    eraGlossaryContainerWeb?.addEventListener('click', (e) => {
+                        const button = e.target.closest('.era-button');
+                        if (button?.dataset.startYear) handleEraClick(button.dataset.startYear);
+                    });
+                },
+
+                populateInstrumentFilter() {
+                    const { instrumentFilter } = this.elements;
+                    if (!instrumentFilter) return;
+                    const relevantInstruments = new Set(['alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'tuba', 'vibraphone', 'congas']);
+                    const instrumentsInDataset = new Set();
+                    this.state.artistsData.forEach(artist => artist.instruments.forEach(inst => { if (relevantInstruments.has(inst)) instrumentsInDataset.add(inst); }));
+                    instrumentFilter.innerHTML = '<option value="all">All Instruments</option>' + Array.from(instrumentsInDataset).sort().map(inst => `<option value="${inst}">${inst.charAt(0).toUpperCase() + inst.slice(1)}</option>`).join('');
+                },
+
+                getTopCollaborators(artistName) {
+                    const collaborations = new Map();
+                    const canonicalArtistName = this.methods.getCanonicalName(artistName);
+
+                    this.state.albums.forEach(album => {
+                        album.pivotalTracks?.forEach(track => {
+                            if (!track.lineup) return;
+                            const lineupParts = track.lineup.split(/,(?![^()]*\))/);
+                            const trackArtists = lineupParts.map(part => {
+                                const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                                return match ? this.methods.getCanonicalName(match[1].trim()) : null;
+                            }).filter(Boolean);
+
+                            if (trackArtists.includes(canonicalArtistName)) {
+                                trackArtists.forEach(cName => {
+                                    if (cName !== canonicalArtistName) collaborations.set(cName, (collaborations.get(cName) || 0) + 1);
+                                });
+                            }
+                        });
+                    });
+                    return Array.from(collaborations.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3).map(e => e[0]);
+                },
+
+                updateCustomScrollbar() {
+                    const { timelineContainer, customScrollbar, customScrollbarThumb } = this.elements;
+                    if (!timelineContainer || !customScrollbar || !customScrollbarThumb) return;
+                    const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
+                    if (scrollableWidth <= 0) {
+                        customScrollbar.style.display = 'none';
+                        return;
+                    }
+                    customScrollbar.style.display = 'block';
+                    const scrollPercentage = timelineContainer.scrollLeft / scrollableWidth;
+                    const thumbWidthPercentage = timelineContainer.clientWidth / timelineContainer.scrollWidth;
+                    customScrollbarThumb.style.width = `${thumbWidthPercentage * 100}%`;
+                    customScrollbarThumb.style.left = `${scrollPercentage * (100 - thumbWidthPercentage * 100)}%`;
+                },
                 
-                // ... other methods from the original script would follow, similarly refactored ...
-                // The full script is very long, so this shows the pattern of refactoring.
-                // Key unshown methods like setupArtistSlider, setupOnThisDayFeature, etc., would be refactored
-                // using the same principles of conciseness and clarity.
+                setupCustomScrollbarInteraction() {
+                    const { customScrollbar, customScrollbarThumb, timelineContainer } = this.elements;
+                    if (!customScrollbar || !customScrollbarThumb || !timelineContainer) return;
+
+                    let isDraggingThumb = false, thumbStartX, thumbStartScrollLeft;
+                    customScrollbarThumb.addEventListener('mousedown', (e) => {
+                        isDraggingThumb = true;
+                        thumbStartX = e.clientX;
+                        thumbStartScrollLeft = timelineContainer.scrollLeft;
+                        document.body.style.cursor = 'grabbing';
+                        document.body.style.userSelect = 'none';
+                    });
+                    document.addEventListener('mousemove', (e) => {
+                        if (!isDraggingThumb) return;
+                        e.preventDefault();
+                        const dx = e.clientX - thumbStartX;
+                        const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
+                        const scrollbarWidth = customScrollbar.clientWidth - customScrollbarThumb.clientWidth;
+                        timelineContainer.scrollLeft = thumbStartScrollLeft + (dx / scrollbarWidth) * scrollableWidth;
+                    });
+                    document.addEventListener('mouseup', () => {
+                        isDraggingThumb = false;
+                        document.body.style.cursor = '';
+                        document.body.style.userSelect = '';
+                    });
+                    customScrollbar.addEventListener('click', (e) => {
+                        if (e.target === customScrollbar) {
+                            const scrollbarRect = customScrollbar.getBoundingClientRect();
+                            const clickPosition = (e.clientX - scrollbarRect.left) / scrollbarRect.width;
+                            timelineContainer.scrollTo({ left: clickPosition * timelineContainer.scrollWidth, behavior: 'smooth' });
+                        }
+                    });
+                },
+
+                renderScrollbarMarkers() {
+                    const { timelineContainer, timelineWrapper, customScrollbarMarkers } = this.elements;
+                    if (!timelineContainer || !timelineWrapper || !customScrollbarMarkers) return;
+                    
+                    customScrollbarMarkers.innerHTML = '';
+                    if (timelineWrapper.scrollWidth <= timelineContainer.clientWidth) return;
+
+                    const years = [...new Set(this.state.albums.map(album => album.year))].sort();
+                    years.forEach(year => {
+                        const yearSection = document.getElementById(`year-${year}`);
+                        if (yearSection && yearSection.style.display !== 'none') {
+                            const position = yearSection.offsetLeft + (yearSection.offsetWidth / 2);
+                            const percentage = (position / timelineWrapper.scrollWidth) * 100;
+                            const marker = document.createElement('div');
+                            marker.className = 'scrollbar-marker';
+                            marker.style.left = `${percentage}%`;
+                            marker.dataset.year = `'${String(year).slice(2)}`;
+                            customScrollbarMarkers.appendChild(marker);
+                        }
+                    });
+                },
+
+                setupOnThisDayFeature() {
+                    const { onThisDayContainer } = this.elements;
+                    if (!onThisDayContainer) return;
+
+                    const today = new Date();
+                    const currentMonth = today.toLocaleString('en-US', { month: 'long' });
+                    const currentDay = today.getDate();
+
+                    const matchingTracks = this.state.albums.flatMap(album => 
+                        (album.pivotalTracks || []).filter(track => {
+                            const dateParts = track.recordingDate.replace(/,/g, '').split(' ');
+                            return dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay;
+                        }).map(track => ({ ...track, parentAlbum: album }))
+                    );
+
+                    if (matchingTracks.length > 0) {
+                        const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
+                        const album = featured.parentAlbum;
+                        onThisDayContainer.innerHTML = `
+                            <div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_#1c1917] cursor-pointer hover:shadow-[6px_6px_0px_#f97316] hover:-translate-y-1 transition-all">
+                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2 font-bebas">On This Day In Jazz...</h4>
+                                <div class="flex items-center gap-4 mt-2">
+                                    <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-stone-900 rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
+                                    <div>
+                                        <p class="text-sm text-stone-600">On <strong>${currentMonth} ${currentDay}, ${album.year}</strong>, the track...</p>
+                                        <p class="text-lg font-bold text-stone-900">"${featured.title}"</p>
+                                        <p class="text-sm text-stone-600">from <strong>${album.albumTitle}</strong> by <strong>${album.artist}</strong> was recorded.</p>
+                                    </div>
+                                </div>
+                            </div>`;
+                        onThisDayContainer.addEventListener('click', () => {
+                            const albumIndex = this.state.visibleAlbums.findIndex(a => a.albumTitle === album.albumTitle);
+                            this.methods.openAlbumModal(album, albumIndex);
+                        });
+                    } else {
+                        onThisDayContainer.innerHTML = `
+                             <div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_#1c1917]">
+                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2 font-bebas">On This Day In Jazz...</h4>
+                                <p class="text-center text-stone-600 mt-4">No landmark tracks were recorded on this day in our database. Check back tomorrow!</p>
+                            </div>`;
+                    }
+                },
             }
         };
-
-        // Dummy implementations for missing methods to show structure
-        JazzApp.methods.buildGenreColorMap = function() {
-            this.state.fullGenreColorMap = {};
-            if (!this.state.styleMatrix.genres) return;
-            Object.entries(this.state.styleMatrix.genres).forEach(([name, data]) => {
-                this.state.fullGenreColorMap[name] = data.color;
-            });
-            // Add fallbacks
-            this.state.fullGenreColorMap['Free Jazz'] = '#fca5a5';
-            this.state.fullGenreColorMap['Avant-Garde Jazz'] = '#fecdd3';
-            this.state.fullGenreColorMap['Jazz Fusion'] = '#a5f3fc';
-        };
-        JazzApp.methods.renderEraGlossary = function() { /* Logic to build era links */ };
-        JazzApp.methods.setupArtistSlider = function() { /* Logic to build artist slider */ };
-        JazzApp.methods.setupMobileMenu = function() { /* Logic for mobile menu */ };
-        JazzApp.methods.setupScrollObservers = function() { /* Logic for scroll animations */ };
-        JazzApp.methods.renderScrollbarMarkers = function() { /* Logic for scrollbar */ };
-        JazzApp.methods.updateCustomScrollbar = function() { /* Logic for scrollbar */ };
-        JazzApp.methods.setupCustomScrollbarInteraction = function() { /* Logic for scrollbar */ };
-        JazzApp.methods.setupOnThisDayFeature = function() { /* Logic for "On This Day" */ };
-        JazzApp.methods.handlePageLoadAnchorLink = function() { /* Logic for hash links */ };
-        JazzApp.methods.resizeCanvas = function() { /* Logic for canvas resize */ };
-        JazzApp.methods.setupDraggable = function() { /* Logic for draggable timeline */ };
-        JazzApp.methods.setupGlossaryInteraction = function() { /* Logic for dropdowns */ };
-        JazzApp.methods.populateInstrumentFilter = function() { /* Logic for instrument filter */ };
-        JazzApp.methods.goToArtistPage = function() { /* Logic for artist pagination */ };
-        JazzApp.methods.getTopCollaborators = function() { return []; /* Logic for collaborators */ };
-
 
         document.addEventListener('DOMContentLoaded', () => JazzApp.init());
     </script>
