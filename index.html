@@ -53,7 +53,7 @@
             color: var(--accent);
         }
         .nav-bar-behaviour { display: none; }
-        @media (min-width: 768px) { .nav-bar-behaviour { display: flex; } }
+        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
         
         #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
@@ -109,8 +109,8 @@
         .banner-section {
             position: relative;
             width: 100%;
-            height: 40vh; /* Reduced height */
-            max-height: 220px; /* Reduced max-height */
+            height: 35vh; /* Reduced height */
+            max-height: 200px; /* Reduced max-height */
             overflow: hidden;
             background-color: var(--bg-dark);
         }
@@ -142,7 +142,8 @@
 
         .typewriter h2 {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.5rem; /* Reduced font size for mobile */
+            font-size: 1.75rem; /* Reduced font size for mobile */
+            max-width: 90vw;
             font-weight: bold;
             color: #fff;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
@@ -172,8 +173,8 @@
 
         @media (min-width: 768px) {
             .banner-section {
-                height: 35vh; /* Reduced height */
-                max-height: 280px; /* Reduced max-height */
+                height: 30vh; /* Reduced height */
+                max-height: 250px; /* Reduced max-height */
             }
             .typewriter h2 {
                 font-size: 3rem; /* Reduced font size */
@@ -272,7 +273,6 @@
             background-color: var(--bg-main);
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
-            box-shadow: 4px 4px 0px var(--text-main);
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -330,6 +330,21 @@
             background-color: var(--bg-secondary);
             border: 2px solid var(--text-main);
         }
+        
+        /* Mobile card ordering */
+        @media (max-width: 1023px) {
+            #mobile-card-container {
+                display: flex;
+                flex-direction: column;
+            }
+            #recommendation-card { order: 1; }
+            #on-this-day-card { order: 2; }
+            #news-card { order: 3; }
+            #latest-review-card { order: 4; }
+            #timeline-nav-card { order: 5; }
+            #legacy-nav-card { order: 6; }
+            #playlist-card { order: 7; }
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -353,7 +368,7 @@
                         </a>
                     </div>
                      <!-- Hamburger Menu Button -->
-                    <div class="md:hidden">
+                    <div class="md:hidden lg:hidden">
                         <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
                             <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -378,7 +393,7 @@
         <main>
             <div class="main-content-wrapper">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div id="mobile-card-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         
                         <!-- Main Column -->
                         <div class="lg:col-span-2 space-y-8">
@@ -392,14 +407,14 @@
 
                             <!-- Navigation Cards -->
                             <div class="grid sm:grid-cols-2 gap-8">
-                                <a href="/timeline" class="dashboard-card group block text-decoration-none">
+                                <a href="/timeline" id="timeline-nav-card" class="dashboard-card group block text-decoration-none">
                                     <h2 class="dashboard-card-header">Jazz Evolution Timeline</h2>
                                     <div class="dashboard-card-content">
                                         <p>Explore the explosive growth of modern jazz from 1950-1969 through an interactive, chronological timeline of landmark albums.</p>
                                         <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore Timeline &rarr;</span>
                                     </div>
                                 </a>
-                                <a href="/legacy" class="dashboard-card group block text-decoration-none">
+                                <a href="/legacy" id="legacy-nav-card" class="dashboard-card group block text-decoration-none">
                                     <h2 class="dashboard-card-header">The Legacy of Jazz</h2>
                                     <div class="dashboard-card-content">
                                         <p>Discover how the sounds of the post-bop era evolved and splintered into new forms, from Jazz Fusion to the Avant-Garde and beyond.</p>
@@ -409,7 +424,7 @@
                             </div>
 
                             <!-- Latest Review Card -->
-                            <div class="dashboard-card">
+                            <div id="latest-review-card" class="dashboard-card">
                                 <h2 class="dashboard-card-header">Latest From The Archive</h2>
                                 <div id="latest-review" class="dashboard-card-content">
                                     <!-- Content injected by JS -->
@@ -427,14 +442,14 @@
                                 </div>
                             </div>
                             <!-- Latest News -->
-                            <div class="dashboard-card">
+                            <div id="news-card" class="dashboard-card">
                                 <h2 class="dashboard-card-header">News</h2>
                                 <div id="latest-news" class="dashboard-card-content">
                                     <!-- Articles injected by JS -->
                                 </div>
                             </div>
                             <!-- Spotify Playlist -->
-                            <div class="dashboard-card">
+                            <div id="playlist-card" class="dashboard-card">
                                 <h2 class="dashboard-card-header">Curated Playlist</h2>
                                 <div class="dashboard-card-content">
                                     <iframe style="border-radius:8px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
@@ -639,11 +654,11 @@
                     const analysisText = album.pivotalTracks && album.pivotalTracks.length > 0 ? (album.pivotalTracks[0].analysis || '') : (album.analysis || '');
 
                     this.elements.recommendationContent.innerHTML = `
-                        <div class="flex flex-col sm:flex-row gap-4 items-center cursor-pointer" data-action="open-recommendation-modal">
+                        <div class="flex flex-row gap-4 items-center cursor-pointer" data-action="open-recommendation-modal">
                             <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-24 h-24 sm:w-40 sm:h-40 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
-                            <div class="flex-grow text-center sm:text-left">
+                            <div class="flex-grow text-left">
                                 <p class="text-stone-600">${album.artist}</p>
-                                <h3 class="text-3xl sm:text-4xl font-bold text-stone-900 my-1">${album.albumTitle}</h3>
+                                <h3 class="text-2xl sm:text-4xl font-bold text-stone-900 leading-tight">${album.albumTitle}</h3>
                                 <p class="text-stone-600 font-bold">(${album.year})</p>
                                 <p class="hidden sm:block mt-2 text-stone-700 text-sm">${analysisText.substring(0, 120)}...</p>
                                 <span class="inline-block mt-2 font-bold text-orange-600 group-hover:underline">View Album &rarr;</span>
@@ -670,8 +685,9 @@
                     });
                     
                     artistModal.addEventListener('click', (e) => {
-                        if (e.target.matches('.clickable-link[data-album-title]')) {
-                            const { albumTitle, artist } = e.target.dataset;
+                        const target = e.target.closest('.clickable-link[data-album-title]');
+                        if (target) {
+                            const { albumTitle, artist } = target.dataset;
                             const album = this.state.allAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
                             if (album) {
                                 this.methods.closeArtistModal(() => this.methods.openAlbumModal(album));
