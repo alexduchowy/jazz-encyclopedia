@@ -1871,7 +1871,7 @@
                     }
                     this.methods.goToArtistPage(this.state.currentArtistPage);
                 },
-
+                
                 goToArtistPage(pageIndex) {
                     const { artistSliderTrack, artistPrevBtn, artistNextBtn, artistPageIndicator } = this.elements;
                     this.state.currentArtistPage = Math.max(0, Math.min(pageIndex, this.state.totalArtistPages - 1));
