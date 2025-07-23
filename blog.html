@@ -201,7 +201,6 @@
                         <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
                         <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         <a href="/blog" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                        <!-- UPDATED: Added social link -->
                         <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600 flex items-center gap-2">
                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                             <span>@controlledjazz</span>
@@ -278,7 +277,6 @@
                 <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
                 <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
-                 <!-- UPDATED: Added social link to mobile menu -->
                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                     <span>@controlledjazz</span>
@@ -346,7 +344,6 @@
                   measurementId: "G-ETT07JGVSB"
                 };
                 
-                // UPDATED: Prevent re-initializing Firebase app
                 const app = window._firebaseApp || initializeApp(firebaseConfig);
                 if (!window._firebaseApp) {
                     window._firebaseApp = app;
@@ -361,9 +358,13 @@
                     }
 
                     const articlesRef = collection(db, "articles");
-                    // UPDATED: Use a more consistent query with a limit
-                    const q = query(articlesRef, orderBy("updatedAt", "desc"), limit(20));
+                    // UPDATED: Changed orderBy to 'createdAt' for reliability
+                    const q = query(articlesRef, orderBy("createdAt", "desc"), limit(20));
                     const articlesSnapshot = await getDocs(q);
+
+                    // Clear existing state before fetching new data
+                    this.state.reviews = [];
+                    this.state.news = [];
 
                     articlesSnapshot.forEach((doc) => {
                         const article = { id: doc.id, ...doc.data() };
@@ -421,9 +422,10 @@
                         const card = document.createElement('a');
                         card.href = `/news/${article.slug}`;
                         card.className = 'article-card !block';
+                        const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString());
                         card.innerHTML = `
                             <div>
-                                <p class="text-sm text-stone-500 mb-2">${article.publishDate || new Date(article.updatedAt.seconds * 1000).toLocaleDateString()}</p>
+                                <p class="text-sm text-stone-500 mb-2">${publishDate}</p>
                                 <h3 class="text-2xl font-bold mb-2 text-stone-900">${article.title}</h3>
                                 <p class="text-stone-700 font-light">${article.body.substring(0, 120).replace(/<[^>]*>?/gm, '')}...</p>
                                 <span class="inline-block mt-4 font-bold text-orange-600">Read More &rarr;</span>
@@ -469,6 +471,3 @@
     </script>
 </body>
 </html>
-```
-
-I've applied all the requested changes to the `blog.html` file. Let me know if you need anything el
