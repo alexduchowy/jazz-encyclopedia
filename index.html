@@ -439,6 +439,7 @@
                 recommendedAlbum: null,
                 onThisDayAlbum: null,
                 artistsData: [],
+                fullArtistsData: {}, // Added to store full artist profiles
                 genreData: {},
                 fullGenreColorMap: {},
             },
@@ -491,6 +492,7 @@
                     const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []).map(a => ({...a, isLegacy: true}));
                     this.state.allAlbums = timelineAlbums.concat(legacyAlbums);
                     this.state.genreData = genreData;
+                    this.state.fullArtistsData = artistProfileData; // Store the full artist data
 
                     this.methods.processArtists(artistProfileData);
                     this.methods.buildGenreColorMap();
@@ -561,9 +563,11 @@
                         }
                     });
 
-                    onThisDayContainer.addEventListener('click', () => {
-                        if (this.state.onThisDayAlbum) {
-                            this.methods.openAlbumModal(this.state.onThisDayAlbum);
+                    onThisDayContainer.addEventListener('click', (e) => {
+                        if (e.target.closest('.on-this-day-album')) {
+                             if (this.state.onThisDayAlbum) {
+                                this.methods.openAlbumModal(this.state.onThisDayAlbum);
+                            }
                         }
                     });
 
@@ -639,7 +643,9 @@
                     const today = new Date();
                     const currentMonth = today.toLocaleString('en-US', { month: 'long' });
                     const currentDay = today.getDate();
+                    let onThisDayHtml = '';
 
+                    // Find tracks recorded on this day
                     const matchingTracks = [];
                     this.state.allAlbums.forEach(album => {
                         const tracks = album.pivotalTracks || (album.recordingDate ? [album] : []);
@@ -656,8 +662,8 @@
                         const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
                         const album = featured.parentAlbum;
                         this.state.onThisDayAlbum = album;
-                        this.elements.onThisDayContainer.innerHTML = `
-                            <div class="flex items-center gap-4 cursor-pointer">
+                        onThisDayHtml += `
+                            <div class="flex items-center gap-4 cursor-pointer on-this-day-album">
                                 <img src="${album.cover}" loading="lazy" class="w-20 h-20 object-cover border-2 border-stone-900 rounded-sm flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=No+Img';">
                                 <div>
                                     <p class="text-sm text-stone-600">On ${currentMonth} ${currentDay}, ${album.year}, the track...</p>
@@ -666,8 +672,45 @@
                                 </div>
                             </div>
                         `;
+                    }
+
+                    // Find artists born on this day
+                    const bornToday = [];
+                    for (const artistName in this.state.fullArtistsData) {
+                        const artist = this.state.fullArtistsData[artistName];
+                        if (artist.bornIn) {
+                            const dateStr = artist.bornIn;
+                            const dateParts = dateStr.replace(/,/g, '').split(' '); // e.g., ["July", "23", "1923", "Dallas", "Texas"]
+                            if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
+                                bornToday.push(artist);
+                            }
+                        }
+                    }
+
+                    if (bornToday.length > 0) {
+                        if (onThisDayHtml !== '') {
+                            onThisDayHtml += `<hr class="my-4 border-stone-300">`;
+                        }
+                        
+                        const artistLinks = bornToday.map(artist => {
+                            const year = artist.bornIn.split(',')[1].trim();
+                            return `<p class="text-sm text-stone-600"><strong>${artist.name}</strong> (${year})</p>`;
+                        }).join('');
+
+                        onThisDayHtml += `
+                            <div>
+                                <p class="text-sm text-stone-600 mb-2">Born on this day:</p>
+                                <div class="space-y-1">
+                                    ${artistLinks}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    if (onThisDayHtml === '') {
+                        this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-stone-600">No notable jazz events on this day in our database. Check back tomorrow!</p>`;
                     } else {
-                        this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-stone-600">No landmark tracks were recorded on this day in our database. Check back tomorrow!</p>`;
+                        this.elements.onThisDayContainer.innerHTML = onThisDayHtml;
                     }
                 },
                 async fetchNewsAndReview() {
