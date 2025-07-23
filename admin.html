@@ -152,7 +152,7 @@
 
                             <!-- Image Upload Section -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Featured Image</label>
+                                <label class="block text-sm font-medium text-gray-700">Featured Image (For Reviews)</label>
                                 <div class="mt-1">
                                     <div class="flex items-center space-x-4 text-sm">
                                         <button type="button" id="select-upload-btn" class="font-medium text-orange-600 underline">Upload a file</button>
@@ -185,8 +185,17 @@
 
                             <div>
                                 <label for="body" class="block text-sm font-medium text-gray-700">Body (HTML allowed)</label>
+                                <!-- EDITOR TOOLBAR -->
+                                <div id="editor-toolbar" class="flex items-center flex-wrap gap-2 mb-2 p-2 bg-gray-50 border rounded-md">
+                                    <button type="button" data-tag="h2" class="px-3 py-1 text-sm font-bold bg-white border rounded shadow-sm hover:bg-gray-100" title="Heading 2">H2</button>
+                                    <button type="button" data-tag="p" class="px-3 py-1 text-sm bg-white border rounded shadow-sm hover:bg-gray-100" title="Paragraph">P</button>
+                                    <button type="button" data-tag="strong" class="px-3 py-1 text-sm font-bold bg-white border rounded shadow-sm hover:bg-gray-100" title="Bold">B</button>
+                                    <button type="button" data-tag="em" class="px-3 py-1 text-sm italic bg-white border rounded shadow-sm hover:bg-gray-100" title="Italic">I</button>
+                                    <button type="button" data-tag="ul" class="px-3 py-1 text-sm bg-white border rounded shadow-sm hover:bg-gray-100" title="Unordered List">List</button>
+                                    <button type="button" data-tag="img" class="px-3 py-1 text-sm bg-white border rounded shadow-sm hover:bg-gray-100" title="Image">IMG</button>
+                                </div>
                                 <textarea id="body" name="body" rows="15" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"></textarea>
-                                <p class="mt-2 text-xs text-gray-500">Wrap the final paragraph in &lt;highlight&gt;...&lt;/highlight&gt; to feature it.</p>
+                                <p class="mt-2 text-xs text-gray-500">For reviews, wrap the final paragraph in &lt;highlight&gt;...&lt;/highlight&gt; to feature it.</p>
                             </div>
                             
                             <p id="form-error" class="text-red-500 text-sm h-4"></p>
@@ -263,15 +272,60 @@
             uploadContainer: document.getElementById('upload-container'),
             urlContainer: document.getElementById('url-container'),
             manualImageUrlInput: document.getElementById('manual-imageUrl'),
+            editorToolbar: document.getElementById('editor-toolbar'),
         };
 
         const generateSlug = (text) => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+
+        const setupEditorToolbar = () => {
+            elements.editorToolbar.addEventListener('click', (e) => {
+                const button = e.target.closest('button');
+                if (!button || !button.dataset.tag) return;
+
+                const tag = button.dataset.tag;
+                const textarea = document.getElementById('body');
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end);
+                let replacement;
+
+                if (tag === 'img') {
+                    const src = prompt("Enter image URL:");
+                    if (!src) return; // User cancelled
+                    const alt = prompt("Enter alt text (optional):");
+                    replacement = `\n<img src="${src}" alt="${alt || ''}">\n`;
+                    textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+                    textarea.focus();
+                    textarea.selectionEnd = start + replacement.length;
+                    return;
+                }
+
+                if (tag === 'ul') {
+                    const listItems = selectedText.split('\n').map(item => `\t<li>${item}</li>`).join('\n');
+                    replacement = `<ul>\n${listItems || '\t<li></li>'}\n</ul>`;
+                } else {
+                    replacement = `<${tag}>${selectedText}</${tag}>`;
+                }
+
+                textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+                textarea.focus();
+
+                if (selectedText) {
+                    textarea.selectionStart = start;
+                    textarea.selectionEnd = start + replacement.length;
+                } else {
+                    // Place cursor inside the tags
+                    textarea.selectionEnd = start + tag.length + 2;
+                }
+            });
+        };
 
         onAuthStateChanged(auth, user => {
             if (user) {
                 elements.authContainer.classList.add('hidden');
                 elements.adminPanel.classList.remove('hidden');
                 loadArticles();
+                setupEditorToolbar(); // Initialize the toolbar when user is logged in
             } else {
                 elements.authContainer.classList.remove('hidden');
                 elements.adminPanel.classList.add('hidden');
