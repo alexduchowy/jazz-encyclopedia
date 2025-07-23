@@ -348,9 +348,22 @@
 
                     articlesSnapshot.forEach((doc) => {
                         const article = { id: doc.id, ...doc.data() };
+                        
+                        // **FIX:** Check for essential data before adding the article to the list.
+                        // This prevents broken or incomplete articles from being displayed.
+                        if (!article.slug || !article.title || !article.body) {
+                            console.warn("Skipping article with missing data:", article.id, article);
+                            return; // Skip this article and go to the next one.
+                        }
+
                         const articleType = article.type ? article.type.toLowerCase() : '';
                         if (articleType === 'review') {
-                            this.state.reviews.push(article);
+                            // Reviews need extra fields to render correctly.
+                            if (article.albumTitle && article.artist && typeof article.rating === 'number') {
+                                this.state.reviews.push(article);
+                            } else {
+                                console.warn("Skipping malformed review:", article.id, article);
+                            }
                         } else if (articleType === 'news') {
                             this.state.news.push(article);
                         }
