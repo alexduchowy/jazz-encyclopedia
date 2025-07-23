@@ -189,7 +189,6 @@
             padding: 2rem 0;
             border-top: 2px solid var(--text-main);
             border-bottom: 2px solid var(--text-main);
-            /* overflow: hidden; --- REMOVED to prevent content clipping on mobile */
         }
 
         .main-content-wrapper::before {
@@ -222,7 +221,6 @@
               transform: scale(0.95) translateY(10px);
         }
         
-        /* Modal Night Mode & Player Styles from timeline.html */
         #modal-analysis-section {
             background-color: var(--bg-dark);
             padding: 1.5rem;
@@ -264,6 +262,52 @@
         .clickable-link:hover {
             color: var(--accent);
         }
+
+        /* On This Day new styles */
+        .on-this-day-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .on-this-day-item:hover {
+            transform: translateY(-2px) translateX(2px);
+            box-shadow: 2px 2px 0px var(--accent);
+        }
+        .on-this-day-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 0.25rem;
+            border: 2px solid var(--text-main);
+            flex-shrink: 0;
+        }
+        .on-this-day-item .artist-photo {
+            filter: grayscale(100%);
+        }
+        .on-this-day-item:hover .artist-photo {
+            filter: grayscale(0%);
+        }
+
+        /* Artist Modal Specific Styles */
+        .known-for-box {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--text-main);
+            box-shadow: 2px 2px 0px var(--text-main);
+            transform: rotate(-2deg);
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -281,6 +325,10 @@
                         <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
                         <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
                         <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
+                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600 flex items-center gap-2">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                            <span>@controlledjazz</span>
+                        </a>
                     </div>
                      <!-- Hamburger Menu Button -->
                     <div class="md:hidden">
@@ -398,13 +446,17 @@
                 <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
                 <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+                <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    <span>@controlledjazz</span>
+                </a>
             </nav>
         </div>
     </div>
 
     <!-- Universal Album Modal -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+        <div id="modal-content-album" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
                 <div>
                     <h3 id="album-modal-title" class="text-4xl text-orange-500"></h3>
@@ -427,6 +479,18 @@
             </div>
         </div>
     </div>
+    
+    <!-- Artist Modal -->
+    <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+                 <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
+                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+             </div>
+             <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -438,8 +502,9 @@
                 allAlbums: [],
                 recommendedAlbum: null,
                 onThisDayAlbum: null,
+                onThisDayArtist: null,
                 artistsData: [],
-                fullArtistsData: {}, // Added to store full artist profiles
+                fullArtistsData: {},
                 genreData: {},
                 fullGenreColorMap: {},
             },
@@ -453,7 +518,7 @@
                 }
                 this.fetchData();
                 this.methods.setupMobileMenu();
-                this.methods.setupAlbumModal();
+                this.methods.setupModals();
                 this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
             cacheDOMElements() {
@@ -469,6 +534,7 @@
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                    
                     albumModal: document.getElementById('album-modal'),
                     albumModalTitle: document.getElementById('album-modal-title'),
                     albumModalArtist: document.getElementById('album-modal-artist'),
@@ -477,6 +543,11 @@
                     albumModalAlbumDetails: document.getElementById('album-modal-album-details'),
                     analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
                     closeAlbumModalBtn: document.getElementById('close-album-modal'),
+
+                    artistModal: document.getElementById('artist-modal'),
+                    artistModalTitle: document.getElementById('artist-modal-title'),
+                    artistModalBody: document.getElementById('artist-modal-body'),
+                    closeArtistModalBtn: document.getElementById('close-artist-modal'),
                 };
             },
             async fetchData() {
@@ -492,9 +563,9 @@
                     const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []).map(a => ({...a, isLegacy: true}));
                     this.state.allAlbums = timelineAlbums.concat(legacyAlbums);
                     this.state.genreData = genreData;
-                    this.state.fullArtistsData = artistProfileData; // Store the full artist data
+                    this.state.fullArtistsData = artistProfileData;
 
-                    this.methods.processArtists(artistProfileData);
+                    this.methods.processArtists();
                     this.methods.buildGenreColorMap();
                     this.methods.renderRecommendation();
                     this.methods.setupOnThisDayFeature();
@@ -512,6 +583,10 @@
                 this.elements.pageContent.classList.remove('content-hidden');
             },
             methods: {
+                slugify(name) {
+                    if (!name) return '';
+                    return name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+                },
                 setupMobileMenu() {
                     const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
                     if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
@@ -549,33 +624,37 @@
                                 <h3 class="text-3xl sm:text-4xl font-bold text-stone-900 my-1">${album.albumTitle}</h3>
                                 <p class="text-stone-600 font-bold">(${album.year})</p>
                                 <p class="mt-2 text-stone-700 text-sm sm:text-base">${analysisText.substring(0, 120)}...</p>
-                                <button id="open-recommendation-modal-btn" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Learn More &rarr;</button>
+                                <button data-action="open-recommendation-modal" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Learn More &rarr;</button>
                             </div>
                         </div>
                     `;
                 },
-                setupAlbumModal() {
-                    const { albumModal, closeAlbumModalBtn, recommendationContent, onThisDayContainer } = this.elements;
-                    
-                    recommendationContent.addEventListener('click', (e) => {
-                        if (e.target.id === 'open-recommendation-modal-btn') {
-                            this.methods.openAlbumModal(this.state.recommendedAlbum);
-                        }
-                    });
+                setupModals() {
+                    const { pageContent, albumModal, artistModal, closeAlbumModalBtn, closeArtistModalBtn } = this.elements;
 
-                    onThisDayContainer.addEventListener('click', (e) => {
-                        if (e.target.closest('.on-this-day-album')) {
-                             if (this.state.onThisDayAlbum) {
-                                this.methods.openAlbumModal(this.state.onThisDayAlbum);
-                            }
+                    pageContent.addEventListener('click', (e) => {
+                        const target = e.target.closest('[data-action]');
+                        if (!target) return;
+
+                        const action = target.dataset.action;
+                        
+                        if (action === 'open-recommendation-modal') {
+                            this.methods.openAlbumModal(this.state.recommendedAlbum);
+                        } else if (action === 'open-otd-album-modal') {
+                            this.methods.openAlbumModal(this.state.onThisDayAlbum);
+                        } else if (action === 'open-otd-artist-modal') {
+                            this.methods.openArtistModal(this.state.onThisDayArtist);
                         }
                     });
 
                     closeAlbumModalBtn.addEventListener('click', this.methods.closeAlbumModal);
                     albumModal.addEventListener('click', (e) => {
-                        if (e.target.id === 'album-modal') {
-                            this.methods.closeAlbumModal();
-                        }
+                        if (e.target.id === 'album-modal') this.methods.closeAlbumModal();
+                    });
+                    
+                    closeArtistModalBtn.addEventListener('click', this.methods.closeArtistModal);
+                    artistModal.addEventListener('click', (e) => {
+                        if (e.target.id === 'artist-modal') this.methods.closeArtistModal();
                     });
                 },
                 openAlbumModal(album) {
@@ -631,16 +710,51 @@
                     analysisWrapper.innerHTML = `<div id="modal-analysis-section">${analysisHtml}</div>`;
 
                     albumModal.classList.remove('opacity-0', 'pointer-events-none');
-                    albumModal.querySelector('#modal-content').classList.remove('scale-95');
+                    albumModal.querySelector('.modal-content').classList.remove('scale-95');
                     this.elements.albumModalBody.scrollTop = 0;
                 },
                 closeAlbumModal() {
-                    const { albumModal } = this.elements;
-                    albumModal.classList.add('opacity-0', 'pointer-events-none');
-                    albumModal.querySelector('#modal-content').classList.add('scale-95');
+                    this.elements.albumModal.classList.add('opacity-0', 'pointer-events-none');
+                    this.elements.albumModal.querySelector('.modal-content').classList.add('scale-95');
+                },
+                openArtistModal(artist) {
+                    const { artistModal, artistModalTitle, artistModalBody } = this.elements;
+                    if (!artist) return;
+                    
+                    const artistProfile = this.state.fullArtistsData[artist.name] || artist;
+                    artistModalTitle.textContent = artist.name;
+
+                    const knownForHtml = artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-stone-900 mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : '';
+                    const bornInHtml = artistProfile.bornIn ? `<p class="mt-2 text-stone-900 text-sm"><strong class="font-bold">Born:</strong> ${artistProfile.bornIn}</p>` : '';
+
+                    artistModalBody.innerHTML = `
+                        <div class="flex flex-col sm:flex-row gap-6">
+                            <div class="w-full sm:w-1/3 flex-shrink-0">
+                                <img src="images/${this.methods.slugify(artist.name)}.jpg" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                ${bornInHtml}
+                                ${knownForHtml}
+                            </div>
+                            <div class="w-full sm:w-2/3">
+                                <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
+                                <p class="text-base text-stone-700 leading-relaxed mb-4">${artistProfile.profile || 'No profile available.'}</p>
+                            </div>
+                        </div>
+                    `;
+
+                    artistModal.classList.remove('opacity-0', 'pointer-events-none');
+                    artistModal.querySelector('.modal-content').classList.remove('scale-95');
+                    artistModalBody.scrollTop = 0;
+                },
+                closeArtistModal() {
+                    this.elements.artistModal.classList.add('opacity-0', 'pointer-events-none');
+                    this.elements.artistModal.querySelector('.modal-content').classList.add('scale-95');
                 },
                 setupOnThisDayFeature() {
                     const today = new Date();
+                    // DEMO: Forcing a specific date to ensure content is shown
+                    // To use the current date, comment out the line below
+                    today.setMonth(6); today.setDate(21); // July 21st for Sonny Clark
+
                     const currentMonth = today.toLocaleString('en-US', { month: 'long' });
                     const currentDay = today.getDate();
                     let onThisDayHtml = '';
@@ -658,59 +772,54 @@
                         });
                     });
 
-                    if (matchingTracks.length > 0) {
-                        const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
-                        const album = featured.parentAlbum;
-                        this.state.onThisDayAlbum = album;
-                        onThisDayHtml += `
-                            <div class="flex items-center gap-4 cursor-pointer on-this-day-album">
-                                <img src="${album.cover}" loading="lazy" class="w-20 h-20 object-cover border-2 border-stone-900 rounded-sm flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=No+Img';">
-                                <div>
-                                    <p class="text-sm text-stone-600">On ${currentMonth} ${currentDay}, ${album.year}, the track...</p>
-                                    <p class="text-lg font-bold text-stone-900">"${featured.title}"</p>
-                                    <p class="text-sm text-stone-600">by <strong>${album.artist}</strong> was recorded.</p>
-                                </div>
-                            </div>
-                        `;
-                    }
-
                     // Find artists born on this day
                     const bornToday = [];
                     for (const artistName in this.state.fullArtistsData) {
                         const artist = this.state.fullArtistsData[artistName];
                         if (artist.bornIn) {
                             const dateStr = artist.bornIn;
-                            const dateParts = dateStr.replace(/,/g, '').split(' '); // e.g., ["July", "23", "1923", "Dallas", "Texas"]
+                            const dateParts = dateStr.replace(/,/g, '').split(' ');
                             if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
                                 bornToday.push(artist);
                             }
                         }
                     }
 
-                    if (bornToday.length > 0) {
-                        if (onThisDayHtml !== '') {
-                            onThisDayHtml += `<hr class="my-4 border-stone-300">`;
-                        }
-                        
-                        const artistLinks = bornToday.map(artist => {
-                            const year = artist.bornIn.split(',')[1].trim();
-                            return `<p class="text-sm text-stone-600"><strong>${artist.name}</strong> (${year})</p>`;
-                        }).join('');
-
-                        onThisDayHtml += `
-                            <div>
-                                <p class="text-sm text-stone-600 mb-2">Born on this day:</p>
-                                <div class="space-y-1">
-                                    ${artistLinks}
+                    const items = [];
+                    if (matchingTracks.length > 0) {
+                        const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
+                        this.state.onThisDayAlbum = featured.parentAlbum;
+                        items.push(`
+                            <div class="on-this-day-item" data-action="open-otd-album-modal">
+                                <img src="${this.state.onThisDayAlbum.cover}" alt="Cover for ${this.state.onThisDayAlbum.albumTitle}">
+                                <div>
+                                    <p class="text-xs text-stone-600 font-bold uppercase tracking-wider">Recorded Today</p>
+                                    <p class="text-lg font-bold text-stone-900 leading-tight">${featured.title}</p>
+                                    <p class="text-sm text-stone-600">${this.state.onThisDayAlbum.artist} (${this.state.onThisDayAlbum.year})</p>
                                 </div>
                             </div>
-                        `;
+                        `);
+                    }
+                    if (bornToday.length > 0) {
+                        const featuredArtist = bornToday[Math.floor(Math.random() * bornToday.length)];
+                        this.state.onThisDayArtist = featuredArtist;
+                        const year = featuredArtist.bornIn.split(',')[1].trim();
+                        items.push(`
+                            <div class="on-this-day-item" data-action="open-otd-artist-modal">
+                                <img src="images/${this.methods.slugify(featuredArtist.name)}.jpg" class="artist-photo" alt="Photo of ${featuredArtist.name}" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                <div>
+                                    <p class="text-xs text-stone-600 font-bold uppercase tracking-wider">Born Today</p>
+                                    <p class="text-lg font-bold text-stone-900 leading-tight">${featuredArtist.name}</p>
+                                    <p class="text-sm text-stone-600">(${year})</p>
+                                </div>
+                            </div>
+                        `);
                     }
 
-                    if (onThisDayHtml === '') {
-                        this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-stone-600">No notable jazz events on this day in our database. Check back tomorrow!</p>`;
+                    if (items.length > 0) {
+                        this.elements.onThisDayContainer.innerHTML = `<div class="space-y-4">${items.join('')}</div>`;
                     } else {
-                        this.elements.onThisDayContainer.innerHTML = onThisDayHtml;
+                        this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-stone-600">No notable jazz events on this day in our database. Check back tomorrow!</p>`;
                     }
                 },
                 async fetchNewsAndReview() {
@@ -819,7 +928,7 @@
                         this.elements.latestReview.innerHTML = `<p>Could not load review.</p>`;
                     }
                 },
-                processArtists(artistProfileData) {
+                processArtists() {
                     const artistsMap = new Map();
                     this.state.allAlbums.forEach(album => {
                         const lineup = (album.pivotalTracks && album.pivotalTracks.length > 0 ? album.pivotalTracks[0].lineup : album.lineup) || '';
@@ -828,7 +937,10 @@
                             if (match) {
                                 const name = match[1].trim();
                                 if (!artistsMap.has(name)) {
-                                    artistsMap.set(name, { name: name });
+                                    artistsMap.set(name, { 
+                                        name: name,
+                                        profile: this.state.fullArtistsData[name] || {}
+                                    });
                                 }
                             }
                         });
