@@ -1308,12 +1308,14 @@
                             const card = document.createElement('div');
                             card.className = 'artist-card bandleader';
                             card.dataset.artistName = artist.name;
+                            const bornInInfo = artist.profile && artist.profile.bornIn ? `<p class="text-xs text-stone-600 truncate">${artist.profile.bornIn}</p>` : '';
                             card.innerHTML = `
                                 <div class="h-56 bg-stone-900 artist-photo-container">
                                     <img src="${artist.photo}" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
                                 <div class="p-3">
                                     <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
+                                    ${bornInInfo}
                                 </div>`;
                             pageDiv.appendChild(card);
                         });
