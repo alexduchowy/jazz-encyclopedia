@@ -606,7 +606,7 @@
                     this.methods.buildGenreColorMap();
                     this.methods.renderRecommendation();
                     this.methods.setupOnThisDayFeature();
-                    await this.methods.fetchNewsAndReview();
+                    this.methods.fetchNewsAndReview();
 
                     this.showPage();
                 } catch (error) {
@@ -848,26 +848,28 @@
                         }
                     }
 
-                    const items = [];
+                    let recordedHtml = '';
                     if (matchingTracks.length > 0) {
                         const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
                         this.state.onThisDayAlbum = featured.parentAlbum;
-                        items.push(`
+                        recordedHtml = `
                             <div class="on-this-day-item" data-action="open-otd-album-modal">
                                 <img src="${this.state.onThisDayAlbum.cover}" alt="Cover for ${this.state.onThisDayAlbum.albumTitle}">
                                 <div>
                                     <p class="text-xs text-stone-600 font-bold uppercase tracking-wider">On ${currentMonth} ${currentDay}, ${this.state.onThisDayAlbum.year}, the track...</p>
                                     <p class="text-lg font-bold text-stone-900 leading-tight">"${featured.title}"</p>
-                                    <p class="text-sm text-stone-600">from the album <strong>${this.state.onThisDayAlbum.albumTitle}</strong> by <strong>${this.state.onThisDayAlbum.artist}</strong> was recorded.</p>
+                                    <p class="text-sm text-stone-600">from <strong>${this.state.onThisDayAlbum.albumTitle}</strong> by <strong>${this.state.onThisDayAlbum.artist}</strong> was recorded.</p>
                                 </div>
                             </div>
-                        `);
+                        `;
                     }
+
+                    let bornHtml = '';
                     if (bornToday.length > 0) {
                         const featuredArtist = bornToday[Math.floor(Math.random() * bornToday.length)];
                         this.state.onThisDayArtist = featuredArtist;
                         const year = featuredArtist.bornIn.split(',')[1].trim();
-                        items.push(`
+                        bornHtml = `
                             <div class="on-this-day-item" data-action="open-otd-artist-modal">
                                 <img src="images/${this.methods.slugify(featuredArtist.name)}.jpg" class="artist-photo" alt="Photo of ${featuredArtist.name}" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 <div>
@@ -876,16 +878,33 @@
                                     <p class="text-sm text-stone-600">${featuredArtist.instruments.slice(0, 2).join(', ')}</p>
                                 </div>
                             </div>
-                        `);
+                        `;
                     }
 
-                    if (items.length > 0) {
-                        this.elements.onThisDayContainer.innerHTML = `<div class="space-y-4">${items.join('')}</div>`;
+                    if (recordedHtml || bornHtml) {
+                        this.elements.onThisDayContainer.innerHTML = `
+                            <div class="space-y-4">
+                                ${recordedHtml}
+                                ${bornHtml}
+                            </div>
+                        `;
                     } else {
                         this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-stone-600">No notable jazz events on this day in our database. Check back tomorrow!</p>`;
                     }
                 },
-                async fetchNewsAndReview() {
+                fetchNewsAndReview() {
+                    const cachedArticles = sessionStorage.getItem('cachedArticles');
+                    if (cachedArticles) {
+                        try {
+                            const articles = JSON.parse(cachedArticles);
+                            this.methods.renderNewsAndReviews(articles);
+                            return; // Exit if we successfully load from cache
+                        } catch (e) {
+                            console.error("Failed to parse cached articles, fetching fresh.", e);
+                            sessionStorage.removeItem('cachedArticles');
+                        }
+                    }
+
                     const firebaseConfig = {
                         apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                         authDomain: "controlled-freedom.firebaseapp.com",
@@ -901,94 +920,102 @@
                     const db = getFirestore(app);
                     const auth = getAuth(app);
 
-                    try {
-                        if (!auth.currentUser) {
-                            await signInAnonymously(auth);
-                        }
-                        const articlesRef = collection(db, "articles");
-                        const q = query(articlesRef, orderBy("updatedAt", "desc"), limit(10));
-                        const articlesSnapshot = await getDocs(q);
-                        
-                        const newsArticles = [];
-                        const reviewArticles = [];
-
-                        if (articlesSnapshot.empty) {
-                            this.elements.latestNews.innerHTML = '<p class="text-stone-500 italic">No news yet.</p>';
-                            this.elements.latestReview.innerHTML = '<p class="text-stone-500 italic">No reviews yet.</p>';
-                            return;
-                        }
-
-                        articlesSnapshot.forEach(doc => {
-                            const article = { id: doc.id, ...doc.data() };
-                            const articleType = article.type ? article.type.toLowerCase() : '';
-                            if (articleType === 'news') {
-                                newsArticles.push(article);
-                            } else if (articleType === 'review') {
-                                reviewArticles.push(article);
+                    (async () => {
+                        try {
+                            if (!auth.currentUser) {
+                                await signInAnonymously(auth);
                             }
-                        });
+                            const articlesRef = collection(db, "articles");
+                            const q = query(articlesRef, orderBy("updatedAt", "desc"), limit(10));
+                            const articlesSnapshot = await getDocs(q);
+                            
+                            const articles = [];
+                            articlesSnapshot.forEach(doc => {
+                                articles.push({ id: doc.id, ...doc.data() });
+                            });
 
-                        // Render News Section
-                        if (newsArticles.length > 0) {
-                            const [featuredNews, ...otherNews] = newsArticles;
-                            let newsHtml = '';
+                            sessionStorage.setItem('cachedArticles', JSON.stringify(articles));
+                            this.methods.renderNewsAndReviews(articles);
 
-                            // Featured Article
-                            const featuredSnippet = (featuredNews.body || '').replace(/<[^>]+>/g, '').substring(0, 80);
-                            newsHtml += `
-                                <a href="/news/${featuredNews.slug}" target="_blank" class="block mb-6 group no-underline">
-                                    <img src="${featuredNews.imageUrl || 'https://placehold.co/400x200/e7e5e4/1c1917?text=News'}" alt="${featuredNews.title}" class="w-full h-40 object-cover rounded-md mb-3 border-2 border-stone-300" onerror="this.onerror=null;this.src='https://placehold.co/400x200/e7e5e4/1c1917?text=News';">
-                                    <h3 class="text-lg font-bold text-stone-900 group-hover:text-orange-600 transition-colors leading-tight">${featuredNews.title}</h3>
-                                    <p class="text-sm text-stone-600 mt-1">${featuredSnippet}...</p>
-                                    <p class="text-xs text-stone-500 mt-2">${featuredNews.publishDate}</p>
-                                </a>
-                            `;
-
-                            // Other News
-                            if (otherNews.length > 0) {
-                                newsHtml += '<hr class="border-stone-300 my-4">';
-                                const otherNewsListHtml = otherNews.slice(0, 3).map(article => `
-                                    <a href="/news/${article.slug}" target="_blank" class="flex items-center gap-3 group no-underline">
-                                        <img src="${article.imageUrl || 'https://placehold.co/80x80/e7e5e4/1c1917?text=News'}" alt="${article.title}" class="w-12 h-12 object-cover rounded-md border-2 border-stone-300 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/e7e5e4/1c1917?text=News';">
-                                        <div class="flex-grow">
-                                            <h4 class="font-semibold text-sm leading-tight text-stone-800 group-hover:text-orange-600 transition-colors">${article.title}</h4>
-                                            <p class="text-xs text-stone-500">${article.publishDate}</p>
-                                        </div>
-                                    </a>
-                                `).join('');
-                                newsHtml += `<div class="space-y-4 mt-4">${otherNewsListHtml}</div>`;
-                            }
-
-                            this.elements.latestNews.innerHTML = newsHtml;
-                        } else {
-                            this.elements.latestNews.innerHTML = '<p class="text-stone-500 italic">No news articles found.</p>';
+                        } catch (error) {
+                            console.error("Error fetching articles:", error);
+                            this.elements.latestNews.innerHTML = `<p>Could not load news.</p>`;
+                            this.elements.latestReview.innerHTML = `<p>Could not load review.</p>`;
                         }
+                    })();
+                },
+                renderNewsAndReviews(articles) {
+                    const newsArticles = [];
+                    const reviewArticles = [];
 
-                        // Render Review Section
-                        if (reviewArticles.length > 0) {
-                            const latestReview = reviewArticles[0];
-                            const snippet = (latestReview.body || '').replace(/<[^>]+>/g, '').substring(0, 150);
-                            const reviewHtml = `
-                                <div class="flex flex-col sm:flex-row gap-6 items-start">
-                                    <img src="${latestReview.imageUrl || 'https://placehold.co/128x128/1c1917/f5f5f4?text=Review'}" alt="Cover for ${latestReview.albumTitle}" class="w-32 h-32 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
+                    if (!articles || articles.length === 0) {
+                        this.elements.latestNews.innerHTML = '<p class="text-stone-500 italic">No news yet.</p>';
+                        this.elements.latestReview.innerHTML = '<p class="text-stone-500 italic">No reviews yet.</p>';
+                        return;
+                    }
+
+                    articles.forEach(article => {
+                        const articleType = article.type ? article.type.toLowerCase() : '';
+                        if (articleType === 'news') {
+                            newsArticles.push(article);
+                        } else if (articleType === 'review') {
+                            reviewArticles.push(article);
+                        }
+                    });
+
+                    // Render News Section
+                    if (newsArticles.length > 0) {
+                        const [featuredNews, ...otherNews] = newsArticles;
+                        let newsHtml = '';
+
+                        const featuredSnippet = (featuredNews.body || '').replace(/<[^>]+>/g, '').substring(0, 80);
+                        newsHtml += `
+                            <a href="/news/${featuredNews.slug}" target="_blank" class="block mb-6 group no-underline">
+                                <img src="${featuredNews.imageUrl || 'https://placehold.co/400x200/e7e5e4/1c1917?text=News'}" alt="${featuredNews.title}" class="w-full h-40 object-cover rounded-md mb-3 border-2 border-stone-300" onerror="this.onerror=null;this.src='https://placehold.co/400x200/e7e5e4/1c1917?text=News';">
+                                <h3 class="text-lg font-bold text-stone-900 group-hover:text-orange-600 transition-colors leading-tight">${featuredNews.title}</h3>
+                                <p class="text-sm text-stone-600 mt-1">${featuredSnippet}...</p>
+                                <p class="text-xs text-stone-500 mt-2">${featuredNews.publishDate}</p>
+                            </a>
+                        `;
+
+                        if (otherNews.length > 0) {
+                            newsHtml += '<hr class="border-stone-300 my-4">';
+                            const otherNewsListHtml = otherNews.slice(0, 3).map(article => `
+                                <a href="/news/${article.slug}" target="_blank" class="flex items-center gap-3 group no-underline">
+                                    <img src="${article.imageUrl || 'https://placehold.co/80x80/e7e5e4/1c1917?text=News'}" alt="${article.title}" class="w-12 h-12 object-cover rounded-md border-2 border-stone-300 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/e7e5e4/1c1917?text=News';">
                                     <div class="flex-grow">
-                                        <p class="text-orange-600 font-bold">Album Review</p>
-                                        <h3 class="text-2xl sm:text-3xl font-bold text-stone-900 my-1">${latestReview.albumTitle}</h3>
-                                        <p class="text-stone-600 font-semibold">By ${latestReview.artist}</p>
-                                        <p class="mt-2 text-stone-700 text-sm sm:text-base">${snippet}...</p>
-                                        <a href="/reviews/${latestReview.slug}" target="_blank" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Read Full Review &rarr;</a>
+                                        <h4 class="font-semibold text-sm leading-tight text-stone-800 group-hover:text-orange-600 transition-colors">${article.title}</h4>
+                                        <p class="text-xs text-stone-500">${article.publishDate}</p>
                                     </div>
-                                </div>
-                            `;
-                            this.elements.latestReview.innerHTML = reviewHtml;
-                        } else {
-                            this.elements.latestReview.innerHTML = '<p class="text-stone-500 italic">No recent reviews found.</p>';
+                                </a>
+                            `).join('');
+                            newsHtml += `<div class="space-y-4 mt-4">${otherNewsListHtml}</div>`;
                         }
 
-                    } catch (error) {
-                        console.error("Error fetching articles:", error);
-                        this.elements.latestNews.innerHTML = `<p>Could not load news.</p>`;
-                        this.elements.latestReview.innerHTML = `<p>Could not load review.</p>`;
+                        this.elements.latestNews.innerHTML = newsHtml;
+                    } else {
+                        this.elements.latestNews.innerHTML = '<p class="text-stone-500 italic">No news articles found.</p>';
+                    }
+
+                    // Render Review Section
+                    if (reviewArticles.length > 0) {
+                        const latestReview = reviewArticles[0];
+                        const snippet = (latestReview.body || '').replace(/<[^>]+>/g, '').substring(0, 150);
+                        const reviewHtml = `
+                            <div class="flex flex-col sm:flex-row gap-6 items-start">
+                                <img src="${latestReview.imageUrl || 'https://placehold.co/128x128/1c1917/f5f5f4?text=Review'}" alt="Cover for ${latestReview.albumTitle}" class="w-32 h-32 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
+                                <div class="flex-grow">
+                                    <p class="text-orange-600 font-bold">Album Review</p>
+                                    <h3 class="text-2xl sm:text-3xl font-bold text-stone-900 my-1">${latestReview.albumTitle}</h3>
+                                    <p class="text-stone-600 font-semibold">By ${latestReview.artist}</p>
+                                    <p class="mt-2 text-stone-700 text-sm sm:text-base">${snippet}...</p>
+                                    <a href="/reviews/${latestReview.slug}" target="_blank" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Read Full Review &rarr;</a>
+                                </div>
+                            </div>
+                        `;
+                        this.elements.latestReview.innerHTML = reviewHtml;
+                    } else {
+                        this.elements.latestReview.innerHTML = '<p class="text-stone-500 italic">No recent reviews found.</p>';
                     }
                 },
                 processArtists() {
