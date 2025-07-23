@@ -142,7 +142,7 @@
 
         .typewriter h2 {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.75rem; /* Reduced font size */
+            font-size: 1.5rem; /* Reduced font size for mobile */
             font-weight: bold;
             color: #fff;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
@@ -308,6 +308,28 @@
             font-weight: 600;
             font-size: 0.9rem;
         }
+
+        .artist-modal-timeline {
+            list-style: none;
+            padding-left: 1rem;
+            border-left: 2px solid var(--bg-secondary);
+        }
+        .artist-modal-timeline-item {
+            position: relative;
+            padding-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        .artist-modal-timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.4rem;
+            top: 0.25rem;
+            width: 0.65rem;
+            height: 0.65rem;
+            border-radius: 9999px;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900">
@@ -360,9 +382,9 @@
                         
                         <!-- Main Column -->
                         <div class="lg:col-span-2 space-y-8">
-                            <!-- Recommendation of the Day -->
+                            <!-- Album of the Day -->
                             <div id="recommendation-card" class="dashboard-card">
-                                <h2 class="dashboard-card-header">Recommendation of the Day</h2>
+                                <h2 class="dashboard-card-header">Album of the Day</h2>
                                 <div id="recommendation-content" class="dashboard-card-content">
                                     <!-- Content injected by JS -->
                                 </div>
@@ -617,14 +639,14 @@
                     const analysisText = album.pivotalTracks && album.pivotalTracks.length > 0 ? (album.pivotalTracks[0].analysis || '') : (album.analysis || '');
 
                     this.elements.recommendationContent.innerHTML = `
-                        <div class="flex flex-col sm:flex-row gap-6 items-center">
-                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
-                            <div class="flex-grow">
+                        <div class="flex flex-col sm:flex-row gap-4 items-center cursor-pointer" data-action="open-recommendation-modal">
+                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-24 h-24 sm:w-40 sm:h-40 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
+                            <div class="flex-grow text-center sm:text-left">
                                 <p class="text-stone-600">${album.artist}</p>
                                 <h3 class="text-3xl sm:text-4xl font-bold text-stone-900 my-1">${album.albumTitle}</h3>
                                 <p class="text-stone-600 font-bold">(${album.year})</p>
-                                <p class="mt-2 text-stone-700 text-sm sm:text-base">${analysisText.substring(0, 120)}...</p>
-                                <button data-action="open-recommendation-modal" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Learn More &rarr;</button>
+                                <p class="hidden sm:block mt-2 text-stone-700 text-sm">${analysisText.substring(0, 120)}...</p>
+                                <span class="inline-block mt-2 font-bold text-orange-600 group-hover:underline">View Album &rarr;</span>
                             </div>
                         </div>
                     `;
@@ -644,6 +666,16 @@
                             this.methods.openAlbumModal(this.state.onThisDayAlbum);
                         } else if (action === 'open-otd-artist-modal') {
                             this.methods.openArtistModal(this.state.onThisDayArtist);
+                        }
+                    });
+                    
+                    artistModal.addEventListener('click', (e) => {
+                        if (e.target.matches('.clickable-link[data-album-title]')) {
+                            const { albumTitle, artist } = e.target.dataset;
+                            const album = this.state.allAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
+                            if (album) {
+                                this.methods.closeArtistModal(() => this.methods.openAlbumModal(album));
+                            }
                         }
                     });
 
@@ -713,19 +745,36 @@
                     albumModal.querySelector('.modal-content').classList.remove('scale-95');
                     this.elements.albumModalBody.scrollTop = 0;
                 },
-                closeAlbumModal() {
+                closeAlbumModal(callback) {
                     this.elements.albumModal.classList.add('opacity-0', 'pointer-events-none');
                     this.elements.albumModal.querySelector('.modal-content').classList.add('scale-95');
+                    if (typeof callback === 'function') setTimeout(callback, 300);
                 },
                 openArtistModal(artist) {
                     const { artistModal, artistModalTitle, artistModalBody } = this.elements;
                     if (!artist) return;
                     
                     const artistProfile = this.state.fullArtistsData[artist.name] || artist;
+                    const artistData = this.state.artistsData.find(a => a.name === artist.name) || {};
+
                     artistModalTitle.textContent = artist.name;
 
                     const knownForHtml = artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-stone-900 mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : '';
                     const bornInHtml = artistProfile.bornIn ? `<p class="mt-2 text-stone-900 text-sm"><strong class="font-bold">Born:</strong> ${artistProfile.bornIn}</p>` : '';
+
+                    const artistAlbums = (artistData.albums || [])
+                        .map(albumTitle => this.state.allAlbums.find(a => a.albumTitle === albumTitle))
+                        .filter(Boolean)
+                        .sort((a, b) => (a.year || 9999) - (b.year || 9999));
+
+                    const albumTimelineHtml = artistAlbums.map(album => `
+                        <li class="artist-modal-timeline-item">
+                            <strong class="text-stone-600">${album.year}:</strong> 
+                            <span class="clickable-link" data-action="open-album-from-artist-modal" data-album-title="${album.albumTitle}" data-artist="${album.artist}">
+                                ${album.albumTitle}
+                            </span>
+                        </li>
+                    `).join('');
 
                     artistModalBody.innerHTML = `
                         <div class="flex flex-col sm:flex-row gap-6">
@@ -737,6 +786,8 @@
                             <div class="w-full sm:w-2/3">
                                 <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
                                 <p class="text-base text-stone-700 leading-relaxed mb-4">${artistProfile.profile || 'No profile available.'}</p>
+                                <h4 class="text-2xl text-stone-900 mb-3">Key Album Appearances</h4>
+                                <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml || '<li>No appearances found in database.</li>'}</ul>
                             </div>
                         </div>
                     `;
@@ -745,9 +796,10 @@
                     artistModal.querySelector('.modal-content').classList.remove('scale-95');
                     artistModalBody.scrollTop = 0;
                 },
-                closeArtistModal() {
+                closeArtistModal(callback) {
                     this.elements.artistModal.classList.add('opacity-0', 'pointer-events-none');
                     this.elements.artistModal.querySelector('.modal-content').classList.add('scale-95');
+                    if (typeof callback === 'function') setTimeout(callback, 300);
                 },
                 setupOnThisDayFeature() {
                     const today = new Date();
@@ -932,15 +984,18 @@
                             if (match) {
                                 const name = match[1].trim();
                                 if (!artistsMap.has(name)) {
+                                    const artistProfile = this.state.fullArtistsData[name] || {};
                                     artistsMap.set(name, { 
                                         name: name,
-                                        profile: this.state.fullArtistsData[name] || {}
+                                        albums: new Set(),
+                                        profile: artistProfile
                                     });
                                 }
+                                artistsMap.get(name).albums.add(album.albumTitle);
                             }
                         });
                     });
-                    this.state.artistsData = Array.from(artistsMap.values());
+                    this.state.artistsData = Array.from(artistsMap.values()).map(a => ({...a, albums: Array.from(a.albums)}));
                 },
                 buildGenreColorMap() {
                     const baseGenreColors = this.state.genreData.genres ? Object.keys(this.state.genreData.genres).reduce((acc, genre) => {
