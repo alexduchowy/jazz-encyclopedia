@@ -1,0 +1,37 @@
+# This file tells the hosting server how to handle different URL paths.
+
+# Rule for the admin page
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
+# Rule for the timeline page
+[[redirects]]
+  from = "/timeline"
+  to = "/timeline.html"
+  status = 200
+
+# Rule for the legacy page
+[[redirects]]
+  from = "/legacy"
+  to = "/legacy.html"
+  status = 200
+
+# Rule for the blog page
+[[redirects]]
+  from = "/blog"
+  to = "/blog.html"
+  status = 200
+
+# Rule for individual news and review articles
+# This tells the server that any path starting with /news/ or /reviews/
+# should be handled by the article.html page.
+[[redirects]]
+  from = "/news/*"
+  to = "/article.html"
+  status = 200
+[[redirects]]
+  from = "/reviews/*"
+  to = "/article.html"
+  status = 200
