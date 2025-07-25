@@ -101,27 +101,29 @@
             <!-- Main Content Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                <!-- Left Column: Video Player and Up Next -->
-                <div class="lg:col-span-8 flex flex-col gap-8">
+                <!-- Left Column: Video Player -->
+                <div class="lg:col-span-8">
                     <div class="video-container">
                         <div id="player"></div>
-                    </div>
-                     <!-- Up Next Playlist -->
-                    <div class="bg-stone-800/50 backdrop-blur-sm border border-stone-700 rounded-lg p-6 flex-grow">
-                        <h2 class="text-2xl text-stone-100 font-bold border-b-2 border-stone-700 pb-2 mb-4">Up Next</h2>
-                        <div id="playlist-container" class="space-y-3 overflow-y-auto" style="max-height: 280px;">
-                            <!-- Playlist items will be generated here -->
-                        </div>
                     </div>
                 </div>
 
                 <!-- Right Column: Info -->
                 <div class="lg:col-span-4 flex flex-col">
-                    <!-- Title & Description -->
                     <div class="bg-stone-800/50 backdrop-blur-sm border border-stone-700 rounded-lg p-6 h-full flex flex-col">
-                        <h2 id="video-main-title" class="text-3xl xl:text-4xl text-stone-100 font-bold border-b-2 border-stone-700 pb-4 mb-4 flex-shrink-0">Loading...</h2>
+                        <h2 id="video-main-title" class="text-3xl text-stone-100 font-bold border-b-2 border-stone-700 pb-3 mb-3 flex-shrink-0">Loading...</h2>
                         <div class="flex-grow overflow-y-auto pr-2">
-                            <p id="video-description" class="text-stone-300 text-base leading-relaxed">Please wait while we load the video details.</p>
+                            <p id="video-description" class="text-stone-300 text-sm leading-relaxed">Please wait while we load the video details.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Up Next Playlist (Full width under the columns on mobile, under player on desktop) -->
+                <div class="lg:col-span-8">
+                    <div class="bg-stone-800/50 backdrop-blur-sm border border-stone-700 rounded-lg p-6">
+                        <h2 class="text-2xl text-stone-100 font-bold border-b-2 border-stone-700 pb-2 mb-4">Up Next</h2>
+                        <div id="playlist-container" class="space-y-3 overflow-y-auto" style="max-height: 240px;">
+                            <!-- Playlist items will be generated here -->
                         </div>
                     </div>
                 </div>
