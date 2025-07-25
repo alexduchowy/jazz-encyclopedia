@@ -14,38 +14,47 @@
     
     <!-- Custom CSS Styling -->
     <style>
-        /* Define custom color properties for easy theme management */
+        /* Light Theme (Default) */
         :root {
-            --bg-main: #f5f5f4; /* stone-100 */
-            --bg-secondary: #e7e5e4; /* stone-200 */
-            --bg-dark: #1a1a1a; /* Custom dark gray */
-            --text-main: #1c1917; /* stone-900 */
-            --text-muted: #44403c; /* stone-700 - Darkened for readability */
-            --accent: #f97316; /* orange-500 */
-            --accent-dark: #ea580c; /* orange-600 */
-            --yellow-accent: #facc15; /* yellow-400 */
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-header: rgba(255,255,255,0.8);
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --border-color: #e7e5e4;
+            --accent: #f97316;
+            --yellow-accent: #facc15;
 
             /* Genre Colors */
-            --genre-bebop: #C19A6B; /* Pastel Brown */
-            --genre-hard-bop: #d8b4fe; /* purple-300 */
-            --genre-cool-jazz: #93c5fd; /* blue-300 */
-            --genre-modal-jazz: #a7f3d0; /* emerald-200 */
-            --genre-post-bop: #fed7aa; /* orange-200 */
-            --genre-free-jazz: #fca5a5; /* red-300 */
-            --genre-avant-garde: #fecdd3; /* rose-200 */
-            --genre-jazz-fusion: #a5f3fc; /* cyan-200 */
-            --genre-melodic-path: #64748b; /* slate-500, for Legacy section */
-            --genre-default: #e7e5e4; /* stone-200 */
+            --genre-bebop: #C19A6B;
+            --genre-hard-bop: #d8b4fe;
+            --genre-cool-jazz: #93c5fd;
+            --genre-modal-jazz: #a7f3d0;
+            --genre-post-bop: #fed7aa;
+            --genre-free-jazz: #fca5a5;
+            --genre-avant-garde: #fecdd3;
+            --genre-jazz-fusion: #a5f3fc;
+            --genre-default: #e7e5e4;
 
-            /* Lighter Era Colors for Timeline Background */
-            --era-cool-light: #dbeafe; /* blue-100 */
-            --era-hard-bop-light: #f3e8ff; /* purple-100 */
-            --era-bebop-light: #EADDCA; /* Lighter Pastel Brown */
-            --era-modal-light: #d1fae5; /* emerald-100 */
-            --era-post-bop-light: #ffedd5; /* orange-100 */
-            --era-free-jazz-light: #fee2e2; /* red-100 */
-            --era-roots-light: #fef9c3; /* yellow-100 */
-            --era-fusion-light: #cffafe; /* cyan-100 */
+            /* Era Colors */
+            --era-cool-light: #dbeafe;
+            --era-hard-bop-light: #f3e8ff;
+            --era-bebop-light: #EADDCA;
+            --era-modal-light: #d1fae5;
+            --era-post-bop-light: #ffedd5;
+            --era-free-jazz-light: #fee2e2;
+            --era-roots-light: #fef9c3;
+            --era-fusion-light: #cffafe;
+        }
+
+        /* Dark Theme */
+        .dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
         }
 
         /* Base body styling */
@@ -55,13 +64,11 @@
             color: var(--text-main);
         }
         
-        /* Heading font styling with new Bebas Neue font */
         h1, h2, h3, h4, h5 {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
         }
 
-        /* Navigation link transition effects */
         .nav-link {
             transition: color 0.2s;
             font-family: 'Bebas Neue', sans-serif;
@@ -71,8 +78,9 @@
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
         }
+        .nav-bar-behaviour { display: none; }
+        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
 
-        /* Section header styling */
         .section-header {
               transform: rotate(-1deg);
               display: inline-block;
@@ -82,18 +90,17 @@
               margin-bottom: 1rem;
         }
         
-        /* Compact Matrix Styling */
         #genre-matrix-container {
-            border: 2px solid var(--text-main);
+            border: 2px solid var(--border-color);
             border-radius: 0.25rem;
-            overflow: auto; /* Enable scrolling */
-            max-height: 70vh; /* Set a max height */
+            overflow: auto;
+            max-height: 70vh;
             background-color: var(--bg-main);
         }
         .matrix-table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 800px; /* Adjust min-width since a column is removed */
+            min-width: 800px;
         }
         .matrix-table th, .matrix-table td {
             padding: 1rem;
@@ -109,6 +116,11 @@
             top: 0;
             z-index: 10;
         }
+        .dark .matrix-table thead th {
+            background-color: #1a1a1a;
+            color: var(--accent);
+            border-bottom: 2px solid var(--border-color);
+        }
         .matrix-table tbody th {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.25rem;
@@ -117,6 +129,10 @@
             left: 0;
             z-index: 5;
             border-right: 2px solid var(--bg-secondary);
+            background-color: var(--bg-main); /* Ensure sticky header has background */
+        }
+        .dark .matrix-table tbody th {
+             border-right-color: var(--border-color);
         }
         .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td {
             border-bottom: none;
@@ -146,20 +162,18 @@
             opacity: 1;
         }
 
-
-        /* Modal transition styles */
-        .modal {
-            transition: opacity 0.3s ease;
-        }
+        .modal { transition: opacity 0.3s ease; }
         .modal-content {
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
         }
+        .dark .modal-content { border-color: var(--border-color); }
         .modal.opacity-0 .modal-content {
               opacity: 0;
               transform: scale(0.95) translateY(10px);
         }
         
-        /* Horizontal draggable timeline container */
         #horizontal-timeline-container {
             position: relative;
             width: 100%;
@@ -169,57 +183,41 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        #horizontal-timeline-container:active {
-            cursor: grabbing;
-        }
-        #horizontal-timeline-container::-webkit-scrollbar {
-            display: none;
-        }
+        #horizontal-timeline-container:active { cursor: grabbing; }
+        #horizontal-timeline-container::-webkit-scrollbar { display: none; }
 
-        /* Canvas for drawing connection lines */
         #timeline-canvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* Allows clicks to pass through to the cards */
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
             z-index: 1;
         }
-        /* Wrapper for all timeline content */
         #timeline-wrapper {
             position: relative;
             display: inline-flex;
             align-items: flex-start;
             padding: 2rem 1rem;
-            padding-top: 5rem; /* MODIFIED: Make space for sticky header */
-            z-index: 2; /* Ensure cards are above the canvas */
+            padding-top: 5rem;
+            z-index: 2;
         }
-        /* Styling for each year's section in the timeline */
         .timeline-year-section {
             display: flex;
             flex-shrink: 0;
             flex-direction: column;
-            align-items: center; /* Center pagination controls */
-            border-left: 4px dotted #a8a29e; /* MODIFIED: Darker dotted line (stone-400) */
+            align-items: center;
+            border-left: 4px dotted var(--text-muted);
             padding: 0 2rem;
         }
-        .timeline-year-section:first-child {
-            border-left: none;
-        }
-        /* Year header styling */
-        .timeline-year-header {
-           display: none; /* MODIFIED: Hide the inline headers */
-        }
-        /* Grid for album cards within a year */
+        .timeline-year-section:first-child { border-left: none; }
+        .timeline-year-header { display: none; }
         .timeline-album-list {
             display: grid;
             grid-template-rows: repeat(2, 1fr);
             grid-auto-flow: column;
             gap: 1.5rem;
-            min-height: 520px; /* Adjust height to fit two rows of cards + gap */
+            min-height: 520px;
         }
-        /* Individual album card styling */
         .timeline-album-card, .legacy-album-card {
             width: 200px;
             flex-shrink: 0;
@@ -232,28 +230,39 @@
             overflow: hidden;
             opacity: 1;
         }
+        .dark .timeline-album-card, .dark .legacy-album-card {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
         .timeline-album-card:hover, .legacy-album-card:hover {
             transform: translateY(-5px) rotate(2deg);
         }
-        .timeline-album-card.dimmed {
-            opacity: 0.5;
+        .dark .timeline-album-card:hover, .dark .legacy-album-card:hover {
+            border-color: var(--accent);
         }
+        .timeline-album-card.dimmed { opacity: 0.5; }
         .timeline-album-card.highlighted {
             opacity: 1;
             box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
         }
-        /* Style for the card that is currently selected/clicked */
+        .dark .timeline-album-card.highlighted { box-shadow: none; border-color: var(--highlight-color, var(--accent)); }
         .timeline-album-card.clicked, .legacy-album-card.clicked {
             transform: translateY(-5px) rotate(2deg) scale(1.05);
             box-shadow: 8px 8px 0px var(--accent) !important;
             opacity: 1 !important;
             z-index: 10;
         }
+        .dark .timeline-album-card.clicked, .dark .legacy-album-card.clicked {
+            box-shadow: none !important;
+            border-color: var(--accent) !important;
+        }
         .timeline-album-card.landmark-album {
             border-width: 4px;
             border-color: var(--landmark-color, var(--accent));
             box-shadow: 0 0 15px 0px var(--landmark-color, var(--accent));
         }
+        .dark .timeline-album-card.landmark-album { box-shadow: 0 0 15px 0px var(--landmark-color, var(--accent)); }
+
         .timeline-album-card img, .legacy-album-card img {
             width: 100%;
             height: 200px;
@@ -265,9 +274,7 @@
         .legacy-album-card:hover img, .legacy-album-card.clicked img {
             filter: grayscale(0%);
         }
-        .timeline-album-card-info, .legacy-album-card-info {
-            padding: 0.75rem;
-        }
+        .timeline-album-card-info, .legacy-album-card-info { padding: 0.75rem; }
         .timeline-album-card-info h5, .legacy-album-card-info h5 {
             color: var(--text-main);
             font-size: 1.25rem;
@@ -277,7 +284,6 @@
             font-family: 'Inter', sans-serif;
             font-size: 0.8rem;
         }
-        /* Artist card styling */
         .artist-card {
             background-color: var(--bg-main);
             border-radius: 0.25rem;
@@ -286,124 +292,91 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 4px 4px 0px var(--text-main);
             border: 2px solid var(--text-main);
-            transform: translateZ(0); /* Promotes the element to a new compositing layer */
-            -webkit-backface-visibility: hidden; /* Safari fix for flickering */
-            backface-visibility: hidden; /* Standard fix for flickering */
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        .dark .artist-card {
+            border-color: var(--border-color);
+            box-shadow: none;
         }
         .artist-card:hover {
             transform: translateY(-5px) rotate(2deg);
-            box-shadow: 8px 8px 0px var(--accent) !important; /* Ensure hover always wins */
+            box-shadow: 8px 8px 0px var(--accent) !important;
         }
-        .artist-card.bandleader {
-            box-shadow: 4px 4px 0px var(--accent);
+        .dark .artist-card:hover {
+            box-shadow: none !important;
+            border-color: var(--accent) !important;
         }
-        .artist-card.influential-sideman {
-            box-shadow: 4px 4px 0px var(--yellow-accent);
-        }
-        .artist-card .artist-photo-container {
-              height: 224px;
-              width: 100%;
-        }
-        .artist-card img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              object-position: center;
-              filter: grayscale(100%);
-              transition: filter 0.3s ease;
-        }
-         .artist-card:hover img {
-            filter: grayscale(0%);
-        }
-        .artist-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            background-color: #1c1917; /* stone-900 */
-        }
-        .artist-placeholder svg {
-            width: 50%;
-            height: 50%;
-            color: #a8a29e; /* stone-400 */
-        }
+        .artist-card.bandleader { box-shadow: 4px 4px 0px var(--accent); }
+        .dark .artist-card.bandleader { box-shadow: none; border-color: var(--accent); }
+        .artist-card.influential-sideman { box-shadow: 4px 4px 0px var(--yellow-accent); }
+        .dark .artist-card.influential-sideman { box-shadow: none; border-color: var(--yellow-accent); }
         
-        /* Artist Slider Styling */
-        #artist-slider-container {
-            overflow: hidden;
+        .artist-card .artist-photo-container { height: 224px; width: 100%; }
+        .artist-card img {
+              width: 100%; height: 100%;
+              object-fit: cover; object-position: center;
+              filter: grayscale(100%); transition: filter 0.3s ease;
         }
-        #artist-slider-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
+         .artist-card:hover img { filter: grayscale(0%); }
+        .artist-placeholder {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100%;
+            background-color: var(--text-main);
         }
+        .artist-placeholder svg { width: 50%; height: 50%; color: var(--text-muted); }
+        
+        #artist-slider-container { overflow: hidden; }
+        #artist-slider-track { display: flex; transition: transform 0.5s ease-in-out; }
         .artist-slider-page {
-            width: 100%;
-            flex-shrink: 0;
-            padding: 0 0.5rem; /* Add some padding so cards don't touch edges */
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns */
+            width: 100%; flex-shrink: 0;
+            padding: 0 0.5rem;
+            display: grid; grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
         }
-        @media (min-width: 768px) { /* Tablet and Web: 6 columns */
-            .artist-slider-page {
-                grid-template-columns: repeat(6, 1fr);
-            }
-        }
+        @media (min-width: 768px) { .artist-slider-page { grid-template-columns: repeat(6, 1fr); } }
         
         .styled-select select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.7rem center;
-            background-size: 1.2em;
+            background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 1.2em;
+            background-color: var(--bg-main);
+            border-color: var(--text-main);
+            color: var(--text-main);
         }
+        .dark .styled-select select { border-color: var(--border-color); }
 
-        /* Modal Night Mode & Player Styles */
         #modal-analysis-section {
-            background-color: var(--bg-dark);
-            padding: 1.5rem;
-            margin-top: 2rem;
+            background-color: #1a1a1a;
+            padding: 1.5rem; margin-top: 2rem;
             border: 2px solid var(--text-main);
             box-shadow: 4px 4px 0px var(--text-main);
         }
-        #modal-analysis-section h5 {
-            color: var(--bg-main);
+        .dark #modal-analysis-section {
+            border-color: var(--border-color);
+            box-shadow: none;
         }
+        #modal-analysis-section h5 { color: #f5f5f4; }
         
         .liner-notes-text {
             font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            line-height: 1.6;
+            font-size: 1rem; line-height: 1.6;
             color: #d4d4d2; 
         }
         
-        audio.styled-player {
-            height: 35px; 
-            accent-color: var(--accent);
-        }
+        audio.styled-player { height: 35px; accent-color: var(--accent); }
 
-        /* Genre Filter Checkbox Styling */
         .genre-checkbox-label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 600;
+            display: flex; align-items: center; cursor: pointer;
+            font-size: 0.875rem; font-weight: 600;
             padding: 0.5rem 1rem;
             border: 2px solid var(--text-main);
             border-radius: 9999px;
             background-color: var(--bg-main);
-            transition: all 0.2s ease;
-            flex-shrink: 0;
+            transition: all 0.2s ease; flex-shrink: 0;
         }
-        .genre-checkbox-label input {
-            appearance: none;
-            -webkit-appearance: none;
-            display: none;
-        }
+        .dark .genre-checkbox-label { border-color: var(--border-color); }
+        .genre-checkbox-label input { display: none; }
         .genre-checkbox-label:has(input:checked) {
             background-color: var(--genre-color, var(--accent));
             color: var(--text-main);
@@ -412,439 +385,212 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+        .dark .genre-checkbox-label:hover { box-shadow: none; }
 
-        /* Scrollbar Marker Styling */
-        #custom-scrollbar-markers {
-            position: absolute;
-            top: -5px; /* Position it slightly above the scrollbar track */
-            left: 0;
-            right: 0;
-            height: 10px;
-            pointer-events: none; /* So it doesn't interfere with clicks on the scrollbar */
-        }
         .scrollbar-marker {
-            position: absolute;
-            width: 2px;
-            height: 100%;
+            position: absolute; width: 2px; height: 100%;
             background-color: var(--accent);
-            transform: translateX(-50%); /* Center the marker on its position */
+            transform: translateX(-50%);
         }
         .scrollbar-marker::after {
-            content: attr(data-year);
-            position: absolute;
-            top: 10px;
-            left: 50%;
+            content: attr(data-year); position: absolute;
+            top: 10px; left: 50%;
             transform: translateX(-50%);
-            font-size: 9px;
-            font-weight: bold;
+            font-size: 9px; font-weight: bold;
             color: var(--text-muted);
         }
 
-        /* Loading indicator styles */
         #loader {
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
             background-color: var(--bg-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             z-index: 100;
         }
         .loader-spinner {
             border: 4px solid var(--bg-secondary);
             border-top: 4px solid var(--accent);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            border-radius: 50%; width: 50px; height: 50px;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .content-hidden {
-            display: none;
-        }
+        .content-hidden { display: none; }
         
         .genre-tag {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            padding: 0.25rem 0.75rem; border-radius: 9999px;
+            font-size: 0.875rem; font-weight: 600;
             color: var(--text-main);
             border: 2px solid var(--text-main);
         }
+        .dark .genre-tag { border-color: var(--border-color); }
 
-        .hidden {
-            display: none !important;
-        }
-
-        /* Style for clickable links in modals */
         .clickable-link {
-            cursor: pointer;
-            text-decoration: underline;
+            cursor: pointer; text-decoration: underline;
             text-decoration-color: var(--accent);
             transition: color 0.2s;
         }
-        .clickable-link:hover {
-            color: var(--accent);
-        }
+        .clickable-link:hover { color: var(--accent); }
 
-        /* Animation for fade-in on scroll */
         .fade-in-element {
-            opacity: 0;
-            transform: translateY(20px);
+            opacity: 0; transform: translateY(20px);
             transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
-        .fade-in-element.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .fade-in-element.is-visible { opacity: 1; transform: translateY(0); }
         
-        /* Nudge animation for scroll buttons */
-        @keyframes nudge-right {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(8px); }
-        }
-        .nudge-animation {
-            animation: nudge-right 1.5s ease-in-out 3;
-        }
+        @keyframes nudge-right { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
+        .nudge-animation { animation: nudge-right 1.5s ease-in-out 3; }
 
-        /* Custom class to manage navigation bar visibility */
-        .nav-bar-behaviour {
-            display: none; /* Hidden on mobile by default */
-        }
-        @media (min-width: 768px) { /* md breakpoint: visible on desktop */
-            .nav-bar-behaviour {
-                display: flex;
-            }
-        }
-
-        /* FIX: New class to handle responsive filters */
-        .desktop-filters-behaviour {
-            display: flex;
-        }
-        @media (max-width: 767px) { /* Below md breakpoint (768px) */
-            .desktop-filters-behaviour {
-                display: none;
-            }
-        }
+        #mobile-menu-panel { transition: transform 0.3s ease-in-out; background-color: var(--bg-main); }
+        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
         
-        /* Mobile Menu Panel Transition */
-        #mobile-menu-panel {
-            transition: transform 0.3s ease-in-out;
-        }
-        #mobile-menu-overlay.hidden #mobile-menu-panel {
-            transform: translateX(100%);
-        }
-        
-        .landmark-album-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem 1rem;
-            list-style-position: inside;
-        }
-
-        /* Artist Modal Timeline Styles */
         .artist-modal-timeline {
-            list-style: none;
-            padding-left: 1rem;
+            list-style: none; padding-left: 1rem;
             border-left: 2px solid var(--bg-secondary);
         }
-        .artist-modal-timeline-item {
-            position: relative;
-            padding-bottom: 1rem;
-            padding-left: 1.5rem;
-        }
+        .dark .artist-modal-timeline { border-left-color: var(--border-color); }
+        .artist-modal-timeline-item { position: relative; padding-bottom: 1rem; padding-left: 1.5rem; }
         .artist-modal-timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -0.4rem;
-            top: 0.25rem;
-            width: 0.65rem;
-            height: 0.65rem;
+            content: ''; position: absolute;
+            left: -0.4rem; top: 0.25rem;
+            width: 0.65rem; height: 0.65rem;
             border-radius: 9999px;
             background-color: var(--bg-secondary);
             border: 2px solid var(--text-main);
         }
-        .landmark-star {
-            color: var(--yellow-accent);
-            font-size: 1.1em;
-            margin-left: 0.25rem;
+        .dark .artist-modal-timeline-item::before {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
         }
         
-        /* Era Styling */
-        .era-section {
-            padding-top: 1.5rem;
-            padding-bottom: 2rem;
-            border-left: 4px solid var(--text-main);
-            display: flex;
-            flex-direction: row;
-        }
-        .era-title {
-            display: none; /* Hide the old vertical titles */
-        }
-        .era-content {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-        }
-
-        /* Artist Connection Web Styling */
-        .collaborator-card {
-            cursor: pointer;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-        }
-        .collaborator-card:hover {
-            transform: scale(1.05);
-            opacity: 0.9;
-        }
-
-        /* Known For Box Styling */
         .known-for-box {
-            background-color: var(--accent);
-            color: var(--bg-main);
+            background-color: var(--accent); color: var(--bg-main);
             padding: 0.5rem 1rem;
             border: 2px solid var(--text-main);
             box-shadow: 2px 2px 0px var(--text-main);
-            transform: rotate(-2deg);
-            display: inline-block;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
+            transform: rotate(-2deg); display: inline-block;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem;
+        }
+        .dark .known-for-box {
+            border-color: var(--border-color);
+            box-shadow: none;
         }
         
-        /* Era Glossary Dropdown Styling */
         .dropdown-btn {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 0.05em;
-            font-size: 1.1rem;
+            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
             padding: 0.5rem 1.5rem;
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
             background-color: var(--bg-main);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            transition: all 0.2s ease; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem;
         }
-        .dropdown-btn:hover {
-            background-color: var(--accent);
-            color: var(--bg-main);
-        }
+        .dark .dropdown-btn { border-color: var(--border-color); }
+        .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
         .dropdown-list {
             background-color: var(--bg-main);
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
             box-shadow: 4px 4px 0px var(--text-main);
-            z-index: 20;
-            width: 300px;
+            z-index: 20; width: 300px;
         }
-        .dropdown-list a {
-            display: block;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.2s ease;
+        .dark .dropdown-list {
+            border-color: var(--border-color);
+            box-shadow: none;
         }
+        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
         .dropdown-list a:hover {
-            background-color: var(--accent);
-            color: var(--bg-main);
+            background-color: var(--accent); color: var(--bg-main);
             transform: translateX(4px);
         }
         .dropdown-list a .era-year {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            font-size: 0.9rem;
+            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em;
+            color: var(--text-muted); font-size: 0.9rem;
         }
-        .dropdown-list a:hover .era-year {
-            color: var(--bg-main);
-        }
-
-        /* FIX: Dropdown Menu Styles */
-        .dropdown-menu {
-            position: absolute;
-            display: none; /* Hide by default */
-            z-index: 50;
-            min-width: 160px;
-            background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-            box-shadow: 4px 4px 0px var(--text-main);
-            border-radius: 0.25rem;
-            margin-top: 0.5rem; /* Adjust for better positioning */
-            transform-origin: top left;
-        }
-
-        .group:hover .dropdown-menu {
-            display: block; /* Show on hover */
-        }
-
-        .dropdown-menu a {
-            font-family: 'Inter', sans-serif;
-            letter-spacing: normal;
-            font-size: 1rem;
-            display: block;
-            padding: 0.5rem 1.5rem;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
-        .dropdown-menu a:hover {
-            background-color: var(--accent);
-            color: var(--bg-main);
-            transform: translateX(5px);
-        }
+        .dropdown-list a:hover .era-year { color: var(--bg-main); }
 
         .era-button {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 0.05em;
-            font-size: 0.9rem;
+            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 0.9rem;
             padding: 0.5rem 0.75rem;
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            color: var(--text-main);
-            font-weight: 600;
-            width: 180px; /* Set a fixed width */
-            height: 50px; /* Set a fixed height */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            transition: all 0.2s ease; cursor: pointer;
+            color: var(--text-main); font-weight: 600;
+            width: 180px; height: 50px;
+            display: flex; align-items: center; justify-content: center; text-align: center;
         }
-        .era-button:hover {
-            filter: brightness(95%);
-            transform: translateY(-2px);
-        }
+        .dark .era-button { border-color: var(--border-color); }
+        .era-button:hover { filter: brightness(95%); transform: translateY(-2px); }
+        .dark .era-button:hover { filter: brightness(120%); }
 
-        /* Mobile Sticky Header fix */
-        @media (max-width: 767px) {
-            #sticky-header-display {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0;
-            }
-            #sticky-year-display {
-                font-size: 2.25rem; /* text-4xl */
-                line-height: 1;
-            }
-            #sticky-era-title {
-                font-size: 1rem; /* text-base */
-                line-height: 1.25;
-                padding-bottom: 0;
-            }
+        .banner-section {
+            position: relative; width: 100%;
+            height: 35vh; max-height: 200px;
+            overflow: hidden; background-color: #1a1a1a;
         }
-.banner-section {
-            position: relative;
-            width: 100%;
-            height: 35vh; /* Reduced height */
-            max-height: 200px; /* Reduced max-height */
-            overflow: hidden;
-            background-color: var(--bg-dark);
-        }
-
         .banner-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.3;
+            width: 100%; height: 100%;
+            object-fit: cover; opacity: 0.3;
             animation: banner-fade-in 2s ease-out forwards;
         }
-
-        @keyframes banner-fade-in {
-            from { opacity: 0; transform: scale(1.05); }
-            to { opacity: 0.3; transform: scale(1); }
-        }
-
+        @keyframes banner-fade-in { from { opacity: 0; transform: scale(1.05); } to { opacity: 0.3; transform: scale(1); } }
         .banner-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1rem;
-            color: var(--bg-main);
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 1rem; color: #f5f5f4;
         }
-
         .typewriter h2 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.75rem; /* Reduced font size for mobile */
-            max-width: 90vw;
-            font-weight: bold;
-            color: #fff;
+            font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem;
+            max-width: 90vw; font-weight: bold; color: #fff;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            overflow: hidden;
-            border-right: .15em solid var(--accent);
-            white-space: nowrap;
-            margin: 0 auto;
-            letter-spacing: .1em;
-            animation:
-                typing 3.5s steps(35, end),
-                blink-caret .75s step-end infinite;
+            overflow: hidden; border-right: .15em solid var(--accent);
+            white-space: nowrap; margin: 0 auto; letter-spacing: .1em;
+            animation: typing 3.5s steps(35, end), blink-caret .75s step-end infinite;
         }
-        
-        .banner-subtitle {
-            font-size: 0.9rem;
-        }
-
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: var(--accent); }
-        }
-
+        .banner-subtitle { font-size: 0.9rem; }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent); } }
         @media (min-width: 768px) {
-            .banner-section {
-                height: 30vh; /* Reduced height */
-                max-height: 250px; /* Reduced max-height */
-            }
-            .typewriter h2 {
-                font-size: 3rem; /* Reduced font size */
-            }
-            .banner-subtitle {
-                font-size: 1.125rem;
-            }
+            .banner-section { height: 30vh; max-height: 250px; }
+            .typewriter h2 { font-size: 3rem; max-width: none; }
+            .banner-subtitle { font-size: 1.125rem; }
         }
    
     </style>
 </head>
-<body class="bg-stone-100 text-stone-900">
+<body class="text-stone-900">
 
-    <!-- Full-screen loader -->
-    <div id="loader">
-        <div class="loader-spinner"></div>
-    </div>
+    <div id="loader" class="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
-        <!-- HEADER -->
-        <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
+        <!-- Standardized Sticky Header -->
+        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                     <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
-<div class="nav-bar-behaviour items-center space-x-8">
-                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                        <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                        <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600 flex items-center gap-2">
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                            <span>@controlledjazz</span>
-                        </a>
-                    </div>
-                    <!-- Hamburger Menu Button -->
-                    <div class="md:hidden">
-                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
-                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
+                    <div class="flex items-center">
+                        <div class="nav-bar-behaviour items-center space-x-8">
+                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                            <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Legacy</a>
+                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                                <span>@controlledjazz</span>
+                            </a>
+                        </div>
+                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                         </button>
+                        <!-- Hamburger Menu Button -->
+                        <div class="lg:hidden ml-2">
+                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </nav>
             </header>
@@ -856,21 +602,21 @@
             <section class="banner-section">
                 <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
                 <div class="banner-overlay">
-            <div class="typewriter">
-                    <h2>A Jazz Evolution Encyclopedia</h2>
+                    <div class="typewriter">
+                        <h2>A Jazz Evolution Encyclopedia</h2>
+                    </div>
+                    <p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Follow the development of modern jazz through the 50s and 60s.</p>
                 </div>
-                <p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Follow the development of modern jazz through the 50s and 60s.</p>
-</div>
             </section>
 
             <!-- Overview Section -->
-            <section id="overview" class="py-16 sm:py-20 bg-stone-100">
+            <section id="overview" class="py-16 sm:py-20 bg-[var(--bg-main)]">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="grid md:grid-cols-5 gap-12 items-start">
-                        <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
+                        <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-[var(--text-main)] text-left">
                             <div class="mb-8">
                                 <h2 class="section-header text-5xl">The Golden Age of Jazz</h2>
-                                <p class="text-lg text-stone-600 mt-4 italic">How two decades of explosive creativity redefined the future of music.</p>
+                                <p class="text-lg text-[var(--text-muted)] mt-4 italic">How two decades of explosive creativity redefined the future of music.</p>
                             </div>
                             <p>The period between 1950 and 1969 represents the most accelerated and dynamic evolution in jazz history. From the virtuosic fire of <strong>Bebop</strong>, the music branched into myriad new forms. Some musicians pursued the soulful, blues-drenched energy of <strong>Hard Bop</strong>, while others explored the harmonically rich, restrained arrangements of <strong>Cool Jazz</strong>.</p>
                             <p>At the heart of this era lies the central theme of <strong style="color: var(--accent);">"controlled freedom."</strong> The philosophy of <strong>Post-Bop</strong> sought a middle ground between dense structures and the radical abandon of the burgeoning <strong>Free Jazz</strong> and <strong>Avant-Garde</strong> scenes, introducing new harmonic and rhythmic complexity while still retaining elements of form and melody.</p>
@@ -888,14 +634,14 @@
             </section>
 
             <!-- Interactive Timeline Section -->
-            <section id="timeline" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+            <section id="timeline" class="py-16 sm:py-20 bg-[var(--bg-secondary)] border-y-4 border-[var(--text-main)] dark:border-[var(--border-color)]">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Timeline Explorer</h2>
-                    <p class="text-center text-lg text-stone-600 mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
+                    <p class="text-center text-lg text-[var(--text-muted)] mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
                     
                     <!-- Timeline Filter Controls -->
                     <div id="timeline-controls" class="space-y-6 mb-8">
-                        <div class="md:hidden flex justify-center items-center gap-4">
+                        <div class="lg:hidden flex justify-center items-center gap-4">
                             <!-- Mobile Genre Dropdown -->
                             <div id="genre-filter-container-mobile" class="relative">
                                 <button id="genre-filter-dropdown-btn" class="dropdown-btn">
@@ -912,19 +658,19 @@
                                     Jump to Era
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                 </button>
-                                <div id="era-glossary-list" class="dropdown-list absolute left-0 top-full mt-2 hidden text-left">
+                                <div id="era-glossary-list" class="dropdown-list absolute right-0 top-full mt-2 hidden text-left">
                                     <!-- Era glossary links will be injected here -->
                                 </div>
                             </div>
                         </div>
 
                         <!-- Web Bubbles -->
-                        <div id="genre-filter-container" class="desktop-filters-behaviour flex-wrap justify-center gap-x-4 gap-y-3">
+                        <div id="genre-filter-container" class="hidden lg:flex flex-wrap justify-center gap-x-4 gap-y-3">
                            <!-- Checkboxes will be injected here by JavaScript -->
                         </div>
                         
                         <!-- Web Era Buttons -->
-                        <div id="era-glossary-container-web" class="desktop-filters-behaviour w-full justify-center">
+                        <div id="era-glossary-container-web" class="hidden lg:block w-full">
                              <!-- Content will be injected by JavaScript -->
                         </div>
                     </div>
@@ -933,35 +679,35 @@
                         <!-- Sticky Year and Era Title Display -->
                         <div id="sticky-header-display" class="absolute top-4 left-1 sm:left-4 flex items-end gap-x-3 pointer-events-none z-10">
                             <div id="sticky-year-display" class="font-black text-orange-500 text-5xl leading-none transition-opacity duration-150"></div>
-                            <h3 id="sticky-era-title" class="font-black text-stone-500 text-3xl leading-tight pb-1 transition-opacity duration-300"></h3>
+                            <h3 id="sticky-era-title" class="font-black text-[var(--text-muted)] text-3xl leading-tight pb-1 transition-opacity duration-300"></h3>
                         </div>
 
                         <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
                             <canvas id="timeline-canvas"></canvas>
                             <div id="timeline-wrapper"></div>
                         </div>
-                        <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
+                        <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                         </button>
-                        <button id="scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all">
+                        <button id="scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
                     </div>
                     <!-- Custom Scrollbar with Markers -->
                     <div class="mt-6">
-                        <div id="custom-scrollbar" class="w-full h-2 bg-stone-300 rounded-full cursor-pointer relative">
+                        <div id="custom-scrollbar" class="w-full h-2 bg-stone-300 dark:bg-stone-700 rounded-full cursor-pointer relative">
                             <div id="custom-scrollbar-markers"></div>
-                            <div id="custom-scrollbar-thumb" class="h-full bg-stone-800 rounded-full absolute top-0 cursor-grab"></div>
+                            <div id="custom-scrollbar-thumb" class="h-full bg-[var(--text-main)] rounded-full absolute top-0 cursor-grab"></div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Genre Matrix Section -->
-            <section id="matrix" class="py-16 sm:py-20">
+            <section id="matrix" class="py-16 sm:py-20 bg-[var(--bg-main)]">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Genres</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Compare the main aspects of each style.</p>
+                    <p class="text-center text-lg text-[var(--text-muted)] mb-12 max-w-3xl mx-auto italic">Compare the main aspects of each style.</p>
                     <div id="genre-matrix-container" class="matrix-container max-w-6xl mx-auto">
                         <table id="style-matrix-table" class="matrix-table">
                             <!-- Table content will be generated here -->
@@ -971,16 +717,16 @@
             </section>
 
             <!-- Key Artists Grid Section -->
-            <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+            <section id="artists" class="py-16 sm:py-20 bg-[var(--bg-secondary)] border-y-4 border-[var(--text-main)] dark:border-[var(--border-color)]">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">The Architects</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined an era.</p>
+                    <p class="text-center text-lg text-[var(--text-muted)] mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined an era.</p>
                     
                     <!-- Instrument Filter Dropdown -->
                     <div class="flex justify-center mb-8">
                         <div class="w-full max-w-xs styled-select">
-                            <label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label>
-                            <select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
+                            <label for="instrument-filter" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-center">Filter by Instrument:</label>
+                            <select id="instrument-filter" class="block w-full rounded-sm border-2 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
                             </select>
                         </div>
                     </div>
@@ -994,11 +740,11 @@
                         </div>
                          <!-- Artist Pagination Controls -->
                         <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4">
-                            <button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                            <button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                             </button>
-                            <span id="artist-page-indicator" class="font-bold text-lg text-stone-900 pointer-events-auto"></span>
-                            <button id="artist-next-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                            <span id="artist-page-indicator" class="font-bold text-lg text-[var(--text-main)] pointer-events-auto"></span>
+                            <button id="artist-next-btn" class="pointer-events-auto p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                             </button>
                        </div>
@@ -1022,18 +768,18 @@
     
     <!-- Modals -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
-            <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+        <div id="modal-content-album" class="modal-content rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
                 <div>
                     <h3 id="modal-title" class="text-4xl text-orange-500"></h3>
-                    <button id="modal-artist" class="text-xl text-stone-600 bg-transparent border-none p-0"></button>
+                    <button id="modal-artist" class="text-xl text-[var(--text-muted)] bg-transparent border-none p-0"></button>
                 </div>
                 <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
             </div>
             <div id="modal-body" class="p-6 overflow-y-auto">
                 <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
                     <div id="modal-album-art-container" class="w-full md:w-1/3 flex-shrink-0">
-                        <img id="modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="" loading="lazy">
+                        <img id="modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" alt="" loading="lazy">
                     </div>
                     <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
@@ -1042,15 +788,15 @@
                 </div>
             </div>
              <!-- Modal Navigation Footer -->
-            <div id="modal-nav-footer" class="flex justify-between items-center p-4 border-t-2 border-stone-900 flex-shrink-0 bg-stone-200">
-                <button id="prev-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Previous Album</button>
-                <button id="next-album-btn" class="px-4 py-2 bg-stone-900 text-stone-100 rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed">Next Album</button>
+            <div id="modal-nav-footer" class="flex justify-between items-center p-4 border-t-2 flex-shrink-0 bg-[var(--bg-secondary)]">
+                <button id="prev-album-btn" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Previous Album</button>
+                <button id="next-album-btn" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Album</button>
             </div>
         </div>
     </div>
     <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
                  <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
                  <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
              </div>
@@ -1058,18 +804,17 @@
         </div>
     </div>
     <div id="genre-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
                  <h3 id="genre-modal-title" class="text-4xl"></h3>
                  <button id="close-genre-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
              </div>
              <div id="genre-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
     </div>
-    <!-- NEW: Path Info Modal -->
     <div id="path-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+        <div class="modal-content rounded-sm shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
                  <h3 id="path-modal-title" class="text-4xl"></h3>
                  <button id="close-path-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
              </div>
@@ -1080,19 +825,18 @@
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
-        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
-            <div class="flex justify-end mb-4">
-                <button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
-                     <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
+                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    <span>@controlledjazz</span>
+                </a>
             </nav>
         </div>
     </div>
@@ -1137,6 +881,7 @@
                         this.methods[key] = this.methods[key].bind(this);
                     }
                 }
+                this.methods.setupTheme(); // Add theme setup
                 this.fetchData();
             },
             
@@ -1180,6 +925,9 @@
                     onThisDayContainer: document.getElementById('on-this-day'),
                     genreFilterDropdownBtn: document.getElementById('genre-filter-dropdown-btn'),
                     genreFilterList: document.getElementById('genre-filter-list'),
+                    themeToggle: document.getElementById('theme-toggle'),
+                    themeIconLight: document.getElementById('theme-icon-light'),
+                    themeIconDark: document.getElementById('theme-icon-dark'),
                 };
             },
 
@@ -1240,6 +988,35 @@
                 setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 0);
             },
             methods: {
+                setupTheme() {
+                    const themeToggle = this.elements.themeToggle;
+                    const lightIcon = this.elements.themeIconLight;
+                    const darkIcon = this.elements.themeIconDark;
+
+                    const applyTheme = (theme) => {
+                        if (theme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                            lightIcon.classList.add('hidden');
+                            darkIcon.classList.remove('hidden');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                            lightIcon.classList.remove('hidden');
+                            darkIcon.classList.add('hidden');
+                        }
+                    };
+
+                    const savedTheme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                    
+                    applyTheme(currentTheme);
+
+                    themeToggle.addEventListener('click', () => {
+                        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                        localStorage.setItem('theme', newTheme);
+                        applyTheme(newTheme);
+                    });
+                },
                 handlePageLoadAnchorLink() {
                     const hash = window.location.hash;
                     if (hash) {
@@ -1464,8 +1241,8 @@
                     `).join('');
                     eraGlossaryContainerWeb.innerHTML = `
                         <div class="flex flex-col items-center w-full">
-                            <span class="font-bold text-sm text-stone-600 mb-2">JUMP TO ERA:</span>
-                            <div class="grid grid-cols-4 gap-x-3 gap-y-2" style="width: 740px;">
+                            <span class="font-bold text-sm text-[var(--text-muted)] mb-2">JUMP TO ERA:</span>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-2" style="width: auto; max-width: 740px;">
                                 ${webButtonsHtml}
                             </div>
                         </div>
@@ -1586,25 +1363,21 @@
                         });
                         matrixContainer.appendChild(tbody);
 
-                        // Add hover effects
                         matrixContainer.addEventListener('mouseover', e => {
                             if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
                                 const cell = e.target;
                                 const row = cell.parentElement;
                                 const colIndex = Array.from(row.children).indexOf(cell);
                                 
-                                // Row hover
                                 row.classList.add('row-hover');
                                 const rowGenreName = row.querySelector('th button')?.dataset.genreName;
                                 if (rowGenreName) {
                                     const genreData = this.state.styleMatrix.genres[rowGenreName];
                                     if (genreData) {
                                         const color = genreData.color.startsWith('var') ? getComputedStyle(document.documentElement).getPropertyValue(genreData.color.match(/--[a-zA-Z-]+/)[0]).trim() : genreData.color;
-                                        row.style.setProperty('--highlight-color', `${color}33`); // Add alpha transparency
+                                        row.style.setProperty('--highlight-color', `${color}33`);
                                     }
                                 }
-
-                                // Column hover
                                 Array.from(matrixContainer.querySelectorAll('tr')).forEach(r => {
                                     r.children[colIndex].classList.add('col-hover');
                                 });
@@ -1801,7 +1574,7 @@
 
                         if (target.dataset.artistName) {
                             const artistName = target.dataset.artistName;
-                            const artist = this.state.artistsData.find(a => a.name === name);
+                            const artist = this.state.artistsData.find(a => a.name === artistName);
                             if (artist) {
                                 this.methods.closeGenreModal(() => this.methods.openArtistModal(artist));
                             }
@@ -1846,11 +1619,11 @@
                             if (artist.tier === 2) card.classList.add('influential-sideman');
                             card.dataset.artistName = artist.name;
                             card.innerHTML = `
-                                <div class="h-56 bg-stone-900 artist-photo-container">
+                                <div class="h-56 artist-photo-container">
                                     <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
                                 <div class="p-3">
-                                    <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
+                                    <h4 class="font-bold text-base text-[var(--text-main)] truncate">${artist.name}</h4>
                                 </div>`;
                             pageDiv.appendChild(card);
                         });
@@ -1897,18 +1670,18 @@
                                 const id = entry.target.getAttribute('id');
                                 this.elements.navLinks.forEach(link => {
                                     const href = link.getAttribute('href');
-                                    if (href && href.startsWith('#')) {
+                                    if (href && href.includes('#')) {
                                         link.classList.remove('active');
-                                        if (href === `#${id}`) {
+                                        if (href.split('#')[1] === id) {
                                             link.classList.add('active');
                                         }
                                     }
                                 });
                                 this.elements.mobileNavLinks.forEach(link => {
                                     const href = link.getAttribute('href');
-                                    if (href && href.startsWith('#')) {
+                                    if (href && href.includes('#')) {
                                         link.classList.remove('text-orange-500');
-                                        if (href === `#${id}`) {
+                                        if (href.split('#')[1] === id) {
                                             link.classList.add('text-orange-500');
                                         }
                                     }
@@ -1965,7 +1738,6 @@
                                 this.methods.openArtistModal(artist);
                             }
                         }
-                        // Close dropdown if clicking outside
                         if (this.elements.eraGlossaryContainerMobile && !this.elements.eraGlossaryContainerMobile.contains(e.target)) {
                             this.elements.eraGlossaryList.classList.add('hidden');
                         }
@@ -2094,7 +1866,7 @@
                     const artistBtn = albumModal.querySelector('#modal-artist');
                     artistBtn.textContent = album.artist;
                     artistBtn.dataset.artistName = album.artist;
-                    artistBtn.className = 'text-xl text-stone-600 bg-transparent border-none p-0 clickable-link';
+                    artistBtn.className = 'text-xl text-[var(--text-muted)] bg-transparent border-none p-0 clickable-link';
 
                     const modalImg = albumModal.querySelector('#modal-album-art');
                     modalImg.src = album.cover || '';
@@ -2125,7 +1897,7 @@
                         return personnel;
                     }).join(', ') : 'N/A';
 
-                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-stone-900 mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span><strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span></div>`;
+                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span><strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span></div>`;
                     
                     const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                     const pivotalTracksHtml = album.pivotalTracks.map(track => {
@@ -2210,7 +1982,7 @@
                     const albumTimelineHtml = artistAlbumsWithYear.map(album => {
                         const landmarkIcon = isLandmark(album.albumTitle) ? '<span class="landmark-star">★</span>' : '';
                         return `<li class="artist-modal-timeline-item">
-                                    <strong class="text-stone-600">${album.year}:</strong> 
+                                    <strong class="text-[var(--text-muted)]">${album.year}:</strong> 
                                     <span class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">
                                         ${album.albumTitle}
                                     </span>
@@ -2226,15 +1998,15 @@
                             if (!collaborator) return '';
                             return `
                                 <div class="collaborator-card text-center" data-artist-name="${collaborator.name}">
-                                    <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 shadow-md" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
-                                    <p class="mt-2 text-sm font-bold text-stone-700">${collaborator.name}</p>
+                                    <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                    <p class="mt-2 text-sm font-bold text-[var(--text-muted)]">${collaborator.name}</p>
                                 </div>
                             `;
                         }).join('');
 
                         collaboratorsHtml = `
-                            <div class="mt-6 pt-4 border-t-2 border-stone-200">
-                                <h4 class="text-2xl text-stone-900 mb-4 text-center">Top Collaborators</h4>
+                            <div class="mt-6 pt-4 border-t-2 border-[var(--border-color)]">
+                                <h4 class="text-2xl text-[var(--text-main)] mb-4 text-center">Top Collaborators</h4>
                                 <div class="grid grid-cols-3 gap-4">
                                     ${collaboratorCards}
                                 </div>
@@ -2242,21 +2014,21 @@
                         `;
                     }
                     
-                    const bornInModalInfo = artist.profile && artist.profile.bornIn ? `<p class="mt-2 text-stone-900 text-sm"><strong class="font-bold">Born:</strong> ${artist.profile.bornIn}</p>` : '';
+                    const bornInModalInfo = artist.profile && artist.profile.bornIn ? `<p class="mt-2 text-[var(--text-main)] text-sm"><strong class="font-bold">Born:</strong> ${artist.profile.bornIn}</p>` : '';
 
                     body.innerHTML = `
                         <div class="flex flex-col sm:flex-row gap-6">
                             <div class="w-full sm:w-1/3 flex-shrink-0">
                                 <div class="artist-photo-container">
-                                    <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                    <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
-                                <p class="mt-4 text-stone-900 text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
+                                <p class="mt-4 text-[var(--text-main)] text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
                                 ${bornInModalInfo}
-                                ${artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-stone-900 mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
+                                ${artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-[var(--text-main)] mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
                             </div>
                             <div class="w-full sm:w-2/3">
-                                ${artistProfile.profile && artistProfile.profile !== 'No profile available.' ? `<h4 class="text-2xl text-stone-900 mb-2">Profile</h4><p class="text-base text-stone-700 leading-relaxed mb-4">${artistProfile.profile}</p>` : ''}
-                                <h4 class="text-2xl text-stone-900 mb-3">Key Album Appearances</h4>
+                                ${artistProfile.profile && artistProfile.profile !== 'No profile available.' ? `<h4 class="text-2xl text-[var(--text-main)] mb-2">Profile</h4><p class="text-base text-[var(--text-muted)] leading-relaxed mb-4">${artistProfile.profile}</p>` : ''}
+                                <h4 class="text-2xl text-[var(--text-main)] mb-3">Key Album Appearances</h4>
                                 <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml}</ul>
                             </div>
                         </div>
@@ -2335,24 +2107,24 @@
 
                     let bodyHtml = `<div class="space-y-6">
                         <div>
-                            <h4 class="text-2xl font-bold text-stone-900 mb-2">Overview</h4>
-                            <p class="text-base text-stone-700 leading-relaxed">${genreData.profile || 'No profile available.'}</p>
+                            <h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Overview</h4>
+                            <p class="text-base text-[var(--text-muted)] leading-relaxed">${genreData.profile || 'No profile available.'}</p>
                         </div>
                         <div>
-                            <h4 class="text-2xl font-bold text-stone-900 mb-2">Key Characteristics</h4>
-                            <ul class="list-disc list-inside space-y-1 text-stone-700">
+                            <h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Key Characteristics</h4>
+                            <ul class="list-disc list-inside space-y-1 text-[var(--text-muted)]">
                                 <li><strong>Harmony:</strong> ${genreData.data[0]}</li>
                                 <li><strong>Rhythm:</strong> ${genreData.data[1]}</li>
                                 <li><strong>Form:</strong> ${genreData.data[2]}</li>
                             </ul>
                         </div>
                         <div>
-                            <h4 class="text-2xl font-bold text-stone-900 mb-2">Key Artists</h4>
-                            <p class="text-base text-stone-700 leading-relaxed">${keyArtistsHtml}</p>
+                            <h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Key Artists</h4>
+                            <p class="text-base text-[var(--text-muted)] leading-relaxed">${keyArtistsHtml}</p>
                         </div>
                         ${landmarkAlbums.length > 0 ? `
                         <div>
-                            <h4 class="text-2xl font-bold text-stone-900 mb-2">Landmark Albums</h4>
+                            <h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Landmark Albums</h4>
                             <ul class="list-disc list-inside space-y-1 landmark-album-list">${landmarkAlbumsHtml}</ul>
                         </div>` : ''}
                     </div>`;
@@ -2386,11 +2158,11 @@
                     bodyEl.innerHTML = `
                         <div class="space-y-4">
                             <div>
-                                <h4 class="text-lg font-bold text-stone-900">Genre Affinity</h4>
-                                <p class="text-base text-stone-700">${data.genreAffinity}</p>
+                                <h4 class="text-lg font-bold text-[var(--text-main)]">Genre Affinity</h4>
+                                <p class="text-base text-[var(--text-muted)]">${data.genreAffinity}</p>
                             </div>
                             <div>
-                                <h4 class="text-lg font-bold text-stone-900">Key Albums</h4>
+                                <h4 class="text-lg font-bold text-[var(--text-main)]">Key Albums</h4>
                                 <ul class="list-disc list-inside space-y-1">${albumsHtml}</ul>
                             </div>
                         </div>
@@ -2559,14 +2331,14 @@
                         const album = featured.parentAlbum;
 
                         onThisDayContainer.innerHTML = `
-                            <div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)] cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] hover:-translate-y-1 transition-all">
+                            <div class="p-4 bg-[var(--bg-secondary)] border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--text-main)] dark:shadow-none cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] dark:hover:border-[var(--accent)] hover:-translate-y-1 transition-all">
                                 <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
                                 <div class="flex items-center gap-4 mt-2">
-                                    <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-stone-900 rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
+                                    <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
                                     <div>
-                                        <p class="text-sm text-stone-600">On <strong>${currentMonth} ${currentDay}</strong>, ${album.year}, the track...</p>
-                                        <p class="text-lg font-bold text-stone-900">"${featured.title}"</p>
-                                        <p class="text-sm text-stone-600">from the album <strong>${album.albumTitle}</strong> by <strong>${album.artist}</strong> was recorded.</p>
+                                        <p class="text-sm text-[var(--text-muted)]">On <strong>${currentMonth} ${currentDay}</strong>, ${album.year}, the track...</p>
+                                        <p class="text-lg font-bold text-[var(--text-main)]">"${featured.title}"</p>
+                                        <p class="text-sm text-[var(--text-muted)]">from the album <strong>${album.albumTitle}</strong> by <strong>${album.artist}</strong> was recorded.</p>
                                     </div>
                                 </div>
                             </div>
@@ -2576,19 +2348,17 @@
                             if (albumIndex !== -1) {
                                 this.methods.openAlbumModal(this.state.visibleAlbums[albumIndex], albumIndex);
                             } else {
-                                // If not visible, we can still open it by finding it in the main list
                                 const mainIndex = this.state.albums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
                                 if (mainIndex !== -1) {
-                                    // This is a simplified open, as it won't have next/prev context
                                      this.methods.openAlbumModal(this.state.albums[mainIndex], -1);
                                 }
                             }
                         });
                     } else {
                         onThisDayContainer.innerHTML = `
-                             <div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)]">
+                             <div class="p-4 bg-[var(--bg-secondary)] border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--text-main)] dark:shadow-none">
                                 <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
-                                <p class="text-center text-stone-600 mt-4">No landmark tracks were recorded on this day in our database. Check back tomorrow!</p>
+                                <p class="text-center text-[var(--text-muted)] mt-4">No landmark tracks were recorded on this day in our database. Check back tomorrow!</p>
                             </div>
                         `;
                     }
