@@ -88,10 +88,19 @@
             border-bottom: 2px solid var(--text-main);
         }
         .dark .dashboard-card-header {
-             border-bottom-color: var(--border-color);
+             background-color: var(--bg-secondary);
+             color: var(--accent);
+             border-bottom: 2px solid var(--border-color);
         }
         .dashboard-card-content {
             padding: 1.25rem;
+            color: var(--text-muted);
+        }
+        .dashboard-card-content p {
+            color: var(--text-muted);
+        }
+        .dashboard-card-content h3, .dashboard-card-content h4 {
+            color: var(--text-main);
         }
         .loader {
             position: fixed;
