@@ -72,29 +72,6 @@
             border-radius: 0.5rem;
             box-shadow: 6px 6px 0px var(--text-main);
         }
-        
-        .playlist-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            border-bottom: 1px solid var(--bg-secondary);
-        }
-        .playlist-item:last-child {
-            border-bottom: none;
-        }
-        .remove-btn {
-            background-color: #ef4444;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .remove-btn:hover {
-            background-color: #dc2626;
-        }
     </style>
 </head>
 <body class="bg-stone-900 text-stone-100">
@@ -162,30 +139,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Playlist Management Section -->
-            <div class="mt-16">
-                <div class="info-card max-w-4xl mx-auto p-6">
-                    <h2 class="text-3xl font-bold border-b-2 border-stone-300 pb-2 mb-4">Manage Playlist</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-2xl font-bold mb-2">Add New Video</h3>
-                            <div class="flex gap-2">
-                                <input type="text" id="youtube-url-input" placeholder="Paste YouTube URL here" class="flex-grow p-2 rounded-md bg-stone-200 text-stone-900 placeholder-stone-500">
-                                <button id="add-video-btn" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md">Add</button>
-                            </div>
-                            <p id="error-message" class="text-red-500 text-sm mt-2"></p>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold mb-2">Current Playlist</h3>
-                            <div id="playlist-container" class="bg-stone-100 rounded-md h-48 overflow-y-auto text-stone-800">
-                                <!-- Playlist items will be injected here by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </main>
 
@@ -222,7 +175,7 @@
         // Firebase Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- App State ---
         let player;
@@ -238,10 +191,6 @@
             upNextTitle: document.getElementById('up-next-title'),
             upNextId: document.getElementById('up-next-id'),
             upNextThumb: document.getElementById('up-next-thumb'),
-            addVideoBtn: document.getElementById('add-video-btn'),
-            urlInput: document.getElementById('youtube-url-input'),
-            playlistContainer: document.getElementById('playlist-container'),
-            errorMessage: document.getElementById('error-message'),
         };
 
         // --- YouTube Player API Setup ---
@@ -256,8 +205,8 @@
                 width: '100%',
                 playerVars: { 
                     'playsinline': 1,
-                    'autoplay': 1, // Autoplay the first video
-                    'controls': 1 // Show controls
+                    'autoplay': 1,
+                    'controls': 1 
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -267,14 +216,12 @@
         };
 
         function onPlayerReady(event) {
-            // Player is ready, if we have a playlist, play the first video.
             if (playlist.length > 0) {
                 playVideo(currentVideoIndex);
             }
         }
 
         function onPlayerStateChange(event) {
-            // When the current video ends, play the next one
             if (event.data === YT.PlayerState.ENDED) {
                 currentVideoIndex++;
                 if (currentVideoIndex >= playlist.length) {
@@ -299,7 +246,7 @@
         function updateNowPlayingUI(index) {
             if (playlist.length === 0) {
                 elements.nowPlayingTitle.textContent = "Playlist Empty";
-                elements.nowPlayingId.textContent = "Add a video below";
+                elements.nowPlayingId.textContent = "Waiting for content...";
                 elements.nowPlayingThumb.src = `https://placehold.co/100x100/1c1917/f5f5f4?text=Empty`;
                 elements.upNextTitle.textContent = "N/A";
                 elements.upNextId.textContent = "N/A";
@@ -320,70 +267,7 @@
             elements.upNextThumb.src = `https://i.ytimg.com/vi/${nextVideo.videoId}/hqdefault.jpg`;
         }
         
-        function renderPlaylistUI() {
-            elements.playlistContainer.innerHTML = '';
-            if (playlist.length === 0) {
-                elements.playlistContainer.innerHTML = '<p class="p-4 text-center text-stone-500">Playlist is empty.</p>';
-                return;
-            }
-            playlist.forEach((video, index) => {
-                const item = document.createElement('div');
-                item.className = 'playlist-item';
-                item.innerHTML = `
-                    <span class="truncate">(${index + 1}) ${video.videoId}</span>
-                    <button class="remove-btn" data-id="${video.id}">Remove</button>
-                `;
-                elements.playlistContainer.appendChild(item);
-            });
-        }
-
         // --- Firebase & Playlist Logic ---
-        function extractYouTubeID(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            if (match && match[2].length === 11) {
-                return match[2];
-            } else {
-                return null;
-            }
-        }
-
-        async function handleAddVideo() {
-            const url = elements.urlInput.value.trim();
-            if (!url) return;
-
-            const videoId = extractYouTubeID(url);
-            if (!videoId) {
-                elements.errorMessage.textContent = "Invalid YouTube URL.";
-                return;
-            }
-            
-            elements.errorMessage.textContent = "";
-            elements.urlInput.value = "";
-            
-            try {
-                const playlistCollection = collection(db, 'tv_playlist');
-                await addDoc(playlistCollection, {
-                    videoId: videoId,
-                    createdAt: serverTimestamp()
-                });
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                elements.errorMessage.textContent = "Could not add video to database.";
-            }
-        }
-
-        async function handleRemoveVideo(e) {
-            if (e.target.classList.contains('remove-btn')) {
-                const docId = e.target.dataset.id;
-                try {
-                    await deleteDoc(doc(db, 'tv_playlist', docId));
-                } catch (error) {
-                    console.error("Error removing document: ", error);
-                }
-            }
-        }
-
         function setupFirestoreListener() {
             const playlistCollection = collection(db, 'tv_playlist');
             const q = query(playlistCollection, orderBy('createdAt'));
@@ -395,10 +279,8 @@
                     ...doc.data()
                 }));
                 
-                renderPlaylistUI();
                 updateNowPlayingUI(currentVideoIndex);
 
-                // If the playlist was empty and now it's not, and the player is ready, start playing.
                 if (wasEmpty && playlist.length > 0 && player && typeof player.loadVideoById === 'function') {
                     currentVideoIndex = 0;
                     playVideo(currentVideoIndex);
@@ -408,7 +290,6 @@
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Firebase Config - Replace with your project's configuration
             const firebaseConfig = {
                 apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                 authDomain: "controlled-freedom.firebaseapp.com",
@@ -424,24 +305,17 @@
             
             onAuthStateChanged(auth, user => {
                 if (user) {
-                    // User is signed in.
                     setupFirestoreListener();
                 } else {
-                    // User is signed out. Sign in anonymously.
                     signInAnonymously(auth).catch(error => {
                         console.error("Anonymous sign-in failed:", error);
                     });
                 }
             });
 
-            // Event Listeners
-            elements.addVideoBtn.addEventListener('click', handleAddVideo);
-            elements.playlistContainer.addEventListener('click', handleRemoveVideo);
-
             // Mobile Menu Logic
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-            const mobileMenuPanel = document.getElementById('mobile-menu-panel');
             const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
             
             const openMenu = () => mobileMenuOverlay.classList.remove('hidden');
