@@ -88,16 +88,18 @@
             border-bottom: 2px solid var(--text-main);
         }
         .dark .dashboard-card-header {
-             background-color: var(--bg-secondary);
+             background-color: var(--bg-main);
              color: var(--accent);
              border-bottom: 2px solid var(--border-color);
         }
         .dashboard-card-content {
             padding: 1.25rem;
-            color: var(--text-muted);
         }
         .dashboard-card-content p {
             color: var(--text-muted);
+        }
+        .dark .dashboard-card-content p {
+            color: var(--text-main);
         }
         .dashboard-card-content h3, .dashboard-card-content h4 {
             color: var(--text-main);
@@ -746,7 +748,7 @@
                                 <p class="text-[var(--text-muted)]">${album.artist}</p>
                                 <h3 class="text-2xl sm:text-4xl font-bold text-[var(--text-main)] leading-tight">${album.albumTitle}</h3>
                                 <p class="text-[var(--text-muted)] font-bold">(${album.year})</p>
-                                <p class="hidden sm:block mt-2 text-[var(--text-muted)] text-sm">${analysisText.substring(0, 120)}...</p>
+                                <p class="hidden sm:block mt-2 text-sm">${analysisText.substring(0, 120)}...</p>
                                 <span class="inline-block mt-2 font-bold text-orange-600 group-hover:underline">View Album &rarr;</span>
                             </div>
                         </div>
