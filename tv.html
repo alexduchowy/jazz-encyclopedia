@@ -14,18 +14,17 @@
     
     <style>
         :root {
-            --bg-main: #f5f5f4;
-            --bg-secondary: #e7e5e4;
-            --bg-dark: #1a1a1a;
-            --text-main: #1c1917;
-            --text-muted: #44403c;
+            --bg-dark: #1c1917; /* stone-900 */
+            --bg-medium: #292524; /* stone-800 */
+            --text-light: #e7e5e4; /* stone-200 */
+            --text-muted: #a8a29e; /* stone-400 */
             --accent: #f97316;
             --accent-dark: #ea580c;
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark); /* Dark theme for the TV page */
-            color: var(--bg-main);
+            background-color: var(--bg-dark);
+            color: var(--text-light);
             overflow-x: hidden;
         }
         h1, h2, h3, h4, h5 {
@@ -54,8 +53,9 @@
             overflow: hidden;
             max-width: 100%;
             background: #000;
-            border: 4px solid var(--text-main);
-            box-shadow: 8px 8px 0px var(--text-main);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 25px -5px var(--accent);
+            border-radius: 0.5rem;
         }
         .video-container #player {
             position: absolute;
@@ -63,14 +63,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-        }
-
-        .info-card {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            border: 2px solid var(--text-main);
-            border-radius: 0.5rem;
-            box-shadow: 6px 6px 0px var(--text-main);
         }
     </style>
 </head>
@@ -92,7 +84,7 @@
                         <span>@controlledjazz</span>
                     </a>
                 </div>
-                <div class="md:hidden lg:hidden">
+                <div class="lg:hidden">
                     <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-100 hover:bg-stone-700 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
                 </div>
             </nav>
@@ -107,34 +99,29 @@
                 <p class="text-lg md:text-xl text-stone-300 mt-2">A 24/7 Broadcast of Historic Jazz Performances</p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                
+            <!-- Video Player -->
+            <div class="max-w-6xl mx-auto">
+                <div class="video-container">
+                    <div id="player"></div>
+                </div>
+            </div>
+
+            <!-- Info and Playlist Grid -->
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+                <!-- Left Column: Title & Description -->
                 <div class="lg:col-span-2">
-                    <div class="video-container rounded-lg">
-                        <div id="player"></div>
+                    <div class="bg-stone-800/50 backdrop-blur-sm border border-stone-700 rounded-lg p-6 h-full">
+                        <h2 id="video-main-title" class="text-4xl text-stone-100 font-bold border-b-2 border-stone-700 pb-3 mb-4">Loading...</h2>
+                        <p id="video-description" class="text-stone-300 text-base leading-relaxed">Please wait while we load the video details.</p>
                     </div>
                 </div>
 
-                <div class="space-y-8">
-                    <div class="info-card p-6">
-                        <h2 class="text-3xl font-bold border-b-2 border-stone-300 pb-2 mb-4">Now Playing</h2>
-                        <div class="flex items-center gap-4">
-                            <img id="now-playing-thumb" src="https://placehold.co/100x100/1c1917/f5f5f4?text=Live" alt="Video Thumbnail" class="w-24 h-24 rounded-md border-2 border-stone-900">
-                            <div>
-                                <h3 id="now-playing-title" class="text-2xl font-bold leading-tight">Loading...</h3>
-                                <p id="now-playing-id" class="text-sm text-stone-600">Waiting for playlist</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-card p-6">
-                        <h2 class="text-3xl font-bold border-b-2 border-stone-300 pb-2 mb-4">Up Next</h2>
-                         <div class="flex items-center gap-4 opacity-70">
-                            <img id="up-next-thumb" src="https://placehold.co/100x100/1c1917/f5f5f4?text=Next" alt="Video Thumbnail" class="w-24 h-24 rounded-md border-2 border-stone-900">
-                            <div>
-                                <h3 id="up-next-title" class="text-2xl font-bold leading-tight">Loading...</h3>
-                                <p id="up-next-id" class="text-sm text-stone-600">Waiting for playlist</p>
-                            </div>
+                <!-- Right Column: Up Next Playlist -->
+                <div class="lg:col-span-1">
+                    <div class="bg-stone-800/50 backdrop-blur-sm border border-stone-700 rounded-lg p-6 h-full">
+                        <h2 class="text-3xl text-stone-100 font-bold border-b-2 border-stone-700 pb-2 mb-4">Up Next</h2>
+                        <div id="playlist-container" class="space-y-3 overflow-y-auto" style="max-height: 400px;">
+                            <!-- Playlist items will be generated here -->
                         </div>
                     </div>
                 </div>
@@ -179,18 +166,15 @@
 
         // --- App State ---
         let player;
-        let playlist = []; // Array of objects: {id: 'firestore-doc-id', videoId: 'youtube-id'}
+        let playlist = []; // Array of objects: {id, videoId, title, description}
         let currentVideoIndex = 0;
         let db, auth;
 
         // --- UI Elements ---
         const elements = {
-            nowPlayingTitle: document.getElementById('now-playing-title'),
-            nowPlayingId: document.getElementById('now-playing-id'),
-            nowPlayingThumb: document.getElementById('now-playing-thumb'),
-            upNextTitle: document.getElementById('up-next-title'),
-            upNextId: document.getElementById('up-next-id'),
-            upNextThumb: document.getElementById('up-next-thumb'),
+            videoMainTitle: document.getElementById('video-main-title'),
+            videoDescription: document.getElementById('video-description'),
+            playlistContainer: document.getElementById('playlist-container'),
         };
 
         // --- YouTube Player API Setup ---
@@ -223,10 +207,7 @@
 
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.ENDED) {
-                currentVideoIndex++;
-                if (currentVideoIndex >= playlist.length) {
-                    currentVideoIndex = 0; // Loop back to the start
-                }
+                currentVideoIndex = (currentVideoIndex + 1) % playlist.length; // Loop playlist
                 playVideo(currentVideoIndex);
             }
         }
@@ -235,36 +216,51 @@
             if (playlist.length > 0 && index < playlist.length) {
                 const videoId = playlist[index].videoId;
                 player.loadVideoById(videoId);
-                updateNowPlayingUI(index);
+                updateUI(index);
             } else {
-                 elements.nowPlayingTitle.textContent = "Playlist is Empty";
-                 elements.nowPlayingId.textContent = "Add a video to start";
+                 elements.videoMainTitle.textContent = "Playlist is Empty";
+                 elements.videoDescription.textContent = "Add a video to the playlist to start the broadcast.";
+                 elements.playlistContainer.innerHTML = '<p class="text-stone-500">No videos in queue.</p>';
             }
         }
 
         // --- UI Update Functions ---
-        function updateNowPlayingUI(index) {
-            if (playlist.length === 0) {
-                elements.nowPlayingTitle.textContent = "Playlist Empty";
-                elements.nowPlayingId.textContent = "Waiting for content...";
-                elements.nowPlayingThumb.src = `https://placehold.co/100x100/1c1917/f5f5f4?text=Empty`;
-                elements.upNextTitle.textContent = "N/A";
-                elements.upNextId.textContent = "N/A";
-                elements.upNextThumb.src = `https://placehold.co/100x100/1c1917/f5f5f4?text=N/A`;
-                return;
+        function updateUI(playingIndex) {
+            if (playlist.length === 0) return;
+
+            const currentVideo = playlist[playingIndex];
+
+            // Update main title and description
+            elements.videoMainTitle.textContent = currentVideo.title;
+            elements.videoDescription.textContent = currentVideo.description;
+
+            // Update "Up Next" playlist
+            elements.playlistContainer.innerHTML = '';
+            for (let i = 0; i < playlist.length; i++) {
+                const itemIndex = (playingIndex + i) % playlist.length;
+                const videoItem = playlist[itemIndex];
+
+                if (i === 0) continue; // Skip the currently playing video in the "Up Next" list
+
+                const playlistItem = document.createElement('div');
+                playlistItem.className = 'playlist-item flex items-center gap-3 p-2 rounded-md transition-colors hover:bg-stone-700/50 cursor-pointer';
+                playlistItem.dataset.index = itemIndex;
+
+                playlistItem.innerHTML = `
+                    <img src="https://i.ytimg.com/vi/${videoItem.videoId}/default.jpg" alt="${videoItem.title}" class="w-16 h-12 object-cover rounded-md border border-stone-600">
+                    <div>
+                        <h4 class="font-bold text-stone-200 text-sm leading-tight">${videoItem.title}</h4>
+                        <p class="text-xs text-stone-400">Up Next</p>
+                    </div>
+                `;
+                
+                playlistItem.addEventListener('click', () => {
+                    currentVideoIndex = parseInt(playlistItem.dataset.index);
+                    playVideo(currentVideoIndex);
+                });
+
+                elements.playlistContainer.appendChild(playlistItem);
             }
-
-            const currentVideo = playlist[index];
-            const nextVideoIndex = (index + 1) % playlist.length;
-            const nextVideo = playlist[nextVideoIndex];
-
-            elements.nowPlayingTitle.textContent = `Playing Video ${index + 1}`;
-            elements.nowPlayingId.textContent = `ID: ${currentVideo.videoId}`;
-            elements.nowPlayingThumb.src = `https://i.ytimg.com/vi/${currentVideo.videoId}/hqdefault.jpg`;
-            
-            elements.upNextTitle.textContent = `Next: Video ${nextVideoIndex + 1}`;
-            elements.upNextId.textContent = `ID: ${nextVideo.videoId}`;
-            elements.upNextThumb.src = `https://i.ytimg.com/vi/${nextVideo.videoId}/hqdefault.jpg`;
         }
         
         // --- Firebase & Playlist Logic ---
@@ -274,16 +270,17 @@
 
             onSnapshot(q, (snapshot) => {
                 const wasEmpty = playlist.length === 0;
-                playlist = snapshot.docs.map(doc => ({
+                playlist = snapshot.docs.map((doc, i) => ({
                     id: doc.id,
-                    ...doc.data()
+                    videoId: doc.data().videoId,
+                    title: doc.data().title || `Jazz Performance ${i + 1}`, // Fallback title
+                    description: doc.data().description || 'No description provided for this performance. Enjoy the music!', // Fallback description
                 }));
                 
-                updateNowPlayingUI(currentVideoIndex);
-
                 if (wasEmpty && playlist.length > 0 && player && typeof player.loadVideoById === 'function') {
-                    currentVideoIndex = 0;
                     playVideo(currentVideoIndex);
+                } else {
+                    updateUI(currentVideoIndex);
                 }
             });
         }
