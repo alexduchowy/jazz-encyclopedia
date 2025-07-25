@@ -88,7 +88,7 @@
             border-bottom: 2px solid var(--text-main);
         }
         .dark .dashboard-card-header {
-             background-color: var(--bg-main);
+             background-color: #1a1a1a;
              color: var(--accent);
              border-bottom: 2px solid var(--border-color);
         }
@@ -734,8 +734,13 @@
                         return;
                     }
                     
-                    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-                    const randomIndex = dayOfYear % this.state.allAlbums.length;
+                    // Corrected Logic: Use days since an epoch for a full cycle
+                    const epoch = new Date('2024-01-01');
+                    const today = new Date();
+                    const diffTime = Math.abs(today - epoch);
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+                    const randomIndex = diffDays % this.state.allAlbums.length;
                     const album = this.state.allAlbums[randomIndex];
                     this.state.recommendedAlbum = album;
 
