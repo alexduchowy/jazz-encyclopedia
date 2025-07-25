@@ -13,26 +13,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
     <style>
+        /* Light Theme (Default) */
         :root {
             --bg-main: #f5f5f4;
             --bg-secondary: #e7e5e4;
-            --bg-dark: #1a1a1a;
+            --bg-header: rgba(255,255,255,0.8);
             --text-main: #1c1917;
             --text-muted: #44403c;
+            --border-color: #e7e5e4;
             --accent: #f97316;
-            --accent-dark: #ea580c;
-            --yellow-accent: #facc15;
-             /* Genre Colors will be populated by JS but have fallbacks */
-            --genre-bebop: #C19A6B;
-            --genre-hard-bop: #d8b4fe;
-            --genre-cool-jazz: #93c5fd;
-            --genre-modal-jazz: #a7f3d0;
-            --genre-post-bop: #fed7aa;
-            --genre-free-jazz: #fca5a5;
-            --genre-avant-garde: #fecdd3;
-            --genre-jazz-fusion: #a5f3fc;
-            --genre-default: #e7e5e4;
         }
+
+        /* Dark Theme */
+        .dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
@@ -55,7 +56,7 @@
         .nav-bar-behaviour { display: none; }
         @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
         
-        #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
+        #mobile-menu-panel { transition: transform 0.3s ease-in-out; background-color: var(--bg-main); }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
         
         .dashboard-card {
@@ -66,9 +67,17 @@
             transition: all 0.2s ease-in-out;
             overflow: hidden;
         }
+        .dark .dashboard-card {
+             border-color: var(--border-color);
+             box-shadow: none;
+        }
         .dashboard-card:hover {
             transform: translate(2px, 2px);
             box-shadow: 4px 4px 0px var(--accent);
+        }
+        .dark .dashboard-card:hover {
+            border-color: var(--accent);
+            box-shadow: none;
         }
         .dashboard-card-header {
             font-family: 'Bebas Neue', sans-serif;
@@ -77,6 +86,9 @@
             background-color: var(--text-main);
             color: var(--bg-main);
             border-bottom: 2px solid var(--text-main);
+        }
+        .dark .dashboard-card-header {
+             border-bottom-color: var(--border-color);
         }
         .dashboard-card-content {
             padding: 1.25rem;
@@ -109,10 +121,10 @@
         .banner-section {
             position: relative;
             width: 100%;
-            height: 35vh; /* Reduced height */
-            max-height: 200px; /* Reduced max-height */
+            height: 35vh; 
+            max-height: 200px;
             overflow: hidden;
-            background-color: var(--bg-dark);
+            background-color: #1a1a1a;
         }
 
         .banner-img {
@@ -137,27 +149,27 @@
             justify-content: center;
             text-align: center;
             padding: 1rem;
-            color: var(--bg-main);
+            color: #f5f5f4;
         }
         
         .typewriter {
-            display: inline-block; /* Allows the container to size to its content */
+            display: inline-block;
         }
 
         .typewriter h2 {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.75rem; /* Reduced font size for mobile */
+            font-size: 1.75rem;
             font-weight: bold;
             color: #fff;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            overflow: hidden; /* Ensures the text is clipped during animation */
+            overflow: hidden;
             border-right: .15em solid var(--accent);
-            white-space: nowrap; /* Keeps the text on a single line */
+            white-space: nowrap;
             letter-spacing: .1em;
             animation:
                 typing 3.5s steps(40, end),
                 blink-caret .75s step-end infinite;
-            max-width: 90vw; /* Prevents it from ever being wider than the viewport */
+            max-width: 90vw;
         }
         
         .banner-subtitle {
@@ -176,12 +188,12 @@
 
         @media (min-width: 768px) {
             .banner-section {
-                height: 30vh; /* Reduced height */
-                max-height: 250px; /* Reduced max-height */
+                height: 30vh;
+                max-height: 250px;
             }
             .typewriter h2 {
-                font-size: 3rem; /* Reduced font size */
-                max-width: none; /* Unset max-width on larger screens */
+                font-size: 3rem;
+                max-width: none;
             }
             .banner-subtitle {
                 font-size: 1.125rem;
@@ -194,6 +206,10 @@
             padding: 2rem 0;
             border-top: 2px solid var(--text-main);
             border-bottom: 2px solid var(--text-main);
+        }
+        .dark .main-content-wrapper {
+             border-top-color: var(--border-color);
+             border-bottom-color: var(--border-color);
         }
 
         .main-content-wrapper::before {
@@ -220,6 +236,11 @@
         }
         .modal-content {
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            background-color: var(--bg-main);
+            border-color: var(--text-main);
+        }
+        .dark .modal-content {
+             border-color: var(--border-color);
         }
         .modal.opacity-0 .modal-content {
               opacity: 0;
@@ -227,14 +248,18 @@
         }
         
         #modal-analysis-section {
-            background-color: var(--bg-dark);
+            background-color: #1a1a1a;
             padding: 1.5rem;
             margin-top: 2rem;
             border: 2px solid var(--text-main);
             box-shadow: 4px 4px 0px var(--text-main);
         }
+        .dark #modal-analysis-section {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
         #modal-analysis-section h5 {
-            color: var(--bg-main);
+            color: #f5f5f4;
         }
         
         .liner-notes-text {
@@ -253,6 +278,9 @@
             border: 2px solid var(--text-main);
             text-decoration: none;
             display: inline-block;
+        }
+        .dark .genre-tag {
+             border-color: var(--border-color);
         }
         .genre-tag:hover {
             filter: brightness(95%);
@@ -280,9 +308,16 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
+        .dark .on-this-day-item {
+             border-color: var(--border-color);
+        }
         .on-this-day-item:hover {
             transform: translateY(-2px) translateX(2px);
             box-shadow: 2px 2px 0px var(--accent);
+        }
+        .dark .on-this-day-item:hover {
+             border-color: var(--accent);
+             box-shadow: none;
         }
         .on-this-day-item img {
             width: 80px;
@@ -291,6 +326,9 @@
             border-radius: 0.25rem;
             border: 2px solid var(--text-main);
             flex-shrink: 0;
+        }
+        .dark .on-this-day-item img {
+             border-color: var(--border-color);
         }
         .on-this-day-item .artist-photo {
             filter: grayscale(100%);
@@ -302,7 +340,7 @@
         /* Artist Modal Specific Styles */
         .known-for-box {
             background-color: var(--accent);
-            color: var(--bg-main);
+            color: #f5f5f4;
             padding: 0.5rem 1rem;
             border: 2px solid var(--text-main);
             box-shadow: 2px 2px 0px var(--text-main);
@@ -311,6 +349,10 @@
             font-family: 'Inter', sans-serif;
             font-weight: 600;
             font-size: 0.9rem;
+        }
+        .dark .known-for-box {
+             border-color: var(--border-color);
+             box-shadow: none;
         }
 
         .artist-modal-timeline {
@@ -334,8 +376,10 @@
             background-color: var(--bg-secondary);
             border: 2px solid var(--text-main);
         }
+        .dark .artist-modal-timeline-item::before {
+             border-color: var(--border-color);
+        }
         
-        /* Mobile card ordering - UPDATED */
         @media (max-width: 1023px) {
             #mobile-card-container {
                 display: flex;
@@ -351,34 +395,40 @@
         }
     </style>
 </head>
-<body class="bg-stone-100 text-stone-900">
+<body class="text-stone-900">
 
     <div id="loader" class="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
         <!-- Standardized Sticky Header -->
-        <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
+        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                     <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
-                    <div class="nav-bar-behaviour items-center space-x-8">
-                        <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                        <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">TV</a>
-                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                        <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600 flex items-center gap-2">
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                            <span>@controlledjazz</span>
-                        </a>
-                    </div>
-                     <!-- Hamburger Menu Button -->
-                    <div class="md:hidden lg:hidden">
-                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
-                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
+                    <div class="flex items-center">
+                        <div class="nav-bar-behaviour items-center space-x-8">
+                            <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Legacy</a>
+                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                                <span>@controlledjazz</span>
+                            </a>
+                        </div>
+                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                         </button>
+                        <!-- Hamburger Menu Button -->
+                        <div class="md:hidden lg:hidden ml-2">
+                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </nav>
             </header>
@@ -398,7 +448,6 @@
         <main>
             <div class="main-content-wrapper">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <!-- UPDATED: Reverted to original two-column structure for desktop, mobile order is now handled purely by CSS -->
                     <div id="mobile-card-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         
                         <!-- Main Column -->
@@ -406,9 +455,7 @@
                             <!-- Album of the Day -->
                             <div id="recommendation-card" class="dashboard-card">
                                 <h2 class="dashboard-card-header">Album of the Day</h2>
-                                <div id="recommendation-content" class="dashboard-card-content">
-                                    <!-- Content injected by JS -->
-                                </div>
+                                <div id="recommendation-content" class="dashboard-card-content"></div>
                             </div>
 
                             <!-- Navigation Cards -->
@@ -432,9 +479,7 @@
                             <!-- Latest Review Card -->
                             <div id="latest-review-card" class="dashboard-card">
                                 <h2 class="dashboard-card-header">Latest From The Archive</h2>
-                                <div id="latest-review" class="dashboard-card-content">
-                                    <!-- Content injected by JS -->
-                                </div>
+                                <div id="latest-review" class="dashboard-card-content"></div>
                             </div>
                         </div>
 
@@ -443,16 +488,12 @@
                             <!-- On This Day -->
                             <div id="on-this-day-card" class="dashboard-card">
                                  <h2 class="dashboard-card-header">On This Day In Jazz...</h2>
-                                 <div id="on-this-day" class="dashboard-card-content">
-                                    <!-- Content injected by JS -->
-                                </div>
+                                 <div id="on-this-day" class="dashboard-card-content"></div>
                             </div>
                             <!-- Latest News -->
                             <div id="news-card" class="dashboard-card">
                                 <h2 class="dashboard-card-header">News</h2>
-                                <div id="latest-news" class="dashboard-card-content">
-                                    <!-- Articles injected by JS -->
-                                </div>
+                                <div id="latest-news" class="dashboard-card-content"></div>
                             </div>
                             <!-- Spotify Playlist -->
                             <div id="playlist-card" class="dashboard-card">
@@ -482,15 +523,15 @@
      <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
-        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
-            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
-                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">TV</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
-                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
+                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                     <span>@controlledjazz</span>
                 </a>
@@ -500,34 +541,30 @@
 
     <!-- Universal Album Modal -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div id="modal-content-album" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
-            <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+        <div id="modal-content-album" class="modal-content rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
                 <div>
                     <h3 id="album-modal-title" class="text-4xl text-orange-500"></h3>
-                    <a id="album-modal-artist" class="text-xl text-stone-600 clickable-link"></a>
+                    <a id="album-modal-artist" class="text-xl text-[var(--text-muted)] clickable-link"></a>
                 </div>
                 <button id="close-album-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
             </div>
             <div id="album-modal-body" class="p-6 overflow-y-auto">
                 <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
                     <div class="w-full md:w-1/3 flex-shrink-0">
-                        <img id="album-modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="Album Art" loading="lazy">
+                        <img id="album-modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)]" alt="Album Art" loading="lazy">
                     </div>
-                    <div id="album-modal-album-details" class="w-full md:w-2/3">
-                        <!-- Details injected by JS -->
-                    </div>
+                    <div id="album-modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
-                <div id="analysis-wrapper" class="relative mt-4">
-                    <!-- Analysis injected by JS -->
-                </div>
+                <div id="analysis-wrapper" class="relative mt-4"></div>
             </div>
         </div>
     </div>
     
     <!-- Artist Modal -->
     <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
                  <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
                  <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
              </div>
@@ -560,6 +597,7 @@
                         this.methods[key] = this.methods[key].bind(this);
                     }
                 }
+                this.methods.setupTheme();
                 this.fetchData();
                 this.methods.setupMobileMenu();
                 this.methods.setupModals();
@@ -578,6 +616,9 @@
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                    themeToggle: document.getElementById('theme-toggle'),
+                    themeIconLight: document.getElementById('theme-icon-light'),
+                    themeIconDark: document.getElementById('theme-icon-dark'),
                     
                     albumModal: document.getElementById('album-modal'),
                     albumModalTitle: document.getElementById('album-modal-title'),
@@ -627,6 +668,35 @@
                 this.elements.pageContent.classList.remove('content-hidden');
             },
             methods: {
+                setupTheme() {
+                    const themeToggle = this.elements.themeToggle;
+                    const lightIcon = this.elements.themeIconLight;
+                    const darkIcon = this.elements.themeIconDark;
+
+                    const applyTheme = (theme) => {
+                        if (theme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                            lightIcon.classList.add('hidden');
+                            darkIcon.classList.remove('hidden');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                            lightIcon.classList.remove('hidden');
+                            darkIcon.classList.add('hidden');
+                        }
+                    };
+
+                    const savedTheme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                    
+                    applyTheme(currentTheme);
+
+                    themeToggle.addEventListener('click', () => {
+                        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                        localStorage.setItem('theme', newTheme);
+                        applyTheme(newTheme);
+                    });
+                },
                 slugify(name) {
                     if (!name) return '';
                     return name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
@@ -662,12 +732,12 @@
 
                     this.elements.recommendationContent.innerHTML = `
                         <div class="flex flex-row gap-4 items-center cursor-pointer" data-action="open-recommendation-modal">
-                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-24 h-24 sm:w-40 sm:h-40 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
+                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-24 h-24 sm:w-40 sm:h-40 object-cover rounded-md border-2 border-stone-900 dark:border-stone-700 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
                             <div class="flex-grow text-left">
-                                <p class="text-stone-600">${album.artist}</p>
-                                <h3 class="text-2xl sm:text-4xl font-bold text-stone-900 leading-tight">${album.albumTitle}</h3>
-                                <p class="text-stone-600 font-bold">(${album.year})</p>
-                                <p class="hidden sm:block mt-2 text-stone-700 text-sm">${analysisText.substring(0, 120)}...</p>
+                                <p class="text-[var(--text-muted)]">${album.artist}</p>
+                                <h3 class="text-2xl sm:text-4xl font-bold text-[var(--text-main)] leading-tight">${album.albumTitle}</h3>
+                                <p class="text-[var(--text-muted)] font-bold">(${album.year})</p>
+                                <p class="hidden sm:block mt-2 text-[var(--text-muted)] text-sm">${analysisText.substring(0, 120)}...</p>
                                 <span class="inline-block mt-2 font-bold text-orange-600 group-hover:underline">View Album &rarr;</span>
                             </div>
                         </div>
@@ -746,8 +816,8 @@
                     }).join(' ');
 
                     albumModalAlbumDetails.innerHTML = `
-                        <h4 class="text-3xl text-stone-900 mb-4">Album Details</h4>
-                        <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900">
+                        <h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4>
+                        <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]">
                             <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
                             <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span>
                             <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
@@ -782,8 +852,8 @@
 
                     artistModalTitle.textContent = artist.name;
 
-                    const knownForHtml = artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-stone-900 mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : '';
-                    const bornInHtml = artistProfile.bornIn ? `<p class="mt-2 text-stone-900 text-sm"><strong class="font-bold">Born:</strong> ${artistProfile.bornIn}</p>` : '';
+                    const knownForHtml = artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-[var(--text-main)] mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : '';
+                    const bornInHtml = artistProfile.bornIn ? `<p class="mt-2 text-[var(--text-main)] text-sm"><strong class="font-bold">Born:</strong> ${artistProfile.bornIn}</p>` : '';
 
                     const artistAlbums = (artistData.albums || [])
                         .map(albumTitle => this.state.allAlbums.find(a => a.albumTitle === albumTitle))
@@ -792,7 +862,7 @@
 
                     const albumTimelineHtml = artistAlbums.map(album => `
                         <li class="artist-modal-timeline-item">
-                            <strong class="text-stone-600">${album.year}:</strong> 
+                            <strong class="text-[var(--text-muted)]">${album.year}:</strong> 
                             <span class="clickable-link" data-action="open-album-from-artist-modal" data-album-title="${album.albumTitle}" data-artist="${album.artist}">
                                 ${album.albumTitle}
                             </span>
@@ -802,14 +872,14 @@
                     artistModalBody.innerHTML = `
                         <div class="flex flex-col sm:flex-row gap-6">
                             <div class="w-full sm:w-1/3 flex-shrink-0">
-                                <img src="images/${this.methods.slugify(artist.name)}.jpg" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                <img src="images/${this.methods.slugify(artist.name)}.jpg" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)]" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 ${bornInHtml}
                                 ${knownForHtml}
                             </div>
                             <div class="w-full sm:w-2/3">
-                                <h4 class="text-2xl text-stone-900 mb-2">Profile</h4>
-                                <p class="text-base text-stone-700 leading-relaxed mb-4">${artistProfile.profile || 'No profile available.'}</p>
-                                <h4 class="text-2xl text-stone-900 mb-3">Key Album Appearances</h4>
+                                <h4 class="text-2xl text-[var(--text-main)] mb-2">Profile</h4>
+                                <p class="text-base text-[var(--text-muted)] leading-relaxed mb-4">${artistProfile.profile || 'No profile available.'}</p>
+                                <h4 class="text-2xl text-[var(--text-main)] mb-3">Key Album Appearances</h4>
                                 <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml || '<li>No appearances found in database.</li>'}</ul>
                             </div>
                         </div>
@@ -829,7 +899,6 @@
                     const currentMonth = today.toLocaleString('en-US', { month: 'long' });
                     const currentDay = today.getDate();
                     
-                    // Find tracks recorded on this day
                     const matchingTracks = [];
                     this.state.allAlbums.forEach(album => {
                         const tracks = album.pivotalTracks || (album.recordingDate ? [album] : []);
@@ -842,7 +911,6 @@
                         });
                     });
 
-                    // Find artists born on this day
                     const bornToday = [];
                     for (const artistName in this.state.fullArtistsData) {
                         const artist = this.state.fullArtistsData[artistName];
@@ -863,9 +931,9 @@
                             <div class="on-this-day-item" data-action="open-otd-album-modal">
                                 <img src="${this.state.onThisDayAlbum.cover}" alt="Cover for ${this.state.onThisDayAlbum.albumTitle}">
                                 <div>
-                                    <p class="text-xs text-stone-600 font-bold uppercase tracking-wider">On ${currentMonth} ${currentDay}, ${this.state.onThisDayAlbum.year}, the track...</p>
-                                    <p class="text-lg font-bold text-stone-900 leading-tight">"${featured.title}"</p>
-                                    <p class="text-sm text-stone-600">from <strong>${this.state.onThisDayAlbum.albumTitle}</strong> by <strong>${this.state.onThisDayAlbum.artist}</strong> was recorded.</p>
+                                    <p class="text-xs text-[var(--text-muted)] font-bold uppercase tracking-wider">On ${currentMonth} ${currentDay}, ${this.state.onThisDayAlbum.year}, the track...</p>
+                                    <p class="text-lg font-bold text-[var(--text-main)] leading-tight">"${featured.title}"</p>
+                                    <p class="text-sm text-[var(--text-muted)]">from <strong>${this.state.onThisDayAlbum.albumTitle}</strong> by <strong>${this.state.onThisDayAlbum.artist}</strong> was recorded.</p>
                                 </div>
                             </div>
                         `;
@@ -880,9 +948,9 @@
                             <div class="on-this-day-item" data-action="open-otd-artist-modal">
                                 <img src="images/${this.methods.slugify(featuredArtist.name)}.jpg" class="artist-photo" alt="Photo of ${featuredArtist.name}" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 <div>
-                                     <p class="text-xs text-stone-600 font-bold uppercase tracking-wider">Born on ${currentMonth} ${currentDay}, ${year}</p>
-                                    <p class="text-lg font-bold text-stone-900 leading-tight">${featuredArtist.name}</p>
-                                    <p class="text-sm text-stone-600">${featuredArtist.instruments.slice(0, 2).join(', ')}</p>
+                                     <p class="text-xs text-[var(--text-muted)] font-bold uppercase tracking-wider">Born on ${currentMonth} ${currentDay}, ${year}</p>
+                                    <p class="text-lg font-bold text-[var(--text-main)] leading-tight">${featuredArtist.name}</p>
+                                    <p class="text-sm text-[var(--text-muted)]">${featuredArtist.instruments.slice(0, 2).join(', ')}</p>
                                 </div>
                             </div>
                         `;
@@ -896,7 +964,7 @@
                             </div>
                         `;
                     } else {
-                        this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-stone-600">No notable jazz events on this day in our database. Check back tomorrow!</p>`;
+                        this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-[var(--text-muted)]">No notable jazz events on this day in our database. Check back tomorrow!</p>`;
                     }
                 },
                 fetchNewsAndReview() {
@@ -905,7 +973,7 @@
                         try {
                             const articles = JSON.parse(cachedArticles);
                             this.methods.renderNewsAndReviews(articles);
-                            return; // Exit if we successfully load from cache
+                            return;
                         } catch (e) {
                             console.error("Failed to parse cached articles, fetching fresh.", e);
                             sessionStorage.removeItem('cachedArticles');
@@ -956,8 +1024,8 @@
                     const reviewArticles = [];
 
                     if (!articles || articles.length === 0) {
-                        this.elements.latestNews.innerHTML = '<p class="text-stone-500 italic">No news yet.</p>';
-                        this.elements.latestReview.innerHTML = '<p class="text-stone-500 italic">No reviews yet.</p>';
+                        this.elements.latestNews.innerHTML = '<p class="text-[var(--text-muted)] italic">No news yet.</p>';
+                        this.elements.latestReview.innerHTML = '<p class="text-[var(--text-muted)] italic">No reviews yet.</p>';
                         return;
                     }
 
@@ -978,21 +1046,21 @@
                         const featuredSnippet = (featuredNews.body || '').replace(/<[^>]+>/g, '').substring(0, 80);
                         newsHtml += `
                             <a href="/news/${featuredNews.slug}" target="_blank" class="block mb-6 group no-underline">
-                                <img src="${featuredNews.imageUrl || 'https://placehold.co/400x200/e7e5e4/1c1917?text=News'}" alt="${featuredNews.title}" class="w-full h-40 object-cover rounded-md mb-3 border-2 border-stone-300" onerror="this.onerror=null;this.src='https://placehold.co/400x200/e7e5e4/1c1917?text=News';">
-                                <h3 class="text-lg font-bold text-stone-900 group-hover:text-orange-600 transition-colors leading-tight">${featuredNews.title}</h3>
-                                <p class="text-sm text-stone-600 mt-1">${featuredSnippet}...</p>
-                                <p class="text-xs text-stone-500 mt-2">${featuredNews.publishDate}</p>
+                                <img src="${featuredNews.imageUrl || 'https://placehold.co/400x200/e7e5e4/1c1917?text=News'}" alt="${featuredNews.title}" class="w-full h-40 object-cover rounded-md mb-3 border-2 border-stone-300 dark:border-stone-700" onerror="this.onerror=null;this.src='https://placehold.co/400x200/e7e5e4/1c1917?text=News';">
+                                <h3 class="text-lg font-bold text-[var(--text-main)] group-hover:text-orange-600 transition-colors leading-tight">${featuredNews.title}</h3>
+                                <p class="text-sm text-[var(--text-muted)] mt-1">${featuredSnippet}...</p>
+                                <p class="text-xs text-[var(--text-muted)] mt-2">${featuredNews.publishDate}</p>
                             </a>
                         `;
 
                         if (otherNews.length > 0) {
-                            newsHtml += '<hr class="border-stone-300 my-4">';
+                            newsHtml += '<hr class="border-stone-300 dark:border-stone-700 my-4">';
                             const otherNewsListHtml = otherNews.slice(0, 3).map(article => `
                                 <a href="/news/${article.slug}" target="_blank" class="flex items-center gap-3 group no-underline">
-                                    <img src="${article.imageUrl || 'https://placehold.co/80x80/e7e5e4/1c1917?text=News'}" alt="${article.title}" class="w-12 h-12 object-cover rounded-md border-2 border-stone-300 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/e7e5e4/1c1917?text=News';">
+                                    <img src="${article.imageUrl || 'https://placehold.co/80x80/e7e5e4/1c1917?text=News'}" alt="${article.title}" class="w-12 h-12 object-cover rounded-md border-2 border-stone-300 dark:border-stone-700 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/e7e5e4/1c1917?text=News';">
                                     <div class="flex-grow">
-                                        <h4 class="font-semibold text-sm leading-tight text-stone-800 group-hover:text-orange-600 transition-colors">${article.title}</h4>
-                                        <p class="text-xs text-stone-500">${article.publishDate}</p>
+                                        <h4 class="font-semibold text-sm leading-tight text-[var(--text-main)] group-hover:text-orange-600 transition-colors">${article.title}</h4>
+                                        <p class="text-xs text-[var(--text-muted)]">${article.publishDate}</p>
                                     </div>
                                 </a>
                             `).join('');
@@ -1001,7 +1069,7 @@
 
                         this.elements.latestNews.innerHTML = newsHtml;
                     } else {
-                        this.elements.latestNews.innerHTML = '<p class="text-stone-500 italic">No news articles found.</p>';
+                        this.elements.latestNews.innerHTML = '<p class="text-[var(--text-muted)] italic">No news articles found.</p>';
                     }
 
                     // Render Review Section
@@ -1010,19 +1078,19 @@
                         const snippet = (latestReview.body || '').replace(/<[^>]+>/g, '').substring(0, 150);
                         const reviewHtml = `
                             <div class="flex flex-col sm:flex-row gap-6 items-start">
-                                <img src="${latestReview.imageUrl || 'https://placehold.co/128x128/1c1917/f5f5f4?text=Review'}" alt="Cover for ${latestReview.albumTitle}" class="w-32 h-32 object-cover rounded-md border-2 border-stone-900 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
+                                <img src="${latestReview.imageUrl || 'https://placehold.co/128x128/1c1917/f5f5f4?text=Review'}" alt="Cover for ${latestReview.albumTitle}" class="w-32 h-32 object-cover rounded-md border-2 border-stone-900 dark:border-stone-700 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
                                 <div class="flex-grow">
                                     <p class="text-orange-600 font-bold">Album Review</p>
-                                    <h3 class="text-2xl sm:text-3xl font-bold text-stone-900 my-1">${latestReview.albumTitle}</h3>
-                                    <p class="text-stone-600 font-semibold">By ${latestReview.artist}</p>
-                                    <p class="mt-2 text-stone-700 text-sm sm:text-base">${snippet}...</p>
+                                    <h3 class="text-2xl sm:text-3xl font-bold text-[var(--text-main)] my-1">${latestReview.albumTitle}</h3>
+                                    <p class="text-[var(--text-muted)] font-semibold">By ${latestReview.artist}</p>
+                                    <p class="mt-2 text-[var(--text-muted)] text-sm sm:text-base">${snippet}...</p>
                                     <a href="/reviews/${latestReview.slug}" target="_blank" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Read Full Review &rarr;</a>
                                 </div>
                             </div>
                         `;
                         this.elements.latestReview.innerHTML = reviewHtml;
                     } else {
-                        this.elements.latestReview.innerHTML = '<p class="text-stone-500 italic">No recent reviews found.</p>';
+                        this.elements.latestReview.innerHTML = '<p class="text-[var(--text-muted)] italic">No recent reviews found.</p>';
                     }
                 },
                 processArtists() {
@@ -1069,4 +1137,4 @@
         document.addEventListener('DOMContentLoaded', () => LandingApp.init());
     </script>
 </body>
-</ht
+</html>
