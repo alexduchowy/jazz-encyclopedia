@@ -9,6 +9,11 @@
     <style>
         :root {
             --accent: #f97316;
+            --bg-dark: #1c1917; /* stone-900 */
+            --bg-medium: #292524; /* stone-800 */
+            --bg-light: #44403c; /* stone-700 */
+            --text-light: #e7e5e4; /* stone-200 */
+            --text-muted: #a8a29e; /* stone-400 */
         }
         .loader {
             border-top-color: var(--accent);
@@ -26,63 +31,80 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.7);
             justify-content: center;
             align-items: center;
         }
         .confirm-modal-content {
-            background-color: #fefefe;
+            background-color: var(--bg-medium);
+            color: var(--text-light);
             margin: auto;
             padding: 20px;
-            border: 1px solid #888;
+            border: 1px solid var(--bg-light);
             width: 80%;
             max-width: 400px;
             border-radius: 8px;
             text-align: center;
             box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
         }
-        #drop-zone.dragover {
-            border-color: var(--accent);
-            background-color: #fef3c7;
-        }
         .playlist-item { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             padding: 0.5rem; 
-            border-bottom: 1px solid #e5e7eb; 
+            border-bottom: 1px solid var(--bg-light);
         }
         .playlist-item:last-child { border-bottom: none; }
-        .remove-btn { 
-            background-color: #ef4444; 
-            color: white; 
+        .btn-action {
             padding: 0.25rem 0.5rem; 
             border-radius: 0.25rem; 
             font-size: 0.75rem; 
             font-weight: bold; 
             cursor: pointer; 
             flex-shrink: 0;
+            transition: background-color 0.2s;
+        }
+        .remove-btn { 
+            background-color: #ef4444; 
+            color: white; 
         }
         .remove-btn:hover { background-color: #dc2626; }
+        .edit-btn-tv {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .edit-btn-tv:hover { background-color: #2563eb; }
+        
+        /* Dark theme form inputs */
+        .form-input, .form-textarea, .form-select {
+            background-color: var(--bg-light);
+            border-color: #57534e; /* stone-600 */
+            color: var(--text-light);
+        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            --tw-ring-color: var(--accent);
+            border-color: var(--accent);
+            background-color: var(--bg-medium);
+        }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-stone-900 text-stone-200">
 
     <!-- Confirmation Modal -->
     <div id="confirm-modal" class="confirm-modal">
         <div class="confirm-modal-content">
-            <p id="confirm-modal-text" class="mb-4 text-gray-800">Are you sure?</p>
+            <p id="confirm-modal-text" class="mb-4 text-stone-200">Are you sure?</p>
             <button id="confirm-yes" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 mr-2">Yes, delete</button>
-            <button id="confirm-no" class="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400">Cancel</button>
+            <button id="confirm-no" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Cancel</button>
         </div>
     </div>
 
     <!-- Auth Container -->
-    <div id="auth-container" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div id="auth-container" class="min-h-screen flex items-center justify-center bg-stone-900 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <div>
                 <img class="mx-auto h-24 w-auto" src="/images/logo.svg" alt="Controlled Freedom">
-                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-stone-100">
                     Sign in to your account
                 </h2>
             </div>
@@ -90,11 +112,11 @@
                 <div class="rounded-md shadow-sm -space-y-px">
                     <div>
                         <label for="email" class="sr-only">Email address</label>
-                        <input id="email" name="email" type="email" autocomplete="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm" placeholder="Email address">
+                        <input id="email" name="email" type="email" autocomplete="email" required class="form-input appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-stone-400 rounded-t-md sm:text-sm" placeholder="Email address">
                     </div>
                     <div>
                         <label for="password" class="sr-only">Password</label>
-                        <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm" placeholder="Password">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required class="form-input appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-stone-400 rounded-b-md sm:text-sm" placeholder="Password">
                     </div>
                 </div>
                 <div>
@@ -109,9 +131,9 @@
 
     <!-- Main Admin Panel -->
     <div id="admin-panel" class="hidden">
-        <header class="bg-white shadow-md">
+        <header class="bg-stone-800 shadow-md">
             <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-                <h1 class="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
+                <h1 class="text-2xl font-bold text-stone-100">Admin Dashboard</h1>
                 <button id="logout-btn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Logout</button>
             </div>
         </header>
@@ -119,31 +141,35 @@
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
 
             <!-- TV PLAYLIST ADMIN -->
-            <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
-                <h2 class="text-2xl font-bold mb-6 text-gray-900 border-b pb-4">Controlled Freedom TV - Admin Panel</h2>
+            <div class="bg-stone-800 p-6 rounded-lg shadow-lg mb-8 border border-stone-700">
+                <h2 class="text-2xl font-bold mb-6 text-stone-100 border-b border-stone-700 pb-4">Controlled Freedom TV - Admin Panel</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                        <h3 class="text-xl font-bold mb-4">Add New Video</h3>
+                        <h3 id="tv-form-title" class="text-xl font-bold mb-4 text-stone-200">Add New Video</h3>
                         <form id="tv-playlist-form" class="space-y-4">
+                            <input type="hidden" id="video-doc-id">
                             <div>
-                                <label for="youtube-url-input" class="block text-sm font-medium text-gray-700">YouTube URL</label>
-                                <input type="text" id="youtube-url-input" placeholder="Paste YouTube URL here" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                <label for="youtube-url-input" class="block text-sm font-medium text-stone-300">YouTube URL</label>
+                                <input type="text" id="youtube-url-input" placeholder="Paste YouTube URL here" required class="form-input mt-1 block w-full rounded-md shadow-sm">
                             </div>
                             <div>
-                                <label for="video-title-input" class="block text-sm font-medium text-gray-700">Title</label>
-                                <input type="text" id="video-title-input" placeholder="Enter video title" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                <label for="video-title-input" class="block text-sm font-medium text-stone-300">Title</label>
+                                <input type="text" id="video-title-input" placeholder="Enter video title" required class="form-input mt-1 block w-full rounded-md shadow-sm">
                             </div>
                             <div>
-                                <label for="video-desc-input" class="block text-sm font-medium text-gray-700">Description</label>
-                                <textarea id="video-desc-input" rows="3" placeholder="Enter video description" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"></textarea>
+                                <label for="video-desc-input" class="block text-sm font-medium text-stone-300">Description</label>
+                                <textarea id="video-desc-input" rows="3" placeholder="Enter video description" required class="form-textarea mt-1 block w-full rounded-md shadow-sm"></textarea>
                             </div>
-                            <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md">Add Video</button>
+                            <div class="flex items-center gap-4">
+                                <button id="tv-form-submit-btn" type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md">Add Video</button>
+                                <button id="tv-form-cancel-btn" type="button" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md hidden">Cancel</button>
+                            </div>
                             <p id="add-video-error" class="text-red-500 text-sm mt-2 h-4"></p>
                         </form>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold mb-4">Current Playlist</h3>
-                        <div id="playlist-container" class="bg-gray-50 rounded-md h-96 overflow-y-auto text-gray-800 border border-gray-300">
+                        <h3 class="text-xl font-bold mb-4 text-stone-200">Current Playlist</h3>
+                        <div id="playlist-container" class="bg-stone-900 rounded-md h-96 overflow-y-auto text-stone-200 border border-stone-700">
                             <!-- Playlist items will be injected here -->
                         </div>
                     </div>
@@ -154,25 +180,25 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Form Column -->
                 <div class="lg:col-span-2">
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <h2 id="form-title" class="text-2xl font-bold mb-6 text-gray-900">Create New Article</h2>
+                    <div class="bg-stone-800 p-6 rounded-lg shadow-lg border border-stone-700">
+                        <h2 id="form-title" class="text-2xl font-bold mb-6 text-stone-100">Create New Article</h2>
                         <form id="article-form" class="space-y-6">
                             <input type="hidden" id="article-id">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label for="article-type" class="block text-sm font-medium text-gray-700">Article Type</label>
-                                    <select id="article-type" name="article-type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md">
+                                    <label for="article-type" class="block text-sm font-medium text-stone-300">Article Type</label>
+                                    <select id="article-type" name="article-type" class="form-select mt-1 block w-full pl-3 pr-10 py-2 text-base rounded-md">
                                         <option value="news">News</option>
                                         <option value="review">Review</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-                                    <input type="text" id="title" name="title" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                                    <label for="title" class="block text-sm font-medium text-stone-300">Title</label>
+                                    <input type="text" id="title" name="title" required class="form-input mt-1 block w-full rounded-md shadow-sm">
                                 </div>
                             </div>
                             
-                            <div id="review-fields-container" class="hidden space-y-6 pt-6 border-t">
+                            <div id="review-fields-container" class="hidden space-y-6 pt-6 border-t border-stone-700">
                                 <!-- Review specific fields -->
                             </div>
 
@@ -181,13 +207,13 @@
                             </div>
 
                             <div>
-                                <label for="body" class="block text-sm font-medium text-gray-700">Body (HTML allowed)</label>
-                                <textarea id="body" name="body" rows="15" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"></textarea>
+                                <label for="body" class="block text-sm font-medium text-stone-300">Body (HTML allowed)</label>
+                                <textarea id="body" name="body" rows="15" required class="form-textarea mt-1 block w-full rounded-md shadow-sm"></textarea>
                             </div>
                             
                             <p id="form-error" class="text-red-500 text-sm h-4"></p>
-                            <div class="flex items-center justify-end gap-4 pt-6 border-t">
-                                <button type="button" id="clear-form-btn" class="text-sm font-medium text-gray-600 hover:text-gray-900">Clear Form</button>
+                            <div class="flex items-center justify-end gap-4 pt-6 border-t border-stone-700">
+                                <button type="button" id="clear-form-btn" class="text-sm font-medium text-stone-300 hover:text-stone-100">Clear Form</button>
                                 <button type="submit" class="w-1/2 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
                                     Save Article
                                 </button>
@@ -198,8 +224,8 @@
 
                 <!-- Articles List Column -->
                 <div class="lg:col-span-1">
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <h2 class="text-2xl font-bold mb-4 text-gray-900">Existing Articles</h2>
+                    <div class="bg-stone-800 p-6 rounded-lg shadow-lg border border-stone-700">
+                        <h2 class="text-2xl font-bold mb-4 text-stone-100">Existing Articles</h2>
                         <div id="articles-list" class="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
                             <div id="list-loader" class="flex justify-center items-center"><div class="loader h-8 w-8 border-4 rounded-full"></div></div>
                         </div>
@@ -232,6 +258,10 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
+        // --- GLOBAL STATE ---
+        let tvPlaylist = []; // Local cache for the TV playlist
+        let editingVideoId = null; // To track which video is being edited
+
         // --- DOM ELEMENTS ---
         const elements = {
             authContainer: document.getElementById('auth-container'),
@@ -241,6 +271,10 @@
             logoutBtn: document.getElementById('logout-btn'),
             // TV Playlist Elements
             tvPlaylistForm: document.getElementById('tv-playlist-form'),
+            tvFormTitle: document.getElementById('tv-form-title'),
+            tvFormSubmitBtn: document.getElementById('tv-form-submit-btn'),
+            tvFormCancelBtn: document.getElementById('tv-form-cancel-btn'),
+            videoDocIdInput: document.getElementById('video-doc-id'),
             urlInput: document.getElementById('youtube-url-input'),
             titleInput: document.getElementById('video-title-input'),
             descInput: document.getElementById('video-desc-input'),
@@ -282,15 +316,15 @@
             const playlistCollection = collection(db, 'tv_playlist');
             const q = query(playlistCollection, orderBy('createdAt'));
             onSnapshot(q, (snapshot) => {
-                const playlist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderPlaylistUI(playlist);
+                tvPlaylist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderPlaylistUI(tvPlaylist);
             });
         };
 
         const renderPlaylistUI = (playlist) => {
             elements.playlistContainer.innerHTML = '';
             if (playlist.length === 0) {
-                elements.playlistContainer.innerHTML = '<p class="p-4 text-center text-gray-500">Playlist is empty.</p>';
+                elements.playlistContainer.innerHTML = '<p class="p-4 text-center text-stone-500">Playlist is empty.</p>';
                 return;
             }
             playlist.forEach((video) => {
@@ -298,22 +332,28 @@
                 item.className = 'playlist-item';
                 item.innerHTML = `
                     <div class="flex items-center gap-3 overflow-hidden">
-                       <img src="https://i.ytimg.com/vi/${video.videoId}/default.jpg" class="w-16 h-12 object-cover rounded-sm border border-gray-300 flex-shrink-0">
+                       <img src="https://i.ytimg.com/vi/${video.videoId}/default.jpg" class="w-16 h-12 object-cover rounded-sm border border-stone-600 flex-shrink-0">
                        <div class="truncate">
-                           <p class="font-bold truncate text-gray-800">${video.title || 'No Title'}</p>
-                           <p class="text-xs text-gray-500 truncate">${video.videoId}</p>
+                           <p class="font-bold truncate text-stone-200">${video.title || 'No Title'}</p>
+                           <p class="text-xs text-stone-400 truncate">${video.videoId}</p>
                        </div>
                     </div>
-                    <button class="remove-btn" data-id="${video.id}">Remove</button>
+                    <div class="flex gap-2">
+                        <button class="btn-action edit-btn-tv" data-id="${video.id}">Edit</button>
+                        <button class="btn-action remove-btn" data-id="${video.id}">Remove</button>
+                    </div>
                 `;
                 elements.playlistContainer.appendChild(item);
             });
         };
-
-        const extractYouTubeID = (url) => {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
+        
+        const resetTvForm = () => {
+            elements.tvPlaylistForm.reset();
+            editingVideoId = null;
+            elements.tvFormTitle.textContent = 'Add New Video';
+            elements.tvFormSubmitBtn.textContent = 'Add Video';
+            elements.tvFormCancelBtn.classList.add('hidden');
+            elements.urlInput.disabled = false;
         };
 
         const handleTvFormSubmit = async (e) => {
@@ -332,39 +372,62 @@
                 elements.addVideoError.textContent = "Invalid YouTube URL.";
                 return;
             }
-
             elements.addVideoError.textContent = "";
 
             try {
-                await addDoc(collection(db, 'tv_playlist'), {
-                    videoId: videoId,
-                    title: title,
-                    description: description,
-                    createdAt: serverTimestamp()
-                });
-                elements.tvPlaylistForm.reset();
+                if (editingVideoId) {
+                    // Update existing video
+                    const videoRef = doc(db, 'tv_playlist', editingVideoId);
+                    await updateDoc(videoRef, { title, description });
+                } else {
+                    // Add new video
+                    await addDoc(collection(db, 'tv_playlist'), {
+                        videoId: videoId,
+                        title: title,
+                        description: description,
+                        createdAt: serverTimestamp()
+                    });
+                }
+                resetTvForm();
             } catch (error) {
-                console.error("Error adding video: ", error);
-                elements.addVideoError.textContent = "Could not add video.";
+                console.error("Error saving video: ", error);
+                elements.addVideoError.textContent = "Could not save video.";
             }
         };
 
-        const handleRemoveVideo = async (e) => {
-            if (e.target.classList.contains('remove-btn')) {
-                const docId = e.target.dataset.id;
+        const handlePlaylistClick = (e) => {
+            const target = e.target;
+            const docId = target.dataset.id;
+
+            if (target.classList.contains('remove-btn')) {
                 if (confirm('Are you sure you want to delete this video?')) {
-                    try {
-                        await deleteDoc(doc(db, 'tv_playlist', docId));
-                    } catch (error) {
-                        console.error("Error removing video: ", error);
-                        alert("Could not remove video.");
-                    }
+                    deleteDoc(doc(db, 'tv_playlist', docId)).catch(err => console.error("Error removing video: ", err));
+                }
+            } else if (target.classList.contains('edit-btn-tv')) {
+                const videoToEdit = tvPlaylist.find(video => video.id === docId);
+                if (videoToEdit) {
+                    editingVideoId = docId;
+                    elements.urlInput.value = `https://www.youtube.com/watch?v=${videoToEdit.videoId}`;
+                    elements.urlInput.disabled = true; // Prevent changing the video ID
+                    elements.titleInput.value = videoToEdit.title;
+                    elements.descInput.value = videoToEdit.description;
+                    
+                    elements.tvFormTitle.textContent = 'Edit Video';
+                    elements.tvFormSubmitBtn.textContent = 'Update Video';
+                    elements.tvFormCancelBtn.classList.remove('hidden');
                 }
             }
         };
 
+        const extractYouTubeID = (url) => {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        };
+
         elements.tvPlaylistForm.addEventListener('submit', handleTvFormSubmit);
-        elements.playlistContainer.addEventListener('click', handleRemoveVideo);
+        elements.playlistContainer.addEventListener('click', handlePlaylistClick);
+        elements.tvFormCancelBtn.addEventListener('click', resetTvForm);
 
 
         // --- ARTICLE MANAGEMENT LOGIC (EXISTING) ---
@@ -377,22 +440,21 @@
                 querySnapshot.forEach((doc) => {
                     const article = { id: doc.id, ...doc.data() };
                     html += `
-                        <div class="p-4 border rounded-md bg-gray-50">
-                            <p class="font-bold text-lg">${article.title}</p>
+                        <div class="p-4 border border-stone-700 rounded-md bg-stone-800/50">
+                            <p class="font-bold text-lg text-stone-200">${article.title}</p>
                             <div class="flex space-x-2 flex-shrink-0 mt-2">
-                                <button data-id="${article.id}" class="edit-btn text-blue-600 hover:text-blue-800 text-sm">Edit</button>
-                                <button data-id="${article.id}" class="delete-btn text-red-600 hover:text-red-800 text-sm">Delete</button>
+                                <button data-id="${article.id}" class="edit-btn text-blue-400 hover:text-blue-300 text-sm">Edit</button>
+                                <button data-id="${article.id}" class="delete-btn text-red-500 hover:text-red-400 text-sm">Delete</button>
                             </div>
                         </div>`;
                 });
-                elements.articlesList.innerHTML = html || '<p>No articles found.</p>';
+                elements.articlesList.innerHTML = html || '<p class="text-stone-400">No articles found.</p>';
             } catch (error) {
                 console.error("Error loading articles:", error);
                 elements.articlesList.innerHTML = '<p class="text-red-500">Could not load articles.</p>';
             }
         };
         
-        // All other existing article functions are assumed to be here and are not repeated.
         elements.articleForm.addEventListener('submit', (e) => {
             e.preventDefault();
             console.log("Article form submitted");
