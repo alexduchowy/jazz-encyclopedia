@@ -13,18 +13,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
     <style>
+        /* Light Theme (Default) */
         :root {
-            --bg-dark: #1c1917; /* stone-900 */
-            --bg-medium: #292524; /* stone-800 */
-            --text-light: #e7e5e4; /* stone-200 */
-            --text-muted: #a8a29e; /* stone-400 */
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-header: rgba(255,255,255,0.8);
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --border-color: #e7e5e4;
             --accent: #f97316;
-            --accent-dark: #ea580c;
         }
+
+        /* Dark Theme */
+        .dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
+            background-color: var(--bg-main);
+            color: var(--text-main);
             overflow-x: hidden;
         }
         h1, h2, h3, h4, h5 {
@@ -43,7 +56,7 @@
         .nav-bar-behaviour { display: none; }
         @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
         
-        #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
+        #mobile-menu-panel { transition: transform 0.3s ease-in-out; background-color: var(--bg-main); }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
 
         .video-container {
@@ -63,28 +76,46 @@
             width: 100%;
             height: 100%;
         }
+        .info-card {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+        }
+        .info-card-header {
+            font-family: 'Bebas Neue', sans-serif;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            color: var(--accent);
+        }
     </style>
 </head>
-<body class="bg-stone-900 text-stone-100">
+<body class="text-stone-100">
 
     <!-- Standardized Sticky Header -->
-    <div class="sticky top-0 z-50 h-24 bg-stone-900/80 backdrop-blur-md border-b border-stone-700">
+    <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
         <header class="container mx-auto h-full">
             <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                 <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
-                <div class="nav-bar-behaviour items-center space-x-8">
-                    <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-300">Home</a>
-                    <a href="/tv.html" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-300">TV</a>
-                    <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-300">Timeline</a>
-                    <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-300">Legacy</a>
-                    <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-stone-300">Blog</a>
-                    <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-stone-300 flex items-center gap-2">
-                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                        <span>@controlledjazz</span>
-                    </a>
-                </div>
-                <div class="lg:hidden">
-                    <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-100 hover:bg-stone-700 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+                <div class="flex items-center">
+                    <div class="nav-bar-behaviour items-center space-x-8">
+                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                        <a href="/tv.html" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                        <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Legacy</a>
+                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                            <span>@controlledjazz</span>
+                        </a>
+                    </div>
+                    <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                        <svg id="theme-icon-light" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="theme-icon-dark" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <div class="lg:hidden ml-2">
+                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+                    </div>
                 </div>
             </nav>
         </header>
@@ -94,8 +125,8 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
             
             <div class="text-center mb-10">
-                <h1 class="text-5xl md:text-7xl text-stone-100">Controlled Freedom <span class="text-orange-500">TV</span></h1>
-                <p class="text-lg text-stone-300 mt-2">A 24/7 Broadcast of Historic Jazz Performances</p>
+                <h1 class="text-5xl md:text-7xl text-[var(--text-main)]">Controlled Freedom <span class="text-orange-500">TV</span></h1>
+                <p class="text-lg text-[var(--text-muted)] mt-2">A 24/7 Broadcast of Historic Jazz Performances</p>
             </div>
 
             <!-- Main Content Grid -->
@@ -112,19 +143,19 @@
 
                 <!-- Right Column: Info -->
                 <div class="lg:col-span-4">
-                    <div id="info-wrapper" class="bg-stone-800/50 backdrop-blur-sm border border-stone-700 rounded-lg p-6 flex flex-col">
-                        <h2 id="video-main-title" class="text-2xl lg:text-3xl text-stone-100 font-bold border-b-2 border-stone-700 pb-3 mb-3 flex-shrink-0">Loading...</h2>
-                        <div class="flex-grow overflow-y-auto pr-2">
-                            <p id="video-description" class="text-stone-300 text-sm leading-relaxed">Please wait while we load the video details.</p>
+                    <div id="info-wrapper" class="info-card flex flex-col">
+                        <h2 id="video-main-title" class="info-card-header text-2xl lg:text-3xl font-bold flex-shrink-0">Loading...</h2>
+                        <div class="p-6 flex-grow overflow-y-auto">
+                            <p id="video-description" class="text-[var(--text-muted)] text-sm leading-relaxed">Please wait while we load the video details.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Up Next Playlist (Full width under the columns on mobile, under player on desktop) -->
+                <!-- Up Next Playlist -->
                 <div class="lg:col-span-8">
-                    <div class="bg-stone-800/50 backdrop-blur-sm border border-stone-700 rounded-lg p-6">
-                        <h2 class="text-xl lg:text-2xl text-stone-100 font-bold border-b-2 border-stone-700 pb-2 mb-4">Up Next</h2>
-                        <div id="playlist-container" class="space-y-3 overflow-y-auto" style="max-height: 240px;">
+                    <div class="info-card">
+                        <h2 class="info-card-header text-xl lg:text-2xl font-bold">Up Next</h2>
+                        <div id="playlist-container" class="p-4 space-y-3 overflow-y-auto" style="max-height: 240px;">
                             <!-- Playlist items will be generated here -->
                         </div>
                     </div>
@@ -146,15 +177,15 @@
      <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
-        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4">
-            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
                 <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-orange-500 p-2 rounded-md">TV</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
-                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
+                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                     <span>@controlledjazz</span>
                 </a>
@@ -170,7 +201,7 @@
 
         // --- App State ---
         let player;
-        let playlist = []; // Array of objects: {id, videoId, title, description}
+        let playlist = [];
         let currentVideoIndex = 0;
         let db, auth;
 
@@ -181,7 +212,36 @@
             playlistContainer: document.getElementById('playlist-container'),
             infoWrapper: document.getElementById('info-wrapper'),
             videoWrapper: document.getElementById('video-wrapper'),
+            themeToggle: document.getElementById('theme-toggle'),
+            themeIconLight: document.getElementById('theme-icon-light'),
+            themeIconDark: document.getElementById('theme-icon-dark'),
         };
+
+        // --- Theme Logic ---
+        function setupTheme() {
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    elements.themeIconLight.classList.add('hidden');
+                    elements.themeIconDark.classList.remove('hidden');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    elements.themeIconLight.classList.remove('hidden');
+                    elements.themeIconDark.classList.add('hidden');
+                }
+            };
+
+            const savedTheme = localStorage.getItem('theme');
+            // Default to dark for TV page if no theme is saved
+            const currentTheme = savedTheme || 'dark'; 
+            applyTheme(currentTheme);
+
+            elements.themeToggle.addEventListener('click', () => {
+                const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+        }
 
         // --- YouTube Player API Setup ---
         const tag = document.createElement('script');
@@ -193,52 +253,38 @@
             player = new YT.Player('player', {
                 height: '100%',
                 width: '100%',
-                playerVars: { 
-                    'playsinline': 1,
-                    'autoplay': 1,
-                    'controls': 1 
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
+                playerVars: { 'playsinline': 1, 'autoplay': 1, 'controls': 1 },
+                events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
             });
         };
 
         function onPlayerReady(event) {
-            if (playlist.length > 0) {
-                playVideo(currentVideoIndex);
-            }
-            // Set initial height for desktop
+            if (playlist.length > 0) playVideo(currentVideoIndex);
             setInfoBoxHeight();
         }
 
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.ENDED) {
-                currentVideoIndex = (currentVideoIndex + 1) % playlist.length; // Loop playlist
+                currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
                 playVideo(currentVideoIndex);
             }
         }
 
         function playVideo(index) {
             if (playlist.length > 0 && index < playlist.length) {
-                const videoId = playlist[index].videoId;
-                player.loadVideoById(videoId);
+                player.loadVideoById(playlist[index].videoId);
                 updateUI(index);
             } else {
                  elements.videoMainTitle.textContent = "Playlist is Empty";
                  elements.videoDescription.textContent = "Add a video to the playlist to start the broadcast.";
-                 elements.playlistContainer.innerHTML = '<p class="text-stone-500">No videos in queue.</p>';
+                 elements.playlistContainer.innerHTML = '<p class="text-[var(--text-muted)]">No videos in queue.</p>';
             }
         }
 
         function setInfoBoxHeight() {
-            // lg breakpoint in Tailwind is 1024px
             if (window.innerWidth >= 1024) {
-                const videoHeight = elements.videoWrapper.offsetHeight;
-                elements.infoWrapper.style.height = `${videoHeight}px`;
+                elements.infoWrapper.style.height = `${elements.videoWrapper.offsetHeight}px`;
             } else {
-                // On mobile, let the height be determined by its content
                 elements.infoWrapper.style.height = 'auto';
             }
         }
@@ -246,56 +292,40 @@
         // --- UI Update Functions ---
         function updateUI(playingIndex) {
             if (playlist.length === 0) return;
-
             const currentVideo = playlist[playingIndex];
-
-            // Update main title and description
             elements.videoMainTitle.textContent = currentVideo.title;
             elements.videoDescription.textContent = currentVideo.description;
-
-            // Update "Up Next" playlist
             elements.playlistContainer.innerHTML = '';
-            for (let i = 0; i < playlist.length; i++) {
-                const itemIndex = (playingIndex + i) % playlist.length;
-                const videoItem = playlist[itemIndex];
-
-                if (i === 0) continue; // Skip the currently playing video in the "Up Next" list
-
+            playlist.forEach((videoItem, i) => {
+                if (i === playingIndex) return;
                 const playlistItem = document.createElement('div');
                 playlistItem.className = 'playlist-item flex items-center gap-3 p-2 rounded-md transition-colors hover:bg-stone-700/50 cursor-pointer';
-                playlistItem.dataset.index = itemIndex;
-
+                playlistItem.dataset.index = i;
                 playlistItem.innerHTML = `
                     <img src="https://i.ytimg.com/vi/${videoItem.videoId}/default.jpg" alt="${videoItem.title}" class="w-16 h-12 object-cover rounded-md border border-stone-600">
                     <div>
-                        <h4 class="font-bold text-stone-200 text-sm leading-tight">${videoItem.title}</h4>
-                        <p class="text-xs text-stone-400">Up Next</p>
-                    </div>
-                `;
-                
+                        <h4 class="font-bold text-[var(--text-main)] text-sm leading-tight">${videoItem.title}</h4>
+                        <p class="text-xs text-[var(--text-muted)]">Up Next</p>
+                    </div>`;
                 playlistItem.addEventListener('click', () => {
                     currentVideoIndex = parseInt(playlistItem.dataset.index);
                     playVideo(currentVideoIndex);
                 });
-
                 elements.playlistContainer.appendChild(playlistItem);
-            }
+            });
         }
         
         // --- Firebase & Playlist Logic ---
         function setupFirestoreListener() {
-            const playlistCollection = collection(db, 'tv_playlist');
-            const q = query(playlistCollection, orderBy('createdAt'));
-
+            const q = query(collection(db, 'tv_playlist'), orderBy('createdAt'));
             onSnapshot(q, (snapshot) => {
                 const wasEmpty = playlist.length === 0;
                 playlist = snapshot.docs.map((doc, i) => ({
                     id: doc.id,
-                    videoId: doc.data().videoId,
-                    title: doc.data().title || `Jazz Performance ${i + 1}`, // Fallback title
-                    description: doc.data().description || 'No description provided for this performance. Enjoy the music!', // Fallback description
+                    ...doc.data(),
+                    title: doc.data().title || `Jazz Performance ${i + 1}`,
+                    description: doc.data().description || 'No description provided.',
                 }));
-                
                 if (wasEmpty && playlist.length > 0 && player && typeof player.loadVideoById === 'function') {
                     playVideo(currentVideoIndex);
                 } else {
@@ -306,6 +336,7 @@
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
+            setupTheme();
             const firebaseConfig = {
                 apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                 authDomain: "controlled-freedom.firebaseapp.com",
@@ -314,41 +345,24 @@
                 messagingSenderId: "992659637634",
                 appId: "1:992659637634:web:88de99efae5cb7cf53bb9b"
             };
-
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
-            
             onAuthStateChanged(auth, user => {
-                if (user) {
-                    setupFirestoreListener();
-                } else {
-                    signInAnonymously(auth).catch(error => {
-                        console.error("Anonymous sign-in failed:", error);
-                    });
-                }
+                if (user) setupFirestoreListener();
+                else signInAnonymously(auth).then(setupFirestoreListener).catch(e => console.error("Anonymous sign-in failed:", e));
             });
-
-            // Set info box height on load and resize
             window.addEventListener('resize', setInfoBoxHeight);
-            
-            // Mobile Menu Logic
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
             const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
-            
             const openMenu = () => mobileMenuOverlay.classList.remove('hidden');
             const closeMenu = () => mobileMenuOverlay.classList.add('hidden');
-
             if(mobileMenuButton) mobileMenuButton.addEventListener('click', openMenu);
             if(mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', closeMenu);
             if(document.getElementById('mobile-menu-bg')) document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
-
-            // Footer Copyright
             const footerCopyright = document.getElementById('footer-copyright');
-            if(footerCopyright) {
-                footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
-            }
+            if(footerCopyright) footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
         });
     </script>
 </body>
