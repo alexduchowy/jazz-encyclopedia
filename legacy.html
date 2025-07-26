@@ -85,7 +85,7 @@
               transform: rotate(-1deg);
               display: inline-block;
               background-color: var(--accent);
-              color: #FFFFFF; /* Changed to always be white */
+              color: #FFFFFF;
               padding: 0.25rem 1rem;
               margin-bottom: 1rem;
         }
@@ -438,10 +438,10 @@
                     <div class="grid md:grid-cols-5 gap-12 items-start">
                         <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-[var(--text-main)] text-left">
                             <div class="mb-8">
-                                <h2 class="section-header text-5xl">The Echoes of Innovation</h2>
-                                <p class="text-lg text-[var(--text-muted)] mt-4 italic">Tracing the paths of jazz beyond the golden age.</p>
+                                <h2 class="section-header text-5xl">Forging the New Sound</h2>
+                                <p class="text-lg text-[var(--text-muted)] mt-4 italic">Tracing the lineage of jazz beyond its golden age.</p>
                             </div>
-                            <p>The story of jazz didn't end in 1969. Instead, the seismic shifts of the post-bop era created a new musical landscape. The period's relentless innovation acted as a creative big bang, sending musicians and ideas hurtling in countless new directions. The structural explorations of Post-Bop, the spiritual depth of Free Jazz, and the raw energy of Avant-Garde became the DNA for future generations.</p>
+                            <p>The story of jazz didn't end in 1969. The seismic shifts of the post-bop era created a new musical landscape, acting as a creative big bang that sent musicians and ideas hurtling in countless new directions. The structural explorations of Post-Bop, the spiritual depth of Free Jazz, and the raw energy of the Avant-Garde became the DNA for future generations.</p>
                             <p>From the high-voltage energy of <strong>Jazz Fusion</strong> and the introspective soundscapes of <strong>ECM Style Jazz</strong> to the conscious reconnection with African roots in <strong>Afro-Jazz</strong>, the legacy of this golden age is everywhere. This page explores the primary paths that grew from that fertile ground, tracing the lineage of modern jazz into the 21st century.</p>
                         </div>
                         <div class="md:col-span-2 mt-8 md:mt-0 space-y-8">
@@ -720,7 +720,6 @@
                             lightIcon.classList.remove('hidden');
                             darkIcon.classList.add('hidden');
                         }
-                        // Redraw connections on theme change
                         if (this.methods.drawEvolutionConnections) {
                            setTimeout(() => this.methods.drawEvolutionConnections(), 50);
                         }
@@ -883,61 +882,74 @@
                     const { pathSelectorGrid } = this.elements;
                     pathSelectorGrid.innerHTML = '';
                     const pathDescriptions = { "The Electric Path": "A high-voltage fusion of jazz improvisation with the raw power of rock and funk.", "The Spiritual Path": "A quest for transcendence through sound, blending jazz with Eastern and African influences.", "The Avant-Garde Path": "A radical deconstruction of traditional music, exploring pure sound, texture, and 'energy playing.'", "The Melodic Path": "Characterized by strong, folk-like melodies and atmospheric soundscapes, favoring lyrical improvisation.", "The Afro-Jazz Path": "A conscious reconnection with the music's African and Caribbean roots, integrating traditional rhythms.", "The Neo-Bop Path": "A powerful revival of the acoustic post-bop tradition that emerged in the 1980s." };
-                    Object.entries(this.state.legacyData).forEach(([pathKey, pathData]) => {
+                    Object.entries(this.state.legacyData).forEach(([pathKey, pathData], index) => {
                         const card = document.createElement('div');
                         card.className = 'path-selector-card text-left';
                         card.dataset.pathKey = pathKey;
+                        card.dataset.index = index;
                         const pathColor = this.methods.getPathColor(pathData);
                         card.style.setProperty('--path-color', pathColor);
                         const imageSlug = pathData.title.replace('The ', '').toLowerCase().replace(/\s+/g, '-');
                         card.innerHTML = `<img src="images/${imageSlug}.jpg" alt="${pathData.title}" class="path-selector-card-img" onerror="this.onerror=null;this.src='https://placehold.co/320x160/1c1917/f5f5f4?text=Path';"><div class="path-selector-card-content"><h4 class="text-3xl font-bold">${pathData.title}</h4><p class="text-sm text-[var(--text-muted)]">${pathDescriptions[pathData.title] || ''}</p></div>`;
                         card.addEventListener('click', () => {
-                            pathSelectorGrid.querySelectorAll('.path-selector-card').forEach(c => c.classList.remove('active'));
-                            card.classList.add('active');
-                            this.methods.renderLegacyAlbumSlider(pathKey);
+                            this.elements.pathSelectorGrid.scrollTo({
+                                left: card.offsetLeft - (this.elements.pathSelectorGrid.offsetWidth / 2) + (card.offsetWidth / 2),
+                                behavior: 'smooth'
+                            });
                         });
                         pathSelectorGrid.appendChild(card);
                     });
                 },
                 setupPathSlider() {
-                    const { pathSelectorGrid, pathSliderControls, pathPrevBtn, pathNextBtn, pathPageIndicator } = this.elements;
+                    const { pathSelectorGrid, pathPrevBtn, pathNextBtn, pathPageIndicator } = this.elements;
                     const cards = Array.from(pathSelectorGrid.children);
                     const totalSlides = cards.length;
 
-                    const updateSlider = (updateContent = false) => {
+                    const updateSliderUI = () => {
                         pathPageIndicator.textContent = `${this.state.currentPathSlide + 1} / ${totalSlides}`;
                         pathPrevBtn.disabled = this.state.currentPathSlide === 0;
                         pathNextBtn.disabled = this.state.currentPathSlide === totalSlides - 1;
-
-                        if (updateContent) {
-                            const currentCard = cards[this.state.currentPathSlide];
-                            if (currentCard) {
-                                pathSelectorGrid.querySelectorAll('.path-selector-card').forEach(c => c.classList.remove('active'));
-                                currentCard.classList.add('active');
-                                this.methods.renderLegacyAlbumSlider(currentCard.dataset.pathKey);
+                        cards.forEach((card, index) => {
+                             if (index === this.state.currentPathSlide) {
+                                if (!card.classList.contains('active')) {
+                                    card.classList.add('active');
+                                    this.methods.renderLegacyAlbumSlider(card.dataset.pathKey);
+                                }
+                            } else {
+                                card.classList.remove('active');
                             }
-                        }
+                        });
                     };
 
                     pathPrevBtn.onclick = () => {
                         if (this.state.currentPathSlide > 0) {
-                            this.state.currentPathSlide--;
-                            const scrollAmount = cards[this.state.currentPathSlide].offsetLeft - pathSelectorGrid.offsetLeft;
-                            pathSelectorGrid.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                            updateSlider(true);
+                            const newIndex = this.state.currentPathSlide - 1;
+                            const card = cards[newIndex];
+                            pathSelectorGrid.scrollTo({ left: card.offsetLeft - (pathSelectorGrid.offsetWidth / 2) + (card.offsetWidth / 2), behavior: 'smooth' });
                         }
                     };
                     pathNextBtn.onclick = () => {
                         if (this.state.currentPathSlide < totalSlides - 1) {
-                            this.state.currentPathSlide++;
-                            const scrollAmount = cards[this.state.currentPathSlide].offsetLeft - pathSelectorGrid.offsetLeft;
-                            pathSelectorGrid.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                            updateSlider(true);
+                            const newIndex = this.state.currentPathSlide + 1;
+                            const card = cards[newIndex];
+                            pathSelectorGrid.scrollTo({ left: card.offsetLeft - (pathSelectorGrid.offsetWidth / 2) + (card.offsetWidth / 2), behavior: 'smooth' });
                         }
                     };
                     
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const index = parseInt(entry.target.dataset.index);
+                                this.state.currentPathSlide = index;
+                                updateSliderUI();
+                            }
+                        });
+                    }, { root: pathSelectorGrid, threshold: 0.6 });
+
+                    cards.forEach(card => observer.observe(card));
+                    
                     this.state.currentPathSlide = 0;
-                    updateSlider();
+                    updateSliderUI();
                 },
                 renderLegacyAlbumSlider(pathKey) {
                     const { legacySliderWrapper, legacySliderTitle, legacyAlbumTrack } = this.elements;
@@ -1483,4 +1495,4 @@
         document.addEventListener('DOMContentLoaded', () => LegacyApp.init());
     </script>
 </body>
-</html>
+</html
