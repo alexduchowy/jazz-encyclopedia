@@ -105,7 +105,7 @@
     <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
         <header class="container mx-auto h-full">
             <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
                 <div class="flex items-center">
                     <div class="nav-bar-behaviour items-center space-x-8">
                         <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
@@ -224,6 +224,11 @@
             themeToggle: document.getElementById('theme-toggle'),
             themeIconLight: document.getElementById('theme-icon-light'),
             themeIconDark: document.getElementById('theme-icon-dark'),
+            mobileMenuButton: document.getElementById('mobile-menu-button'),
+            mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
+            mobileMenuPanel: document.getElementById('mobile-menu-panel'),
+            mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+            footerCopyright: document.getElementById('footer-copyright'),
         };
 
         // --- Theme Logic ---
@@ -241,7 +246,6 @@
             };
 
             const savedTheme = localStorage.getItem('theme');
-            // Default to dark for TV page if no theme is saved
             const currentTheme = savedTheme || 'dark'; 
             applyTheme(currentTheme);
 
@@ -249,6 +253,28 @@
                 const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
                 localStorage.setItem('theme', newTheme);
                 applyTheme(newTheme);
+            });
+        }
+        
+        // --- Mobile Menu Logic ---
+        function setupMobileMenu() {
+            const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = elements;
+            if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
+            
+            const openMenu = () => {
+                mobileMenuOverlay.classList.remove('hidden');
+                setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+            };
+            const closeMenu = () => {
+                mobileMenuPanel.style.transform = 'translateX(100%)';
+                setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+            };
+
+            mobileMenuButton.addEventListener('click', openMenu);
+            mobileMenuCloseButton.addEventListener('click', closeMenu);
+            document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+            document.querySelectorAll('#mobile-nav-links a').forEach(link => {
+                link.addEventListener('click', closeMenu);
             });
         }
 
@@ -346,6 +372,7 @@
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             setupTheme();
+            setupMobileMenu(); // <-- FIX: Call the setup function
             const firebaseConfig = {
                 apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                 authDomain: "controlled-freedom.firebaseapp.com",
@@ -362,16 +389,7 @@
                 else signInAnonymously(auth).then(setupFirestoreListener).catch(e => console.error("Anonymous sign-in failed:", e));
             });
             window.addEventListener('resize', setInfoBoxHeight);
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-            const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
-            const openMenu = () => mobileMenuOverlay.classList.remove('hidden');
-            const closeMenu = () => mobileMenuOverlay.classList.add('hidden');
-            if(mobileMenuButton) mobileMenuButton.addEventListener('click', openMenu);
-            if(mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', closeMenu);
-            if(document.getElementById('mobile-menu-bg')) document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
-            const footerCopyright = document.getElementById('footer-copyright');
-            if(footerCopyright) footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+            elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
         });
     </script>
 </body>
