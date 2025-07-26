@@ -13,16 +13,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
     <style>
+        /* Light Theme (Default) */
         :root {
-            --bg-main: #f5f5f4; /* stone-100 */
-            --bg-secondary: #e7e5e4; /* stone-200 */
-            --bg-dark: #1a1a1a; /* Custom dark gray */
-            --text-main: #1c1917; /* stone-900 */
-            --text-muted: #44403c; /* stone-700 - Darkened for readability */
-            --accent: #f97316; /* orange-500 */
-            --accent-dark: #ea580c; /* orange-600 */
-            --yellow-accent: #facc15; /* yellow-400 */
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-header: rgba(245, 245, 244, 0.8);
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --border-color: #1c1917;
+            --accent: #f97316;
+            --yellow-accent: #facc15;
         }
+
+        /* Dark Theme Overrides */
+        .dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
@@ -42,18 +54,21 @@
             color: var(--accent);
         }
         .nav-bar-behaviour { display: none; }
-        @media (min-width: 768px) { .nav-bar-behaviour { display: flex; } }
+        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
         
-        #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
+        #mobile-menu-panel { background-color: var(--bg-main); transition: transform 0.3s ease-in-out; }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
 
         .section-header {
               transform: rotate(-1deg);
               display: inline-block;
               background-color: var(--accent);
-              color: var(--bg-main);
+              color: #FFFFFF;
               padding: 0.25rem 1rem;
               margin-bottom: 1rem;
+        }
+        .dark .section-header {
+            color: var(--text-main);
         }
         
         #loader {
@@ -81,16 +96,14 @@
             display: none;
         }
 
-        /* Banner & Typewriter Animation - UPDATED */
         .banner-section {
             position: relative;
             width: 100%;
-            height: 35vh; /* Reduced height */
-            max-height: 200px; /* Reduced max-height */
+            height: 35vh;
+            max-height: 200px;
             overflow: hidden;
-            background-color: var(--bg-dark);
+            background-color: #1a1a1a;
         }
-
         .banner-img {
             width: 100%;
             height: 100%;
@@ -98,12 +111,10 @@
             opacity: 0.3;
             animation: banner-fade-in 2s ease-out forwards;
         }
-
         @keyframes banner-fade-in {
             from { opacity: 0; transform: scale(1.05); }
             to { opacity: 0.3; transform: scale(1); }
         }
-
         .banner-overlay {
             position: absolute;
             inset: 0;
@@ -113,12 +124,11 @@
             justify-content: center;
             text-align: center;
             padding: 1rem;
-            color: var(--bg-main);
+            color: #f5f5f4;
         }
-
         .typewriter h2 {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.75rem; /* Reduced font size for mobile */
+            font-size: 1.75rem;
             max-width: 90vw;
             font-weight: bold;
             color: #fff;
@@ -132,31 +142,25 @@
                 typing 3.5s steps(35, end),
                 blink-caret .75s step-end infinite;
         }
-        
         .banner-subtitle {
             font-size: 0.9rem;
         }
-
-        /* The typing effect */
         @keyframes typing {
             from { width: 0 }
             to { width: 100% }
         }
-
-        /* The typewriter cursor effect */
         @keyframes blink-caret {
             from, to { border-color: transparent }
             50% { border-color: var(--accent); }
         }
-
-        /* Desktop Banner Styles */
         @media (min-width: 768px) {
             .banner-section {
-                height: 30vh; /* Reduced height */
-                max-height: 250px; /* Reduced max-height */
+                height: 30vh;
+                max-height: 250px;
             }
             .typewriter h2 {
-                font-size: 3rem; /* Reduced font size */
+                font-size: 3rem;
+                max-width: none;
             }
             .banner-subtitle {
                 font-size: 1.125rem;
@@ -167,61 +171,75 @@
             display: flex;
             gap: 1rem;
             align-items: flex-start;
-            background-color: #fff;
-            border: 1px solid var(--bg-secondary);
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            background-color: var(--bg-main);
+            border: 2px solid var(--border-color);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--border-color);
             transition: all 0.2s ease;
             padding: 1rem;
             text-decoration: none;
             color: var(--text-main);
         }
+        .dark .article-card {
+            box-shadow: none;
+        }
         .article-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            box-shadow: 8px 8px 0px var(--accent);
             cursor: pointer;
+        }
+        .dark .article-card:hover {
+            box-shadow: none;
+            border-color: var(--accent);
         }
         .star-filled {
             color: var(--yellow-accent);
         }
     </style>
 </head>
-<body class="bg-stone-100 text-stone-900">
+<body class="bg-[var(--bg-main)] text-[var(--text-main)]">
 
     <div id="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
         <!-- Standardized Sticky Header -->
-        <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
+        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
-                    <div class="nav-bar-behaviour items-center space-x-8">
-                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                        <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                        <a href="/blog" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600 flex items-center gap-2">
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                            <span>@controlledjazz</span>
-                        </a>
-                    </div>
-                    <!-- Hamburger Menu Button -->
-                    <div class="md:hidden">
-                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
-                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
+                    <div class="flex items-center">
+                        <div class="nav-bar-behaviour items-center space-x-8">
+                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Legacy</a>
+                            <a href="/blog" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                                <span>@controlledjazz</span>
+                            </a>
+                        </div>
+                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                         </button>
+                        <!-- Hamburger Menu Button -->
+                        <div class="lg:hidden ml-2">
+                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </nav>
             </header>
         </div>
 
         <main>
-            <!-- Banner Section - UPDATED -->
+            <!-- Banner Section -->
             <section class="banner-section">
-                <img src="images/bannerblog.png" alt="Blog Banner" class="banner-img" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Blog';">
+                <img src="images/bannerblog.png" alt="Blog Banner" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop';">
                 <div class="banner-overlay">
                     <div class="typewriter">
                         <h2>From The Archive</h2>
@@ -231,24 +249,18 @@
             </section>
 
             <!-- Combined News and Reviews Section -->
-            <section id="blog-content" class="py-16 sm:py-20">
+            <section id="blog-content" class="py-16 sm:py-20 bg-[var(--bg-main)]">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
                         
-                        <!-- Left Column: News -->
                         <div>
                             <h2 class="section-header text-4xl mb-6">Latest News</h2>
-                            <div id="news-list" class="space-y-6">
-                                <!-- News articles will be injected here -->
-                            </div>
+                            <div id="news-list" class="space-y-6"></div>
                         </div>
 
-                        <!-- Right Column: Reviews -->
                         <div>
                             <h2 class="section-header text-4xl mb-6">Album Reviews</h2>
-                            <div id="reviews-list" class="space-y-6">
-                                <!-- Review articles will be injected here -->
-                            </div>
+                            <div id="reviews-list" class="space-y-6"></div>
                         </div>
                     </div>
                 </div>
@@ -270,14 +282,15 @@
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
-        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
-            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
-                <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
+                <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                     <span>@controlledjazz</span>
                 </a>
@@ -287,13 +300,42 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const BlogApp = {
             state: { reviews: [], news: [], allAlbums: [] },
             elements: {},
             methods: {
+                 setupTheme() {
+                    const themeToggle = BlogApp.elements.themeToggle;
+                    const lightIcon = BlogApp.elements.themeIconLight;
+                    const darkIcon = BlogApp.elements.themeIconDark;
+
+                    const applyTheme = (theme) => {
+                        if (theme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                            lightIcon.classList.add('hidden');
+                            darkIcon.classList.remove('hidden');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                            lightIcon.classList.remove('hidden');
+                            darkIcon.classList.add('hidden');
+                        }
+                    };
+
+                    const savedTheme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                    
+                    applyTheme(currentTheme);
+
+                    themeToggle.addEventListener('click', () => {
+                        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                        localStorage.setItem('theme', newTheme);
+                        applyTheme(newTheme);
+                    });
+                },
                  setupMobileMenu() {
                     const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = BlogApp.elements;
                     if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
@@ -316,6 +358,7 @@
             },
             init() {
                 this.cacheDOMElements();
+                this.methods.setupTheme();
                 this.fetchData();
                 this.methods.setupMobileMenu();
                 this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
@@ -331,18 +374,14 @@
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                    themeToggle: document.getElementById('theme-toggle'),
+                    themeIconLight: document.getElementById('theme-icon-light'),
+                    themeIconDark: document.getElementById('theme-icon-dark'),
                 };
             },
             async fetchData() {
-                const firebaseConfig = {
-                  apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
-                  authDomain: "controlled-freedom.firebaseapp.com",
-                  projectId: "controlled-freedom",
-                  storageBucket: "controlled-freedom.appspot.com",
-                  messagingSenderId: "992659637634",
-                  appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
-                  measurementId: "G-ETT07JGVSB"
-                };
+                // Use environment variables for Firebase config
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "...", authDomain: "...", projectId: "..." };
                 
                 const app = window._firebaseApp || initializeApp(firebaseConfig);
                 if (!window._firebaseApp) {
@@ -353,16 +392,17 @@
                 const auth = getAuth(app);
 
                 try {
-                    if (!auth.currentUser) {
+                    // Use custom token if available, otherwise sign in anonymously
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else if (!auth.currentUser) {
                         await signInAnonymously(auth);
                     }
 
                     const articlesRef = collection(db, "articles");
-                    // UPDATED: Changed orderBy to 'createdAt' for reliability
                     const q = query(articlesRef, orderBy("createdAt", "desc"), limit(20));
                     const articlesSnapshot = await getDocs(q);
 
-                    // Clear existing state before fetching new data
                     this.state.reviews = [];
                     this.state.news = [];
 
@@ -416,7 +456,7 @@
                 reviewsList.innerHTML = '';
 
                 if (this.state.news.length === 0) {
-                    newsList.innerHTML = '<p class="text-stone-500 italic">No news articles yet.</p>';
+                    newsList.innerHTML = '<p class="text-[var(--text-muted)] italic">No news articles yet.</p>';
                 } else {
                     this.state.news.forEach(article => {
                         const card = document.createElement('a');
@@ -425,9 +465,9 @@
                         const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString());
                         card.innerHTML = `
                             <div>
-                                <p class="text-sm text-stone-500 mb-2">${publishDate}</p>
-                                <h3 class="text-2xl font-bold mb-2 text-stone-900">${article.title}</h3>
-                                <p class="text-stone-700 font-light">${article.body.substring(0, 120).replace(/<[^>]*>?/gm, '')}...</p>
+                                <p class="text-sm text-[var(--text-muted)] mb-2">${publishDate}</p>
+                                <h3 class="text-2xl font-bold mb-2 text-[var(--text-main)]">${article.title}</h3>
+                                <p class="text-[var(--text-muted)] font-light">${article.body.substring(0, 120).replace(/<[^>]*>?/gm, '')}...</p>
                                 <span class="inline-block mt-4 font-bold text-orange-600">Read More &rarr;</span>
                             </div>
                         `;
@@ -436,12 +476,12 @@
                 }
 
                 if (this.state.reviews.length === 0) {
-                    reviewsList.innerHTML = '<p class="text-stone-500 italic">No reviews available yet.</p>';
+                    reviewsList.innerHTML = '<p class="text-[var(--text-muted)] italic">No reviews available yet.</p>';
                 } else {
                     this.state.reviews.forEach(review => {
                         let starsHtml = '';
                         for (let i = 1; i <= 5; i++) {
-                            starsHtml += `<svg class="w-4 h-4 ${i <= review.rating ? 'star-filled' : 'text-stone-300'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
+                            starsHtml += `<svg class="w-4 h-4 ${i <= review.rating ? 'star-filled' : 'text-stone-400 dark:text-stone-600'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
                         }
 
                         const albumData = this.state.allAlbums.find(a => a.albumTitle === review.albumTitle && a.artist === review.artist);
@@ -451,14 +491,14 @@
                         card.href = `/reviews/${review.slug}`;
                         card.className = 'article-card';
                         card.innerHTML = `
-                            <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-24 h-24 object-cover rounded-md border-2 border-stone-200 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/e7e5e4/1c1917?text=Review';">
+                            <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-24 h-24 object-cover rounded-md border-2 border-[var(--border-color)] flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/e7e5e4/1c1917?text=Review';">
                             <div class="flex-grow">
                                 <div class="flex items-center justify-between mb-1">
-                                    <p class="text-sm text-stone-500">${review.artist}</p>
+                                    <p class="text-sm text-[var(--text-muted)]">${review.artist}</p>
                                     <div class="flex items-center gap-1" title="Rating: ${review.rating}/5">${starsHtml}</div>
                                 </div>
-                                <h3 class="text-xl font-bold text-stone-900">${review.albumTitle}</h3>
-                                <p class="text-stone-600 text-sm font-serif italic">"${review.title}"</p>
+                                <h3 class="text-xl font-bold text-[var(--text-main)]">${review.albumTitle}</h3>
+                                <p class="text-[var(--text-muted)] text-sm font-serif italic">"${review.title}"</p>
                                 <span class="inline-block mt-2 text-sm font-bold text-orange-600">Read Review &rarr;</span>
                             </div>
                         `;
