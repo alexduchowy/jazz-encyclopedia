@@ -66,8 +66,9 @@
             overflow: hidden;
             max-width: 100%;
             background: #000;
-            border: 2px solid var(--accent); /* Thin orange border */
+            border: 2px solid var(--accent);
             border-radius: 0.5rem;
+            box-shadow: 0 0 20px var(--accent);
         }
         .video-container #player {
             position: absolute;
@@ -94,9 +95,62 @@
         }
         .dark .info-card-header {
              background-color: #1a1a1a;
-             color: var(--accent);
+             color: var(--text-main); /* CHANGED: Title is now white in dark mode */
              border-bottom-color: var(--border-color);
         }
+        
+        /* --- NEW STYLES for Streaming Feel --- */
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .dark .live-indicator {
+            color: var(--accent);
+        }
+        .live-indicator::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444; /* red-500 */
+            border-radius: 50%;
+            animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.85); }
+        }
+        
+        #video-main-title {
+            /* NEW: Responsive font size */
+            font-size: clamp(1.25rem, 4vw, 1.875rem);
+            line-height: 1.2;
+            word-break: break-word;
+        }
+        
+        .up-next-header {
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent) 50%, var(--text-main) 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 5s infinite linear;
+        }
+        .dark .up-next-header {
+             background: linear-gradient(90deg, var(--text-main) 0%, var(--accent) 50%, var(--text-main) 100%);
+             background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 5s infinite linear;
+        }
+        @keyframes shimmer {
+            to { background-position: -200% 0; }
+        }
+
     </style>
 </head>
 <body class="text-stone-100">
@@ -153,7 +207,13 @@
                 <!-- Right Column: Info -->
                 <div class="lg:col-span-4">
                     <div id="info-wrapper" class="info-card flex flex-col">
-                        <h2 id="video-main-title" class="info-card-header text-2xl lg:text-3xl font-bold flex-shrink-0">Loading...</h2>
+                        <!-- UPDATED: Header with "Now Playing" indicator -->
+                        <div class="info-card-header flex-shrink-0">
+                            <div class="live-indicator">
+                                <span>NOW PLAYING</span>
+                            </div>
+                            <h2 id="video-main-title" class="font-bold mt-1">Loading Broadcast...</h2>
+                        </div>
                         <div class="p-6 flex-grow overflow-y-auto">
                             <p id="video-description" class="text-[var(--text-muted)] text-sm leading-relaxed">Please wait while we load the video details.</p>
                         </div>
@@ -163,7 +223,8 @@
                 <!-- Up Next Playlist -->
                 <div class="lg:col-span-8">
                     <div class="info-card">
-                        <h2 class="info-card-header text-xl lg:text-2xl font-bold">Up Next</h2>
+                         <!-- UPDATED: Added class for animation -->
+                        <h2 class="info-card-header text-xl lg:text-2xl font-bold up-next-header">Up Next</h2>
                         <div id="playlist-container" class="p-4 space-y-3 overflow-y-auto" style="max-height: 240px;">
                             <!-- Playlist items will be generated here -->
                         </div>
@@ -372,7 +433,7 @@
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             setupTheme();
-            setupMobileMenu(); // <-- FIX: Call the setup function
+            setupMobileMenu();
             const firebaseConfig = {
                 apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                 authDomain: "controlled-freedom.firebaseapp.com",
