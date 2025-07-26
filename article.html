@@ -341,7 +341,18 @@
                     return;
                 }
 
-                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "...", authDomain: "...", projectId: "..." };
+                // **FIX:** Use environment variables with a hard-coded fallback
+                const firebaseConfig = typeof __firebase_config !== 'undefined' 
+                    ? JSON.parse(__firebase_config)
+                    : {
+                        apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
+                        authDomain: "controlled-freedom.firebaseapp.com",
+                        projectId: "controlled-freedom",
+                        storageBucket: "controlled-freedom.appspot.com",
+                        messagingSenderId: "992659637634",
+                        appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
+                        measurementId: "G-ETT07JGVSB"
+                      };
 
                 const app = window._firebaseApp || initializeApp(firebaseConfig);
                 if (!window._firebaseApp) {
