@@ -74,7 +74,6 @@
         }
         .edit-btn-tv:hover { background-color: #2563eb; }
         
-        /* NEW: Styles for move buttons */
         .move-btn {
             background-color: var(--bg-light);
             color: var(--text-light);
@@ -89,7 +88,6 @@
             cursor: not-allowed;
         }
 
-        /* Dark theme form inputs */
         .form-input, .form-textarea, .form-select {
             background-color: var(--bg-light);
             border-color: #57534e; /* stone-600 */
@@ -326,10 +324,12 @@
         // --- TV PLAYLIST LOGIC ---
         const setupTvPlaylistListener = () => {
             const playlistCollection = collection(db, 'tv_playlist');
-            // UPDATED: Order by the new 'order' field
-            const q = query(playlistCollection, orderBy('order'));
+            // **FIX**: Order by createdAt to fetch all documents
+            const q = query(playlistCollection, orderBy('createdAt'));
             onSnapshot(q, (snapshot) => {
                 tvPlaylist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // **FIX**: Sort locally by the 'order' field, handling missing values
+                tvPlaylist.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity));
                 renderPlaylistUI(tvPlaylist);
             });
         };
@@ -347,10 +347,10 @@
                     <div class="flex items-center gap-2">
                         <div class="flex flex-col gap-1">
                             <button class="move-btn move-up-btn" data-id="${video.id}" ${index === 0 ? 'disabled' : ''}>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                             </button>
                             <button class="move-btn move-down-btn" data-id="${video.id}" ${index === playlist.length - 1 ? 'disabled' : ''}>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                         </div>
                         <img src="https://i.ytimg.com/vi/${video.videoId}/default.jpg" class="w-16 h-12 object-cover rounded-sm border border-stone-600 flex-shrink-0">
@@ -400,7 +400,6 @@
                     const videoRef = doc(db, 'tv_playlist', editingVideoId);
                     await updateDoc(videoRef, { title, description });
                 } else {
-                    // NEW: Calculate order for new videos
                     const newOrder = tvPlaylist.length > 0 ? Math.max(...tvPlaylist.map(v => v.order || 0)) + 1 : 0;
                     await addDoc(collection(db, 'tv_playlist'), {
                         videoId: videoId,
@@ -427,13 +426,16 @@
             const currentItem = tvPlaylist[currentIndex];
             const targetItem = tvPlaylist[targetIndex];
 
-            // Swap the 'order' values in Firestore
             try {
                 const currentRef = doc(db, 'tv_playlist', currentItem.id);
                 const targetRef = doc(db, 'tv_playlist', targetItem.id);
                 
-                await updateDoc(currentRef, { order: targetItem.order });
-                await updateDoc(targetRef, { order: currentItem.order });
+                // Ensure both items have an order before swapping
+                const currentOrder = currentItem.order ?? currentIndex;
+                const targetOrder = targetItem.order ?? targetIndex;
+
+                await updateDoc(currentRef, { order: targetOrder });
+                await updateDoc(targetRef, { order: currentOrder });
             } catch (error) {
                 console.error("Error reordering playlist:", error);
             }
