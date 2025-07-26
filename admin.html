@@ -74,6 +74,7 @@
         }
         .edit-btn-tv:hover { background-color: #2563eb; }
         
+        /* NEW: Styles for move buttons */
         .move-btn {
             background-color: var(--bg-light);
             color: var(--text-light);
@@ -88,6 +89,7 @@
             cursor: not-allowed;
         }
 
+        /* Dark theme form inputs */
         .form-input, .form-textarea, .form-select {
             background-color: var(--bg-light);
             border-color: #57534e; /* stone-600 */
@@ -102,7 +104,6 @@
 </head>
 <body class="bg-stone-900 text-stone-200">
 
-    <!-- Confirmation Modal -->
     <div id="confirm-modal" class="confirm-modal">
         <div class="confirm-modal-content">
             <p id="confirm-modal-text" class="mb-4 text-stone-200">Are you sure?</p>
@@ -111,7 +112,6 @@
         </div>
     </div>
 
-    <!-- Auth Container -->
     <div id="auth-container" class="min-h-screen flex items-center justify-center bg-stone-900 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <div>
@@ -141,7 +141,6 @@
         </div>
     </div>
 
-    <!-- Main Admin Panel -->
     <div id="admin-panel" class="hidden">
         <header class="bg-stone-800 shadow-md">
             <div class="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -152,7 +151,6 @@
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
 
-            <!-- TV PLAYLIST ADMIN -->
             <div class="bg-stone-800 p-6 rounded-lg shadow-lg mb-8 border border-stone-700">
                 <h2 class="text-2xl font-bold mb-6 text-stone-100 border-b border-stone-700 pb-4">Controlled Freedom TV - Admin Panel</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -169,6 +167,10 @@
                                 <input type="text" id="video-title-input" placeholder="Enter video title" required class="form-input mt-1 block w-full rounded-md shadow-sm">
                             </div>
                             <div>
+                                <label for="video-lineup-input" class="block text-sm font-medium text-stone-300">Line-up</label>
+                                <textarea id="video-lineup-input" rows="3" placeholder="e.g., John Coltrane (tenor saxophone), McCoy Tyner (piano)..." class="form-textarea mt-1 block w-full rounded-md shadow-sm"></textarea>
+                            </div>
+                            <div>
                                 <label for="video-desc-input" class="block text-sm font-medium text-stone-300">Description</label>
                                 <textarea id="video-desc-input" rows="3" placeholder="Enter video description" required class="form-textarea mt-1 block w-full rounded-md shadow-sm"></textarea>
                             </div>
@@ -182,15 +184,12 @@
                     <div>
                         <h3 class="text-xl font-bold mb-4 text-stone-200">Current Playlist</h3>
                         <div id="playlist-container" class="bg-stone-900 rounded-md h-96 overflow-y-auto text-stone-200 border border-stone-700">
-                            <!-- Playlist items will be injected here -->
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ARTICLES ADMIN (Your existing structure) -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Form Column -->
                 <div class="lg:col-span-2">
                     <div class="bg-stone-800 p-6 rounded-lg shadow-lg border border-stone-700">
                         <h2 id="form-title" class="text-2xl font-bold mb-6 text-stone-100">Create New Article</h2>
@@ -211,12 +210,10 @@
                             </div>
                             
                             <div id="review-fields-container" class="hidden space-y-6 pt-6 border-t border-stone-700">
-                                <!-- Review specific fields -->
-                            </div>
+                                </div>
 
                             <div>
-                                <!-- Image Upload Section -->
-                            </div>
+                                </div>
 
                             <div>
                                 <label for="body" class="block text-sm font-medium text-stone-300">Body (HTML allowed)</label>
@@ -234,7 +231,6 @@
                     </div>
                 </div>
 
-                <!-- Articles List Column -->
                 <div class="lg:col-span-1">
                     <div class="bg-stone-800 p-6 rounded-lg shadow-lg border border-stone-700">
                         <h2 class="text-2xl font-bold mb-4 text-stone-100">Existing Articles</h2>
@@ -288,6 +284,7 @@
             videoDocIdInput: document.getElementById('video-doc-id'),
             urlInput: document.getElementById('youtube-url-input'),
             titleInput: document.getElementById('video-title-input'),
+            lineupInput: document.getElementById('video-lineup-input'),
             descInput: document.getElementById('video-desc-input'),
             playlistContainer: document.getElementById('playlist-container'),
             addVideoError: document.getElementById('add-video-error'),
@@ -324,11 +321,9 @@
         // --- TV PLAYLIST LOGIC ---
         const setupTvPlaylistListener = () => {
             const playlistCollection = collection(db, 'tv_playlist');
-            // **FIX**: Order by createdAt to fetch all documents
             const q = query(playlistCollection, orderBy('createdAt'));
             onSnapshot(q, (snapshot) => {
                 tvPlaylist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                // **FIX**: Sort locally by the 'order' field, handling missing values
                 tvPlaylist.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity));
                 renderPlaylistUI(tvPlaylist);
             });
@@ -381,15 +376,16 @@
             e.preventDefault();
             const url = elements.urlInput.value.trim();
             const title = elements.titleInput.value.trim();
+            const lineup = elements.lineupInput.value.trim();
             const description = elements.descInput.value.trim();
             
             if (!url || !title || !description) {
-                elements.addVideoError.textContent = "Please fill out all fields.";
+                elements.addVideoError.textContent = "URL, Title, and Description are required.";
                 return;
             }
 
             const videoId = extractYouTubeID(url);
-            if (!videoId) {
+            if (!videoId && !editingVideoId) {
                 elements.addVideoError.textContent = "Invalid YouTube URL.";
                 return;
             }
@@ -398,13 +394,14 @@
             try {
                 if (editingVideoId) {
                     const videoRef = doc(db, 'tv_playlist', editingVideoId);
-                    await updateDoc(videoRef, { title, description });
+                    await updateDoc(videoRef, { title, description, lineup });
                 } else {
                     const newOrder = tvPlaylist.length > 0 ? Math.max(...tvPlaylist.map(v => v.order || 0)) + 1 : 0;
                     await addDoc(collection(db, 'tv_playlist'), {
                         videoId: videoId,
                         title: title,
                         description: description,
+                        lineup: lineup,
                         createdAt: serverTimestamp(),
                         order: newOrder
                     });
@@ -430,7 +427,6 @@
                 const currentRef = doc(db, 'tv_playlist', currentItem.id);
                 const targetRef = doc(db, 'tv_playlist', targetItem.id);
                 
-                // Ensure both items have an order before swapping
                 const currentOrder = currentItem.order ?? currentIndex;
                 const targetOrder = targetItem.order ?? targetIndex;
 
@@ -458,6 +454,7 @@
                     elements.urlInput.value = `https://www.youtube.com/watch?v=${videoToEdit.videoId}`;
                     elements.urlInput.disabled = true;
                     elements.titleInput.value = videoToEdit.title;
+                    elements.lineupInput.value = videoToEdit.lineup || '';
                     elements.descInput.value = videoToEdit.description;
                     elements.tvFormTitle.textContent = 'Edit Video';
                     elements.tvFormSubmitBtn.textContent = 'Update Video';
