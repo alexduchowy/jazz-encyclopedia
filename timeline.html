@@ -571,7 +571,7 @@
         <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
                     <div class="flex items-center">
                         <div class="nav-bar-behaviour items-center space-x-8">
                             <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
@@ -881,13 +881,14 @@
             // Initialization
             init() {
                 this.cacheDOMElements();
+                // Bind all methods to the JazzApp context
                 for (const key in this.methods) {
                     if (typeof this.methods[key] === 'function') {
                         this.methods[key] = this.methods[key].bind(this);
                     }
                 }
                 this.methods.setupTheme();
-                this.fetchData();
+                this.methods.fetchData();
             },
             
             cacheDOMElements() {
@@ -936,63 +937,64 @@
                 };
             },
 
-            fetchData() {
-                Promise.all([
-                    fetch('database.json').then(res => res.json()),
-                    fetch('artists.json').then(res => res.json()),
-                    fetch('genres.json').then(res => res.json())
-                ])
-                .then(([dbData, artistProfileData, genreData]) => {
-                    this.state.albums = dbData.albums;
-                    this.state.artistProfiles = artistProfileData;
-                    this.state.styleMatrix = genreData;
-                    
-                    this.state.albums.forEach(album => {
-                        if (typeof album.genres === 'string') {
-                            album.genres = album.genres.split(',').map(g => g.trim());
-                        } else if (!Array.isArray(album.genres)) {
-                            album.genres = [];
-                        }
-                    });
-
-                    this.initializeAppUI();
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    this.elements.pageContent.innerHTML = `<div class="text-center p-8">
-                        <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
-                        <p class="text-[var(--text-muted)] mt-2">Could not fetch all required database files. Please ensure all .json files are available.</p>
-                        <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
-                    </div>`;
-                    this.showPage();
-                });
-            },
-            
-            showPage() {
-                this.elements.loader.style.display = 'none';
-                this.elements.pageContent.classList.remove('content-hidden');
-            },
-
-            initializeAppUI() {
-                this.methods.processAndSortData();
-                this.methods.buildGenreColorMap();
-                this.methods.setupFilters();
-                this.methods.renderEraGlossary();
-                this.methods.renderTimeline();
-                this.methods.setupTimelineInteraction();
-                this.methods.setupModals();
-                this.methods.setupArtistSlider();
-                this.methods.buildGenreMatrix();
-                this.methods.setupMobileMenu();
-                this.methods.setupScrollObservers();
-                this.methods.setupGeneralEventListeners();
-                this.methods.renderScrollbarMarkers();
-                this.methods.setupOnThisDayFeature();
-                this.showPage();
-                this.methods.handlePageLoadAnchorLink();
-                setTimeout(() => { this.elements.timelineContainer.scrollLeft = 0; }, 0);
-            },
             methods: {
+                fetchData() {
+                    Promise.all([
+                        fetch('database.json').then(res => res.json()),
+                        fetch('artists.json').then(res => res.json()),
+                        fetch('genres.json').then(res => res.json())
+                    ])
+                    .then(([dbData, artistProfileData, genreData]) => {
+                        this.state.albums = dbData.albums;
+                        this.state.artistProfiles = artistProfileData;
+                        this.state.styleMatrix = genreData;
+                        
+                        this.state.albums.forEach(album => {
+                            if (typeof album.genres === 'string') {
+                                album.genres = album.genres.split(',').map(g => g.trim());
+                            } else if (!Array.isArray(album.genres)) {
+                                album.genres = [];
+                            }
+                        });
+
+                        this.methods.initializeAppUI();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        this.elements.pageContent.innerHTML = `<div class="text-center p-8">
+                            <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
+                            <p class="text-[var(--text-muted)] mt-2">Could not fetch all required database files. Please ensure all .json files are available.</p>
+                            <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
+                        </div>`;
+                        this.methods.showPage();
+                    });
+                },
+            
+                showPage() {
+                    this.elements.loader.style.display = 'none';
+                    this.elements.pageContent.classList.remove('content-hidden');
+                },
+
+                initializeAppUI() {
+                    this.methods.processAndSortData();
+                    this.methods.buildGenreColorMap();
+                    this.methods.setupFilters();
+                    this.methods.renderEraGlossary();
+                    this.methods.renderTimeline();
+                    this.methods.setupTimelineInteraction();
+                    this.methods.setupModals();
+                    this.methods.setupArtistSlider();
+                    this.methods.buildGenreMatrix();
+                    this.methods.setupMobileMenu();
+                    this.methods.setupScrollObservers();
+                    this.methods.setupGeneralEventListeners();
+                    this.methods.renderScrollbarMarkers();
+                    this.methods.setupOnThisDayFeature();
+                    this.methods.showPage();
+                    this.methods.handlePageLoadAnchorLink();
+                    setTimeout(() => { if(this.elements.timelineContainer) this.elements.timelineContainer.scrollLeft = 0; }, 0);
+                },
+                
                 setupTheme() {
                     const themeToggle = this.elements.themeToggle;
                     const lightIcon = this.elements.themeIconLight;
@@ -1022,6 +1024,7 @@
                         applyTheme(newTheme);
                     });
                 },
+
                 handlePageLoadAnchorLink() {
                     const hash = window.location.hash;
                     if (hash) {
@@ -1040,6 +1043,7 @@
                         }, 150);
                     }
                 },
+
                 getCanonicalName(name) {
                     if (!name) return '';
                     const trimmedName = name.trim();
@@ -1158,6 +1162,7 @@
                         }
                     });
                 },
+
                 setupFilters() {
                     const { genreFilterContainer, genreFilterList } = this.elements;
                     const allGenresInDB = new Set();
@@ -1819,7 +1824,7 @@
                         yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
                     });
                     document.querySelectorAll('.era-section').forEach(eraSection => {
-                        const visibleYears = eraSection.querySelectorAll('.timeline-year-section:not([style*="display: none"])');
+                        const visibleYears = eraSection.querySelectorAll('.era-content > .timeline-year-section:not([style*="display: none"])');
                         eraSection.style.display = visibleYears.length > 0 ? 'flex' : 'none';
                     });
                     
