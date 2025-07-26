@@ -341,7 +341,6 @@
                     return;
                 }
 
-                // **FIX:** Use environment variables with a hard-coded fallback
                 const firebaseConfig = typeof __firebase_config !== 'undefined' 
                     ? JSON.parse(__firebase_config)
                     : {
@@ -404,6 +403,7 @@
                 }
             },
             renderArticle(article, albumData) {
+                // This line dynamically sets the browser tab's title
                 document.title = `${article.title} - Controlled Freedom`;
                 let contentHtml = '';
 
@@ -455,9 +455,8 @@
 
                             <div class="lg:col-span-2">
                                 <header class="mb-8">
-                                    <p class="text-xl text-[var(--text-muted)] font-semibold">${article.artist}</p>
-                                    <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] mt-1">${article.albumTitle}</h1>
-                                    <p class="text-lg text-[var(--text-muted)] italic mt-2">"${article.title}"</p>
+                                    <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] mt-1">"${article.title}"</h1>
+                                    <p class="text-xl text-[var(--text-muted)] font-semibold mt-2">${article.artist} - <em>${article.albumTitle}</em></p>
                                     <div class="rating-highlight mt-4" title="Rating: ${article.rating}/5">
                                         <span>Rating:</span>
                                         <div class="flex">${starsHtml}</div>
