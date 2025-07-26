@@ -12,44 +12,60 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
     <style>
-        /* Define custom color properties for easy theme management */
+        /* Light Theme (Default) */
         :root {
-            --bg-main: #f5f5f4; /* stone-100 */
-            --bg-secondary: #e7e5e4; /* stone-200 */
-            --bg-dark: #1a1a1a; /* Custom dark gray */
-            --text-main: #1c1917; /* stone-900 */
-            --text-muted: #44403c; /* stone-700 - Darkened for readability */
-            --accent: #f97316; /* orange-500 */
-            --accent-dark: #ea580c; /* orange-600 */
-            --yellow-accent: #facc15; /* yellow-400 */
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-header: rgba(245, 245, 244, 0.8);
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --border-color: #1c1917;
+            --accent: #f97316;
+            --yellow-accent: #facc15;
 
-            /* Genre Colors */
-            --genre-bebop: #C19A6B; /* Pastel Brown */
-            --genre-hard-bop: #d8b4fe; /* purple-300 */
-            --genre-cool-jazz: #93c5fd; /* blue-300 */
-            --genre-modal-jazz: #a7f3d0; /* emerald-200 */
-            --genre-post-bop: #fed7aa; /* orange-200 */
-            --genre-free-jazz: #fca5a5; /* red-300 */
-            --genre-avant-garde: #fecdd3; /* rose-200 */
-            --genre-jazz-fusion: #a5f3fc; /* cyan-200 */
-            --genre-melodic-path: #64748b; /* slate-500, for Legacy section */
-            --genre-default: #e7e5e4; /* stone-200 */
+            /* Pastel Genre Colors */
+            --genre-bebop: #C19A6B;
+            --genre-hard-bop: #d8b4fe;
+            --genre-cool-jazz: #93c5fd;
+            --genre-modal-jazz: #a7f3d0;
+            --genre-post-bop: #fed7aa;
+            --genre-free-jazz: #fca5a5;
+            --genre-avant-garde: #fecdd3;
+            --genre-jazz-fusion: #a5f3fc;
+            --genre-default: #e7e5e4;
         }
 
-        /* Base body styling */
+        /* Dark Theme Overrides */
+        .dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
+
+            /* Darker Genre Colors */
+            --genre-bebop: #A17A4B;
+            --genre-hard-bop: #8b5cf6;
+            --genre-cool-jazz: #3b82f6;
+            --genre-modal-jazz: #10b981;
+            --genre-post-bop: #f59e0b;
+            --genre-free-jazz: #ef4444;
+            --genre-avant-garde: #ec4899;
+            --genre-jazz-fusion: #06b6d4;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
         }
         
-        /* Heading font styling with new Bebas Neue font */
         h1, h2, h3, h4, h5 {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
         }
 
-        /* Navigation link transition effects */
         .nav-link {
             transition: color 0.2s;
             font-family: 'Bebas Neue', sans-serif;
@@ -60,26 +76,25 @@
             color: var(--accent);
         }
         .nav-bar-behaviour { display: none; }
-        @media (min-width: 768px) { .nav-bar-behaviour { display: flex; } }
+        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
         
-        #mobile-menu-panel { transition: transform 0.3s ease-in-out; }
+        #mobile-menu-panel { background-color: var(--bg-main); transition: transform 0.3s ease-in-out; }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
 
-        /* Section header styling */
         .section-header {
               transform: rotate(-1deg);
               display: inline-block;
               background-color: var(--accent);
-              color: var(--bg-main);
+              color: #FFFFFF; /* Changed to always be white */
               padding: 0.25rem 1rem;
               margin-bottom: 1rem;
         }
+        .dark .section-header { color: var(--text-main); }
         
-        /* Modal transition styles */
-        .modal {
-            transition: opacity 0.3s ease;
-        }
+        .modal { transition: opacity 0.3s ease; }
         .modal-content {
+            background-color: var(--bg-main);
+            border: 2px solid var(--border-color);
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
         }
         .modal.opacity-0 .modal-content {
@@ -87,7 +102,6 @@
               transform: scale(0.95) translateY(10px);
         }
         
-        /* Individual album card styling */
         .legacy-album-card {
             width: 200px;
             flex-shrink: 0;
@@ -95,13 +109,15 @@
             border-radius: 0.25rem;
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-            box-shadow: 4px 4px 0px var(--text-main);
-            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--border-color);
+            border: 2px solid var(--border-color);
             overflow: hidden;
         }
+        .dark .legacy-album-card { box-shadow: none; }
         .legacy-album-card:hover {
             transform: translateY(-5px) rotate(2deg);
         }
+        .dark .legacy-album-card:hover { border-color: var(--accent); }
         
         .legacy-album-card img {
             width: 100%;
@@ -110,461 +126,295 @@
             filter: grayscale(100%);
             transition: filter 0.3s ease;
         }
-        .legacy-album-card:hover img {
-            filter: grayscale(0%);
-        }
-        .legacy-album-card-info {
-            padding: 0.75rem;
-        }
-        .legacy-album-card-info h5 {
-            color: var(--text-main);
-            font-size: 1.25rem;
-        }
-        .legacy-album-card-info p {
-            color: var(--text-muted);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-        }
-        /* Artist card styling */
+        .legacy-album-card:hover img { filter: grayscale(0%); }
+        .legacy-album-card-info { padding: 0.75rem; }
+        .legacy-album-card-info h5 { color: var(--text-main); font-size: 1.25rem; }
+        .legacy-album-card-info p { color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 0.8rem; }
+
         .artist-card {
             background-color: var(--bg-main);
             border-radius: 0.25rem;
             overflow: hidden;
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 4px 4px 0px var(--text-main);
-            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--border-color);
+            border: 2px solid var(--border-color);
         }
+        .dark .artist-card { box-shadow: none; }
         .artist-card:hover {
             transform: translateY(-5px) rotate(2deg);
             box-shadow: 8px 8px 0px var(--accent) !important;
         }
-        
-        .artist-card .artist-photo-container {
-              height: 224px;
-              width: 100%;
+        .dark .artist-card:hover {
+            box-shadow: none !important;
+            border-color: var(--accent) !important;
         }
+        
+        .artist-card .artist-photo-container { height: 224px; width: 100%; }
         .artist-card img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              object-position: center;
-              filter: grayscale(100%);
-              transition: filter 0.3s ease;
+              width: 100%; height: 100%;
+              object-fit: cover; object-position: center;
+              filter: grayscale(100%); transition: filter 0.3s ease;
         }
-         .artist-card:hover img {
-            filter: grayscale(0%);
-        }
+         .artist-card:hover img { filter: grayscale(0%); }
         
-        /* Artist Slider Styling */
-        #artist-slider-container {
-            overflow: hidden;
-        }
-        #artist-slider-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
+        #artist-slider-container { overflow: hidden; }
+        #artist-slider-track { display: flex; transition: transform 0.5s ease-in-out; }
         .artist-slider-page {
-            width: 100%;
-            flex-shrink: 0;
+            width: 100%; flex-shrink: 0;
             padding: 0 0.5rem;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
         }
-        @media (min-width: 768px) {
-            .artist-slider-page {
-                grid-template-columns: repeat(6, 1fr);
-            }
-        }
+        @media (min-width: 768px) { .artist-slider-page { grid-template-columns: repeat(6, 1fr); } }
         
         .styled-select select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.7rem center;
-            background-size: 1.2em;
+            background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 1.2em;
+            background-color: var(--bg-main);
+            border-color: var(--border-color);
+            color: var(--text-main);
         }
 
-        /* Modal Night Mode & Player Styles */
         #modal-analysis-section {
-            background-color: var(--bg-dark);
-            padding: 1.5rem;
-            margin-top: 2rem;
-            border: 2px solid var(--text-main);
-            box-shadow: 4px 4px 0px var(--text-main);
+            background-color: #1a1a1a;
+            padding: 1.5rem; margin-top: 2rem;
+            border: 2px solid var(--border-color);
+            box-shadow: 4px 4px 0px var(--border-color);
         }
-        #modal-analysis-section h5 {
-            color: var(--bg-main);
-        }
+        .dark #modal-analysis-section { box-shadow: none; }
+        #modal-analysis-section h5 { color: #f5f5f4; }
         
-        .liner-notes-text {
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #d4d4d2; 
-        }
+        .liner-notes-text { font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; color: #d4d4d2; }
         
         .genre-tag {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            padding: 0.25rem 0.75rem; border-radius: 9999px;
+            font-size: 0.875rem; font-weight: 600;
             color: var(--text-main);
-            border: 2px solid var(--text-main);
+            border: 2px solid var(--border-color);
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        /* Style for clickable links in modals */
         .clickable-link {
-            cursor: pointer;
-            text-decoration: underline;
+            cursor: pointer; text-decoration: underline;
             text-decoration-color: var(--accent);
             transition: color 0.2s;
         }
-        .clickable-link:hover {
-            color: var(--accent);
-        }
+        .clickable-link:hover { color: var(--accent); }
         
-        /* Artist Modal Timeline Styles */
         .artist-modal-timeline {
-            list-style: none;
-            padding-left: 1rem;
+            list-style: none; padding-left: 1rem;
             border-left: 2px solid var(--bg-secondary);
         }
-        .artist-modal-timeline-item {
-            position: relative;
-            padding-bottom: 1rem;
-            padding-left: 1.5rem;
-        }
+        .dark .artist-modal-timeline { border-left-color: var(--border-color); }
+        .artist-modal-timeline-item { position: relative; padding-bottom: 1rem; padding-left: 1.5rem; }
         .artist-modal-timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -0.4rem;
-            top: 0.25rem;
-            width: 0.65rem;
-            height: 0.65rem;
+            content: ''; position: absolute;
+            left: -0.4rem; top: 0.25rem;
+            width: 0.65rem; height: 0.65rem;
             border-radius: 9999px;
             background-color: var(--bg-secondary);
-            border: 2px solid var(--text-main);
+            border: 2px solid var(--border-color);
         }
         
-        /* Known For Box Styling */
         .known-for-box {
-            background-color: var(--accent);
-            color: var(--bg-main);
+            background-color: var(--accent); color: var(--bg-main);
             padding: 0.5rem 1rem;
-            border: 2px solid var(--text-main);
-            box-shadow: 2px 2px 0px var(--text-main);
-            transform: rotate(-2deg);
-            display: inline-block;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
+            border: 2px solid var(--border-color);
+            box-shadow: 2px 2px 0px var(--border-color);
+            transform: rotate(-2deg); display: inline-block;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem;
         }
+        .dark .known-for-box { box-shadow: none; }
         
-        /* Loading indicator styles */
         #loader {
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
             background-color: var(--bg-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             z-index: 100;
         }
         .loader-spinner {
             border: 4px solid var(--bg-secondary);
             border-top: 4px solid var(--accent);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            border-radius: 50%; width: 50px; height: 50px;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .content-hidden {
-            display: none;
-        }
+        .content-hidden { display: none; }
 
-.banner-section {
-            position: relative;
-            width: 100%;
-            height: 35vh; /* Reduced height */
-            max-height: 200px; /* Reduced max-height */
-            overflow: hidden;
-            background-color: var(--bg-dark);
+        .banner-section {
+            position: relative; width: 100%;
+            height: 35vh; max-height: 200px;
+            overflow: hidden; background-color: #1a1a1a;
         }
-
         .banner-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.3;
+            width: 100%; height: 100%;
+            object-fit: cover; opacity: 0.3;
             animation: banner-fade-in 2s ease-out forwards;
         }
-
-        @keyframes banner-fade-in {
-            from { opacity: 0; transform: scale(1.05); }
-            to { opacity: 0.3; transform: scale(1); }
-        }
-
+        @keyframes banner-fade-in { from { opacity: 0; transform: scale(1.05); } to { opacity: 0.3; transform: scale(1); } }
         .banner-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1rem;
-            color: var(--bg-main);
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 1rem; color: #f5f5f4;
         }
-
         .typewriter h2 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.75rem; /* Reduced font size for mobile */
-            max-width: 90vw;
-            font-weight: bold;
-            color: #fff;
+            font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem;
+            max-width: 90vw; font-weight: bold; color: #fff;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            overflow: hidden;
-            border-right: .15em solid var(--accent);
-            white-space: nowrap;
-            margin: 0 auto;
-            letter-spacing: .1em;
-            animation:
-                typing 3.5s steps(35, end),
-                blink-caret .75s step-end infinite;
+            overflow: hidden; border-right: .15em solid var(--accent);
+            white-space: nowrap; margin: 0 auto; letter-spacing: .1em;
+            animation: typing 3.5s steps(35, end), blink-caret .75s step-end infinite;
         }
-        
-        .banner-subtitle {
-            font-size: 0.9rem;
-        }
-
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: var(--accent); }
-        }
-
+        .banner-subtitle { font-size: 0.9rem; }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent); } }
         @media (min-width: 768px) {
-            .banner-section {
-                height: 30vh; /* Reduced height */
-                max-height: 250px; /* Reduced max-height */
-            }
-            .typewriter h2 {
-                font-size: 3rem; /* Reduced font size */
-            }
-            .banner-subtitle {
-                font-size: 1.125rem;
-            }
+            .banner-section { height: 30vh; max-height: 250px; }
+            .typewriter h2 { font-size: 3rem; }
+            .banner-subtitle { font-size: 1.125rem; }
         }
         
-        /* --- LEGACY PAGE SPECIFIC STYLES --- */
         #path-selector-grid {
-            display: flex;
-            gap: 1.5rem;
-            padding: 1rem;
-            overflow-x: auto;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
+            display: flex; gap: 1.5rem; padding: 1rem;
+            overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none;
+            scroll-snap-type: x mandatory; scroll-behavior: smooth;
         }
-        #path-selector-grid::-webkit-scrollbar {
-            display: none;
-        }
+        #path-selector-grid::-webkit-scrollbar { display: none; }
         .path-selector-card {
-            width: 80vw;
-            max-width: 300px;
-            flex-shrink: 0;
-            scroll-snap-align: center;
+            width: 80vw; max-width: 300px;
+            flex-shrink: 0; scroll-snap-align: center;
             background-color: var(--bg-secondary);
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            cursor: pointer;
+            border: 2px solid var(--border-color);
+            border-radius: 0.25rem; cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 4px 4px 0px var(--text-main);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            box-shadow: 4px 4px 0px var(--border-color);
+            overflow: hidden; display: flex; flex-direction: column;
         }
-        @media (min-width: 768px) {
-            .path-selector-card {
-                width: 320px;
-            }
-        }
+        .dark .path-selector-card { box-shadow: none; }
+        @media (min-width: 768px) { .path-selector-card { width: 320px; } }
         .path-selector-card-img {
-            height: 160px;
-            width: 100%;
-            object-fit: cover;
-            filter: grayscale(50%);
+            height: 160px; width: 100%;
+            object-fit: cover; filter: grayscale(50%);
             transition: filter 0.3s ease;
         }
         .path-selector-card:hover .path-selector-card-img,
-        .path-selector-card.active .path-selector-card-img {
-            filter: grayscale(0%);
-        }
+        .path-selector-card.active .path-selector-card-img { filter: grayscale(0%); }
         .path-selector-card-content {
-            padding: 1rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
+            padding: 1rem; flex-grow: 1;
+            display: flex; flex-direction: column;
         }
         .path-selector-card:hover {
             transform: translateY(-4px) rotate(-1deg);
-            box-shadow: 6px 6px 0px var(--text-main);
+            box-shadow: 6px 6px 0px var(--border-color);
         }
+        .dark .path-selector-card:hover { box-shadow: none; border-color: var(--accent); }
         .path-selector-card.active {
             transform: translateY(-4px) rotate(-1deg) scale(1.02);
             border-width: 4px;
             border-color: var(--path-color, var(--accent));
             box-shadow: 8px 8px 0px var(--path-color, var(--accent));
         }
+        .dark .path-selector-card.active { box-shadow: none; }
         #legacy-slider-wrapper {
             background-color: rgba(231, 229, 228, 0.5);
             transition: background-color 0.5s ease-in-out;
         }
-        #legacy-album-track {
-            padding: 1rem 0;
-            transition: transform 0.5s ease-in-out;
-        }
+        .dark #legacy-slider-wrapper { background-color: rgba(41, 37, 36, 0.5); }
+        #legacy-album-track { padding: 1rem 0; transition: transform 0.5s ease-in-out; }
         
-        /* Genre Evolution Styles */
-        #genre-evolution-wrapper {
-            position: relative;
-            padding-bottom: 2rem;
-        }
+        #genre-evolution-wrapper { position: relative; padding-bottom: 2rem; }
         #genre-evolution-container {
-            display: flex;
-            overflow-x: auto;
-            padding: 2rem 1rem;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            cursor: grab;
+            display: flex; overflow-x: auto; padding: 2rem 1rem;
+            -ms-overflow-style: none; scrollbar-width: none; cursor: grab;
         }
-        #genre-evolution-container:active {
-            cursor: grabbing;
-        }
-        #genre-evolution-container::-webkit-scrollbar {
-            display: none;
-        }
-        #genre-evolution-chart {
-            display: inline-flex;
-            gap: 0;
-            position: relative;
-            min-height: 700px;
-        }
+        #genre-evolution-container:active { cursor: grabbing; }
+        #genre-evolution-container::-webkit-scrollbar { display: none; }
+        #genre-evolution-chart { display: inline-flex; gap: 0; position: relative; min-height: 700px; }
         .evolution-decade-column {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            padding: 4rem 3rem;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 1rem; padding: 4rem 3rem;
             border-left: 2px dashed var(--text-muted);
             position: relative;
         }
-        #genre-evolution-chart > .evolution-decade-column:first-child {
-            border-left: none;
-        }
+        #genre-evolution-chart > .evolution-decade-column:first-child { border-left: none; }
         .evolution-decade-header {
-            position: absolute;
-            top: 0;
-            left: 50%;
+            position: absolute; top: 0; left: 50%;
             transform: translateX(-50%);
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 2.5rem;
-            color: var(--text-muted);
-            white-space: nowrap;
+            font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+            color: var(--text-muted); white-space: nowrap;
         }
         .evolution-nodes-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            gap: 2rem;
-            width: 100%;
-            height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: space-around; gap: 2rem;
+            width: 100%; height: 100%;
         }
         .evolution-genre-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
+            display: flex; flex-direction: column;
+            align-items: center; gap: 1.5rem;
         }
         .genre-node {
             padding: 0.75rem 1.25rem;
-            border: 2px solid var(--text-main);
+            border: 2px solid var(--border-color);
             border-radius: 0.25rem;
-            box-shadow: 4px 4px 0px var(--text-main);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            text-align: center;
-            flex-shrink: 0;
-            z-index: 1;
+            box-shadow: 4px 4px 0px var(--border-color);
+            cursor: pointer; transition: all 0.2s ease;
+            position: relative; text-align: center;
+            flex-shrink: 0; z-index: 1;
             background-color: var(--bg-main);
             min-width: 160px;
         }
+        .dark .genre-node { box-shadow: none; }
         .genre-node:hover {
             transform: translateY(-4px) rotate(1deg);
             box-shadow: 6px 6px 0px var(--accent);
         }
-        .genre-node h4 {
-            font-size: 1.25rem;
-            line-height: 1.2;
-        }
+        .dark .genre-node:hover { box-shadow: none; border-color: var(--accent); }
+        .genre-node h4 { font-size: 1.25rem; line-height: 1.2; }
         #evolution-connections {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
             overflow: visible;
         }
     </style>
 </head>
-<body class="bg-stone-100 text-stone-900">
+<body class="bg-[var(--bg-main)] text-[var(--text-main)]">
 
     <div id="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
         <!-- Standardized Sticky Header -->
-        <div class="sticky top-0 z-50 h-24 bg-white/80 backdrop-blur-md border-b border-stone-200">
+        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
-                    <div class="nav-bar-behaviour items-center space-x-8">
-                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Home</a>
-                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Timeline</a>
-                        <a href="/legacy" class="nav-link active px-3 py-2 rounded-md font-medium text-stone-600">Legacy</a>
-                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600">Blog</a>
-                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-stone-600 flex items-center gap-2">
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                            <span>@controlledjazz</span>
-                        </a>
-                    </div>
-                     <!-- Hamburger Menu Button -->
-                    <div class="md:hidden">
-                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none">
-                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
+                    <div class="flex items-center">
+                        <div class="nav-bar-behaviour items-center space-x-8">
+                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                            <a href="/legacy" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Legacy</a>
+                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                                <span>@controlledjazz</span>
+                            </a>
+                        </div>
+                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                         </button>
+                         <!-- Hamburger Menu Button -->
+                        <div class="lg:hidden ml-2">
+                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </nav>
             </header>
@@ -573,54 +423,46 @@
         <main>
             <!-- Banner Section -->
             <section class="banner-section">
-                <img src="images/bannerlegacy.png" alt="The Legacy of Jazz" class="banner-img" onerror="this.onerror=null;this.src='https://placehold.co/1920x320/1c1917/f5f5f4?text=Legacy';">
+                <img src="images/bannerlegacy.png" alt="The Legacy of Jazz" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1598488035139-3a33543e757c?q=80&w=2070&auto=format&fit=crop';">
                 <div class="banner-overlay">
-<div class="typewriter">
-                    <h2>The Legacy of an Era</h2>
+                    <div class="typewriter">
+                        <h2>The Legacy of an Era</h2>
+                    </div>
+                    <p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">How two decades of explosive creativity redefined the future of music.</p>
                 </div>
-                <p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">How two decades of explosive creativity redefined the future of music.
-
-</p>                </div>
             </section>
 
             <!-- Overview Section -->
-            <section id="overview" class="py-16 sm:py-20 bg-stone-100">
+            <section id="overview" class="py-16 sm:py-20 bg-[var(--bg-main)]">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
                     <div class="grid md:grid-cols-5 gap-12 items-start">
-                        <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-stone-900 text-left">
+                        <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-[var(--text-main)] text-left">
                             <div class="mb-8">
                                 <h2 class="section-header text-5xl">The Echoes of Innovation</h2>
-                                <p class="text-lg text-stone-600 mt-4 italic">Tracing the paths of jazz beyond the golden age.</p>
+                                <p class="text-lg text-[var(--text-muted)] mt-4 italic">Tracing the paths of jazz beyond the golden age.</p>
                             </div>
                             <p>The story of jazz didn't end in 1969. Instead, the seismic shifts of the post-bop era created a new musical landscape. The period's relentless innovation acted as a creative big bang, sending musicians and ideas hurtling in countless new directions. The structural explorations of Post-Bop, the spiritual depth of Free Jazz, and the raw energy of Avant-Garde became the DNA for future generations.</p>
                             <p>From the high-voltage energy of <strong>Jazz Fusion</strong> and the introspective soundscapes of <strong>ECM Style Jazz</strong> to the conscious reconnection with African roots in <strong>Afro-Jazz</strong>, the legacy of this golden age is everywhere. This page explores the primary paths that grew from that fertile ground, tracing the lineage of modern jazz into the 21st century.</p>
                         </div>
                         <div class="md:col-span-2 mt-8 md:mt-0 space-y-8">
-                             <!-- "ON THIS DAY" FEATURE -->
-                            <div id="on-this-day">
-                                <!-- Content will be injected by JavaScript -->
-                            </div>
-                             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5KmHPJb9HzTeHpaCDRBkNO?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            <div id="on-this-day"></div>
+                            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5KmHPJb9HzTeHpaCDRBkNO?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="legacy" class="pt-12 pb-16 sm:pb-20 bg-stone-200 border-y-4 border-stone-900">
+            <section id="legacy" class="pt-12 pb-16 sm:pb-20 bg-[var(--bg-secondary)] border-y-4 border-[var(--border-color)]">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
                     <h2 class="section-header text-5xl">Path Timeline</h2>
-                    <p class="text-center text-lg text-stone-600 mb-4 max-w-3xl mx-auto italic">Follow the splintering of the post-bop sound into new forms.</p>
+                    <p class="text-center text-lg text-[var(--text-muted)] mb-4 max-w-3xl mx-auto italic">Follow the splintering of the post-bop sound into new forms.</p>
                     
-                    <!-- Path Selector Container -->
                     <div id="path-selector-container" class="mb-12">
-                        <div id="path-selector-grid">
-                            <!-- Path cards injected by JS -->
-                        </div>
-                        <!-- Mobile Slider Controls -->
+                        <div id="path-selector-grid"></div>
                         <div id="path-slider-controls" class="flex justify-center items-center gap-4 mt-4">
-                             <button id="path-prev-btn" class="p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-                            <span id="path-page-indicator" class="font-bold text-lg text-stone-900"></span>
-                            <button id="path-next-btn" class="p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                             <button id="path-prev-btn" class="p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                            <span id="path-page-indicator" class="font-bold text-lg text-[var(--text-main)]"></span>
+                            <button id="path-next-btn" class="p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
                         </div>
                     </div>
 
@@ -628,54 +470,50 @@
                         <h3 id="legacy-slider-title" class="text-4xl mb-8 text-center transition-colors duration-300"></h3>
                         <div id="legacy-album-slider-container" class="relative">
                             <div id="legacy-album-track-wrapper" class="overflow-hidden"><div id="legacy-album-track" class="flex gap-6"></div></div>
-                            <button id="legacy-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-                            <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                            <button id="legacy-prev-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 z-10 p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                            <button id="legacy-next-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 z-10 p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="legacy-genres" class="py-16 sm:py-20 bg-stone-100">
+            <section id="legacy-genres" class="py-16 sm:py-20 bg-[var(--bg-main)]">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Genre Evolution</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the evolution of jazz styles. Click on a genre to learn more.</p>
+                    <p class="text-center text-lg text-[var(--text-muted)] mb-12 max-w-3xl mx-auto italic">Explore the evolution of jazz styles. Click on a genre to learn more.</p>
                     <div id="genre-evolution-wrapper">
                         <div id="genre-evolution-container">
                             <div id="genre-evolution-chart">
-                                <!-- Chart will be rendered by JS -->
                                 <svg id="evolution-connections"></svg>
                             </div>
                         </div>
-                        <button id="evolution-prev-btn" class="absolute top-1/2 -translate-y-1/2 left-2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-                        <button id="evolution-next-btn" class="absolute top-1/2 -translate-y-1/2 right-2 z-10 p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                        <button id="evolution-prev-btn" class="absolute top-1/2 -translate-y-1/2 left-2 z-10 p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                        <button id="evolution-next-btn" class="absolute top-1/2 -translate-y-1/2 right-2 z-10 p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
                     </div>
                 </div>
             </section>
 
-            <section id="artists" class="py-16 sm:py-20 bg-stone-200 border-y-4 border-stone-900">
+            <section id="artists" class="py-16 sm:py-20 bg-[var(--bg-secondary)] border-y-4 border-[var(--border-color)]">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="section-header text-5xl">Legacy Artists</h2>
-                    <p class="text-center text-lg text-stone-600 mb-12 max-w-3xl mx-auto italic">Explore the musicians who carried the torch forward.</p>
+                    <p class="text-center text-lg text-[var(--text-muted)] mb-12 max-w-3xl mx-auto italic">Explore the musicians who carried the torch forward.</p>
                     <div class="flex justify-center mb-8">
                         <div class="w-full max-w-xs styled-select">
-                            <label for="instrument-filter" class="block text-sm font-medium text-stone-600 mb-2 text-center">Filter by Instrument:</label>
-                            <select id="instrument-filter" class="block w-full rounded-sm border-2 border-stone-900 bg-stone-100 text-stone-900 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
+                            <label for="instrument-filter" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-center">Filter by Instrument:</label>
+                            <select id="instrument-filter" class="block w-full rounded-sm border-2 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
                             </select>
                         </div>
                     </div>
                     <div id="artist-slider-wrapper" class="relative">
                         <div id="artist-slider-container" class="min-h-[300px] md:min-h-[320px]">
-                            <div id="artist-slider-track">
-                                <!-- Artist pages will be injected here by JavaScript -->
-                            </div>
+                            <div id="artist-slider-track"></div>
                         </div>
-                         <!-- Artist Pagination Controls -->
                         <div id="artist-pagination-controls" class="absolute inset-x-0 -bottom-12 flex justify-center items-center gap-4">
-                            <button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                            <button id="artist-prev-btn" class="pointer-events-auto p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                             </button>
-                            <span id="artist-page-indicator" class="font-bold text-lg text-stone-900 pointer-events-auto"></span>
-                            <button id="artist-next-btn" class="pointer-events-auto p-2 rounded-full bg-stone-900 text-stone-100 hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
+                            <span id="artist-page-indicator" class="font-bold text-lg text-[var(--text-main)] pointer-events-auto"></span>
+                            <button id="artist-next-btn" class="pointer-events-auto p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                             </button>
                        </div>
@@ -697,30 +535,28 @@
     
     <!-- Modals -->
     <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div id="modal-content" class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
-            <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+        <div id="modal-content" class="modal-content rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 border-[var(--border-color)] flex-shrink-0">
                 <div>
                     <h3 id="modal-title" class="text-4xl text-orange-500"></h3>
-                    <button id="modal-artist" class="text-xl text-stone-600 bg-transparent border-none p-0"></button>
+                    <button id="modal-artist" class="text-xl text-[var(--text-muted)] bg-transparent border-none p-0"></button>
                 </div>
                 <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
             </div>
             <div id="modal-body" class="p-6 overflow-y-auto">
                 <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
                     <div id="modal-album-art-container" class="w-full md:w-1/3 flex-shrink-0">
-                        <img id="modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-stone-900" alt="" loading="lazy">
+                        <img id="modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-[var(--border-color)]" alt="" loading="lazy">
                     </div>
                     <div id="modal-album-details" class="w-full md:w-2/3"></div>
                 </div>
-                <div id="analysis-wrapper" class="relative mt-4">
-                    <!-- Content injected by JS -->
-                </div>
+                <div id="analysis-wrapper" class="relative mt-4"></div>
             </div>
         </div>
     </div>
     <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 border-[var(--border-color)] flex-shrink-0">
                  <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
                  <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
              </div>
@@ -728,8 +564,8 @@
         </div>
     </div>
     <div id="genre-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content bg-stone-100 border-2 border-stone-900 rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 border-stone-900 flex-shrink-0">
+        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 border-[var(--border-color)] flex-shrink-0">
                  <h3 id="genre-modal-title" class="text-4xl"></h3>
                  <button id="close-genre-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
              </div>
@@ -740,13 +576,14 @@
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
-        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 bg-stone-100 w-64 shadow-lg p-4 transform translate-x-full">
-            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-stone-900 hover:bg-stone-200 focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <a href="/" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Home</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-stone-900 hover:text-orange-500 p-2 rounded-md">Blog</a>
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
             </nav>
         </div>
     </div>
@@ -777,6 +614,7 @@
                         this.methods[key] = this.methods[key].bind(this);
                     }
                 }
+                this.methods.setupTheme();
                 this.fetchData();
             },
             cacheDOMElements() {
@@ -814,6 +652,9 @@
                     evolutionPrevBtn: document.getElementById('evolution-prev-btn'),
                     evolutionNextBtn: document.getElementById('evolution-next-btn'),
                     evolutionConnections: document.getElementById('evolution-connections'),
+                    themeToggle: document.getElementById('theme-toggle'),
+                    themeIconLight: document.getElementById('theme-icon-light'),
+                    themeIconDark: document.getElementById('theme-icon-dark'),
                 };
             },
             fetchData() {
@@ -842,7 +683,7 @@
                     this.initializeAppUI();
                 }).catch(error => {
                     console.error('Error fetching data:', error);
-                    this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2><p class="text-stone-600 mt-2">${error.message}</p></div>`;
+                    this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2><p class="text-[var(--text-muted)] mt-2">${error.message}</p></div>`;
                     this.showPage();
                 });
             },
@@ -864,6 +705,39 @@
                 this.showPage();
             },
             methods: {
+                setupTheme() {
+                    const themeToggle = this.elements.themeToggle;
+                    const lightIcon = this.elements.themeIconLight;
+                    const darkIcon = this.elements.themeIconDark;
+
+                    const applyTheme = (theme) => {
+                        if (theme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                            lightIcon.classList.add('hidden');
+                            darkIcon.classList.remove('hidden');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                            lightIcon.classList.remove('hidden');
+                            darkIcon.classList.add('hidden');
+                        }
+                        // Redraw connections on theme change
+                        if (this.methods.drawEvolutionConnections) {
+                           setTimeout(() => this.methods.drawEvolutionConnections(), 50);
+                        }
+                    };
+
+                    const savedTheme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                    
+                    applyTheme(currentTheme);
+
+                    themeToggle.addEventListener('click', () => {
+                        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                        localStorage.setItem('theme', newTheme);
+                        applyTheme(newTheme);
+                    });
+                },
                 getCanonicalName(name) {
                     if (!name) return '';
                     const trimmedName = name.trim();
@@ -965,14 +839,14 @@
                         this.state.onThisDayAlbum = album;
 
                         onThisDayContainer.innerHTML = `
-                            <div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)] cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] hover:-translate-y-1 transition-all">
-                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
+                            <div class="p-4 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--border-color)] dark:shadow-none cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] dark:hover:border-[var(--accent)] hover:-translate-y-1 transition-all">
+                                <h4 class="text-2xl text-stone-900 dark:text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
                                 <div class="flex items-center gap-4 mt-2">
-                                    <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-stone-900 rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
+                                    <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-[var(--border-color)] rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
                                     <div>
-                                        <p class="text-sm text-stone-600">On <strong>${currentMonth} ${currentDay}</strong>, ${album.year}, the track...</p>
-                                        <p class="text-lg font-bold text-stone-900">"${featured.title}"</p>
-                                        <p class="text-sm text-stone-600">from <strong>${album.albumTitle}</strong> was recorded.</p>
+                                        <p class="text-sm text-[var(--text-muted)]">On <strong>${currentMonth} ${currentDay}</strong>, ${album.year}, the track...</p>
+                                        <p class="text-lg font-bold text-[var(--text-main)]">"${featured.title}"</p>
+                                        <p class="text-sm text-[var(--text-muted)]">from <strong>${album.albumTitle}</strong> was recorded.</p>
                                     </div>
                                 </div>
                             </div>
@@ -982,9 +856,9 @@
                         });
                     } else {
                         onThisDayContainer.innerHTML = `
-                             <div class="p-4 bg-stone-200 border-2 border-stone-900 rounded-sm shadow-[4px_4px_0px_var(--text-main)]">
-                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
-                                <p class="text-center text-stone-600 mt-4">No legacy tracks were recorded on this day. Check back tomorrow!</p>
+                             <div class="p-4 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--border-color)] dark:shadow-none">
+                                <h4 class="text-2xl text-stone-900 dark:text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
+                                <p class="text-center text-[var(--text-muted)] mt-4">No legacy tracks were recorded on this day. Check back tomorrow!</p>
                             </div>
                         `;
                     }
@@ -1016,7 +890,7 @@
                         const pathColor = this.methods.getPathColor(pathData);
                         card.style.setProperty('--path-color', pathColor);
                         const imageSlug = pathData.title.replace('The ', '').toLowerCase().replace(/\s+/g, '-');
-                        card.innerHTML = `<img src="images/${imageSlug}.jpg" alt="${pathData.title}" class="path-selector-card-img" onerror="this.onerror=null;this.src='https://placehold.co/320x160/1c1917/f5f5f4?text=Path';"><div class="path-selector-card-content"><h4 class="text-3xl font-bold">${pathData.title}</h4><p class="text-sm text-stone-600">${pathDescriptions[pathData.title] || ''}</p></div>`;
+                        card.innerHTML = `<img src="images/${imageSlug}.jpg" alt="${pathData.title}" class="path-selector-card-img" onerror="this.onerror=null;this.src='https://placehold.co/320x160/1c1917/f5f5f4?text=Path';"><div class="path-selector-card-content"><h4 class="text-3xl font-bold">${pathData.title}</h4><p class="text-sm text-[var(--text-muted)]">${pathDescriptions[pathData.title] || ''}</p></div>`;
                         card.addEventListener('click', () => {
                             pathSelectorGrid.querySelectorAll('.path-selector-card').forEach(c => c.classList.remove('active'));
                             card.classList.add('active');
@@ -1071,8 +945,12 @@
                     if (!pathData) return;
                     legacySliderTitle.textContent = `Key Albums of ${pathData.title}`;
                     const pathColor = this.methods.getPathColor(pathData);
-                    const bgColor = pathColor.startsWith('var') ? `color-mix(in srgb, ${getComputedStyle(document.documentElement).getPropertyValue(pathColor.match(/--[a-zA-Z-]+/)[0]).trim()} 15%, transparent)` : `${pathColor}26`;
+                    const isDark = document.documentElement.classList.contains('dark');
+                    const baseColor = getComputedStyle(document.documentElement).getPropertyValue(pathColor.match(/--[a-zA-Z-]+/)[0]).trim();
+                    const bgColor = `color-mix(in srgb, ${baseColor} ${isDark ? '25%' : '15%'}, transparent)`;
+                    
                     legacySliderWrapper.style.backgroundColor = bgColor;
+                    
                     legacyAlbumTrack.innerHTML = '';
                     pathData.albums.forEach(album => {
                         const card = document.createElement('div');
@@ -1207,7 +1085,8 @@
                     ];
 
                     const svgNS = "http://www.w3.org/2000/svg";
-                    evolutionConnections.innerHTML = `<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="${getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()}" /></marker></defs>`;
+                    const mutedColor = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
+                    evolutionConnections.innerHTML = `<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="${mutedColor}" /></marker></defs>`;
                     
                     evolutionConnections.setAttribute('width', genreEvolutionChart.scrollWidth);
                     evolutionConnections.setAttribute('height', genreEvolutionChart.scrollHeight);
@@ -1239,7 +1118,7 @@
                             const path = document.createElementNS(svgNS, 'path');
                             const d = `M ${fromPoint.x} ${fromPoint.y} C ${fromPoint.x + 40} ${fromPoint.y}, ${mergePointX - 40} ${avgY}, ${mergePointX} ${avgY}`;
                             path.setAttribute('d', d);
-                            path.setAttribute('stroke', 'var(--text-muted)');
+                            path.setAttribute('stroke', mutedColor);
                             path.setAttribute('stroke-width', '2');
                             path.setAttribute('fill', 'none');
                             if (fromPoints.length === 1) {
@@ -1251,7 +1130,7 @@
                         if (fromPoints.length > 1) {
                             const finalPath = document.createElementNS(svgNS, 'path');
                             finalPath.setAttribute('d', `M ${mergePointX} ${avgY} L ${toNode.left} ${toNode.y}`);
-                            finalPath.setAttribute('stroke', 'var(--text-muted)');
+                            finalPath.setAttribute('stroke', mutedColor);
                             finalPath.setAttribute('stroke-width', '2');
                             finalPath.setAttribute('fill', 'none');
                             finalPath.setAttribute('marker-end', 'url(#arrowhead)');
@@ -1308,14 +1187,14 @@
                         const pageArtists = filteredArtists.slice(i * pageSize, (i + 1) * pageSize);
                         pageArtists.forEach(artist => {
                             const card = document.createElement('div');
-                            card.className = 'artist-card bandleader';
+                            card.className = 'artist-card';
                             card.dataset.artistName = artist.name;
                             card.innerHTML = `
                                 <div class="h-56 bg-stone-900 artist-photo-container">
                                     <img src="${artist.photo}" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
                                 <div class="p-3">
-                                    <h4 class="font-bold text-base text-stone-900 truncate">${artist.name}</h4>
+                                    <h4 class="font-bold text-base text-[var(--text-main)] truncate">${artist.name}</h4>
                                 </div>`;
                             pageDiv.appendChild(card);
                         });
@@ -1391,7 +1270,7 @@
                     this.elements.artistPrevBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage - 1));
                     this.elements.artistNextBtn.addEventListener('click', () => this.methods.goToArtistPage(this.state.currentArtistPage + 1));
                     this.elements.instrumentFilter.addEventListener('change', () => {
-                        this.state.currentArtistPage = 0; // Reset page on filter change
+                        this.state.currentArtistPage = 0;
                         this.methods.setupArtistSlider();
                     });
                     let resizeTimeout;
@@ -1415,7 +1294,7 @@
                     const artistBtn = albumModal.querySelector('#modal-artist');
                     artistBtn.textContent = album.artist;
                     artistBtn.dataset.artistName = album.artist;
-                    artistBtn.className = 'text-xl text-stone-600 bg-transparent border-none p-0 clickable-link';
+                    artistBtn.className = 'text-xl text-[var(--text-muted)] bg-transparent border-none p-0 clickable-link';
                     
                     const modalImg = albumModal.querySelector('#modal-album-art');
                     modalImg.src = album.cover || '';
@@ -1435,7 +1314,7 @@
                         return personnel;
                     }).join(', ');
 
-                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-stone-900 mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-stone-900"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span><strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span></div>`;
+                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span><strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span></div>`;
                     
                     const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                     const pivotalTracksHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks.map(track => {
@@ -1470,7 +1349,7 @@
                     
                     const albumTimelineHtml = artistAlbumsWithYear.map(album => {
                         return `<li class="artist-modal-timeline-item">
-                                    <strong class="text-stone-600">${album.year || 'N/A'}:</strong> 
+                                    <strong class="text-[var(--text-muted)]">${album.year || 'N/A'}:</strong> 
                                     <span class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">
                                         ${album.albumTitle}
                                     </span>
@@ -1481,14 +1360,14 @@
                         <div class="flex flex-col sm:flex-row gap-6">
                             <div class="w-full sm:w-1/3 flex-shrink-0">
                                 <div class="artist-photo-container">
-                                    <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-stone-900" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                    <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-[var(--border-color)]" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
-                                <p class="mt-4 text-stone-900 text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
-                                ${artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-stone-900 mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
+                                <p class="mt-4 text-[var(--text-main)] text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
+                                ${artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-[var(--text-main)] mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
                             </div>
                             <div class="w-full sm:w-2/3">
-                                ${artistProfile.profile && artistProfile.profile !== 'No profile available.' ? `<h4 class="text-2xl text-stone-900 mb-2">Profile</h4><p class="text-base text-stone-700 leading-relaxed mb-4">${artistProfile.profile}</p>` : ''}
-                                <h4 class="text-2xl text-stone-900 mb-3">Key Album Appearances</h4>
+                                ${artistProfile.profile && artistProfile.profile !== 'No profile available.' ? `<h4 class="text-2xl text-[var(--text-main)] mb-2">Profile</h4><p class="text-base text-[var(--text-muted)] leading-relaxed mb-4">${artistProfile.profile}</p>` : ''}
+                                <h4 class="text-2xl text-[var(--text-main)] mb-3">Key Album Appearances</h4>
                                 <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml || '<li>No appearances found in database.</li>'}</ul>
                             </div>
                         </div>
@@ -1530,19 +1409,19 @@
                     titleEl.style.color = this.state.fullGenreColorMap[genreName] || 'var(--accent)';
 
                     const bodyEl = genreModal.querySelector('#genre-modal-body');
-                    const keyArtistsHtml = genreInfo.artists ? `<p class="text-base text-stone-700 leading-relaxed">${genreInfo.artists.split(', ').map(name => `<span class="clickable-link" data-artist-name="${name.trim()}">${name.trim()}</span>`).join(', ')}</p>` : '';
+                    const keyArtistsHtml = genreInfo.artists ? `<p class="text-base text-[var(--text-muted)] leading-relaxed">${genreInfo.artists.split(', ').map(name => `<span class="clickable-link" data-artist-name="${name.trim()}">${name.trim()}</span>`).join(', ')}</p>` : '';
                     const landmarkAlbumsHtml = genreInfo.landmarkAlbums ? `<ul class="list-disc list-inside space-y-1 landmark-album-list">${genreInfo.landmarkAlbums.map(title => {
                         const album = this.state.fullAlbumDatabase.find(a => a.albumTitle.toLowerCase() === title.toLowerCase()) || this.state.allLegacyAlbums.find(a => a.albumTitle.toLowerCase() === title.toLowerCase());
                         return album ? `<li><span class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${title}</span></li>` : `<li>${title}</li>`;
                     }).join('')}</ul>` : '';
-                    const characteristicsHtml = genreInfo.data ? `<ul class="list-disc list-inside space-y-1 text-stone-700">${this.state.genreData.features.map((feature, i) => `<li><strong>${feature}:</strong> ${genreInfo.data[i]}</li>`).join('')}</ul>` : '';
+                    const characteristicsHtml = genreInfo.data ? `<ul class="list-disc list-inside space-y-1 text-[var(--text-muted)]">${this.state.genreData.features.map((feature, i) => `<li><strong>${feature}:</strong> ${genreInfo.data[i]}</li>`).join('')}</ul>` : '';
 
                     bodyEl.innerHTML = `<div class="space-y-6">
                         ${parentGenreName ? `<p class="text-sm text-stone-500 -mt-2 mb-4">A subgenre of <strong>${parentGenreName}</strong></p>` : ''}
-                        <div><h4 class="text-2xl font-bold text-stone-900 mb-2">Overview</h4><p class="text-base text-stone-700 leading-relaxed">${genreInfo.profile || 'No profile available.'}</p></div>
-                        ${characteristicsHtml ? `<div><h4 class="text-2xl font-bold text-stone-900 mb-2">Key Characteristics</h4>${characteristicsHtml}</div>` : ''}
-                        ${keyArtistsHtml ? `<div><h4 class="text-2xl font-bold text-stone-900 mb-2">Key Artists</h4>${keyArtistsHtml}</div>` : ''}
-                        ${landmarkAlbumsHtml ? `<div><h4 class="text-2xl font-bold text-stone-900 mb-2">Landmark Albums</h4>${landmarkAlbumsHtml}</div>` : ''}
+                        <div><h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Overview</h4><p class="text-base text-[var(--text-muted)] leading-relaxed">${genreInfo.profile || 'No profile available.'}</p></div>
+                        ${characteristicsHtml ? `<div><h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Key Characteristics</h4>${characteristicsHtml}</div>` : ''}
+                        ${keyArtistsHtml ? `<div><h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Key Artists</h4>${keyArtistsHtml}</div>` : ''}
+                        ${landmarkAlbumsHtml ? `<div><h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Landmark Albums</h4>${landmarkAlbumsHtml}</div>` : ''}
                     </div>`;
 
                     genreModal.classList.remove('opacity-0', 'pointer-events-none');
