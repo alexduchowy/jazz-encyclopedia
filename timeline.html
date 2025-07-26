@@ -329,12 +329,17 @@
         #artist-slider-container { overflow: hidden; }
         #artist-slider-track { display: flex; transition: transform 0.5s ease-in-out; }
         .artist-slider-page {
-            width: 100%; flex-shrink: 0;
+            flex: 0 0 100%; /* FIX: Use flex shorthand for robust sizing */
             padding: 0 0.5rem;
-            display: grid; grid-template-columns: repeat(3, 1fr);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
         }
-        @media (min-width: 768px) { .artist-slider-page { grid-template-columns: repeat(6, 1fr); } }
+        @media (min-width: 768px) {
+            .artist-slider-page {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
         
         .styled-select select {
             -webkit-appearance: none; -moz-appearance: none; appearance: none;
