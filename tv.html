@@ -55,16 +55,7 @@
             animation: noise 0.2s infinite;
         }
         @keyframes noise {
-            0%, 100% { background-position: 0 0; }
-            10% { background-position: -5% -10%; }
-            20% { background-position: -15% 5%; }
-            30% { background-position: 7% -25%; }
-            40% { background-position: 20% 25%; }
-            50% { background-position: -25% 10%; }
-            60% { background-position: 15% 5%; }
-            70% { background-position: 0% 15%; }
-            80% { background-position: 25% 35%; }
-            90% { background-position: -10% 10%; }
+            0%, 100% { background-position: 0 0; } 10% { background-position: -5% -10%; } 20% { background-position: -15% 5%; } 30% { background-position: 7% -25%; } 40% { background-position: 20% 25%; } 50% { background-position: -25% 10%; } 60% { background-position: 15% 5%; } 70% { background-position: 0% 15%; } 80% { background-position: 25% 35%; } 90% { background-position: -10% 10%; }
         }
 
         h1, h2, h3, h4, h5 {
@@ -157,6 +148,26 @@
         .dark .playlist-item:hover {
             background-color: rgba(255,255,255,0.05);
         }
+        
+        /* NEW: Line-up Styles */
+        .artist-lineup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+        .artist-lineup-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .artist-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+            flex-shrink: 0;
+        }
 
     </style>
 </head>
@@ -219,12 +230,14 @@
                         <h3 class="info-card-header text-xl font-bold">Performance Details</h3>
                         <div class="p-4 md:p-6 space-y-4">
                             <div>
-                                <h4 class="font-bold text-sm uppercase tracking-wider text-[var(--text-muted)]">Line-up</h4>
-                                <p id="video-lineup" class="text-[var(--text-main)] leading-relaxed"></p>
+                                <h4 class="font-bold text-sm uppercase tracking-wider text-[var(--text-muted)] mb-3">Line-up</h4>
+                                <div id="video-lineup" class="artist-lineup-grid">
+                                    <!-- Artist lineup will be injected here -->
+                                </div>
                             </div>
-                            <div>
-                                <h4 class="font-bold text-sm uppercase tracking-wider text-[var(--text-muted)]">About this Performance</h4>
-                                <p id="video-description" class="text-[var(--text-main)] text-sm leading-relaxed"></p>
+                            <div class="pt-4 border-t-2 border-[var(--border-color)]">
+                                <h4 class="font-bold text-sm uppercase tracking-wider text-[var(--text-muted)] mb-2">About this Performance</h4>
+                                <p id="video-description" class="text-[var(--text-muted)] text-sm leading-relaxed"></p>
                             </div>
                         </div>
                     </div>
@@ -300,6 +313,12 @@
             mobileMenuPanel: document.getElementById('mobile-menu-panel'),
             mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
             footerCopyright: document.getElementById('footer-copyright'),
+        };
+
+        // --- Helper Functions ---
+        const slugify = (name) => {
+            if (!name) return '';
+            return name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
         };
 
         // --- Theme Logic ---
@@ -382,7 +401,7 @@
             } else {
                  elements.videoMainTitle.textContent = "Playlist is Empty";
                  elements.videoDescription.textContent = "Add a video to the playlist to start the broadcast.";
-                 elements.videoLineup.textContent = "";
+                 elements.videoLineup.innerHTML = "";
                  elements.playlistContainer.innerHTML = '<p class="text-[var(--text-muted)] p-4">No videos in queue.</p>';
             }
         }
@@ -393,9 +412,34 @@
             const currentVideo = playlist[playingIndex];
             elements.videoMainTitle.textContent = currentVideo.title;
             elements.videoDescription.textContent = currentVideo.description || 'No description available.';
-            elements.videoLineup.textContent = currentVideo.lineup || 'Line-up information not available.';
-            elements.playlistContainer.innerHTML = '';
             
+            // Render Lineup
+            if (currentVideo.lineup) {
+                const lineupHtml = currentVideo.lineup.split(',').map(person => {
+                    const match = person.trim().match(/(.+?)\s\((.+)\)/);
+                    if (match) {
+                        const name = match[1].trim();
+                        const instrument = match[2].trim();
+                        const photoSlug = slugify(name);
+                        return `
+                            <div class="artist-lineup-item">
+                                <img src="images/${photoSlug}.jpg" alt="${name}" class="artist-photo" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                <div>
+                                    <p class="font-bold text-[var(--text-main)] text-sm leading-tight">${name}</p>
+                                    <p class="text-xs text-[var(--text-muted)]">${instrument}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    return '';
+                }).join('');
+                elements.videoLineup.innerHTML = lineupHtml;
+            } else {
+                elements.videoLineup.innerHTML = '<p class="text-[var(--text-muted)] text-sm">Line-up information not available.</p>';
+            }
+
+            // Render Playlist
+            elements.playlistContainer.innerHTML = '';
             const upcomingVideos = playlist.slice(playingIndex + 1).concat(playlist.slice(0, playingIndex));
 
             if (upcomingVideos.length === 0) {
