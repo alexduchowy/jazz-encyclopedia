@@ -861,7 +861,7 @@
                     { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: 'var(--era-roots-light)' },
                     { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: 'var(--era-fusion-light)' }
                 ],
-                currentVisibleAlbumIndex: -1,
+                currentAlbumIndex: -1, // Changed from currentVisibleAlbumIndex
                 currentArtistPage: 0,
                 totalArtistPages: 0,
                 lastKnownYear: '',
@@ -881,7 +881,7 @@
                         this.methods[key] = this.methods[key].bind(this);
                     }
                 }
-                this.methods.setupTheme(); // Add theme setup
+                this.methods.setupTheme();
                 this.fetchData();
             },
             
@@ -956,7 +956,7 @@
                     console.error('Error fetching data:', error);
                     this.elements.pageContent.innerHTML = `<div class="text-center p-8">
                         <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
-                        <p class="text-stone-600 mt-2">Could not fetch all required database files. Please ensure all .json files are available.</p>
+                        <p class="text-[var(--text-muted)] mt-2">Could not fetch all required database files. Please ensure all .json files are available.</p>
                         <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
                     </div>`;
                     this.showPage();
@@ -1432,20 +1432,20 @@
                         }
                         if (!card.classList.contains('hidden')) {
                             const { albumTitle, artist } = card.dataset;
-                            const albumIndexInVisible = this.state.visibleAlbums.findIndex(a => a.albumTitle === albumTitle && a.artist === artist);
+                            const album = this.state.albums.find(a => a.albumTitle === albumTitle && a.artist === artist);
                             
-                            if (isMobile) {
-                                if (this.state.mobileCardSelectedForModal === card) {
-                                    if (albumIndexInVisible !== -1) {
-                                        this.methods.openAlbumModal(this.state.visibleAlbums[albumIndexInVisible], albumIndexInVisible);
+                            if (album) {
+                                if (isMobile) {
+                                    if (this.state.mobileCardSelectedForModal === card) {
+                                        this.methods.openAlbumModal(album);
+                                        this.state.mobileCardSelectedForModal = null;
+                                    } else {
+                                        this.methods.applyHighlights(card);
+                                        this.state.mobileCardSelectedForModal = card;
                                     }
-                                    this.state.mobileCardSelectedForModal = null;
                                 } else {
-                                    this.methods.applyHighlights(card);
-                                    this.state.mobileCardSelectedForModal = card;
+                                    this.methods.openAlbumModal(album);
                                 }
-                            } else {
-                                if (albumIndexInVisible !== -1) this.methods.openAlbumModal(this.state.visibleAlbums[albumIndexInVisible], albumIndexInVisible);
                             }
                         }
                     });
@@ -1515,15 +1515,15 @@
                         }
                     });
                     document.getElementById('prev-album-btn').addEventListener('click', () => {
-                        if (this.state.currentVisibleAlbumIndex > 0) {
-                            const newIndex = this.state.currentVisibleAlbumIndex - 1;
-                            this.methods.openAlbumModal(this.state.visibleAlbums[newIndex], newIndex);
+                        if (this.state.currentAlbumIndex > 0) {
+                            const newIndex = this.state.currentAlbumIndex - 1;
+                            this.methods.openAlbumModal(this.state.albums[newIndex]);
                         }
                     });
                     document.getElementById('next-album-btn').addEventListener('click', () => {
-                        if (this.state.currentVisibleAlbumIndex < this.state.visibleAlbums.length - 1) {
-                            const newIndex = this.state.currentVisibleAlbumIndex + 1;
-                            this.methods.openAlbumModal(this.state.visibleAlbums[newIndex], newIndex);
+                        if (this.state.currentAlbumIndex >= 0 && this.state.currentAlbumIndex < this.state.albums.length - 1) {
+                            const newIndex = this.state.currentAlbumIndex + 1;
+                            this.methods.openAlbumModal(this.state.albums[newIndex]);
                         }
                     });
 
@@ -1552,10 +1552,9 @@
                     artistModal.addEventListener('click', (e) => {
                         if (e.target.matches('.clickable-link[data-album-title]')) {
                             const { albumTitle, artist } = e.target.dataset;
-                            const visibleAlbum = this.state.visibleAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
-                            if (visibleAlbum) {
-                                const indexInVisible = this.state.visibleAlbums.indexOf(visibleAlbum);
-                                this.methods.closeArtistModal(() => this.methods.openAlbumModal(visibleAlbum, indexInVisible));
+                            const album = this.state.albums.find(a => a.albumTitle === albumTitle && a.artist === artist);
+                            if (album) {
+                                this.methods.closeArtistModal(() => this.methods.openAlbumModal(album));
                             }
                         }
                     });
@@ -1580,10 +1579,9 @@
                             }
                         } else if (target.dataset.albumTitle) {
                             const { albumTitle, artist } = target.dataset;
-                            const visibleAlbum = this.state.visibleAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
-                             if (visibleAlbum) {
-                                const indexInVisible = this.state.visibleAlbums.indexOf(visibleAlbum);
-                                this.methods.closeGenreModal(() => this.methods.openAlbumModal(visibleAlbum, indexInVisible));
+                            const album = this.state.albums.find(a => a.albumTitle === albumTitle && a.artist === artist);
+                             if (album) {
+                                this.methods.closeGenreModal(() => this.methods.openAlbumModal(album));
                             }
                         }
                     });
@@ -1820,6 +1818,7 @@
                         eraSection.style.display = visibleYears.length > 0 ? 'flex' : 'none';
                     });
                     
+                    // FIX: Delay layout-dependent calculations to prevent race conditions
                     setTimeout(() => {
                         this.methods.resizeCanvas();
                         this.methods.renderScrollbarMarkers();
@@ -1848,8 +1847,12 @@
                     });
                 },
                 
-                openAlbumModal(album, indexInVisibleList) {
-                    this.state.currentVisibleAlbumIndex = indexInVisibleList;
+                openAlbumModal(album) { // FIX: Simplified signature
+                    if (!album) return;
+                    
+                    const albumIndex = this.state.albums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
+                    this.state.currentAlbumIndex = albumIndex;
+
                     const { albumModal } = this.elements;
                     
                     this.methods.applyHighlights(null);
@@ -1857,6 +1860,7 @@
 
                     const previouslyClicked = document.querySelector('.timeline-album-card.clicked');
                     if (previouslyClicked) previouslyClicked.classList.remove('clicked');
+                    
                     const safeAlbumTitle = album.albumTitle.replace(/"/g, '\\"');
                     const safeArtist = album.artist.replace(/"/g, '\\"');
                     const cardToHighlight = document.querySelector(`.timeline-album-card[data-album-title="${safeAlbumTitle}"][data-artist="${safeArtist}"]`);
@@ -1937,9 +1941,8 @@
                         }
                     });
 
-
-                    document.getElementById('prev-album-btn').disabled = indexInVisibleList <= 0;
-                    document.getElementById('next-album-btn').disabled = indexInVisibleList < 0 || indexInVisibleList >= this.state.visibleAlbums.length - 1;
+                    document.getElementById('prev-album-btn').disabled = albumIndex <= 0;
+                    document.getElementById('next-album-btn').disabled = albumIndex < 0 || albumIndex >= this.state.albums.length - 1;
 
                     albumModal.classList.remove('opacity-0', 'pointer-events-none');
                     albumModal.querySelector('.modal-content').classList.remove('scale-95');
@@ -2344,15 +2347,7 @@
                             </div>
                         `;
                         onThisDayContainer.addEventListener('click', () => {
-                            const albumIndex = this.state.visibleAlbums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
-                            if (albumIndex !== -1) {
-                                this.methods.openAlbumModal(this.state.visibleAlbums[albumIndex], albumIndex);
-                            } else {
-                                const mainIndex = this.state.albums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
-                                if (mainIndex !== -1) {
-                                     this.methods.openAlbumModal(this.state.albums[mainIndex], -1);
-                                }
-                            }
+                            this.methods.openAlbumModal(album); // FIX: Simplified call
                         });
                     } else {
                         onThisDayContainer.innerHTML = `
