@@ -861,7 +861,7 @@
                     { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: 'var(--era-roots-light)' },
                     { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: 'var(--era-fusion-light)' }
                 ],
-                currentAlbumIndex: -1, // Changed from currentVisibleAlbumIndex
+                currentAlbumIndex: -1, 
                 currentArtistPage: 0,
                 totalArtistPages: 0,
                 lastKnownYear: '',
@@ -1818,12 +1818,11 @@
                         eraSection.style.display = visibleYears.length > 0 ? 'flex' : 'none';
                     });
                     
-                    // FIX: Delay layout-dependent calculations to prevent race conditions
                     setTimeout(() => {
                         this.methods.resizeCanvas();
                         this.methods.renderScrollbarMarkers();
                         this.methods.updateCustomScrollbar();
-                    }, 0);
+                    }, 50); // A small delay to ensure DOM updates are painted
                 },
 
                 applyHighlights(selectedCard) {
@@ -1847,7 +1846,7 @@
                     });
                 },
                 
-                openAlbumModal(album) { // FIX: Simplified signature
+                openAlbumModal(album) { 
                     if (!album) return;
                     
                     const albumIndex = this.state.albums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
@@ -2347,7 +2346,7 @@
                             </div>
                         `;
                         onThisDayContainer.addEventListener('click', () => {
-                            this.methods.openAlbumModal(album); // FIX: Simplified call
+                            this.methods.openAlbumModal(album); 
                         });
                     } else {
                         onThisDayContainer.innerHTML = `
