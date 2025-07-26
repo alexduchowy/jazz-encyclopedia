@@ -20,7 +20,7 @@
             --bg-header: rgba(255,255,255,0.8);
             --text-main: #1c1917;
             --text-muted: #44403c;
-            --border-color: #e7e5e4;
+            --border-color: #1c1917;
             --accent: #f97316;
         }
 
@@ -39,7 +39,35 @@
             background-color: var(--bg-main);
             color: var(--text-main);
             overflow-x: hidden;
+            position: relative;
         }
+        
+        /* NEW: Static background effect for a broadcast feel */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXVvoJGasKTRtrnBxsjN0NLGysy8u73X29/j5+vGys2Cg4F/f39dbXN8fX1dfX3DxsjT1dTra2t7enpdZWp/f39ubW10dHTFxsfIZ3A3AAAAQUlEQVR42uzBSAJAQAADsV3V3f4bOghFQvE8UvI8Qf4un+Nh/AUIEAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQICKTR3QIBj3fUAAAAAElFTkSuQmCC');
+            opacity: 0.03;
+            z-index: -1;
+            animation: noise 0.2s infinite;
+        }
+        @keyframes noise {
+            0%, 100% { background-position: 0 0; }
+            10% { background-position: -5% -10%; }
+            20% { background-position: -15% 5%; }
+            30% { background-position: 7% -25%; }
+            40% { background-position: 20% 25%; }
+            50% { background-position: -25% 10%; }
+            60% { background-position: 15% 5%; }
+            70% { background-position: 0% 15%; }
+            80% { background-position: 25% 35%; }
+            90% { background-position: -10% 10%; }
+        }
+
         h1, h2, h3, h4, h5 {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
@@ -61,14 +89,17 @@
 
         .video-container {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            padding-bottom: 56.25%; /* 16:9 */
             height: 0;
             overflow: hidden;
             max-width: 100%;
             background: #000;
-            border: 2px solid var(--accent);
-            border-radius: 0.5rem;
-            box-shadow: 0 0 20px var(--accent);
+            border: 4px solid var(--border-color); /* Thicker border */
+            border-radius: 0.25rem;
+            box-shadow: 8px 8px 0px var(--border-color); /* Consistent shadow */
+        }
+        .dark .video-container {
+            box-shadow: none;
         }
         .video-container #player {
             position: absolute;
@@ -78,28 +109,21 @@
             height: 100%;
         }
         .info-card {
-            background-color: var(--bg-secondary);
-            border: 2px solid var(--text-main);
-            border-radius: 0.5rem;
+            background-color: var(--bg-main);
+            border: 2px solid var(--border-color);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--border-color);
         }
         .dark .info-card {
-            border-color: var(--border-color);
+            box-shadow: none;
         }
 
         .info-card-header {
             font-family: 'Bebas Neue', sans-serif;
             padding: 0.75rem 1.25rem;
-            border-bottom: 2px solid var(--text-main);
-            background-color: var(--text-main);
-            color: var(--bg-main);
-        }
-        .dark .info-card-header {
-             background-color: #1a1a1a;
-             color: var(--text-main); /* CHANGED: Title is now white in dark mode */
-             border-bottom-color: var(--border-color);
+            border-bottom: 2px solid var(--border-color);
         }
         
-        /* --- NEW STYLES for Streaming Feel --- */
         .live-indicator {
             display: flex;
             align-items: center;
@@ -117,7 +141,7 @@
             content: '';
             width: 8px;
             height: 8px;
-            background-color: #ef4444; /* red-500 */
+            background-color: #ef4444;
             border-radius: 50%;
             animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
         }
@@ -127,28 +151,17 @@
         }
         
         #video-main-title {
-            /* NEW: Responsive font size */
             font-size: clamp(1.25rem, 4vw, 1.875rem);
             line-height: 1.2;
             word-break: break-word;
+            color: var(--text-main);
         }
         
-        .up-next-header {
-            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent) 50%, var(--text-main) 100%);
-            background-size: 200% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 5s infinite linear;
+        .playlist-item:hover {
+            background-color: var(--bg-secondary);
         }
-        .dark .up-next-header {
-             background: linear-gradient(90deg, var(--text-main) 0%, var(--accent) 50%, var(--text-main) 100%);
-             background-size: 200% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 5s infinite linear;
-        }
-        @keyframes shimmer {
-            to { background-position: -200% 0; }
+        .dark .playlist-item:hover {
+            background-color: rgba(255,255,255,0.05);
         }
 
     </style>
@@ -207,7 +220,6 @@
                 <!-- Right Column: Info -->
                 <div class="lg:col-span-4">
                     <div id="info-wrapper" class="info-card flex flex-col">
-                        <!-- UPDATED: Header with "Now Playing" indicator -->
                         <div class="info-card-header flex-shrink-0">
                             <div class="live-indicator">
                                 <span>NOW PLAYING</span>
@@ -223,9 +235,8 @@
                 <!-- Up Next Playlist -->
                 <div class="lg:col-span-8">
                     <div class="info-card">
-                         <!-- UPDATED: Added class for animation -->
-                        <h2 class="info-card-header text-xl lg:text-2xl font-bold up-next-header">Up Next</h2>
-                        <div id="playlist-container" class="p-4 space-y-3 overflow-y-auto" style="max-height: 240px;">
+                        <h2 class="info-card-header text-xl lg:text-2xl font-bold">Up Next</h2>
+                        <div id="playlist-container" class="p-2 space-y-1 overflow-y-auto" style="max-height: 240px;">
                             <!-- Playlist items will be generated here -->
                         </div>
                     </div>
@@ -373,7 +384,7 @@
             } else {
                  elements.videoMainTitle.textContent = "Playlist is Empty";
                  elements.videoDescription.textContent = "Add a video to the playlist to start the broadcast.";
-                 elements.playlistContainer.innerHTML = '<p class="text-[var(--text-muted)]">No videos in queue.</p>';
+                 elements.playlistContainer.innerHTML = '<p class="text-[var(--text-muted)] p-4">No videos in queue.</p>';
             }
         }
 
@@ -392,13 +403,21 @@
             elements.videoMainTitle.textContent = currentVideo.title;
             elements.videoDescription.textContent = currentVideo.description;
             elements.playlistContainer.innerHTML = '';
-            playlist.forEach((videoItem, i) => {
-                if (i === playingIndex) return;
+            
+            const upcomingVideos = playlist.slice(playingIndex + 1).concat(playlist.slice(0, playingIndex));
+
+            if (upcomingVideos.length === 0) {
+                 elements.playlistContainer.innerHTML = '<p class="text-[var(--text-muted)] p-4">End of broadcast.</p>';
+                 return;
+            }
+
+            upcomingVideos.forEach((videoItem, i) => {
+                const originalIndex = playlist.findIndex(p => p.id === videoItem.id);
                 const playlistItem = document.createElement('div');
-                playlistItem.className = 'playlist-item flex items-center gap-3 p-2 rounded-md transition-colors hover:bg-stone-700/50 cursor-pointer';
-                playlistItem.dataset.index = i;
+                playlistItem.className = 'playlist-item flex items-center gap-3 p-2 rounded-md transition-colors cursor-pointer';
+                playlistItem.dataset.index = originalIndex;
                 playlistItem.innerHTML = `
-                    <img src="https://i.ytimg.com/vi/${videoItem.videoId}/default.jpg" alt="${videoItem.title}" class="w-16 h-12 object-cover rounded-md border border-stone-600">
+                    <img src="https://i.ytimg.com/vi/${videoItem.videoId}/default.jpg" alt="${videoItem.title}" class="w-16 h-12 object-cover rounded-sm border-2 border-[var(--border-color)] flex-shrink-0">
                     <div>
                         <h4 class="font-bold text-[var(--text-main)] text-sm leading-tight">${videoItem.title}</h4>
                         <p class="text-xs text-[var(--text-muted)]">Up Next</p>
@@ -413,7 +432,7 @@
         
         // --- Firebase & Playlist Logic ---
         function setupFirestoreListener() {
-            const q = query(collection(db, 'tv_playlist'), orderBy('createdAt'));
+            const q = query(collection(db, 'tv_playlist')); // **FIX**: Removed orderBy
             onSnapshot(q, (snapshot) => {
                 const wasEmpty = playlist.length === 0;
                 playlist = snapshot.docs.map((doc, i) => ({
@@ -422,6 +441,8 @@
                     title: doc.data().title || `Jazz Performance ${i + 1}`,
                     description: doc.data().description || 'No description provided.',
                 }));
+                playlist.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity));
+
                 if (wasEmpty && playlist.length > 0 && player && typeof player.loadVideoById === 'function') {
                     playVideo(currentVideoIndex);
                 } else {
