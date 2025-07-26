@@ -201,6 +201,27 @@
             padding-top: 5rem;
             z-index: 2;
         }
+        
+        /* FIX: Added missing Era styles for horizontal layout */
+        .era-section {
+            padding-top: 1.5rem;
+            padding-bottom: 2rem;
+            border-left: 4px solid var(--text-main);
+            display: flex;
+            flex-direction: row;
+        }
+        .dark .era-section {
+            border-left-color: var(--border-color);
+        }
+        .era-title {
+            display: none; /* Hides the vertical era titles, as they are now in the sticky header */
+        }
+        .era-content {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+        }
+        
         .timeline-year-section {
             display: flex;
             flex-shrink: 0;
