@@ -109,6 +109,9 @@
             vertical-align: top;
             transition: background-color: 0.1s ease-in-out;
         }
+        .dark .matrix-table td {
+    color: var(--text-main);
+}
         .matrix-table thead th {
             background-color: var(--text-main);
             color: var(--bg-main);
@@ -131,9 +134,10 @@
             border-right: 2px solid var(--bg-secondary);
             background-color: var(--bg-main); /* Ensure sticky header has background */
         }
-        .dark .matrix-table tbody th {
-             border-right-color: var(--border-color);
-        }
+    .dark .matrix-table tbody th {
+     border-right-color: var(--border-color);
+     color: var(--text-main);
+}
         .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td {
             border-bottom: none;
         }
@@ -407,6 +411,9 @@
             background-color: var(--genre-color, var(--accent));
             color: var(--text-main);
         }
+        .dark .genre-checkbox-label:has(input:checked) {
+    color: var(--bg-main);
+}
         .genre-checkbox-label:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -544,7 +551,7 @@
             width: 180px; height: 50px;
             display: flex; align-items: center; justify-content: center; text-align: center;
         }
-        .dark .era-button { border-color: var(--border-color); }
+      .dark .era-button { border-color: var(--border-color); color: var(--bg-main); }
         .era-button:hover { filter: brightness(95%); transform: translateY(-2px); }
         .dark .era-button:hover { filter: brightness(120%); }
 
