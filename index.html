@@ -735,7 +735,12 @@
                         slide.className = `slide ${index === 0 ? 'active' : ''}`;
                         slide.style.backgroundImage = `url(${slideData.imageUrl || 'https://placehold.co/1200x600/1c1917/f5f5f4?text=Controlled+Freedom'})`;
 
-                        const link = slideData.isWelcome ? '/' : `/${slideData.type.toLowerCase()}/${slideData.slug}`;
+                        let pathSegment = slideData.type.toLowerCase();
+                        if (pathSegment === 'review') {
+                            pathSegment = 'reviews';
+                        }
+                        const link = slideData.isWelcome ? '/' : `/${pathSegment}/${slideData.slug}`;
+                        
                         const linkText = slideData.isWelcome ? 'Explore The Site &rarr;' : 'Read More &rarr;';
                         const titleHtml = slideData.isWelcome 
                             ? `<div class="typewriter"><h2>${slideData.title}</h2></div>`
