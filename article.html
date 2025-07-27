@@ -194,6 +194,26 @@
             font-size: 1.1rem;
             letter-spacing: 0.05em;
         }
+
+        /* NEW: Styles for responsive video embeds */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000;
+            margin: 2.5rem auto;
+            border-radius: 0.5rem;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
     </style>
 </head>
 <body class="bg-[var(--bg-main)] text-[var(--text-main)]">
@@ -328,7 +348,6 @@
                     });
                 }
             },
-            // NEW: Function to update meta tags
             updateMetaTags(article) {
                 const pageUrl = window.location.href;
                 let imageUrl = article.imageUrl || 'https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/cf-social-card-default.png';
@@ -357,7 +376,6 @@
                 this.setMeta('twitter:image', imageUrl);
             },
             
-            // NEW: Helper to set meta tags
             setMeta(metaNameOrProperty, content) {
                 let element = document.querySelector(`meta[name='${metaNameOrProperty}']`) || document.querySelector(`meta[property='${metaNameOrProperty}']`);
                 if (element) {
@@ -367,7 +385,7 @@
             async init() {
                 this.cacheDOMElements();
                 this.methods.setupTheme();
-                await this.fetchArticle(); // Await fetch to ensure meta tags are set
+                await this.fetchArticle();
                 this.methods.setupMobileMenu();
                 this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
@@ -432,7 +450,7 @@
                         const articleDoc = querySnapshot.docs[0];
                         const article = articleDoc.data();
                         
-                        this.updateMetaTags(article); // Set meta tags
+                        this.updateMetaTags(article);
                         
                         let albumData = null;
                         if (article.type === 'review') {
@@ -461,9 +479,14 @@
                 }
             },
             renderArticle(article, albumData) {
-                // document.title is now set in updateMetaTags
                 let contentHtml = '';
                 const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
+
+                // NEW: Automatically wrap iframes for responsive display
+                let bodyContent = article.body.replace(
+                    /<iframe(.+?)><\/iframe>/g, 
+                    '<div class="video-container"><iframe$1></iframe></div>'
+                );
 
                 if (article.type === 'review') {
                     let coverImage = albumData?.cover || article.imageUrl || 'https://placehold.co/600x600/e7e5e4/1c1917?text=No+Image';
@@ -476,7 +499,6 @@
                         starsHtml += `<svg class="w-5 h-5 ${i <= article.rating ? 'star-filled' : 'text-stone-400 dark:text-stone-600'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
                     }
 
-                    let bodyContent = article.body;
                     let highlightedParagraph = '';
 
                     if (bodyContent.includes('<highlight>')) {
@@ -541,7 +563,7 @@
                                 </div>
                             </header>
                             <article class="article-body mx-auto max-w-3xl mt-8">
-                                ${article.body}
+                                ${bodyContent}
                             </article>
                         </div>
                     `;
