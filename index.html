@@ -215,9 +215,14 @@
         #frontpage-slider {
             position: relative;
             width: 100%;
-            height: 60vh;
-            max-height: 500px;
+            height: 50vh;
+            max-height: 450px;
             overflow: hidden;
+            border-radius: 0.5rem;
+            border: 2px solid var(--text-main);
+        }
+        .dark #frontpage-slider {
+            border-color: var(--border-color);
         }
         .slide {
             position: absolute;
@@ -509,12 +514,17 @@
 
         <main>
             <!-- NEW FRONTPAGE SLIDER SECTION -->
-            <section id="frontpage-section" class="bg-black">
-                <div id="frontpage-slider">
-                    <!-- Slides will be injected here -->
-                </div>
-                <div id="frontpage-dots" class="slide-dots">
-                    <!-- Dots will be injected here -->
+            <section id="frontpage-section" class="py-12 bg-[var(--bg-secondary)]">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-4xl font-bold text-center mb-8">Frontpage</h2>
+                    <div class="relative">
+                        <div id="frontpage-slider">
+                            <!-- Slides will be injected here -->
+                        </div>
+                        <div id="frontpage-dots" class="slide-dots">
+                            <!-- Dots will be injected here -->
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -733,7 +743,7 @@
                     this.methods.renderRecommendation();
                     this.methods.setupOnThisDayFeature();
                     this.methods.fetchNewsAndReview();
-                    this.methods.fetchFrontpageArticles(); // Error was here
+                    this.methods.fetchFrontpageArticles();
 
                     this.showPage();
                 } catch (error) {
@@ -747,7 +757,6 @@
                 this.elements.pageContent.classList.remove('content-hidden');
             },
             methods: {
-                // ADDING THE MISSING SLIDER FUNCTIONS BACK
                 async fetchFrontpageArticles() {
                     const firebaseConfig = {
                         apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
@@ -839,8 +848,6 @@
                         this.methods.startSlider(); // Reset interval on manual navigation
                     }
                 },
-                // END OF ADDED SLIDER FUNCTIONS
-
                 setupTheme() {
                     const themeToggle = this.elements.themeToggle;
                     const lightIcon = this.elements.themeIconLight;
