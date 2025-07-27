@@ -185,7 +185,7 @@
                                         <input type="text" id="review-album" class="form-input mt-1 block w-full rounded-md shadow-sm">
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     <div>
                                         <label for="review-rating" class="block text-sm font-medium text-stone-300">Rating (1-5)</label>
                                         <input type="number" id="review-rating" min="1" max="5" step="0.5" class="form-input mt-1 block w-full rounded-md shadow-sm">
@@ -198,24 +198,28 @@
                                         <label for="review-label" class="block text-sm font-medium text-stone-300">Label</label>
                                         <input type="text" id="review-label" class="form-input mt-1 block w-full rounded-md shadow-sm">
                                     </div>
-                                    <div>
-                                        <label for="review-author" class="block text-sm font-medium text-stone-300">Author</label>
-                                        <input type="text" id="review-author" class="form-input mt-1 block w-full rounded-md shadow-sm" value="Staff">
-                                    </div>
                                 </div>
                                 <div>
                                     <label for="review-genres" class="block text-sm font-medium text-stone-300">Genres (comma-separated)</label>
                                     <input type="text" id="review-genres" class="form-input mt-1 block w-full rounded-md shadow-sm">
                                 </div>
+                            </div>
+
+                             <!-- Common Article Fields -->
+                            <div class="space-y-6 pt-6 border-t border-stone-700">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label for="review-publish-date" class="block text-sm font-medium text-stone-300">Publish Date</label>
-                                        <input type="date" id="review-publish-date" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                        <label for="article-author" class="block text-sm font-medium text-stone-300">Author</label>
+                                        <input type="text" id="article-author" class="form-input mt-1 block w-full rounded-md shadow-sm" value="Staff">
                                     </div>
-                                     <div>
-                                        <label for="review-slug" class="block text-sm font-medium text-stone-300">URL Slug</label>
-                                        <input type="text" id="review-slug" class="form-input mt-1 block w-full rounded-md shadow-sm bg-stone-700" readonly>
+                                    <div>
+                                        <label for="article-publish-date" class="block text-sm font-medium text-stone-300">Publish Date</label>
+                                        <input type="date" id="article-publish-date" class="form-input mt-1 block w-full rounded-md shadow-sm">
                                     </div>
+                                </div>
+                                <div>
+                                    <label for="article-slug" class="block text-sm font-medium text-stone-300">URL Slug (auto-generated)</label>
+                                    <input type="text" id="article-slug" class="form-input mt-1 block w-full rounded-md shadow-sm bg-stone-700" readonly>
                                 </div>
                             </div>
                             
@@ -322,6 +326,9 @@
             titleArticleInput: document.getElementById('title'),
             bodyArticleInput: document.getElementById('body'),
             saveArticleBtn: document.getElementById('save-article-btn'),
+            articleAuthorInput: document.getElementById('article-author'),
+            articlePublishDateInput: document.getElementById('article-publish-date'),
+            articleSlugInput: document.getElementById('article-slug'),
             // Review Fields
             reviewFieldsContainer: document.getElementById('review-fields-container'),
             reviewArtistInput: document.getElementById('review-artist'),
@@ -329,10 +336,7 @@
             reviewRatingInput: document.getElementById('review-rating'),
             reviewYearInput: document.getElementById('review-year'),
             reviewLabelInput: document.getElementById('review-label'),
-            reviewAuthorInput: document.getElementById('review-author'),
             reviewGenresInput: document.getElementById('review-genres'),
-            reviewPublishDateInput: document.getElementById('review-publish-date'),
-            reviewSlugInput: document.getElementById('review-slug'),
             // Image URL
             imageUrlInput: document.getElementById('article-image-url'),
             imagePreview: document.getElementById('image-preview'),
@@ -495,7 +499,7 @@
         elements.tvFormCancelBtn.addEventListener('click', resetTvForm);
 
 
-        // --- ARTICLE MANAGEMENT LOGIC (UPDATED) ---
+        // --- ARTICLE MANAGEMENT LOGIC ---
         const generateSlug = (title) => {
             if (!title) return '';
             return title.toLowerCase()
@@ -523,8 +527,8 @@
             elements.imagePreview.classList.add('hidden');
             elements.imagePreview.src = '';
             elements.formError.textContent = '';
-            elements.reviewAuthorInput.value = 'Staff';
-            elements.reviewPublishDateInput.value = new Date().toISOString().slice(0, 10);
+            elements.articleAuthorInput.value = 'Staff';
+            elements.articlePublishDateInput.value = new Date().toISOString().slice(0, 10);
             toggleReviewFields();
         };
 
@@ -573,6 +577,9 @@
                     title: elements.titleArticleInput.value.trim(),
                     body: elements.bodyArticleInput.value.trim(),
                     imageUrl: imageUrl || '',
+                    slug: elements.articleSlugInput.value.trim(),
+                    author: elements.articleAuthorInput.value.trim(),
+                    publishDate: elements.articlePublishDateInput.value,
                     updatedAt: serverTimestamp(),
                 };
 
@@ -583,17 +590,7 @@
                         rating: parseFloat(elements.reviewRatingInput.value) || 0,
                         year: parseInt(elements.reviewYearInput.value) || null,
                         label: elements.reviewLabelInput.value.trim(),
-                        author: elements.reviewAuthorInput.value.trim(),
                         genres: elements.reviewGenresInput.value.split(',').map(g => g.trim()).filter(g => g),
-                        publishDate: elements.reviewPublishDateInput.value,
-                        slug: elements.reviewSlugInput.value.trim()
-                    });
-                } else {
-                     // For news and column, we can also set author and publish date
-                    Object.assign(articleData, {
-                        author: elements.reviewAuthorInput.value.trim(),
-                        publishDate: elements.reviewPublishDateInput.value,
-                        slug: generateSlug(articleData.title) // Auto-generate slug for non-reviews too
                     });
                 }
 
@@ -633,21 +630,17 @@
                     
                     toggleReviewFields();
 
+                    elements.articleAuthorInput.value = article.author || 'Staff';
+                    elements.articlePublishDateInput.value = article.publishDate || new Date().toISOString().slice(0, 10);
+                    elements.articleSlugInput.value = article.slug || '';
+
                     if (article.type === 'review') {
                         elements.reviewArtistInput.value = article.artist || '';
                         elements.reviewAlbumInput.value = article.albumTitle || '';
                         elements.reviewRatingInput.value = article.rating || '';
                         elements.reviewYearInput.value = article.year || '';
                         elements.reviewLabelInput.value = article.label || '';
-                        elements.reviewAuthorInput.value = article.author || 'Staff';
                         elements.reviewGenresInput.value = (article.genres || []).join(', ');
-                        elements.reviewPublishDateInput.value = article.publishDate || new Date().toISOString().slice(0, 10);
-                        elements.reviewSlugInput.value = article.slug || '';
-                    } else {
-                        // Populate common fields for news/column
-                        elements.reviewAuthorInput.value = article.author || 'Staff';
-                        elements.reviewPublishDateInput.value = article.publishDate || new Date().toISOString().slice(0, 10);
-                        elements.reviewSlugInput.value = article.slug || generateSlug(article.title);
                     }
 
                     if (article.imageUrl) {
@@ -732,9 +725,7 @@
         });
         elements.articleTypeInput.addEventListener('change', toggleReviewFields);
         elements.titleArticleInput.addEventListener('keyup', (e) => {
-            if (elements.articleTypeInput.value !== 'review') {
-                elements.reviewSlugInput.value = generateSlug(e.target.value);
-            }
+            elements.articleSlugInput.value = generateSlug(e.target.value);
         });
         
         // --- INITIAL SETUP ---
