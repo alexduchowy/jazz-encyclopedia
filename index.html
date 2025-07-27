@@ -739,10 +739,24 @@
                         if (!slideData.isWelcome) {
                             const type = (slideData.type || '').toLowerCase();
                             const slug = slideData.slug || '';
-                            let pathSegment = type;
-
-                            if (type === 'review') {
-                                pathSegment = 'reviews';
+                            
+                            // BUG FIX: Use a clear switch statement to map article type to the correct URL path segment.
+                            // This is more explicit and prevents incorrect paths.
+                            let pathSegment;
+                            switch (type) {
+                                case 'review':
+                                    pathSegment = 'reviews';
+                                    break;
+                                case 'news':
+                                    pathSegment = 'news';
+                                    break;
+                                case 'column':
+                                    pathSegment = 'column';
+                                    break;
+                                default:
+                                    // Fallback for any other types that might be added in the future.
+                                    pathSegment = type;
+                                    break;
                             }
                             
                             if (pathSegment && slug) {
