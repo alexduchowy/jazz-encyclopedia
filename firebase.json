@@ -20,6 +20,10 @@
       {
         "source": "/reviews/**",
         "destination": "/article.html"
+      },
+      {
+        "source": "/column/**",
+        "destination": "/article.html"
       }
     ]
   }
