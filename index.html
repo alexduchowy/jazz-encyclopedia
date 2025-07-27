@@ -227,7 +227,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('images/cfminilogo.png');
+            background-image: url('/images/cfminilogo.png'); /* FIX: Using absolute path */
             background-size: 75px 75px;
             background-repeat: repeat;
             opacity: 0.03;
@@ -683,7 +683,6 @@
             },
             methods: {
                 async fetchFrontpageArticles() {
-                    console.log("DEBUG: Starting fetchFrontpageArticles...");
                     const firebaseConfig = {
                         apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                         authDomain: "controlled-freedom.firebaseapp.com",
@@ -702,16 +701,12 @@
                         
                         const articlesRef = collection(db, "articles");
                         const getLatest = async (type) => {
-                            console.log(`DEBUG: Fetching latest article for type: '${type}'`);
                             const q = query(articlesRef, where("type", "==", type), orderBy("publishDate", "desc"), limit(1));
                             const snapshot = await getDocs(q);
                             if (snapshot.empty) {
-                                console.log(`DEBUG: No article found for type: '${type}'`);
                                 return null;
                             }
-                            const articleData = snapshot.docs[0].data();
-                            console.log(`DEBUG: Found article for type '${type}':`, articleData);
-                            return articleData;
+                            return snapshot.docs[0].data();
                         };
 
                         const welcomeSlide = {
@@ -732,17 +727,14 @@
                                 const pathSegment = pathMap[type] || type;
                                 if (article.slug) {
                                     article.link = `/${pathSegment}/${article.slug}`;
-                                    console.log(`DEBUG: Generated link for type '${type}': ${article.link}`);
                                 } else {
                                     article.link = '#';
-                                    console.warn(`DEBUG: Article of type '${type}' is missing a slug.`, article);
                                 }
                                 fetchedArticles.push(article);
                             }
                         }
                         
                         this.state.frontpageSlides = [welcomeSlide, ...fetchedArticles];
-                        console.log("DEBUG: Final frontpageSlides array to be rendered:", JSON.parse(JSON.stringify(this.state.frontpageSlides)));
                         this.methods.renderFrontpageSlider();
 
                     } catch (error) {
@@ -750,20 +742,16 @@
                     }
                 },
                 renderFrontpageSlider() {
-                    console.log("DEBUG: Starting renderFrontpageSlider...");
                     const { frontpageSlider, frontpageDots } = this.elements;
                     frontpageSlider.innerHTML = '';
                     frontpageDots.innerHTML = '';
 
                     this.state.frontpageSlides.forEach((slideData, index) => {
-                        console.log(`DEBUG: Rendering slide at index ${index}:`, JSON.parse(JSON.stringify(slideData)));
-                        
                         const slide = document.createElement('div');
                         slide.className = `slide ${index === 0 ? 'active' : ''}`;
                         slide.style.backgroundImage = `url(${slideData.imageUrl || 'https://placehold.co/1200x600/1c1917/f5f5f4?text=Controlled+Freedom'})`;
 
                         const link = slideData.link || '#';
-                        console.log(`DEBUG:   -> Using final link for href: ${link}`);
                         
                         const linkText = slideData.isWelcome ? 'Explore The Site &rarr;' : 'Read More &rarr;';
                         const titleHtml = slideData.isWelcome 
