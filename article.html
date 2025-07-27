@@ -336,7 +336,6 @@
                 const pathParts = path.split('/').filter(part => part.length > 0);
                 const slug = pathParts.pop();
 
-
                 if (!slug) {
                     this.renderError("No article specified in the URL.");
                     this.showPage();
@@ -405,7 +404,6 @@
                 }
             },
             renderArticle(article, albumData) {
-                // This line dynamically sets the browser tab's title
                 document.title = `${article.title} - Controlled Freedom`;
                 let contentHtml = '';
                 const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
@@ -475,16 +473,17 @@
                             </div>
                         </div>
                     `;
-                } else {
+                } else { // Handles 'news' and 'column'
                     contentHtml = `
                         <div class="max-w-4xl mx-auto">
-                            <header class="text-center mb-12">
-                                <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)]">${article.title}</h1>
+                             <header class="mb-12">
+                                <img src="${article.imageUrl || 'https://placehold.co/1200x600/e7e5e4/1c1917?text=Controlled+Freedom'}" alt="Header image for ${article.title}" class="w-full h-auto max-h-[50vh] object-cover rounded-lg mb-8" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/e7e5e4/1c1917?text=Controlled+Freedom';">
+                                <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] text-center">${article.title}</h1>
                                 <div class="text-center mt-6 text-sm text-[var(--text-muted)]">
                                     <span>By ${article.author || 'Staff'}</span> | <span>Published on ${publishDate}</span>
                                 </div>
                             </header>
-                            <article class="article-body mx-auto max-w-2xl mt-8">
+                            <article class="article-body mx-auto max-w-3xl mt-8">
                                 ${article.body}
                             </article>
                         </div>
