@@ -1,582 +1,736 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Meta Tags for Social Media (will be dynamically updated) -->
-    <title>Article - Controlled Freedom</title>
-    <meta name="description" content="An interactive exploration of jazz history and reviews.">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://controlled-freedom.web.app/">
-    <meta property="og:title" content="Controlled Freedom">
-    <meta property="og:description" content="An interactive exploration of jazz history and reviews.">
-    <meta property="og:image" content="https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/cf-social-card-default.png">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://controlled-freedom.web.app/">
-    <meta property="twitter:title" content="Controlled Freedom">
-    <meta property="twitter:description" content="An interactive exploration of jazz history and reviews.">
-    <meta property="twitter:image" content="https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/cf-social-card-default.png">
-    <meta name="twitter:site" content="@controlledjazz">
-
-    <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
-    
-    <!-- External Libraries & Fonts -->
+    <title>Admin Panel - Controlled Freedom</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
-    
+    <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
     <style>
-        /* Light Theme (Default) */
         :root {
-            --bg-main: #f5f5f4;
-            --bg-secondary: #e7e5e4;
-            --bg-header: rgba(245, 245, 244, 0.8);
-            --text-main: #1c1917;
-            --text-muted: #44403c;
-            --border-color: #1c1917;
             --accent: #f97316;
-            --yellow-accent: #facc15;
+            --bg-dark: #1c1917; /* stone-900 */
+            --bg-medium: #292524; /* stone-800 */
+            --bg-light: #44403c; /* stone-700 */
+            --text-light: #e7e5e4; /* stone-200 */
+            --text-muted: #a8a29e; /* stone-400 */
         }
-
-        /* Dark Theme Overrides */
-        .dark {
-            --bg-main: #1c1917;
-            --bg-secondary: #292524;
-            --bg-header: rgba(28, 25, 23, 0.8);
-            --text-main: #f5f5f4;
-            --text-muted: #a8a29e;
-            --border-color: #44403c;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-main);
-        }
-        h1, h2, h3, h4, h5 {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 0.05em;
-        }
-        .nav-link {
-            transition: color 0.2s;
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 0.1em;
-            font-size: 1.1rem;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: var(--accent);
-        }
-        .nav-bar-behaviour { display: none; }
-        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
-        
-        #mobile-menu-panel { background-color: var(--bg-main); transition: transform 0.3s ease-in-out; }
-        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
-
-        .title-rotate {
-            transform: rotate(-1.5deg);
-        }
-        #loader {
-            position: fixed;
-            inset: 0;
-            background-color: var(--bg-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-        .loader-spinner {
-            border: 4px solid var(--bg-secondary);
-            border-top: 4px solid var(--accent);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
+        .loader {
+            border-top-color: var(--accent);
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
-        .content-hidden {
-            display: none;
-        }
-        .article-body {
-            font-family: 'Lora', serif;
-            line-height: 1.8;
-            font-size: 1.125rem;
-            color: var(--text-muted);
-        }
-        .dark .article-body {
-             color: var(--text-muted);
-        }
-        .article-body p, .article-body ul, .article-body ol {
-            margin-bottom: 1.5rem;
-        }
-        .article-body h2 {
-            font-family: 'Lora', serif;
-            font-weight: 600;
-            font-size: 1.875rem;
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-main);
-        }
-        .article-body img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.5rem;
-            margin: 2.5rem auto;
-            display: block;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-        }
-        .dark .article-body img {
-             box-shadow: none;
-        }
-        .star-filled {
-            color: var(--yellow-accent);
-        }
-
-        .dark-box {
-            background-color: var(--bg-secondary);
-            color: var(--text-main);
-            padding: 1.5rem;
-            border: 2px solid var(--border-color);
-            box-shadow: 4px 4px 0px var(--border-color);
-            border-radius: 0.25rem;
-        }
-        .dark .dark-box {
-            background-color: #1a1a1a;
-            box-shadow: none;
-        }
-        .dark-box h3 {
-            color: var(--accent);
-        }
-        .dark .dark-box p {
-            color: var(--text-muted);
-        }
-        .dark .dark-box .font-bold {
-            color: var(--text-main);
-        }
-        .liner-notes-text {
-            font-family: 'Lora', serif;
-            font-size: 1.1rem;
-            line-height: 1.7;
-            color: var(--text-muted);
-        }
-        .dark .liner-notes-text {
-             color: #d4d4d2; 
-        }
-        .liner-notes-text p {
-            margin-bottom: 0;
-        }
-        .rating-highlight {
-            background-color: var(--bg-main);
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            border: 2px solid var(--border-color);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 2px 2px 0px var(--border-color);
-        }
-        .dark .rating-highlight {
-            background-color: #1a1a1a;
-            box-shadow: none;
-        }
-        .rating-highlight span {
-            font-family: 'Bebas Neue', sans-serif;
-            color: var(--text-main);
-            font-size: 1.1rem;
-            letter-spacing: 0.05em;
-        }
-
-        /* Styles for responsive video embeds */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            overflow: hidden;
-            max-width: 100%;
-            background: #000;
-            margin: 2.5rem auto;
-            border-radius: 0.5rem;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
+        .confirm-modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 100;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            border: 0;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
         }
+        .confirm-modal-content {
+            background-color: var(--bg-medium);
+            color: var(--text-light);
+            margin: auto;
+            padding: 20px;
+            border: 1px solid var(--bg-light);
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        }
+        .playlist-item { display: flex; align-items: center; padding: 0.5rem; border-bottom: 1px solid var(--bg-light); }
+        .playlist-item:last-child { border-bottom: none; }
+        .btn-action { padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold; cursor: pointer; flex-shrink: 0; transition: background-color 0.2s; }
+        .remove-btn { background-color: #ef4444; color: white; }
+        .remove-btn:hover { background-color: #dc2626; }
+        .edit-btn-tv { background-color: #3b82f6; color: white; }
+        .edit-btn-tv:hover { background-color: #2563eb; }
+        .move-btn { background-color: var(--bg-light); color: var(--text-light); padding: 0.25rem; border-radius: 50%; }
+        .move-btn:hover:not(:disabled) { background-color: var(--accent); }
+        .move-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .form-input, .form-textarea, .form-select { background-color: var(--bg-light); border-color: #57534e; color: var(--text-light); }
+        .form-input:focus, .form-textarea:focus, .form-select:focus { --tw-ring-color: var(--accent); border-color: var(--accent); background-color: var(--bg-medium); }
+        .html-shortcut-btn { background-color: var(--bg-light); padding: 0.25rem 0.75rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; }
+        .html-shortcut-btn:hover { background-color: var(--accent); }
+        #review-fields-container.hidden { display: none; }
     </style>
 </head>
-<body class="bg-[var(--bg-main)] text-[var(--text-main)]">
+<body class="bg-stone-900 text-stone-200">
 
-    <div id="loader"><div class="loader-spinner"></div></div>
-
-    <div id="page-content" class="content-hidden">
-        <!-- Sticky Header -->
-        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
-            <header class="container mx-auto h-full">
-                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
-                    <div class="flex items-center">
-                        <div class="nav-bar-behaviour items-center space-x-8">
-                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
-                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
-                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
-                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Legacy</a>
-                            <a href="/blog" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
-                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                                <span>@controlledjazz</span>
-                            </a>
-                        </div>
-                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
-                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                        </button>
-                        <!-- Hamburger Menu Button -->
-                        <div class="lg:hidden ml-2">
-                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
-                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </nav>
-            </header>
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="confirm-modal">
+        <div class="confirm-modal-content">
+            <p id="confirm-modal-text" class="mb-4 text-stone-200">Are you sure?</p>
+            <button id="confirm-yes" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 mr-2">Yes, delete</button>
+            <button id="confirm-no" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Cancel</button>
         </div>
-
-        <main class="py-16 sm:py-20">
-            <div id="article-container" class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-                <!-- Article content will be injected here -->
-            </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="bg-stone-900 text-stone-200 py-8 mt-16">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                 <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
-                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
-                <div class="mt-6 border-t border-stone-700 pt-6">
-                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
-                </div>
-            </div>
-        </footer>
     </div>
 
-    <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
-        <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
-        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
-            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
-            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
-                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
-                <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
-                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                    <span>@controlledjazz</span>
-                </a>
-            </nav>
+    <!-- Auth Screen -->
+    <div id="auth-container" class="min-h-screen flex items-center justify-center bg-stone-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div>
+                <img class="mx-auto h-24 w-auto" src="/images/logo.svg" alt="Controlled Freedom">
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-stone-100">Sign in to your account</h2>
+            </div>
+            <form id="login-form" class="mt-8 space-y-6">
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div>
+                        <label for="email" class="sr-only">Email address</label>
+                        <input id="email" name="email" type="email" autocomplete="email" required class="form-input appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-stone-400 rounded-t-md sm:text-sm" placeholder="Email address">
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">Password</label>
+                        <input id="password" name="password" type="password" autocomplete="current-password" required class="form-input appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-stone-400 rounded-b-md sm:text-sm" placeholder="Password">
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">Sign in</button>
+                </div>
+                <p id="auth-error" class="text-red-500 text-sm mt-2"></p>
+            </form>
         </div>
+    </div>
+
+    <!-- Main Admin Panel -->
+    <div id="admin-panel" class="hidden">
+        <header class="bg-stone-800 shadow-md">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-stone-100">Admin Dashboard</h1>
+                <button id="logout-btn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Logout</button>
+            </div>
+        </header>
+
+        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+            <!-- TV Playlist Section -->
+            <div class="bg-stone-800 p-6 rounded-lg shadow-lg mb-8 border border-stone-700">
+                <h2 class="text-2xl font-bold mb-6 text-stone-100 border-b border-stone-700 pb-4">Controlled Freedom TV - Admin Panel</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 id="tv-form-title" class="text-xl font-bold mb-4 text-stone-200">Add New Video</h3>
+                        <form id="tv-playlist-form" class="space-y-4">
+                            <input type="hidden" id="video-doc-id">
+                            <div>
+                                <label for="youtube-url-input" class="block text-sm font-medium text-stone-300">YouTube URL</label>
+                                <input type="text" id="youtube-url-input" placeholder="Paste YouTube URL here" required class="form-input mt-1 block w-full rounded-md shadow-sm">
+                            </div>
+                            <div>
+                                <label for="video-title-input" class="block text-sm font-medium text-stone-300">Title</label>
+                                <input type="text" id="video-title-input" placeholder="Enter video title" required class="form-input mt-1 block w-full rounded-md shadow-sm">
+                            </div>
+                            <div>
+                                <label for="video-lineup-input" class="block text-sm font-medium text-stone-300">Line-up</label>
+                                <textarea id="video-lineup-input" rows="3" placeholder="e.g., John Coltrane (tenor saxophone), McCoy Tyner (piano)..." class="form-textarea mt-1 block w-full rounded-md shadow-sm"></textarea>
+                            </div>
+                            <div>
+                                <label for="video-desc-input" class="block text-sm font-medium text-stone-300">Description</label>
+                                <textarea id="video-desc-input" rows="3" placeholder="Enter video description" required class="form-textarea mt-1 block w-full rounded-md shadow-sm"></textarea>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button id="tv-form-submit-btn" type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md">Add Video</button>
+                                <button id="tv-form-cancel-btn" type="button" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md hidden">Cancel</button>
+                            </div>
+                            <p id="add-video-error" class="text-red-500 text-sm mt-2 h-4"></p>
+                        </form>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 text-stone-200">Current Playlist</h3>
+                        <div id="playlist-container" class="bg-stone-900 rounded-md h-96 overflow-y-auto text-stone-200 border border-stone-700"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Articles Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="bg-stone-800 p-6 rounded-lg shadow-lg border border-stone-700">
+                        <h2 id="form-title" class="text-2xl font-bold mb-6 text-stone-100">Create New Article</h2>
+                        <form id="article-form" class="space-y-6">
+                            <input type="hidden" id="article-id">
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="article-type" class="block text-sm font-medium text-stone-300">Article Type</label>
+                                    <select id="article-type" name="article-type" class="form-select mt-1 block w-full pl-3 pr-10 py-2 text-base rounded-md">
+                                        <option value="news">News</option>
+                                        <option value="review">Review</option>
+                                        <option value="column">Column</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="title" class="block text-sm font-medium text-stone-300">Title</label>
+                                    <input type="text" id="title" name="title" required class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                </div>
+                            </div>
+
+                            <!-- Review Specific Fields -->
+                            <div id="review-fields-container" class="hidden space-y-6 pt-6 border-t border-stone-700">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="review-artist" class="block text-sm font-medium text-stone-300">Artist</label>
+                                        <input type="text" id="review-artist" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="review-album" class="block text-sm font-medium text-stone-300">Album Title</label>
+                                        <input type="text" id="review-album" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div>
+                                        <label for="review-rating" class="block text-sm font-medium text-stone-300">Rating (1-5)</label>
+                                        <input type="number" id="review-rating" min="1" max="5" step="0.5" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="review-year" class="block text-sm font-medium text-stone-300">Release Year</label>
+                                        <input type="number" id="review-year" placeholder="YYYY" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="review-label" class="block text-sm font-medium text-stone-300">Label</label>
+                                        <input type="text" id="review-label" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="review-genres" class="block text-sm font-medium text-stone-300">Genres (comma-separated)</label>
+                                    <input type="text" id="review-genres" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                </div>
+                            </div>
+
+                             <!-- Common Article Fields -->
+                            <div class="space-y-6 pt-6 border-t border-stone-700">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="article-author" class="block text-sm font-medium text-stone-300">Author</label>
+                                        <input type="text" id="article-author" class="form-input mt-1 block w-full rounded-md shadow-sm" value="Staff">
+                                    </div>
+                                    <div>
+                                        <label for="article-publish-date" class="block text-sm font-medium text-stone-300">Publish Date</label>
+                                        <input type="date" id="article-publish-date" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="article-slug" class="block text-sm font-medium text-stone-300">URL Slug (auto-generated)</label>
+                                    <input type="text" id="article-slug" class="form-input mt-1 block w-full rounded-md shadow-sm bg-stone-700" readonly>
+                                </div>
+                            </div>
+                            
+                            <!-- Image URL Input Section -->
+                            <div>
+                                <label for="article-image-url" class="block text-sm font-medium text-stone-300">Header Image URL</label>
+                                <input type="text" id="article-image-url" placeholder="Paste Firebase Storage URL here" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                <img id="image-preview" src="" alt="Image Preview" class="hidden mt-4 rounded-md max-h-60 w-auto border border-stone-600"/>
+                            </div>
+
+                            <div>
+                                <label for="body" class="block text-sm font-medium text-stone-300">Body (HTML allowed)</label>
+                                <!-- HTML Shortcut Buttons -->
+                                <div id="html-shortcuts" class="flex flex-wrap gap-2 my-2">
+                                    <button type="button" class="html-shortcut-btn" data-tag="p">&lt;p&gt;</button>
+                                    <button type="button" class="html-shortcut-btn" data-tag="h3">&lt;h3&gt;</button>
+                                    <button type="button" class="html-shortcut-btn" data-tag="b">&lt;b&gt;</button>
+                                    <button type="button" class="html-shortcut-btn" data-tag="i">&lt;i&gt;</button>
+                                    <button type="button" class="html-shortcut-btn" data-tag="a">&lt;a&gt;</button>
+                                    <button type="button" class="html-shortcut-btn" data-tag="ul">&lt;ul&gt;</button>
+                                    <button type="button" class="html-shortcut-btn" data-tag="ol">&lt;ol&gt;</button>
+                                    <button type="button" class="html-shortcut-btn" data-tag="li">&lt;li&gt;</button>
+                                </div>
+                                <textarea id="body" name="body" rows="15" required class="form-textarea mt-1 block w-full rounded-md shadow-sm font-mono"></textarea>
+                            </div>
+                            
+                            <p id="form-error" class="text-red-500 text-sm h-4"></p>
+                            <div class="flex items-center justify-end gap-4 pt-6 border-t border-stone-700">
+                                <button type="button" id="clear-form-btn" class="text-sm font-medium text-stone-300 hover:text-stone-100">Clear Form</button>
+                                <button type="submit" id="save-article-btn" class="w-1/2 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                                    Save Article
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <div class="bg-stone-800 p-6 rounded-lg shadow-lg border border-stone-700">
+                        <h2 class="text-2xl font-bold mb-4 text-stone-100">Existing Articles</h2>
+                        <div id="articles-list" class="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
+                            <div id="list-loader" class="flex justify-center items-center"><div class="loader h-8 w-8 border-4 rounded-full"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
-        const ArticleApp = {
-            elements: {},
-            methods: {
-                setupTheme() {
-                    const themeToggle = ArticleApp.elements.themeToggle;
-                    const lightIcon = ArticleApp.elements.themeIconLight;
-                    const darkIcon = ArticleApp.elements.themeIconDark;
+        // --- CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
+            authDomain: "controlled-freedom.firebaseapp.com",
+            projectId: "controlled-freedom",
+            storageBucket: "controlled-freedom.appspot.com",
+            messagingSenderId: "992659637634",
+            appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
+        };
+        const ADMIN_UID = "njzhckiysaaI3701pogS5k9hang1";
 
-                    const applyTheme = (theme) => {
-                        if (theme === 'dark') {
-                            document.documentElement.classList.add('dark');
-                            lightIcon.classList.add('hidden');
-                            darkIcon.classList.remove('hidden');
-                        } else {
-                            document.documentElement.classList.remove('dark');
-                            lightIcon.classList.remove('hidden');
-                            darkIcon.classList.add('hidden');
-                        }
-                    };
+        // --- INITIALIZATION ---
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
 
-                    const savedTheme = localStorage.getItem('theme');
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-                    
-                    applyTheme(currentTheme);
+        // --- GLOBAL STATE ---
+        let tvPlaylist = [];
+        let editingVideoId = null;
 
-                    themeToggle.addEventListener('click', () => {
-                        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-                        localStorage.setItem('theme', newTheme);
-                        applyTheme(newTheme);
-                    });
-                },
-                setupMobileMenu() {
-                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = ArticleApp.elements;
-                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
-                    const openMenu = () => {
-                        mobileMenuOverlay.classList.remove('hidden');
-                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
-                    };
-                    const closeMenu = () => {
-                        mobileMenuPanel.style.transform = 'translateX(100%)';
-                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
-                    };
-                    mobileMenuButton.addEventListener('click', openMenu);
-                    mobileMenuCloseButton.addEventListener('click', closeMenu);
-                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
-                    document.querySelectorAll('#mobile-nav-links a').forEach(link => {
-                        link.addEventListener('click', closeMenu);
-                    });
-                }
-            },
-            updateMetaTags(article) {
-                const pageUrl = window.location.href;
-                let imageUrl = article.imageUrl || 'https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/cf-social-card-default.png';
-                
-                if (imageUrl && !imageUrl.startsWith('http')) {
-                    imageUrl = `${window.location.origin}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
-                }
+        // --- DOM ELEMENTS ---
+        const elements = {
+            authContainer: document.getElementById('auth-container'),
+            adminPanel: document.getElementById('admin-panel'),
+            loginForm: document.getElementById('login-form'),
+            authError: document.getElementById('auth-error'),
+            logoutBtn: document.getElementById('logout-btn'),
+            // TV Playlist
+            tvPlaylistForm: document.getElementById('tv-playlist-form'),
+            tvFormTitle: document.getElementById('tv-form-title'),
+            tvFormSubmitBtn: document.getElementById('tv-form-submit-btn'),
+            tvFormCancelBtn: document.getElementById('tv-form-cancel-btn'),
+            videoDocIdInput: document.getElementById('video-doc-id'),
+            urlInput: document.getElementById('youtube-url-input'),
+            titleInput: document.getElementById('video-title-input'),
+            lineupInput: document.getElementById('video-lineup-input'),
+            descInput: document.getElementById('video-desc-input'),
+            playlistContainer: document.getElementById('playlist-container'),
+            addVideoError: document.getElementById('add-video-error'),
+            // Articles
+            articleForm: document.getElementById('article-form'),
+            articlesList: document.getElementById('articles-list'),
+            formTitle: document.getElementById('form-title'),
+            clearFormBtn: document.getElementById('clear-form-btn'),
+            formError: document.getElementById('form-error'),
+            articleIdInput: document.getElementById('article-id'),
+            articleTypeInput: document.getElementById('article-type'),
+            titleArticleInput: document.getElementById('title'),
+            bodyArticleInput: document.getElementById('body'),
+            saveArticleBtn: document.getElementById('save-article-btn'),
+            articleAuthorInput: document.getElementById('article-author'),
+            articlePublishDateInput: document.getElementById('article-publish-date'),
+            articleSlugInput: document.getElementById('article-slug'),
+            // Review Fields
+            reviewFieldsContainer: document.getElementById('review-fields-container'),
+            reviewArtistInput: document.getElementById('review-artist'),
+            reviewAlbumInput: document.getElementById('review-album'),
+            reviewRatingInput: document.getElementById('review-rating'),
+            reviewYearInput: document.getElementById('review-year'),
+            reviewLabelInput: document.getElementById('review-label'),
+            reviewGenresInput: document.getElementById('review-genres'),
+            // Image URL
+            imageUrlInput: document.getElementById('article-image-url'),
+            imagePreview: document.getElementById('image-preview'),
+            // HTML Shortcuts
+            htmlShortcuts: document.getElementById('html-shortcuts'),
+            // Confirmation Modal
+            confirmModal: document.getElementById('confirm-modal'),
+            confirmModalText: document.getElementById('confirm-modal-text'),
+            confirmYesBtn: document.getElementById('confirm-yes'),
+            confirmNoBtn: document.getElementById('confirm-no'),
+        };
 
-                let description = 'A new article from Controlled Freedom.';
-                if (article.type === 'review') {
-                    description = `Review of ${article.albumTitle} by ${article.artist}. Rating: ${article.rating}/5.`;
-                } else {
-                    description = article.body.replace(/<[^>]*>/g, '').substring(0, 155).trim() + '...';
-                }
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, user => {
+            if (user && user.uid === ADMIN_UID) {
+                elements.authContainer.classList.add('hidden');
+                elements.adminPanel.classList.remove('hidden');
+                setupArticleListener(); 
+                setupTvPlaylistListener();
+            } else {
+                elements.authContainer.classList.remove('hidden');
+                elements.adminPanel.classList.add('hidden');
+                if (user) { signOut(auth); }
+            }
+        });
 
-                document.title = `${article.title} - Controlled Freedom`;
-                this.setMeta('description', description);
-                this.setMeta('og:title', article.title);
-                this.setMeta('og:description', description);
-                this.setMeta('og:image', imageUrl);
-                this.setMeta('og:url', pageUrl);
-                this.setMeta('og:type', 'article');
-                this.setMeta('twitter:card', 'summary_large_image');
-                this.setMeta('twitter:title', article.title);
-                this.setMeta('twitter:description', description);
-                this.setMeta('twitter:image', imageUrl);
-            },
-            
-            setMeta(metaNameOrProperty, content) {
-                let element = document.querySelector(`meta[name='${metaNameOrProperty}']`) || document.querySelector(`meta[property='${metaNameOrProperty}']`);
-                if (element) {
-                    element.setAttribute('content', content);
-                }
-            },
-            async init() {
-                this.cacheDOMElements();
-                this.methods.setupTheme();
-                await this.fetchArticle();
-                this.methods.setupMobileMenu();
-                this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
-            },
-            cacheDOMElements() {
-                this.elements = {
-                    loader: document.getElementById('loader'),
-                    pageContent: document.getElementById('page-content'),
-                    articleContainer: document.getElementById('article-container'),
-                    footerCopyright: document.getElementById('footer-copyright'),
-                    mobileMenuButton: document.getElementById('mobile-menu-button'),
-                    mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
-                    mobileMenuPanel: document.getElementById('mobile-menu-panel'),
-                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
-                    themeToggle: document.getElementById('theme-toggle'),
-                    themeIconLight: document.getElementById('theme-icon-light'),
-                    themeIconDark: document.getElementById('theme-icon-dark'),
-                };
-            },
-            async fetchArticle() {
-                const path = window.location.pathname;
-                const pathParts = path.split('/').filter(part => part.length > 0);
-                const slug = pathParts.pop();
+        elements.loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            elements.authError.textContent = '';
+            signInWithEmailAndPassword(auth, elements.loginForm.email.value, elements.loginForm.password.value)
+                .catch(error => { elements.authError.textContent = "Invalid email or password."; });
+        });
 
-                if (!slug) {
-                    this.renderError("No article specified in the URL.");
-                    this.showPage();
-                    return;
-                }
+        elements.logoutBtn.addEventListener('click', () => signOut(auth));
 
-                const firebaseConfig = typeof __firebase_config !== 'undefined' 
-                    ? JSON.parse(__firebase_config)
-                    : {
-                        apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
-                        authDomain: "controlled-freedom.firebaseapp.com",
-                        projectId: "controlled-freedom",
-                        storageBucket: "controlled-freedom.appspot.com",
-                        messagingSenderId: "992659637634",
-                        appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
-                        measurementId: "G-ETT07JGVSB"
-                      };
-
-                const app = window._firebaseApp || initializeApp(firebaseConfig);
-                if (!window._firebaseApp) {
-                    window._firebaseApp = app;
-                }
-                
-                const db = getFirestore(app);
-                const auth = getAuth(app);
-
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else if (!auth.currentUser) {
-                        await signInAnonymously(auth);
-                    }
-                    
-                    const articlesRef = collection(db, "articles");
-                    const q = query(articlesRef, where("slug", "==", slug), limit(1));
-                    const querySnapshot = await getDocs(q);
-
-                    if (!querySnapshot.empty) {
-                        const articleDoc = querySnapshot.docs[0];
-                        const article = articleDoc.data();
-                        
-                        this.updateMetaTags(article);
-                        
-                        let albumData = null;
-                        if (article.type === 'review') {
-                             try {
-                                const [dbData, legacyData] = await Promise.all([
-                                    fetch('/database.json').then(res => res.json()),
-                                    fetch('/legacy.json').then(res => res.json())
-                                ]);
-                                const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []);
-                                const allAlbums = (dbData.albums || []).concat(legacyAlbums);
-                                albumData = allAlbums.find(a => a.albumTitle === article.albumTitle && a.artist === article.artist);
-                            } catch (e) {
-                                console.warn("Could not fetch album databases.", e);
-                            }
-                        }
-                        
-                        this.renderArticle(article, albumData);
-                    } else {
-                        this.renderError("Article not found.");
-                    }
-                } catch (error) {
-                    console.error("Error fetching article:", error);
-                    this.renderError("Could not load the article.");
-                } finally {
-                    this.showPage();
-                }
-            },
-            renderArticle(article, albumData) {
-                let contentHtml = '';
-                const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
-
-                // NEW: Process the body content to wrap iframes before rendering
-                let bodyContent = article.body.replace(
-                    /<iframe src="https:\/\/www\.youtube\.com\/embed\/([^"]+)"(.*?)><\/iframe>/g,
-                    (match, videoId, otherAttrs) => {
-                        // Reconstruct the iframe with modern attributes inside the responsive wrapper
-                        return `<div class="video-container">
-                                    <iframe src="https://www.youtube.com/embed/${videoId}" 
-                                            title="YouTube video player" 
-                                            frameborder="0" 
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                            allowfullscreen
-                                            ${otherAttrs}>
-                                    </iframe>
-                                </div>`;
-                    }
-                );
-
-                if (article.type === 'review') {
-                    let coverImage = albumData?.cover || article.imageUrl || 'https://placehold.co/600x600/e7e5e4/1c1917?text=No+Image';
-                    if (coverImage && !coverImage.startsWith('http') && !coverImage.startsWith('/')) {
-                        coverImage = '/' + coverImage;
-                    }
-
-                    let starsHtml = '';
-                    for (let i = 1; i <= 5; i++) {
-                        starsHtml += `<svg class="w-5 h-5 ${i <= article.rating ? 'star-filled' : 'text-stone-400 dark:text-stone-600'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
-                    }
-
-                    let highlightedParagraph = '';
-                    if (bodyContent.includes('<highlight>')) {
-                        const highlightParts = bodyContent.split('<highlight>');
-                        bodyContent = highlightParts[0];
-                        const highlightText = highlightParts[1].replace('</highlight>', '');
-                        highlightedParagraph = `<div class="dark-box mt-12"><div class="liner-notes-text">${highlightText}</div></div>`;
-                    }
-
-                    contentHtml = `
-                        <div class="grid lg:grid-cols-3 gap-8 lg:gap-12">
-                            <div class="lg:col-span-1">
-                                <div class="sticky top-28">
-                                    <img src="${coverImage}" alt="Cover for ${article.albumTitle}" class="w-full h-auto object-cover rounded-md border-2 border-[var(--border-color)] shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x600/e7e5e4/1c1917?text=No+Image';">
-                                    <div class="mt-6 dark-box">
-                                        <h3 class="text-2xl font-bold mb-4">Album Details</h3>
-                                        <div class="space-y-3 text-sm">
-                                            <div><p class="font-bold text-[var(--text-main)]">Release Date:</p><p class="text-[var(--text-muted)]">${article.year || 'N/A'}</p></div>
-                                            <div><p class="font-bold text-[var(--text-main)]">Genre:</p><p class="text-[var(--text-muted)]">${(article.genres || []).join(', ')}</p></div>
-                                            <div><p class="font-bold text-[var(--text-main)]">Label:</p><p class="text-[var(--text-muted)]">${article.label || 'N/A'}</p></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lg:col-span-2">
-                                <header class="mb-8">
-                                    <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] mt-1">"${article.title}"</h1>
-                                    <p class="text-xl text-[var(--text-muted)] font-semibold mt-2">${article.artist} - <em>${article.albumTitle}</em></p>
-                                    <div class="rating-highlight mt-4" title="Rating: ${article.rating}/5"><span>Rating:</span><div class="flex">${starsHtml}</div></div>
-                                    <div class="mt-6 text-sm text-[var(--text-muted)] border-t border-[var(--border-color)] pt-4"><span>Reviewed by ${article.author || 'Staff'}</span> | <span>Published on ${publishDate}</span></div>
-                                </header>
-                                <article class="article-body">${bodyContent}</article>
-                                ${highlightedParagraph}
-                            </div>
-                        </div>`;
-                } else { // Handles 'news' and 'column'
-                    contentHtml = `
-                        <div class="max-w-4xl mx-auto">
-                             <header class="mb-12">
-                                <img src="${article.imageUrl || 'https://placehold.co/1200x600/e7e5e4/1c1917?text=Controlled+Freedom'}" alt="Header image for ${article.title}" class="w-full h-auto max-h-[50vh] object-cover rounded-lg mb-8" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/e7e5e4/1c1917?text=Controlled+Freedom';">
-                                <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] text-center">${article.title}</h1>
-                                <div class="text-center mt-6 text-sm text-[var(--text-muted)]"><span>By ${article.author || 'Staff'}</span> | <span>Published on ${publishDate}</span></div>
-                            </header>
-                            <article class="article-body mx-auto max-w-3xl mt-8">${bodyContent}</article>
-                        </div>`;
-                }
-
-                this.elements.articleContainer.innerHTML = contentHtml;
-                // The iframe processing is now done before this step, so no need for querySelectorAll here.
-            },
-            renderError(message) {
-                this.elements.articleContainer.innerHTML = `
-                    <div class="text-center py-16">
-                        <h1 class="text-4xl font-bold text-red-600">Error</h1>
-                        <p class="text-lg text-[var(--text-muted)] mt-4">${message}</p>
-                        <a href="/blog" class="inline-block mt-8 px-6 py-3 bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600">
-                            &larr; Back to Blog
-                        </a>
+        // --- TV PLAYLIST LOGIC ---
+        const setupTvPlaylistListener = () => {
+            const q = query(collection(db, 'tv_playlist'));
+            onSnapshot(q, (snapshot) => {
+                tvPlaylist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                tvPlaylist.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity));
+                renderPlaylistUI(tvPlaylist);
+            }, (error) => console.error("Playlist listener error:", error));
+        };
+        const renderPlaylistUI = (playlist) => {
+            elements.playlistContainer.innerHTML = '';
+            if (!playlist || playlist.length === 0) {
+                elements.playlistContainer.innerHTML = '<p class="p-4 text-center text-stone-500">Playlist is empty.</p>';
+                return;
+            }
+            playlist.forEach((video, index) => {
+                const item = document.createElement('div');
+                item.className = 'playlist-item';
+                item.innerHTML = `
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <div class="flex flex-col gap-1">
+                            <button class="move-btn move-up-btn" data-id="${video.id}" ${index === 0 ? 'disabled' : ''}><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
+                            <button class="move-btn move-down-btn" data-id="${video.id}" ${index === playlist.length - 1 ? 'disabled' : ''}><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+                        </div>
+                        <img src="https://i.ytimg.com/vi/${video.videoId}/default.jpg" class="w-16 h-12 object-cover rounded-sm border border-stone-600 flex-shrink-0" alt="Video thumbnail">
+                        <div class="truncate">
+                           <p class="font-bold truncate text-stone-200">${video.title || 'No Title'}</p>
+                           <p class="text-xs text-stone-400 truncate">${video.videoId}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 ml-auto pl-2">
+                        <button class="btn-action edit-btn-tv" data-id="${video.id}">Edit</button>
+                        <button class="btn-action remove-btn" data-id="${video.id}">Remove</button>
                     </div>
                 `;
-            },
-            showPage() {
-                this.elements.loader.style.display = 'none';
-                this.elements.pageContent.classList.remove('content-hidden');
+                elements.playlistContainer.appendChild(item);
+            });
+        };
+        const resetTvForm = () => {
+            elements.tvPlaylistForm.reset();
+            editingVideoId = null;
+            elements.tvFormTitle.textContent = 'Add New Video';
+            elements.tvFormSubmitBtn.textContent = 'Add Video';
+            elements.tvFormCancelBtn.classList.add('hidden');
+            elements.urlInput.disabled = false;
+        };
+        const handleTvFormSubmit = async (e) => {
+            e.preventDefault();
+            const url = elements.urlInput.value.trim();
+            const title = elements.titleInput.value.trim();
+            const lineup = elements.lineupInput.value.trim();
+            const description = elements.descInput.value.trim();
+            if (!url || !title || !description) {
+                elements.addVideoError.textContent = "URL, Title, and Description are required."; return;
+            }
+            const videoId = extractYouTubeID(url);
+            if (!videoId && !editingVideoId) {
+                elements.addVideoError.textContent = "Invalid YouTube URL."; return;
+            }
+            elements.addVideoError.textContent = "";
+            try {
+                if (editingVideoId) {
+                    await updateDoc(doc(db, 'tv_playlist', editingVideoId), { title, description, lineup });
+                } else {
+                    const newOrder = tvPlaylist.length > 0 ? Math.max(...tvPlaylist.map(v => v.order || 0)) + 1 : 0;
+                    await addDoc(collection(db, 'tv_playlist'), { videoId, title, description, lineup, createdAt: serverTimestamp(), order: newOrder });
+                }
+                resetTvForm();
+            } catch (error) {
+                console.error("Error saving video: ", error);
+                elements.addVideoError.textContent = "Could not save video.";
+            }
+        };
+        const movePlaylistItem = async (docId, direction) => {
+            const currentIndex = tvPlaylist.findIndex(v => v.id === docId);
+            if (currentIndex === -1) return;
+            const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+            if (targetIndex < 0 || targetIndex >= tvPlaylist.length) return;
+            const currentItem = tvPlaylist[currentIndex];
+            const targetItem = tvPlaylist[targetIndex];
+            try {
+                const currentRef = doc(db, 'tv_playlist', currentItem.id);
+                const targetRef = doc(db, 'tv_playlist', targetItem.id);
+                const currentOrder = currentItem.order ?? currentIndex;
+                const targetOrder = targetItem.order ?? targetIndex;
+                await updateDoc(currentRef, { order: targetOrder });
+                await updateDoc(targetRef, { order: currentOrder });
+            } catch (error) { console.error("Error reordering playlist:", error); }
+        };
+        const handlePlaylistClick = (e) => {
+            const button = e.target.closest('button');
+            if (!button) return;
+            const docId = button.dataset.id;
+            if (button.classList.contains('remove-btn')) {
+                showConfirmModal('Are you sure you want to delete this video?', () => {
+                    deleteDoc(doc(db, 'tv_playlist', docId)).catch(err => console.error("Error removing video: ", err));
+                });
+            } else if (button.classList.contains('edit-btn-tv')) {
+                const videoToEdit = tvPlaylist.find(video => video.id === docId);
+                if (videoToEdit) {
+                    editingVideoId = docId;
+                    elements.urlInput.value = `https://www.youtube.com/watch?v=${videoToEdit.videoId}`;
+                    elements.urlInput.disabled = true;
+                    elements.titleInput.value = videoToEdit.title;
+                    elements.lineupInput.value = videoToEdit.lineup || '';
+                    elements.descInput.value = videoToEdit.description;
+                    elements.tvFormTitle.textContent = 'Edit Video';
+                    elements.tvFormSubmitBtn.textContent = 'Update Video';
+                    elements.tvFormCancelBtn.classList.remove('hidden');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } else if (button.classList.contains('move-up-btn')) {
+                movePlaylistItem(docId, 'up');
+            } else if (button.classList.contains('move-down-btn')) {
+                movePlaylistItem(docId, 'down');
+            }
+        };
+        const extractYouTubeID = (url) => {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        };
+        elements.tvPlaylistForm.addEventListener('submit', handleTvFormSubmit);
+        elements.playlistContainer.addEventListener('click', handlePlaylistClick);
+        elements.tvFormCancelBtn.addEventListener('click', resetTvForm);
+
+
+        // --- ARTICLE MANAGEMENT LOGIC ---
+        const generateSlug = (title) => {
+            if (!title) return '';
+            return title.toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        };
+
+        const toggleReviewFields = () => {
+            if (elements.articleTypeInput.value === 'review') {
+                elements.reviewFieldsContainer.classList.remove('hidden');
+            } else {
+                elements.reviewFieldsContainer.classList.add('hidden');
+            }
+        };
+        
+        const resetArticleForm = () => {
+            elements.articleForm.reset();
+            elements.articleIdInput.value = '';
+            elements.imageUrlInput.value = '';
+            elements.formTitle.textContent = 'Create New Article';
+            elements.saveArticleBtn.textContent = 'Save Article';
+            elements.saveArticleBtn.disabled = false;
+            elements.imagePreview.classList.add('hidden');
+            elements.imagePreview.src = '';
+            elements.formError.textContent = '';
+            elements.articleAuthorInput.value = 'Staff';
+            elements.articlePublishDateInput.value = new Date().toISOString().slice(0, 10);
+            toggleReviewFields();
+        };
+
+        const setupArticleListener = () => {
+            const q = query(collection(db, "articles"), orderBy("updatedAt", "desc"));
+            onSnapshot(q, (querySnapshot) => {
+                let html = '';
+                if (querySnapshot.empty) {
+                    elements.articlesList.innerHTML = '<p class="text-stone-400">No articles found.</p>';
+                    return;
+                }
+                querySnapshot.forEach((doc) => {
+                    const article = { id: doc.id, ...doc.data() };
+                    const date = article.updatedAt?.seconds ? new Date(article.updatedAt.seconds * 1000).toLocaleDateString() : 'No date';
+                    html += `
+                        <div class="p-4 border border-stone-700 rounded-md bg-stone-800/50 flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-lg text-stone-200">${article.title}</p>
+                                <p class="text-xs text-stone-400 uppercase font-semibold">${article.type} - ${date}</p>
+                           </div>
+                            <div class="flex space-x-2 flex-shrink-0 mt-1">
+                                <button data-id="${article.id}" class="edit-btn text-blue-400 hover:text-blue-300 text-sm font-semibold">Edit</button>
+                                <button data-id="${article.id}" class="delete-btn text-red-500 hover:text-red-400 text-sm font-semibold">Delete</button>
+                            </div>
+                        </div>`;
+                });
+                elements.articlesList.innerHTML = html;
+            }, (error) => {
+                console.error("Error with article listener:", error);
+                elements.articlesList.innerHTML = '<p class="text-red-500">Could not load articles.</p>';
+            });
+        };
+        
+        const handleArticleFormSubmit = async (e) => {
+            e.preventDefault();
+            elements.saveArticleBtn.disabled = true;
+            elements.saveArticleBtn.textContent = 'Saving...';
+            elements.formError.textContent = '';
+
+            const articleId = elements.articleIdInput.value;
+            const imageUrl = elements.imageUrlInput.value.trim();
+
+            try {
+                const articleData = {
+                    type: elements.articleTypeInput.value,
+                    title: elements.titleArticleInput.value.trim(),
+                    body: elements.bodyArticleInput.value.trim(),
+                    imageUrl: imageUrl || '',
+                    slug: elements.articleSlugInput.value.trim(),
+                    author: elements.articleAuthorInput.value.trim(),
+                    publishDate: elements.articlePublishDateInput.value,
+                    updatedAt: serverTimestamp(),
+                };
+
+                if (articleData.type === 'review') {
+                    Object.assign(articleData, {
+                        artist: elements.reviewArtistInput.value.trim(),
+                        albumTitle: elements.reviewAlbumInput.value.trim(),
+                        rating: parseFloat(elements.reviewRatingInput.value) || 0,
+                        year: parseInt(elements.reviewYearInput.value) || null,
+                        label: elements.reviewLabelInput.value.trim(),
+                        genres: elements.reviewGenresInput.value.split(',').map(g => g.trim()).filter(g => g),
+                    });
+                }
+
+                if (articleId) {
+                    await updateDoc(doc(db, 'articles', articleId), articleData);
+                } else {
+                    articleData.createdAt = serverTimestamp();
+                    await addDoc(collection(db, 'articles'), articleData);
+                }
+                
+                resetArticleForm();
+
+            } catch (error) {
+                console.error("Error saving article:", error);
+                elements.formError.textContent = 'Failed to save article. Check console for details.';
+                elements.saveArticleBtn.disabled = false;
+                elements.saveArticleBtn.textContent = 'Save Article';
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => ArticleApp.init());
+        const handleArticlesListClick = async (e) => {
+            const target = e.target;
+            const articleId = target.dataset.id;
+
+            if (target.classList.contains('edit-btn') && articleId) {
+                const docRef = doc(db, "articles", articleId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const article = docSnap.data();
+                    resetArticleForm(); 
+                    elements.articleIdInput.value = articleId;
+                    elements.articleTypeInput.value = article.type || 'news';
+                    elements.titleArticleInput.value = article.title || '';
+                    elements.bodyArticleInput.value = article.body || '';
+                    elements.formTitle.textContent = 'Edit Article';
+                    elements.saveArticleBtn.textContent = 'Update Article';
+                    
+                    toggleReviewFields();
+
+                    elements.articleAuthorInput.value = article.author || 'Staff';
+                    elements.articlePublishDateInput.value = article.publishDate || new Date().toISOString().slice(0, 10);
+                    elements.articleSlugInput.value = article.slug || '';
+
+                    if (article.type === 'review') {
+                        elements.reviewArtistInput.value = article.artist || '';
+                        elements.reviewAlbumInput.value = article.albumTitle || '';
+                        elements.reviewRatingInput.value = article.rating || '';
+                        elements.reviewYearInput.value = article.year || '';
+                        elements.reviewLabelInput.value = article.label || '';
+                        elements.reviewGenresInput.value = (article.genres || []).join(', ');
+                    }
+
+                    if (article.imageUrl) {
+                        elements.imageUrlInput.value = article.imageUrl;
+                        elements.imagePreview.src = article.imageUrl;
+                        elements.imagePreview.classList.remove('hidden');
+                    }
+                    window.scrollTo({ top: elements.articleForm.offsetTop, behavior: 'smooth' });
+                }
+            }
+
+            if (target.classList.contains('delete-btn') && articleId) {
+                showConfirmModal(`Are you sure you want to delete this article? This cannot be undone.`, async () => {
+                    try {
+                        const docRef = doc(db, "articles", articleId);
+                        const docSnap = await getDoc(docRef);
+                        if (docSnap.exists() && docSnap.data().imageUrl) {
+                            try {
+                                const imageRef = ref(storage, docSnap.data().imageUrl);
+                                await deleteObject(imageRef);
+                            } catch (storageError) {
+                                console.error("Could not delete image from storage:", storageError);
+                            }
+                        }
+                        await deleteDoc(docRef);
+                        if(elements.articleIdInput.value === articleId) {
+                           resetArticleForm();
+                        }
+                    } catch (error) {
+                        console.error("Error deleting article:", error);
+                        elements.formError.textContent = "Error deleting article.";
+                    }
+                });
+            }
+        };
+
+        // --- HELPER FUNCTIONS ---
+        const showConfirmModal = (text, onConfirm) => {
+            elements.confirmModalText.textContent = text;
+            elements.confirmModal.style.display = 'flex';
+            const newConfirmBtn = elements.confirmYesBtn.cloneNode(true);
+            elements.confirmYesBtn.parentNode.replaceChild(newConfirmBtn, elements.confirmYesBtn);
+            elements.confirmYesBtn = newConfirmBtn;
+            elements.confirmYesBtn.onclick = () => { onConfirm(); elements.confirmModal.style.display = 'none'; };
+        };
+        const insertHtmlTag = (tag) => {
+            const textarea = elements.bodyArticleInput;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const selection = text.substring(start, end);
+            let replacement;
+            switch(tag) {
+                case 'a': replacement = `<a href="">${selection}</a>`; break;
+                case 'ul': case 'ol': replacement = `<${tag}>\n\t<li>${selection}</li>\n</${tag}>`; break;
+                default: replacement = `<${tag}>${selection}</${tag}>`;
+            }
+            textarea.value = text.substring(0, start) + replacement + text.substring(end);
+            textarea.focus();
+            if (start === end) {
+                if(tag === 'a') { textarea.selectionStart = textarea.selectionEnd = start + 9; } 
+                else { textarea.selectionStart = textarea.selectionEnd = start + tag.length + 2; }
+            }
+        };
+
+        // --- EVENT LISTENERS ---
+        elements.articleForm.addEventListener('submit', handleArticleFormSubmit);
+        elements.articlesList.addEventListener('click', handleArticlesListClick);
+        elements.clearFormBtn.addEventListener('click', resetArticleForm);
+        elements.confirmNoBtn.addEventListener('click', () => elements.confirmModal.style.display = 'none');
+        elements.imageUrlInput.addEventListener('input', (e) => {
+            const url = e.target.value.trim();
+            if (url) {
+                elements.imagePreview.src = url;
+                elements.imagePreview.classList.remove('hidden');
+            } else {
+                elements.imagePreview.classList.add('hidden');
+            }
+        });
+        elements.htmlShortcuts.addEventListener('click', (e) => {
+            if (e.target.matches('button[data-tag]')) { insertHtmlTag(e.target.dataset.tag); }
+        });
+        elements.articleTypeInput.addEventListener('change', toggleReviewFields);
+        elements.titleArticleInput.addEventListener('keyup', (e) => {
+            elements.articleSlugInput.value = generateSlug(e.target.value);
+        });
+        
+        // --- INITIAL SETUP ---
+        resetArticleForm();
+
     </script>
 </body>
 </html>
