@@ -468,7 +468,7 @@
                 } else {
                     this.state.news.forEach(article => {
                         const card = document.createElement('a');
-                        card.href = `/article.html?slug=${article.slug}`;
+                        card.href = `/news/${article.slug}`; // Corrected Link
                         card.className = 'article-card p-4';
                         const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
                         card.innerHTML = `
@@ -496,7 +496,7 @@
                         }
                         const coverImage = review.imageUrl || 'https://placehold.co/600x600/e7e5e4/1c1917?text=Review';
                         const card = document.createElement('a');
-                        card.href = `/article.html?slug=${review.slug}`;
+                        card.href = `/reviews/${review.slug}`; // Corrected Link
                         card.className = 'article-card p-4';
                         card.innerHTML = `
                             <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-full h-auto aspect-square object-cover rounded-md border-2 border-[var(--border-color)] mb-4" onerror="this.onerror=null;this.src='https://placehold.co/600x600/e7e5e4/1c1917?text=Review';">
@@ -522,7 +522,7 @@
                 } else {
                     this.state.columns.forEach(article => {
                         const card = document.createElement('a');
-                        card.href = `/article.html?slug=${article.slug}`;
+                        card.href = `/column/${article.slug}`; // Corrected Link
                         card.className = 'article-card p-4';
                         const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
                         card.innerHTML = `
