@@ -168,17 +168,15 @@
         }
 
         .article-card {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
             background-color: var(--bg-main);
             border: 2px solid var(--border-color);
             border-radius: 0.25rem;
             box-shadow: 4px 4px 0px var(--border-color);
             transition: all 0.2s ease;
-            padding: 1rem;
             text-decoration: none;
             color: var(--text-main);
+            display: flex;
+            flex-direction: column;
         }
         .dark .article-card {
             box-shadow: none;
@@ -194,6 +192,28 @@
         }
         .star-filled {
             color: var(--yellow-accent);
+        }
+
+        /* Horizontal Scroll Container */
+        .horizontal-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 1.5rem;
+            padding: 0.5rem 0 1.5rem 0.5rem;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .horizontal-scroll::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+        .horizontal-scroll > * {
+            flex-shrink: 0;
+            width: 320px;
+        }
+        @media (max-width: 640px) {
+            .horizontal-scroll > * {
+                width: 80vw;
+            }
         }
     </style>
 </head>
@@ -248,23 +268,25 @@
                 </div>
             </section>
 
-            <!-- Combined News and Reviews Section -->
-            <section id="blog-content" class="py-16 sm:py-20 bg-[var(--bg-main)]">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
-                        
-                        <div>
-                            <h2 class="section-header text-4xl mb-6">Latest News</h2>
-                            <div id="news-list" class="space-y-6"></div>
-                        </div>
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl space-y-16 py-16 sm:py-20">
+                <!-- News Section -->
+                <section id="news-section">
+                    <h2 class="section-header text-4xl mb-2">Latest News</h2>
+                    <div id="news-list" class="horizontal-scroll"></div>
+                </section>
 
-                        <div>
-                            <h2 class="section-header text-4xl mb-6">Album Reviews</h2>
-                            <div id="reviews-list" class="space-y-6"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                <!-- Reviews Section -->
+                <section id="reviews-section">
+                    <h2 class="section-header text-4xl mb-2">Album Reviews</h2>
+                    <div id="reviews-list" class="horizontal-scroll"></div>
+                </section>
+
+                <!-- Columns Section -->
+                <section id="column-section">
+                    <h2 class="section-header text-4xl mb-2">Columns & Opinions</h2>
+                    <div id="columns-list" class="horizontal-scroll"></div>
+                </section>
+            </div>
         </main>
 
         <!-- Footer -->
@@ -304,7 +326,7 @@
         import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const BlogApp = {
-            state: { reviews: [], news: [], allAlbums: [] },
+            state: { reviews: [], news: [], columns: [] },
             elements: {},
             methods: {
                  setupTheme() {
@@ -369,6 +391,7 @@
                     pageContent: document.getElementById('page-content'),
                     newsList: document.getElementById('news-list'),
                     reviewsList: document.getElementById('reviews-list'), 
+                    columnsList: document.getElementById('columns-list'),
                     footerCopyright: document.getElementById('footer-copyright'),
                     mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
@@ -380,7 +403,6 @@
                 };
             },
             async fetchData() {
-                // **FIX:** Use environment variables with a hard-coded fallback
                 const firebaseConfig = typeof __firebase_config !== 'undefined' 
                     ? JSON.parse(__firebase_config)
                     : {
@@ -394,10 +416,7 @@
                       };
                 
                 const app = window._firebaseApp || initializeApp(firebaseConfig);
-                if (!window._firebaseApp) {
-                    window._firebaseApp = app;
-                }
-
+                if (!window._firebaseApp) { window._firebaseApp = app; }
                 const db = getFirestore(app);
                 const auth = getAuth(app);
 
@@ -409,45 +428,37 @@
                     }
 
                     const articlesRef = collection(db, "articles");
-                    const q = query(articlesRef, orderBy("createdAt", "desc"), limit(20));
+                    const q = query(articlesRef, orderBy("createdAt", "desc"), limit(30));
                     const articlesSnapshot = await getDocs(q);
 
                     this.state.reviews = [];
                     this.state.news = [];
+                    this.state.columns = [];
 
                     articlesSnapshot.forEach((doc) => {
                         const article = { id: doc.id, ...doc.data() };
-                        
                         if (!article.slug || !article.title || !article.body) {
-                            console.warn("Skipping article with missing data:", article.id, article);
+                            console.warn("Skipping article with missing data:", article.id);
                             return; 
                         }
 
                         const articleType = article.type ? article.type.toLowerCase() : '';
                         if (articleType === 'review') {
-                            if (article.albumTitle && article.artist && typeof article.rating === 'number') {
-                                this.state.reviews.push(article);
-                            } else {
-                                console.warn("Skipping malformed review:", article.id, article);
-                            }
+                            this.state.reviews.push(article);
                         } else if (articleType === 'news') {
                             this.state.news.push(article);
+                        } else if (articleType === 'column') {
+                            this.state.columns.push(article);
                         }
                     });
                     
-                    const [dbData, legacyData] = await Promise.all([
-                        fetch('database.json').then(res => res.json()).catch(() => ({albums: []})),
-                        fetch('legacy.json').then(res => res.json()).catch(() => ({paths: {}}))
-                    ]);
-                    const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []);
-                    this.state.allAlbums = (dbData.albums || []).concat(legacyAlbums);
-
                     this.initializeAppUI();
 
                 } catch (error) {
                     console.error("Error fetching data: ", error);
-                    this.elements.newsList.innerHTML = `<p class="text-red-500">Could not load articles. Please try again later.</p>`;
-                    this.elements.reviewsList.innerHTML = `<p class="text-red-500">Could not load reviews. Please try again later.</p>`;
+                    this.elements.newsList.innerHTML = `<p class="text-red-500">Could not load articles.</p>`;
+                    this.elements.reviewsList.innerHTML = `<p class="text-red-500">Could not load reviews.</p>`;
+                    this.elements.columnsList.innerHTML = `<p class="text-red-500">Could not load columns.</p>`;
                     this.showPage();
                 }
             },
@@ -460,61 +471,87 @@
                 this.showPage();
             },
             renderLists() {
-                const { newsList, reviewsList } = this.elements;
+                this.renderNews();
+                this.renderReviews();
+                this.renderColumns();
+            },
+            renderNews() {
+                const { newsList } = this.elements;
                 newsList.innerHTML = '';
-                reviewsList.innerHTML = '';
-
                 if (this.state.news.length === 0) {
-                    newsList.innerHTML = '<p class="text-[var(--text-muted)] italic">No news articles yet.</p>';
+                    newsList.innerHTML = '<p class="text-[var(--text-muted)] italic px-1">No news articles yet.</p>';
                 } else {
                     this.state.news.forEach(article => {
                         const card = document.createElement('a');
-                        card.href = `/news/${article.slug}`;
-                        card.className = 'article-card !block';
+                        card.href = `/article.html?slug=${article.slug}`;
+                        card.className = 'article-card p-4';
                         const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString());
                         card.innerHTML = `
-                            <div>
+                            <div class="flex flex-col flex-grow">
                                 <p class="text-sm text-[var(--text-muted)] mb-2">${publishDate}</p>
-                                <h3 class="text-2xl font-bold mb-2 text-[var(--text-main)]">${article.title}</h3>
-                                <p class="text-[var(--text-muted)] font-light">${article.body.substring(0, 120).replace(/<[^>]*>?/gm, '')}...</p>
-                                <span class="inline-block mt-4 font-bold text-orange-600">Read More &rarr;</span>
+                                <h3 class="text-2xl font-bold mb-2 text-[var(--text-main)] flex-grow">${article.title}</h3>
+                                <p class="text-[var(--text-muted)] font-light text-sm">${article.body.substring(0, 100).replace(/<[^>]*>?/gm, '')}...</p>
+                                <span class="inline-block mt-4 font-bold text-orange-600 self-start">Read More &rarr;</span>
                             </div>
                         `;
                         newsList.appendChild(card);
                     });
                 }
-
-                if (this.state.reviews.length === 0) {
-                    reviewsList.innerHTML = '<p class="text-[var(--text-muted)] italic">No reviews available yet.</p>';
+            },
+            renderReviews() {
+                const { reviewsList } = this.elements;
+                reviewsList.innerHTML = '';
+                 if (this.state.reviews.length === 0) {
+                    reviewsList.innerHTML = '<p class="text-[var(--text-muted)] italic px-1">No reviews available yet.</p>';
                 } else {
                     this.state.reviews.forEach(review => {
                         let starsHtml = '';
                         for (let i = 1; i <= 5; i++) {
                             starsHtml += `<svg class="w-4 h-4 ${i <= review.rating ? 'star-filled' : 'text-stone-400 dark:text-stone-600'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
                         }
-
-                        const albumData = this.state.allAlbums.find(a => a.albumTitle === review.albumTitle && a.artist === review.artist);
-                        const coverImage = albumData ? albumData.cover : review.imageUrl || 'https://placehold.co/100x100/e7e5e4/1c1917?text=Review';
-
+                        const coverImage = review.imageUrl || 'https://placehold.co/150x150/e7e5e4/1c1917?text=Review';
                         const card = document.createElement('a');
-                        card.href = `/reviews/${review.slug}`;
-                        card.className = 'article-card';
+                        card.href = `/article.html?slug=${review.slug}`;
+                        card.className = 'article-card p-4';
                         card.innerHTML = `
-                            <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-24 h-24 object-cover rounded-md border-2 border-[var(--border-color)] flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/e7e5e4/1c1917?text=Review';">
-                            <div class="flex-grow">
+                            <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-full h-48 object-cover rounded-md border-2 border-[var(--border-color)] mb-4" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e7e5e4/1c1917?text=Review';">
+                            <div class="flex flex-col flex-grow">
                                 <div class="flex items-center justify-between mb-1">
-                                    <p class="text-sm text-[var(--text-muted)]">${review.artist}</p>
-                                    <div class="flex items-center gap-1" title="Rating: ${review.rating}/5">${starsHtml}</div>
+                                    <p class="text-sm text-[var(--text-muted)] truncate">${review.artist}</p>
+                                    <div class="flex items-center gap-1 flex-shrink-0" title="Rating: ${review.rating}/5">${starsHtml}</div>
                                 </div>
-                                <h3 class="text-xl font-bold text-[var(--text-main)]">${review.albumTitle}</h3>
+                                <h3 class="text-xl font-bold text-[var(--text-main)] flex-grow">${review.albumTitle}</h3>
                                 <p class="text-[var(--text-muted)] text-sm font-serif italic">"${review.title}"</p>
-                                <span class="inline-block mt-2 text-sm font-bold text-orange-600">Read Review &rarr;</span>
+                                <span class="inline-block mt-2 text-sm font-bold text-orange-600 self-start">Read Review &rarr;</span>
                             </div>
                         `;
                         reviewsList.appendChild(card);
                     });
                 }
             },
+            renderColumns() {
+                const { columnsList } = this.elements;
+                columnsList.innerHTML = '';
+                if (this.state.columns.length === 0) {
+                    columnsList.innerHTML = '<p class="text-[var(--text-muted)] italic px-1">No columns yet.</p>';
+                } else {
+                    this.state.columns.forEach(article => {
+                        const card = document.createElement('a');
+                        card.href = `/article.html?slug=${article.slug}`;
+                        card.className = 'article-card p-4';
+                        const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString());
+                        card.innerHTML = `
+                             <div class="flex flex-col flex-grow">
+                                <p class="text-sm text-[var(--text-muted)] mb-2">${publishDate} by ${article.author || 'Staff'}</p>
+                                <h3 class="text-2xl font-bold mb-2 text-[var(--text-main)] flex-grow">${article.title}</h3>
+                                <p class="text-[var(--text-muted)] font-light text-sm">${article.body.substring(0, 150).replace(/<[^>]*>?/gm, '')}...</p>
+                                <span class="inline-block mt-4 font-bold text-orange-600 self-start">Read More &rarr;</span>
+                            </div>
+                        `;
+                        columnsList.appendChild(card);
+                    });
+                }
+            }
         };
         document.addEventListener('DOMContentLoaded', () => BlogApp.init());
     </script>
