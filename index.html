@@ -718,7 +718,7 @@
                             title: 'New ways to discover Jazz History',
                             imageUrl: 'images/bannerindex.jpg',
                             isWelcome: true,
-                            link: '/'
+                            link: '/timeline'
                         };
                         
                         const articleTypesToFetch = ['column', 'news', 'review'];
@@ -756,6 +756,7 @@
                         slide.style.backgroundImage = `url(${slideData.imageUrl || 'https://placehold.co/1200x600/1c1917/f5f5f4?text=Controlled+Freedom'})`;
 
                         const link = slideData.link || '#';
+                        const target = slideData.isWelcome ? '' : 'target="_blank" rel="noopener noreferrer"';
                         
                         const linkText = slideData.isWelcome ? 'Explore The Site &rarr;' : 'Read More &rarr;';
                         const titleHtml = slideData.isWelcome 
@@ -768,7 +769,7 @@
                                 <p class="text-lg font-bold text-orange-500 uppercase tracking-widest">${slideData.type}</p>
                                 ${titleHtml}
                                 ${subtitle}
-                                <a href="${link}" target="_blank" rel="noopener noreferrer" class="inline-block mt-4 font-bold text-white hover:text-orange-500 transition-colors">${linkText}</a>
+                                <a href="${link}" ${target} class="inline-block mt-4 font-bold text-white hover:text-orange-500 transition-colors">${linkText}</a>
                             </div>
                         `;
                         frontpageSlider.appendChild(slide);
