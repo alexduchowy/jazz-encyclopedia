@@ -484,7 +484,7 @@
 
                 let bodyContent = article.body;
 
-                // NEW: Prepare video HTML if youtubeID exists
+                // Prepare video HTML if youtubeID exists
                 let videoHtml = '';
                 if (article.youtubeID) {
                     videoHtml = `
@@ -498,8 +498,9 @@
                         </div>`;
                 }
                 
-                // NEW: Replace the placeholder with the video HTML. If no video, placeholder is removed.
-                bodyContent = bodyContent.replace(/<p>\[YOUTUBE_VIDEO\]<\/p>/g, videoHtml);
+                // CORRECTED: Replace the placeholder with the video HTML.
+                // This regex looks for the placeholder, optionally wrapped in <p> tags.
+                bodyContent = bodyContent.replace(/<p>\s*\[YOUTUBE_VIDEO\]\s*<\/p>|\[YOUTUBE_VIDEO\]/g, videoHtml);
 
 
                 if (article.type === 'review') {
