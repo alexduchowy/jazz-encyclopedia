@@ -211,6 +211,57 @@
             }
         }
 
+        /* NEW SLIDER STYLES */
+        #frontpage-slider {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            max-height: 500px;
+            overflow: hidden;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+        .slide.active {
+            opacity: 1;
+        }
+        .slide-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+        }
+        .slide-dots {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .dot.active {
+            background-color: white;
+        }
+        
         .main-content-wrapper {
             position: relative;
             background-color: var(--bg-secondary);
@@ -457,6 +508,16 @@
         </section>
 
         <main>
+            <!-- NEW FRONTPAGE SLIDER SECTION -->
+            <section id="frontpage-section" class="bg-black">
+                <div id="frontpage-slider">
+                    <!-- Slides will be injected here -->
+                </div>
+                <div id="frontpage-dots" class="slide-dots">
+                    <!-- Dots will be injected here -->
+                </div>
+            </section>
+
             <div class="main-content-wrapper">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div id="mobile-card-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -520,7 +581,7 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-stone-900 text-stone-200 py-8 mt-16">
+        <footer class="bg-stone-900 text-stone-200 py-8">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
                 <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
@@ -599,6 +660,9 @@
                 fullArtistsData: {},
                 genreData: {},
                 fullGenreColorMap: {},
+                frontpageSlides: [], 
+                currentSlide: 0, 
+                slideInterval: null,
             },
             elements: {},
             init() {
@@ -644,6 +708,9 @@
                     artistModalTitle: document.getElementById('artist-modal-title'),
                     artistModalBody: document.getElementById('artist-modal-body'),
                     closeArtistModalBtn: document.getElementById('close-artist-modal'),
+                    
+                    frontpageSlider: document.getElementById('frontpage-slider'),
+                    frontpageDots: document.getElementById('frontpage-dots'),
                 };
             },
             async fetchData() {
@@ -666,6 +733,7 @@
                     this.methods.renderRecommendation();
                     this.methods.setupOnThisDayFeature();
                     this.methods.fetchNewsAndReview();
+                    this.methods.fetchFrontpageArticles();
 
                     this.showPage();
                 } catch (error) {
@@ -734,7 +802,6 @@
                         return;
                     }
                     
-                    // Corrected Logic: Use days since an epoch for a full cycle
                     const epoch = new Date('2024-01-01');
                     const today = new Date();
                     const diffTime = Math.abs(today - epoch);
@@ -983,7 +1050,7 @@
                         this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-[var(--text-muted)]">No notable jazz events on this day in our database. Check back tomorrow!</p>`;
                     }
                 },
-                fetchNewsAndReview() {
+                async fetchNewsAndReview() {
                     const cachedArticles = sessionStorage.getItem('cachedArticles');
                     if (cachedArticles) {
                         try {
@@ -1011,29 +1078,27 @@
                     const db = getFirestore(app);
                     const auth = getAuth(app);
 
-                    (async () => {
-                        try {
-                            if (!auth.currentUser) {
-                                await signInAnonymously(auth);
-                            }
-                            const articlesRef = collection(db, "articles");
-                            const q = query(articlesRef, orderBy("updatedAt", "desc"), limit(10));
-                            const articlesSnapshot = await getDocs(q);
-                            
-                            const articles = [];
-                            articlesSnapshot.forEach(doc => {
-                                articles.push({ id: doc.id, ...doc.data() });
-                            });
-
-                            sessionStorage.setItem('cachedArticles', JSON.stringify(articles));
-                            this.methods.renderNewsAndReviews(articles);
-
-                        } catch (error) {
-                            console.error("Error fetching articles:", error);
-                            this.elements.latestNews.innerHTML = `<p>Could not load news.</p>`;
-                            this.elements.latestReview.innerHTML = `<p>Could not load review.</p>`;
+                    try {
+                        if (!auth.currentUser) {
+                            await signInAnonymously(auth);
                         }
-                    })();
+                        const articlesRef = collection(db, "articles");
+                        const q = query(articlesRef, orderBy("updatedAt", "desc"), limit(10));
+                        const articlesSnapshot = await getDocs(q);
+                        
+                        const articles = [];
+                        articlesSnapshot.forEach(doc => {
+                            articles.push({ id: doc.id, ...doc.data() });
+                        });
+
+                        sessionStorage.setItem('cachedArticles', JSON.stringify(articles));
+                        this.methods.renderNewsAndReviews(articles);
+
+                    } catch (error) {
+                        console.error("Error fetching articles:", error);
+                        this.elements.latestNews.innerHTML = `<p>Could not load news.</p>`;
+                        this.elements.latestReview.innerHTML = `<p>Could not load review.</p>`;
+                    }
                 },
                 renderNewsAndReviews(articles) {
                     const newsArticles = [];
