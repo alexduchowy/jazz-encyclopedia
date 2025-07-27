@@ -482,22 +482,25 @@
                 let contentHtml = '';
                 const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
 
-                // NEW: Process the body content to wrap iframes before rendering
-                let bodyContent = article.body.replace(
-                    /<iframe src="https:\/\/www\.youtube\.com\/embed\/([^"]+)"(.*?)><\/iframe>/g,
-                    (match, videoId, otherAttrs) => {
-                        // Reconstruct the iframe with modern attributes inside the responsive wrapper
-                        return `<div class="video-container">
-                                    <iframe src="https://www.youtube.com/embed/${videoId}" 
-                                            title="YouTube video player" 
-                                            frameborder="0" 
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                            allowfullscreen
-                                            ${otherAttrs}>
-                                    </iframe>
-                                </div>`;
-                    }
-                );
+                let bodyContent = article.body;
+
+                // NEW: Prepare video HTML if youtubeID exists
+                let videoHtml = '';
+                if (article.youtubeID) {
+                    videoHtml = `
+                        <div class="video-container">
+                            <iframe src="https://www.youtube.com/embed/${article.youtubeID}" 
+                                    title="YouTube video player" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                    allowfullscreen>
+                            </iframe>
+                        </div>`;
+                }
+                
+                // NEW: Replace the placeholder with the video HTML. If no video, placeholder is removed.
+                bodyContent = bodyContent.replace(/<p>\[YOUTUBE_VIDEO\]<\/p>/g, videoHtml);
+
 
                 if (article.type === 'review') {
                     let coverImage = albumData?.cover || article.imageUrl || 'https://placehold.co/600x600/e7e5e4/1c1917?text=No+Image';
@@ -557,7 +560,6 @@
                 }
 
                 this.elements.articleContainer.innerHTML = contentHtml;
-                // The iframe processing is now done before this step, so no need for querySelectorAll here.
             },
             renderError(message) {
                 this.elements.articleContainer.innerHTML = `
