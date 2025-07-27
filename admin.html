@@ -78,10 +78,8 @@
     <!-- Auth Screen -->
     <div id="auth-container" class="min-h-screen flex items-center justify-center bg-stone-900 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
-            <div>
-                <img class="mx-auto h-24 w-auto" src="/images/logo.svg" alt="Controlled Freedom">
-                <h2 class="mt-6 text-center text-3xl font-extrabold text-stone-100">Sign in to your account</h2>
-            </div>
+            <img class="mx-auto h-24 w-auto" src="/images/logo.svg" alt="Controlled Freedom">
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-stone-100">Sign in to your account</h2>
             <form id="login-form" class="mt-8 space-y-6">
                 <div class="rounded-md shadow-sm -space-y-px">
                     <div>
@@ -223,11 +221,19 @@
                                 </div>
                             </div>
                             
-                            <!-- Image URL Input Section -->
-                            <div>
-                                <label for="article-image-url" class="block text-sm font-medium text-stone-300">Header Image URL</label>
-                                <input type="text" id="article-image-url" placeholder="Paste Firebase Storage URL here" class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                <img id="image-preview" src="" alt="Image Preview" class="hidden mt-4 rounded-md max-h-60 w-auto border border-stone-600"/>
+                            <!-- Image URL & YouTube ID Input Section -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="article-image-url" class="block text-sm font-medium text-stone-300">Header Image URL</label>
+                                    <input type="text" id="article-image-url" placeholder="Paste Firebase Storage URL here" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    <img id="image-preview" src="" alt="Image Preview" class="hidden mt-4 rounded-md max-h-60 w-auto border border-stone-600"/>
+                                </div>
+                                <!-- NEW: YouTube ID Field -->
+                                <div>
+                                    <label for="youtube-id" class="block text-sm font-medium text-stone-300">YouTube Video ID (Optional)</label>
+                                    <input type="text" id="youtube-id" placeholder="e.g., F9axzrxcoWg" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    <p class="text-xs text-stone-500 mt-1">Just the ID, not the full URL.</p>
+                                </div>
                             </div>
 
                             <div>
@@ -337,9 +343,10 @@
             reviewYearInput: document.getElementById('review-year'),
             reviewLabelInput: document.getElementById('review-label'),
             reviewGenresInput: document.getElementById('review-genres'),
-            // Image URL
+            // Image URL & YouTube
             imageUrlInput: document.getElementById('article-image-url'),
             imagePreview: document.getElementById('image-preview'),
+            youtubeIdInput: document.getElementById('youtube-id'), // NEW
             // HTML Shortcuts
             htmlShortcuts: document.getElementById('html-shortcuts'),
             // Confirmation Modal
@@ -521,6 +528,7 @@
             elements.articleForm.reset();
             elements.articleIdInput.value = '';
             elements.imageUrlInput.value = '';
+            elements.youtubeIdInput.value = ''; // NEW
             elements.formTitle.textContent = 'Create New Article';
             elements.saveArticleBtn.textContent = 'Save Article';
             elements.saveArticleBtn.disabled = false;
@@ -580,6 +588,7 @@
                     slug: elements.articleSlugInput.value.trim(),
                     author: elements.articleAuthorInput.value.trim(),
                     publishDate: elements.articlePublishDateInput.value,
+                    youtubeID: elements.youtubeIdInput.value.trim() || '', // NEW
                     updatedAt: serverTimestamp(),
                 };
 
@@ -633,6 +642,7 @@
                     elements.articleAuthorInput.value = article.author || 'Staff';
                     elements.articlePublishDateInput.value = article.publishDate || new Date().toISOString().slice(0, 10);
                     elements.articleSlugInput.value = article.slug || '';
+                    elements.youtubeIdInput.value = article.youtubeID || ''; // NEW
 
                     if (article.type === 'review') {
                         elements.reviewArtistInput.value = article.artist || '';
