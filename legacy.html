@@ -841,46 +841,42 @@
                     }));
                 },
                 buildGenreColorMap() {
-                    const styleSheet = document.styleSheets[0];
-                    const rootRules = [...styleSheet.cssRules].find(rule => rule.selectorText === ':root');
-                    const darkRules = [...styleSheet.cssRules].find(rule => rule.selectorText === '.dark');
-                    
-                    const genreColors = {};
-                    const darkGenreColors = {};
-
-                    if (rootRules) {
-                        const colorStyles = rootRules.style.cssText.split(';');
-                        colorStyles.forEach(style => {
-                            if (style.includes('--genre-')) {
-                                const [key, value] = style.split(':');
-                                if (key && value) genreColors[key.trim()] = value.trim();
-                            }
-                        });
-                    }
-                     if (darkRules) {
-                        const darkColorStyles = darkRules.style.cssText.split(';');
-                        darkColorStyles.forEach(style => {
-                            if (style.includes('--genre-')) {
-                                const [key, value] = style.split(':');
-                                if (key && value) darkGenreColors[key.trim()] = value.trim();
-                            }
-                        });
-                    }
-
-                    const allGenreNames = new Set();
-                    Object.values(this.state.genreData.genres).forEach(g => {
-                        allGenreNames.add(g.name);
-                        if (g.subgenres) {
-                            Object.keys(g.subgenres).forEach(sg => allGenreNames.add(sg));
+                    // Find the inline stylesheet by checking for a null href property.
+                    // This is more robust than assuming it's the first stylesheet.
+                    let inlineStyleSheet = null;
+                    for (const sheet of document.styleSheets) {
+                        if (!sheet.href) {
+                            inlineStyleSheet = sheet;
+                            break;
                         }
-                    });
+                    }
 
-                    this.state.fullGenreColorMap = {};
-                    allGenreNames.forEach(genreName => {
-                         const slug = this.methods.slugify(genreName);
-                         const cssVar = `--genre-${slug}`;
-                         this.state.fullGenreColorMap[genreName] = `var(${cssVar})`;
-                    });
+                    if (!inlineStyleSheet) {
+                        console.error("Could not find the inline stylesheet to read CSS variables.");
+                        return;
+                    }
+                    
+                    try {
+                        // This block might still fail in very rare cases, so it's wrapped in try...catch.
+                        const allGenreNames = new Set();
+                        Object.values(this.state.genreData.genres).forEach(g => {
+                            allGenreNames.add(g.name);
+                            if (g.subgenres) {
+                                Object.keys(g.subgenres).forEach(sg => allGenreNames.add(sg));
+                            }
+                        });
+
+                        this.state.fullGenreColorMap = {};
+                        allGenreNames.forEach(genreName => {
+                            const slug = this.methods.slugify(genreName);
+                            const cssVar = `--genre-${slug}`;
+                            // The color map will now correctly reference the CSS variables.
+                            this.state.fullGenreColorMap[genreName] = `var(${cssVar})`;
+                        });
+
+                    } catch (e) {
+                        console.error("Error accessing CSS rules from the inline stylesheet:", e);
+                    }
                 },
                 setupOnThisDayFeature() {
                     const { onThisDayContainer } = this.elements;
