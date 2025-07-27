@@ -178,6 +178,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            overflow: hidden;
         }
         .dark .article-card {
             box-shadow: none;
@@ -469,13 +470,14 @@
                     this.state.news.forEach(article => {
                         const card = document.createElement('a');
                         card.href = `/news/${article.slug}`;
-                        card.className = 'article-card p-4';
+                        card.className = 'article-card';
                         const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
                         card.innerHTML = `
-                            <img src="${article.imageUrl || 'https://placehold.co/600x338/e7e5e4/1c1917?text=News'}" alt="Article image" class="w-full h-auto aspect-[16/9] object-cover rounded-md mb-4" onerror="this.onerror=null;this.src='https://placehold.co/600x338/e7e5e4/1c1917?text=News';">
-                            <div class="flex flex-col flex-grow">
+                            <img src="${article.imageUrl || 'https://placehold.co/600x338/e7e5e4/1c1917?text=News'}" alt="Article image" class="w-full h-auto aspect-[16/9] object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x338/e7e5e4/1c1917?text=News';">
+                            <div class="p-6 flex flex-col flex-grow">
                                 <p class="text-sm text-[var(--text-muted)] mb-2">${publishDate}</p>
                                 <h3 class="text-2xl font-bold mb-2 text-[var(--text-main)] flex-grow">${article.title}</h3>
+                                <p class="text-sm text-[var(--text-muted)] font-light">${article.body.substring(0, 80).replace(/<[^>]*>?/gm, '')}...</p>
                                 <span class="inline-block mt-4 font-bold text-orange-600 self-start">Read More &rarr;</span>
                             </div>
                         `;
@@ -497,10 +499,10 @@
                         const coverImage = review.imageUrl || 'https://placehold.co/600x338/e7e5e4/1c1917?text=Review';
                         const card = document.createElement('a');
                         card.href = `/reviews/${review.slug}`;
-                        card.className = 'article-card p-4';
+                        card.className = 'article-card';
                         card.innerHTML = `
-                            <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-full h-auto aspect-[16/9] object-cover rounded-md border-2 border-[var(--border-color)] mb-4" onerror="this.onerror=null;this.src='https://placehold.co/600x338/e7e5e4/1c1917?text=Review';">
-                            <div class="flex flex-col flex-grow">
+                            <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-full h-auto aspect-[16/9] object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x338/e7e5e4/1c1917?text=Review';">
+                            <div class="p-6 flex flex-col flex-grow">
                                 <div class="flex items-center justify-between mb-1">
                                     <p class="text-sm text-[var(--text-muted)] truncate">${review.artist}</p>
                                     <div class="flex items-center gap-1 flex-shrink-0" title="Rating: ${review.rating}/5">${starsHtml}</div>
@@ -523,13 +525,14 @@
                     this.state.columns.forEach(article => {
                         const card = document.createElement('a');
                         card.href = `/column/${article.slug}`;
-                        card.className = 'article-card p-4';
+                        card.className = 'article-card';
                         const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
                         card.innerHTML = `
-                            <img src="${article.imageUrl || 'https://placehold.co/600x338/e7e5e4/1c1917?text=Opinion'}" alt="Article image" class="w-full h-auto aspect-[16/9] object-cover rounded-md mb-4" onerror="this.onerror=null;this.src='https://placehold.co/600x338/e7e5e4/1c1917?text=Opinion';">
-                             <div class="flex flex-col flex-grow">
+                            <img src="${article.imageUrl || 'https://placehold.co/600x338/e7e5e4/1c1917?text=Opinion'}" alt="Article image" class="w-full h-auto aspect-[16/9] object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x338/e7e5e4/1c1917?text=Opinion';">
+                             <div class="p-6 flex flex-col flex-grow">
                                 <p class="text-sm text-[var(--text-muted)] mb-2">${publishDate} by ${article.author || 'Staff'}</p>
                                 <h3 class="text-2xl font-bold mb-2 text-[var(--text-main)] flex-grow">${article.title}</h3>
+                                <p class="text-sm text-[var(--text-muted)] font-light">${article.body.substring(0, 80).replace(/<[^>]*>?/gm, '')}...</p>
                                 <span class="inline-block mt-4 font-bold text-orange-600 self-start">Read More &rarr;</span>
                             </div>
                         `;
