@@ -38,6 +38,21 @@
             --genre-nu-jazz: #a7f3d0;
             --genre-smooth-jazz: #93c5fd;
             --genre-modern-creative: #fecdd3;
+            --genre-third-stream: #bae6fd;
+            --genre-experimental-big-band: #e9d5ff;
+            --genre-spiritual-jazz: #dcfce7;
+            --genre-afro-jazz: #fef08a;
+            --genre-soul-jazz: #fed7aa;
+            --genre-progressive-big-band: #fecaca;
+            --genre-jazz-rock: #a5f3fc;
+            --genre-jazz-funk: #c4b5fd;
+            --genre-indo-jazz: #fde047;
+            --genre-ambient-jazz: #a7f3d0;
+            --genre-ecm-style-jazz: #93c5fd;
+            --genre-cape-jazz: #fef08a;
+            --genre-chamber-jazz: #bae6fd;
+            --genre-post-minimalism: #e9d5ff;
+            --genre-neo-bop: #d8b4fe;
             --genre-default: #e7e5e4;
         }
 
@@ -65,6 +80,21 @@
             --genre-nu-jazz: #10b981;
             --genre-smooth-jazz: #3b82f6;
             --genre-modern-creative: #ec4899;
+            --genre-third-stream: #0284c7;
+            --genre-experimental-big-band: #a855f7;
+            --genre-spiritual-jazz: #22c55e;
+            --genre-afro-jazz: #ca8a04;
+            --genre-soul-jazz: #f59e0b;
+            --genre-progressive-big-band: #dc2626;
+            --genre-jazz-rock: #0891b2;
+            --genre-jazz-funk: #7c3aed;
+            --genre-indo-jazz: #eab308;
+            --genre-ambient-jazz: #10b981;
+            --genre-ecm-style-jazz: #3b82f6;
+            --genre-cape-jazz: #ca8a04;
+            --genre-chamber-jazz: #0284c7;
+            --genre-post-minimalism: #a855f7;
+            --genre-neo-bop: #8b5cf6;
         }
 
         body {
@@ -191,15 +221,18 @@
         }
 
         #modal-analysis-section {
-            background-color: #1a1a1a;
+            background-color: var(--bg-secondary);
             padding: 1.5rem; margin-top: 2rem;
             border: 2px solid var(--border-color);
             box-shadow: 4px 4px 0px var(--border-color);
         }
-        .dark #modal-analysis-section { box-shadow: none; }
-        #modal-analysis-section h5 { color: #f5f5f4; }
+        .dark #modal-analysis-section { 
+            box-shadow: none; 
+            background-color: #292524; /* A slightly different dark shade */
+        }
+        #modal-analysis-section h5 { color: var(--text-main); }
         
-        .liner-notes-text { font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; color: #d4d4d2; }
+        .liner-notes-text { font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; color: var(--text-muted); }
         
         .genre-tag {
             padding: 0.25rem 0.75rem; border-radius: 9999px;
@@ -534,12 +567,12 @@
             </section>
         </main>
 
-        <footer class="bg-stone-900 text-stone-200 py-8">
+        <footer class="bg-[var(--bg-secondary)] text-[var(--text-main)] py-8 border-t-2 border-[var(--border-color)]">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
-                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
-                <div class="mt-6 border-t border-stone-700 pt-6">
-                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
+                <p class="text-sm text-[var(--text-muted)] mt-2">Designed to bring music history to life through interactive data visualization.</p>
+                <div class="mt-6 border-t border-[var(--border-color)] pt-6">
+                    <p id="footer-copyright" class="text-xs text-[var(--text-muted)]"></p>
                 </div>
             </div>
         </footer>
@@ -553,7 +586,7 @@
                     <h3 id="modal-title" class="text-4xl text-orange-500"></h3>
                     <button id="modal-artist" class="text-xl text-[var(--text-muted)] bg-transparent border-none p-0"></button>
                 </div>
-                <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+                <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">×</button>
             </div>
             <div id="modal-body" class="p-6 overflow-y-auto">
                 <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
@@ -570,7 +603,7 @@
         <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
              <div class="flex justify-between items-start p-4 border-b-2 border-[var(--border-color)] flex-shrink-0">
                  <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
-                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">×</button>
              </div>
              <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
@@ -579,7 +612,7 @@
         <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
              <div class="flex justify-between items-start p-4 border-b-2 border-[var(--border-color)] flex-shrink-0">
                  <h3 id="genre-modal-title" class="text-4xl"></h3>
-                 <button id="close-genre-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+                 <button id="close-genre-modal" class="text-4xl font-bold p-2 leading-none text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">×</button>
              </div>
              <div id="genre-modal-body" class="p-6 overflow-y-auto"></div>
         </div>
@@ -591,11 +624,11 @@
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
             <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
-                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Home</a>
+                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">TV</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Legacy</a>
+                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Blog</a>
             </nav>
         </div>
     </div>
@@ -617,8 +650,7 @@
                 currentArtistPage: 0,
                 totalArtistPages: 0,
                 currentPathSlide: 0,
-                pathSliderObserver: null,
-                pathSliderTimeout: null,
+                pathScrollTimeout: null,
             },
             elements: {},
             init() {
@@ -809,21 +841,45 @@
                     }));
                 },
                 buildGenreColorMap() {
-                    const baseGenreColors = this.state.genreData.genres ? Object.keys(this.state.genreData.genres).reduce((acc, genre) => {
-                        acc[genre] = this.state.genreData.genres[genre].color;
-                        return acc;
-                    }, {}) : {};
-                    this.state.fullGenreColorMap = { ...baseGenreColors };
-                    const allAlbums = this.state.allLegacyAlbums.concat(this.state.fullAlbumDatabase);
-                    allAlbums.forEach(album => {
-                        if(album.genres) {
-                            album.genres.forEach(genre => {
-                                if (!this.state.fullGenreColorMap[genre]) {
-                                    const parentGenre = Object.values(this.state.genreData.genres).find(g => g.subgenres && g.subgenres[genre]);
-                                    this.state.fullGenreColorMap[genre] = parentGenre ? parentGenre.color : 'var(--genre-default)';
-                                }
-                            });
+                    const styleSheet = document.styleSheets[0];
+                    const rootRules = [...styleSheet.cssRules].find(rule => rule.selectorText === ':root');
+                    const darkRules = [...styleSheet.cssRules].find(rule => rule.selectorText === '.dark');
+                    
+                    const genreColors = {};
+                    const darkGenreColors = {};
+
+                    if (rootRules) {
+                        const colorStyles = rootRules.style.cssText.split(';');
+                        colorStyles.forEach(style => {
+                            if (style.includes('--genre-')) {
+                                const [key, value] = style.split(':');
+                                if (key && value) genreColors[key.trim()] = value.trim();
+                            }
+                        });
+                    }
+                     if (darkRules) {
+                        const darkColorStyles = darkRules.style.cssText.split(';');
+                        darkColorStyles.forEach(style => {
+                            if (style.includes('--genre-')) {
+                                const [key, value] = style.split(':');
+                                if (key && value) darkGenreColors[key.trim()] = value.trim();
+                            }
+                        });
+                    }
+
+                    const allGenreNames = new Set();
+                    Object.values(this.state.genreData.genres).forEach(g => {
+                        allGenreNames.add(g.name);
+                        if (g.subgenres) {
+                            Object.keys(g.subgenres).forEach(sg => allGenreNames.add(sg));
                         }
+                    });
+
+                    this.state.fullGenreColorMap = {};
+                    allGenreNames.forEach(genreName => {
+                         const slug = this.methods.slugify(genreName);
+                         const cssVar = `--genre-${slug}`;
+                         this.state.fullGenreColorMap[genreName] = `var(${cssVar})`;
                     });
                 },
                 setupOnThisDayFeature() {
@@ -853,7 +909,7 @@
 
                         onThisDayContainer.innerHTML = `
                             <div class="p-4 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--border-color)] dark:shadow-none cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] dark:hover:border-[var(--accent)] hover:-translate-y-1 transition-all">
-                                <h4 class="text-2xl text-stone-900 dark:text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
+                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
                                 <div class="flex items-center gap-4 mt-2">
                                     <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-[var(--border-color)] rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
                                     <div>
@@ -870,7 +926,7 @@
                     } else {
                         onThisDayContainer.innerHTML = `
                              <div class="p-4 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--border-color)] dark:shadow-none">
-                                <h4 class="text-2xl text-stone-900 dark:text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
+                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
                                 <p class="text-center text-[var(--text-muted)] mt-4">No legacy tracks were recorded on this day. Check back tomorrow!</p>
                             </div>
                         `;
@@ -885,12 +941,15 @@
                     if (firstPathKey) {
                         this.methods.renderLegacyAlbumSlider(firstPathKey);
                         const firstCard = this.elements.pathSelectorGrid.querySelector('.path-selector-card');
-                        if (firstCard) firstCard.classList.add('active');
+                        if (firstCard) {
+                             this.methods.selectPath(0);
+                        }
                     }
                 },
                 getPathColor(pathData) {
                     const affinity = pathData.genreAffinity.split(', ')[0].trim();
-                    return this.state.fullGenreColorMap[affinity] || 'var(--genre-default)';
+                    const slug = this.methods.slugify(affinity);
+                    return `var(--genre-${slug}, var(--genre-default))`;
                 },
                 renderPathSelector() {
                     const { pathSelectorGrid } = this.elements;
@@ -908,34 +967,37 @@
                         pathSelectorGrid.appendChild(card);
                     });
                 },
-                setupPathSlider() {
+                selectPath(index) {
                     const { pathSelectorGrid, pathPrevBtn, pathNextBtn, pathPageIndicator } = this.elements;
                     const cards = Array.from(pathSelectorGrid.children);
                     const totalSlides = cards.length;
 
-                    const selectPath = (index) => {
-                        if (index < 0 || index >= totalSlides) return;
-                        
-                        // Only update if the index has changed
-                        if (index === this.state.currentPathSlide && document.querySelector('.path-selector-card.active')) return;
+                    if (index < 0 || index >= totalSlides) return;
+                    
+                    // Only update if the index has changed
+                    if (index === this.state.currentPathSlide && pathSelectorGrid.querySelector('.path-selector-card.active')) return;
 
-                        this.state.currentPathSlide = index;
+                    this.state.currentPathSlide = index;
 
-                        pathPageIndicator.textContent = `${index + 1} / ${totalSlides}`;
-                        pathPrevBtn.disabled = index === 0;
-                        pathNextBtn.disabled = index === totalSlides - 1;
+                    pathPageIndicator.textContent = `${index + 1} / ${totalSlides}`;
+                    pathPrevBtn.disabled = index === 0;
+                    pathNextBtn.disabled = index === totalSlides - 1;
 
-                        cards.forEach((card, i) => {
-                            if (i === index) {
-                                if (!card.classList.contains('active')) {
-                                    card.classList.add('active');
-                                    this.methods.renderLegacyAlbumSlider(card.dataset.pathKey);
-                                }
-                            } else {
-                                card.classList.remove('active');
+                    cards.forEach((card, i) => {
+                        if (i === index) {
+                            if (!card.classList.contains('active')) {
+                                card.classList.add('active');
+                                this.methods.renderLegacyAlbumSlider(card.dataset.pathKey);
                             }
-                        });
-                    };
+                        } else {
+                            card.classList.remove('active');
+                        }
+                    });
+                },
+                setupPathSlider() {
+                    const { pathSelectorGrid, pathPrevBtn, pathNextBtn } = this.elements;
+                    const cards = Array.from(pathSelectorGrid.children);
+                    const totalSlides = cards.length;
 
                     const scrollToCard = (index) => {
                          const card = cards[index];
@@ -946,53 +1008,49 @@
                     };
 
                     pathPrevBtn.onclick = () => {
-                        if (this.state.currentPathSlide > 0) {
-                           scrollToCard(this.state.currentPathSlide - 1);
-                        }
+                        const newIndex = Math.max(0, this.state.currentPathSlide - 1);
+                        this.methods.selectPath(newIndex);
+                        scrollToCard(newIndex);
                     };
                     pathNextBtn.onclick = () => {
-                        if (this.state.currentPathSlide < totalSlides - 1) {
-                           scrollToCard(this.state.currentPathSlide + 1);
-                        }
+                        const newIndex = Math.min(totalSlides - 1, this.state.currentPathSlide + 1);
+                        this.methods.selectPath(newIndex);
+                        scrollToCard(newIndex);
                     };
                     
                     pathSelectorGrid.addEventListener('click', (e) => {
                         const card = e.target.closest('.path-selector-card');
                         if (card) {
                             const index = parseInt(card.dataset.index);
+                            this.methods.selectPath(index);
                             scrollToCard(index);
                         }
                     });
-
-                    const observer = new IntersectionObserver((entries) => {
-                        clearTimeout(this.state.pathSliderTimeout);
-                        this.state.pathSliderTimeout = setTimeout(() => {
-                            const intersectingEntries = entries.filter(e => e.isIntersecting);
-                            if (intersectingEntries.length > 0) {
-                                let mostCenteredEntry = intersectingEntries[0];
-                                let minDistanceFromCenter = Infinity;
-
-                                intersectingEntries.forEach(entry => {
-                                    const rect = entry.target.getBoundingClientRect();
-                                    const gridRect = pathSelectorGrid.getBoundingClientRect();
-                                    const cardCenter = rect.left + rect.width / 2;
-                                    const gridCenter = gridRect.left + gridRect.width / 2;
-                                    const distance = Math.abs(cardCenter - gridCenter);
-                                    if (distance < minDistanceFromCenter) {
-                                        minDistanceFromCenter = distance;
-                                        mostCenteredEntry = entry;
-                                    }
-                                });
-
-                                const index = parseInt(mostCenteredEntry.target.dataset.index);
-                                selectPath(index);
-                            }
-                        }, 150);
-                    }, { root: pathSelectorGrid, threshold: 0.5 });
-
-                    cards.forEach(card => observer.observe(card));
                     
-                    selectPath(0);
+                    // Debounced scroll-end detection
+                    pathSelectorGrid.addEventListener('scroll', () => {
+                        clearTimeout(this.state.pathScrollTimeout);
+                        this.state.pathScrollTimeout = setTimeout(() => {
+                            const gridCenter = pathSelectorGrid.scrollLeft + pathSelectorGrid.offsetWidth / 2;
+                            let closestCardIndex = -1;
+                            let minDistance = Infinity;
+
+                            cards.forEach((card, index) => {
+                                const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+                                const distance = Math.abs(gridCenter - cardCenter);
+                                if (distance < minDistance) {
+                                    minDistance = distance;
+                                    closestCardIndex = index;
+                                }
+                            });
+
+                            if (closestCardIndex !== -1) {
+                                this.methods.selectPath(closestCardIndex);
+                            }
+                        }, 150); 
+                    }, { passive: true });
+                    
+                    this.methods.selectPath(0);
                 },
                 renderLegacyAlbumSlider(pathKey) {
                     const { legacySliderWrapper, legacySliderTitle, legacyAlbumTrack } = this.elements;
@@ -1001,7 +1059,11 @@
                     legacySliderTitle.textContent = `Key Albums of ${pathData.title}`;
                     const pathColor = this.methods.getPathColor(pathData);
                     const isDark = document.documentElement.classList.contains('dark');
-                    const baseColor = getComputedStyle(document.documentElement).getPropertyValue(pathColor.match(/--[a-zA-Z-]+/)[0]).trim();
+                    
+                    // We extract the CSS variable name to get its value
+                    const cssVarName = pathColor.substring(4, pathColor.length - 1);
+                    const baseColor = getComputedStyle(document.documentElement).getPropertyValue(cssVarName).trim();
+                    
                     const bgColor = `color-mix(in srgb, ${baseColor} ${isDark ? '25%' : '15%'}, transparent)`;
                     
                     legacySliderWrapper.style.backgroundColor = bgColor;
@@ -1090,9 +1152,10 @@
                                     ${columns.map(groups => `
                                         <div class="evolution-genre-group">
                                             ${groups.map(group => group.map(genreName => {
-                                                const color = this.state.fullGenreColorMap[genreName] || 'var(--genre-default)';
+                                                const slug = this.methods.slugify(genreName);
+                                                const colorVar = `--genre-${slug}`;
                                                 return `
-                                                    <div class="genre-node" data-genre-name="${genreName}" style="background-color: ${color};">
+                                                    <div class="genre-node" data-genre-name="${genreName}" style="background-color: var(${colorVar}, var(--genre-default));">
                                                         <h4>${genreName}</h4>
                                                     </div>
                                                 `;
@@ -1358,7 +1421,11 @@
                     
                     const pivotalTrack = album.pivotalTracks && album.pivotalTracks.length > 0 ? album.pivotalTracks[0] : {};
                     
-                    const genreTags = (album.genres || []).map(g => `<span class="genre-tag clickable-link" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}" data-genre-name="${g.trim()}">${g.trim()}</span>`).join(' ');
+                    const genreTags = (album.genres || []).map(g => {
+                        const slug = this.methods.slugify(g.trim());
+                        const colorVar = `--genre-${slug}`;
+                        return `<span class="genre-tag clickable-link" style="background-color: var(${colorVar}, var(--genre-default))" data-genre-name="${g.trim()}">${g.trim()}</span>`
+                    }).join(' ');
 
                     const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A').split(/, (?![^()]*\))/).map(personnel => {
                         const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
@@ -1374,7 +1441,7 @@
                     const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                     const pivotalTracksHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks.map(track => {
                         return `<div class="mb-8 last:mb-0">
-                                    <h5 class="text-2xl font-bold text-white">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                    <h5 class="text-2xl font-bold text-[var(--text-main)]">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
                                     <p class="liner-notes-text">${track.analysis}</p>
                                 </div>`;
                     }).join('<hr class="border-stone-700 my-8">') : `<p class="liner-notes-text">${album.analysis || 'Analysis not available.'}</p>`;
@@ -1461,7 +1528,9 @@
 
                     const titleEl = genreModal.querySelector('#genre-modal-title');
                     titleEl.textContent = genreName;
-                    titleEl.style.color = this.state.fullGenreColorMap[genreName] || 'var(--accent)';
+                    const slug = this.methods.slugify(genreName);
+                    const colorVar = `--genre-${slug}`;
+                    titleEl.style.color = `var(${colorVar}, var(--accent))`;
 
                     const bodyEl = genreModal.querySelector('#genre-modal-body');
                     const keyArtistsHtml = genreInfo.artists ? `<p class="text-base text-[var(--text-muted)] leading-relaxed">${genreInfo.artists.split(', ').map(name => `<span class="clickable-link" data-artist-name="${name.trim()}">${name.trim()}</span>`).join(', ')}</p>` : '';
