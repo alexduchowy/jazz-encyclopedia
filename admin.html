@@ -61,6 +61,7 @@
         .form-input:focus, .form-textarea:focus, .form-select:focus { --tw-ring-color: var(--accent); border-color: var(--accent); background-color: var(--bg-medium); }
         .html-shortcut-btn { background-color: var(--bg-light); padding: 0.25rem 0.75rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; }
         .html-shortcut-btn:hover { background-color: var(--accent); }
+        #review-fields-container.hidden { display: none; }
     </style>
 </head>
 <body class="bg-stone-900 text-stone-200">
@@ -171,6 +172,52 @@
                                     <input type="text" id="title" name="title" required class="form-input mt-1 block w-full rounded-md shadow-sm">
                                 </div>
                             </div>
+
+                            <!-- Review Specific Fields -->
+                            <div id="review-fields-container" class="hidden space-y-6 pt-6 border-t border-stone-700">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="review-artist" class="block text-sm font-medium text-stone-300">Artist</label>
+                                        <input type="text" id="review-artist" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="review-album" class="block text-sm font-medium text-stone-300">Album Title</label>
+                                        <input type="text" id="review-album" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    <div>
+                                        <label for="review-rating" class="block text-sm font-medium text-stone-300">Rating (1-5)</label>
+                                        <input type="number" id="review-rating" min="1" max="5" step="0.5" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="review-year" class="block text-sm font-medium text-stone-300">Release Year</label>
+                                        <input type="number" id="review-year" placeholder="YYYY" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="review-label" class="block text-sm font-medium text-stone-300">Label</label>
+                                        <input type="text" id="review-label" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="review-author" class="block text-sm font-medium text-stone-300">Author</label>
+                                        <input type="text" id="review-author" class="form-input mt-1 block w-full rounded-md shadow-sm" value="Staff">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="review-genres" class="block text-sm font-medium text-stone-300">Genres (comma-separated)</label>
+                                    <input type="text" id="review-genres" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="review-publish-date" class="block text-sm font-medium text-stone-300">Publish Date</label>
+                                        <input type="date" id="review-publish-date" class="form-input mt-1 block w-full rounded-md shadow-sm">
+                                    </div>
+                                     <div>
+                                        <label for="review-slug" class="block text-sm font-medium text-stone-300">URL Slug</label>
+                                        <input type="text" id="review-slug" class="form-input mt-1 block w-full rounded-md shadow-sm bg-stone-700" readonly>
+                                    </div>
+                                </div>
+                            </div>
                             
                             <!-- Image Upload Section -->
                             <div>
@@ -245,7 +292,6 @@
         // --- GLOBAL STATE ---
         let tvPlaylist = [];
         let editingVideoId = null;
-        let articleToDeleteId = null; // For confirmation modal
 
         // --- DOM ELEMENTS ---
         const elements = {
@@ -277,6 +323,17 @@
             titleArticleInput: document.getElementById('title'),
             bodyArticleInput: document.getElementById('body'),
             saveArticleBtn: document.getElementById('save-article-btn'),
+            // Review Fields
+            reviewFieldsContainer: document.getElementById('review-fields-container'),
+            reviewArtistInput: document.getElementById('review-artist'),
+            reviewAlbumInput: document.getElementById('review-album'),
+            reviewRatingInput: document.getElementById('review-rating'),
+            reviewYearInput: document.getElementById('review-year'),
+            reviewLabelInput: document.getElementById('review-label'),
+            reviewAuthorInput: document.getElementById('review-author'),
+            reviewGenresInput: document.getElementById('review-genres'),
+            reviewPublishDateInput: document.getElementById('review-publish-date'),
+            reviewSlugInput: document.getElementById('review-slug'),
             // Image Upload
             imageUploadInput: document.getElementById('article-image-upload'),
             imagePreview: document.getElementById('image-preview'),
@@ -296,7 +353,7 @@
             if (user && user.uid === ADMIN_UID) {
                 elements.authContainer.classList.add('hidden');
                 elements.adminPanel.classList.remove('hidden');
-                setupArticleListener(); // Use real-time listener
+                setupArticleListener(); 
                 setupTvPlaylistListener();
             } else {
                 elements.authContainer.classList.remove('hidden');
@@ -314,11 +371,13 @@
 
         elements.logoutBtn.addEventListener('click', () => signOut(auth));
 
-        // --- TV PLAYLIST LOGIC (Unchanged) ---
+        // --- TV PLAYLIST LOGIC (FIXED) ---
         const setupTvPlaylistListener = () => {
-            const q = query(collection(db, 'tv_playlist'), orderBy('order'));
+            const q = query(collection(db, 'tv_playlist')); // Removed orderBy
             onSnapshot(q, (snapshot) => {
                 tvPlaylist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // Sort client-side to ensure all videos are included and ordered
+                tvPlaylist.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity));
                 renderPlaylistUI(tvPlaylist);
             }, (error) => console.error("Playlist listener error:", error));
         };
@@ -332,14 +391,10 @@
                 const item = document.createElement('div');
                 item.className = 'playlist-item';
                 item.innerHTML = `
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 overflow-hidden">
                         <div class="flex flex-col gap-1">
-                            <button class="move-btn move-up-btn" data-id="${video.id}" ${index === 0 ? 'disabled' : ''}>
-                                <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                            </button>
-                            <button class="move-btn move-down-btn" data-id="${video.id}" ${index === playlist.length - 1 ? 'disabled' : ''}>
-                                <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </button>
+                            <button class="move-btn move-up-btn" data-id="${video.id}" ${index === 0 ? 'disabled' : ''}><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
+                            <button class="move-btn move-down-btn" data-id="${video.id}" ${index === playlist.length - 1 ? 'disabled' : ''}><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
                         </div>
                         <img src="https://i.ytimg.com/vi/${video.videoId}/default.jpg" class="w-16 h-12 object-cover rounded-sm border border-stone-600 flex-shrink-0" alt="Video thumbnail">
                         <div class="truncate">
@@ -370,13 +425,11 @@
             const lineup = elements.lineupInput.value.trim();
             const description = elements.descInput.value.trim();
             if (!url || !title || !description) {
-                elements.addVideoError.textContent = "URL, Title, and Description are required.";
-                return;
+                elements.addVideoError.textContent = "URL, Title, and Description are required."; return;
             }
             const videoId = extractYouTubeID(url);
             if (!videoId && !editingVideoId) {
-                elements.addVideoError.textContent = "Invalid YouTube URL.";
-                return;
+                elements.addVideoError.textContent = "Invalid YouTube URL."; return;
             }
             elements.addVideoError.textContent = "";
             try {
@@ -428,6 +481,7 @@
                     elements.tvFormTitle.textContent = 'Edit Video';
                     elements.tvFormSubmitBtn.textContent = 'Update Video';
                     elements.tvFormCancelBtn.classList.remove('hidden');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             } else if (button.classList.contains('move-up-btn')) {
                 movePlaylistItem(docId, 'up');
@@ -445,7 +499,23 @@
         elements.tvFormCancelBtn.addEventListener('click', resetTvForm);
 
 
-        // --- ARTICLE MANAGEMENT LOGIC (IMPLEMENTED) ---
+        // --- ARTICLE MANAGEMENT LOGIC (UPDATED) ---
+        const generateSlug = (title) => {
+            if (!title) return '';
+            return title.toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '') // remove non-word chars
+                .replace(/[\s_-]+/g, '-') // collapse whitespace and replace by -
+                .replace(/^-+|-+$/g, ''); // remove leading/trailing dashes
+        };
+
+        const toggleReviewFields = () => {
+            if (elements.articleTypeInput.value === 'review') {
+                elements.reviewFieldsContainer.classList.remove('hidden');
+            } else {
+                elements.reviewFieldsContainer.classList.add('hidden');
+            }
+        };
         
         const resetArticleForm = () => {
             elements.articleForm.reset();
@@ -458,6 +528,9 @@
             elements.imagePreview.src = '';
             elements.uploadProgress.textContent = '';
             elements.formError.textContent = '';
+            elements.reviewAuthorInput.value = 'Staff';
+            elements.reviewPublishDateInput.value = new Date().toISOString().slice(0, 10);
+            toggleReviewFields();
         };
 
         const setupArticleListener = () => {
@@ -470,11 +543,12 @@
                 }
                 querySnapshot.forEach((doc) => {
                     const article = { id: doc.id, ...doc.data() };
+                    const date = article.updatedAt?.seconds ? new Date(article.updatedAt.seconds * 1000).toLocaleDateString() : 'No date';
                     html += `
                         <div class="p-4 border border-stone-700 rounded-md bg-stone-800/50 flex justify-between items-start">
                             <div>
                                 <p class="font-bold text-lg text-stone-200">${article.title}</p>
-                                <p class="text-xs text-stone-400">${article.type} - ${new Date(article.updatedAt.seconds * 1000).toLocaleString()}</p>
+                                <p class="text-xs text-stone-400 uppercase font-semibold">${article.type} - ${date}</p>
                            </div>
                             <div class="flex space-x-2 flex-shrink-0 mt-1">
                                 <button data-id="${article.id}" class="edit-btn text-blue-400 hover:text-blue-300 text-sm font-semibold">Edit</button>
@@ -500,33 +574,19 @@
             let imageUrl = elements.existingImageUrlInput.value;
 
             try {
-                // 1. Upload image if a new one is provided
                 if (imageFile) {
                     const filePath = `articles/${Date.now()}_${imageFile.name}`;
                     const storageRef = ref(storage, filePath);
                     const uploadTask = uploadBytesResumable(storageRef, imageFile);
-
-                    // Await for upload completion to get the URL
                     await new Promise((resolve, reject) => {
                         uploadTask.on('state_changed', 
-                            (snapshot) => {
-                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                elements.uploadProgress.textContent = `Upload is ${progress.toFixed(0)}% done`;
-                            }, 
-                            (error) => {
-                                console.error("Upload failed:", error);
-                                reject(error);
-                            }, 
-                            async () => {
-                                imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                                elements.uploadProgress.textContent = 'Upload complete.';
-                                resolve();
-                            }
+                            (snapshot) => { elements.uploadProgress.textContent = `Upload is ${((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(0)}% done`; }, 
+                            (error) => { console.error("Upload failed:", error); reject(error); }, 
+                            async () => { imageUrl = await getDownloadURL(uploadTask.snapshot.ref); elements.uploadProgress.textContent = 'Upload complete.'; resolve(); }
                         );
                     });
                 }
 
-                // 2. Prepare article data
                 const articleData = {
                     type: elements.articleTypeInput.value,
                     title: elements.titleArticleInput.value.trim(),
@@ -535,13 +595,23 @@
                     updatedAt: serverTimestamp(),
                 };
 
-                // 3. Save or Update Firestore document
+                if (articleData.type === 'review') {
+                    Object.assign(articleData, {
+                        artist: elements.reviewArtistInput.value.trim(),
+                        albumTitle: elements.reviewAlbumInput.value.trim(),
+                        rating: parseFloat(elements.reviewRatingInput.value) || 0,
+                        year: parseInt(elements.reviewYearInput.value) || null,
+                        label: elements.reviewLabelInput.value.trim(),
+                        author: elements.reviewAuthorInput.value.trim(),
+                        genres: elements.reviewGenresInput.value.split(',').map(g => g.trim()).filter(g => g),
+                        publishDate: elements.reviewPublishDateInput.value,
+                        slug: elements.reviewSlugInput.value.trim()
+                    });
+                }
+
                 if (articleId) {
-                    // Update existing article
-                    const articleRef = doc(db, 'articles', articleId);
-                    await updateDoc(articleRef, articleData);
+                    await updateDoc(doc(db, 'articles', articleId), articleData);
                 } else {
-                    // Create new article
                     articleData.createdAt = serverTimestamp();
                     await addDoc(collection(db, 'articles'), articleData);
                 }
@@ -565,26 +635,40 @@
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     const article = docSnap.data();
-                    resetArticleForm(); // Clear form before populating
+                    resetArticleForm(); 
                     elements.articleIdInput.value = articleId;
                     elements.articleTypeInput.value = article.type || 'news';
                     elements.titleArticleInput.value = article.title || '';
                     elements.bodyArticleInput.value = article.body || '';
                     elements.formTitle.textContent = 'Edit Article';
                     elements.saveArticleBtn.textContent = 'Update Article';
+                    
+                    toggleReviewFields(); // Show/hide review fields based on type
+
+                    if (article.type === 'review') {
+                        elements.reviewArtistInput.value = article.artist || '';
+                        elements.reviewAlbumInput.value = article.albumTitle || '';
+                        elements.reviewRatingInput.value = article.rating || '';
+                        elements.reviewYearInput.value = article.year || '';
+                        elements.reviewLabelInput.value = article.label || '';
+                        elements.reviewAuthorInput.value = article.author || 'Staff';
+                        elements.reviewGenresInput.value = (article.genres || []).join(', ');
+                        elements.reviewPublishDateInput.value = article.publishDate || new Date().toISOString().slice(0, 10);
+                        elements.reviewSlugInput.value = article.slug || '';
+                    }
+
                     if (article.imageUrl) {
                         elements.existingImageUrlInput.value = article.imageUrl;
                         elements.imagePreview.src = article.imageUrl;
                         elements.imagePreview.classList.remove('hidden');
                     }
-                    window.scrollTo(0, 0); // Scroll to top to see the form
+                    window.scrollTo({ top: elements.articleForm.offsetTop, behavior: 'smooth' });
                 }
             }
 
             if (target.classList.contains('delete-btn') && articleId) {
                 showConfirmModal(`Are you sure you want to delete this article? This cannot be undone.`, async () => {
                     try {
-                        // Also delete image from storage if it exists
                         const docRef = doc(db, "articles", articleId);
                         const docSnap = await getDoc(docRef);
                         if (docSnap.exists() && docSnap.data().imageUrl) {
@@ -592,14 +676,12 @@
                                 const imageRef = ref(storage, docSnap.data().imageUrl);
                                 await deleteObject(imageRef);
                             } catch (storageError) {
-                                // Log error but proceed with Firestore deletion
-                                console.error("Could not delete image from storage, it might not exist or there's a permissions issue:", storageError);
+                                console.error("Could not delete image from storage:", storageError);
                             }
                         }
                         await deleteDoc(docRef);
-                        // The onSnapshot listener will automatically update the UI.
                         if(elements.articleIdInput.value === articleId) {
-                           resetArticleForm(); // If deleting the article currently being edited
+                           resetArticleForm();
                         }
                     } catch (error) {
                         console.error("Error deleting article:", error);
@@ -613,18 +695,11 @@
         const showConfirmModal = (text, onConfirm) => {
             elements.confirmModalText.textContent = text;
             elements.confirmModal.style.display = 'flex';
-            
-            // Clone and replace to remove old event listeners
             const newConfirmBtn = elements.confirmYesBtn.cloneNode(true);
             elements.confirmYesBtn.parentNode.replaceChild(newConfirmBtn, elements.confirmYesBtn);
             elements.confirmYesBtn = newConfirmBtn;
-
-            elements.confirmYesBtn.onclick = () => {
-                onConfirm();
-                elements.confirmModal.style.display = 'none';
-            };
+            elements.confirmYesBtn.onclick = () => { onConfirm(); elements.confirmModal.style.display = 'none'; };
         };
-
         const insertHtmlTag = (tag) => {
             const textarea = elements.bodyArticleInput;
             const start = textarea.selectionStart;
@@ -632,37 +707,16 @@
             const text = textarea.value;
             const selection = text.substring(start, end);
             let replacement;
-
             switch(tag) {
-                case 'a':
-                    replacement = `<a href="">${selection}</a>`;
-                    break;
-                case 'p':
-                case 'h3':
-                case 'b':
-                case 'i':
-                case 'li':
-                    replacement = `<${tag}>${selection}</${tag}>`;
-                    break;
-                case 'ul':
-                case 'ol':
-                     replacement = `<${tag}>\n\t<li>${selection}</li>\n</${tag}>`;
-                     break;
-                default:
-                    replacement = selection;
+                case 'a': replacement = `<a href="">${selection}</a>`; break;
+                case 'ul': case 'ol': replacement = `<${tag}>\n\t<li>${selection}</li>\n</${tag}>`; break;
+                default: replacement = `<${tag}>${selection}</${tag}>`;
             }
-            
             textarea.value = text.substring(0, start) + replacement + text.substring(end);
             textarea.focus();
-            // Move cursor inside the tag if no text was selected
             if (start === end) {
-                if(tag === 'a') {
-                     textarea.selectionStart = start + 9;
-                     textarea.selectionEnd = start + 9;
-                } else {
-                    textarea.selectionStart = start + tag.length + 2;
-                    textarea.selectionEnd = start + tag.length + 2;
-                }
+                if(tag === 'a') { textarea.selectionStart = textarea.selectionEnd = start + 9; } 
+                else { textarea.selectionStart = textarea.selectionEnd = start + tag.length + 2; }
             }
         };
 
@@ -674,18 +728,20 @@
         elements.imageUploadInput.addEventListener('change', (e) => {
             if (e.target.files && e.target.files[0]) {
                 const reader = new FileReader();
-                reader.onload = (event) => {
-                    elements.imagePreview.src = event.target.result;
-                    elements.imagePreview.classList.remove('hidden');
-                }
+                reader.onload = (event) => { elements.imagePreview.src = event.target.result; elements.imagePreview.classList.remove('hidden'); }
                 reader.readAsDataURL(e.target.files[0]);
             }
         });
         elements.htmlShortcuts.addEventListener('click', (e) => {
-            if (e.target.matches('button[data-tag]')) {
-                insertHtmlTag(e.target.dataset.tag);
-            }
+            if (e.target.matches('button[data-tag]')) { insertHtmlTag(e.target.dataset.tag); }
         });
+        elements.articleTypeInput.addEventListener('change', toggleReviewFields);
+        elements.titleArticleInput.addEventListener('keyup', (e) => {
+            elements.reviewSlugInput.value = generateSlug(e.target.value);
+        });
+        
+        // --- INITIAL SETUP ---
+        resetArticleForm();
 
     </script>
 </body>
