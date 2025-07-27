@@ -129,100 +129,13 @@
             display: none;
         }
 
-        .banner-section {
-            position: relative;
-            width: 100%;
-            height: 35vh; 
-            max-height: 200px;
-            overflow: hidden;
-            background-color: #1a1a1a;
-        }
-
-        .banner-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.3;
-            animation: banner-fade-in 2s ease-out forwards;
-        }
-
-        @keyframes banner-fade-in {
-            from { opacity: 0; transform: scale(1.05); }
-            to { opacity: 0.3; transform: scale(1); }
-        }
-
-        .banner-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1rem;
-            color: #f5f5f4;
-        }
-        
-        .typewriter {
-            display: inline-block;
-        }
-
-        .typewriter h2 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.75rem;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            overflow: hidden;
-            border-right: .15em solid var(--accent);
-            white-space: nowrap;
-            letter-spacing: .1em;
-            animation:
-                typing 3.5s steps(40, end),
-                blink-caret .75s step-end infinite;
-            max-width: 90vw;
-        }
-        
-        .banner-subtitle {
-            font-size: 0.9rem;
-        }
-
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: var(--accent); }
-        }
-
-        @media (min-width: 768px) {
-            .banner-section {
-                height: 30vh;
-                max-height: 250px;
-            }
-            .typewriter h2 {
-                font-size: 3rem;
-                max-width: none;
-            }
-            .banner-subtitle {
-                font-size: 1.125rem;
-            }
-        }
-        
-        /* SLIDER STYLES */
+        /* UPDATED SLIDER STYLES */
         #frontpage-slider {
             position: relative;
             width: 100%;
-            height: 50vh;
-            max-height: 450px;
+            height: 70vh;
+            max-height: 600px;
             overflow: hidden;
-            border-radius: 0.5rem;
-            border: 2px solid var(--text-main);
-        }
-        .dark #frontpage-slider {
-            border-color: var(--border-color);
         }
         .slide {
             position: absolute;
@@ -246,6 +159,7 @@
             padding: 2rem;
             background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
             color: white;
+            text-align: center;
         }
         .slide-dots {
             position: absolute;
@@ -265,6 +179,33 @@
         }
         .dot.active {
             background-color: white;
+        }
+        .typewriter h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            overflow: hidden;
+            border-right: .15em solid var(--accent);
+            white-space: nowrap;
+            letter-spacing: .1em;
+            animation:
+                typing 3.5s steps(40, end),
+                blink-caret .75s step-end infinite;
+            max-width: 90vw;
+            display: inline-block;
+        }
+        .banner-subtitle {
+            font-size: 1.125rem;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent); }
         }
 
         .main-content-wrapper {
@@ -501,30 +442,14 @@
             </header>
         </div>
 
-        <!-- Animated Banner -->
-        <section class="banner-section">
-            <img src="images/bannerindex.jpg" alt="A collage of jazz album covers" class="banner-img" onerror="this.style.display='none'">
-            <div class="banner-overlay">
-                <div class="typewriter">
-                    <h2>New ways to discover Jazz History</h2>
-                </div>
-                <p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">An interactive dashboard to explore the artists, albums, and stories that shaped the music.</p>
-            </div>
-        </section>
-
         <main>
-            <!-- NEW FRONTPAGE SLIDER SECTION -->
-            <section id="frontpage-section" class="py-12 bg-[var(--bg-secondary)]">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 class="text-4xl font-bold text-center mb-8">Frontpage</h2>
-                    <div class="relative">
-                        <div id="frontpage-slider">
-                            <!-- Slides will be injected here -->
-                        </div>
-                        <div id="frontpage-dots" class="slide-dots">
-                            <!-- Dots will be injected here -->
-                        </div>
-                    </div>
+            <!-- MERGED BANNER AND SLIDER -->
+            <section class="relative">
+                <div id="frontpage-slider">
+                    <!-- Slides will be injected here -->
+                </div>
+                <div id="frontpage-dots" class="slide-dots">
+                    <!-- Dots will be injected here -->
                 </div>
             </section>
 
@@ -781,11 +706,19 @@
                             return snapshot.empty ? null : snapshot.docs[0].data();
                         };
 
+                        const welcomeSlide = {
+                            type: 'Welcome',
+                            title: 'New ways to discover Jazz History',
+                            imageUrl: 'images/bannerindex.jpg',
+                            slug: '/', 
+                            isWelcome: true 
+                        };
+
                         const latestColumn = await getLatest('column');
                         const latestNews = await getLatest('news');
                         const latestReview = await getLatest('review');
 
-                        this.state.frontpageSlides = [latestColumn, latestNews, latestReview].filter(Boolean);
+                        this.state.frontpageSlides = [welcomeSlide, latestColumn, latestNews, latestReview].filter(Boolean);
                         this.methods.renderFrontpageSlider();
 
                     } catch (error) {
@@ -802,13 +735,20 @@
                         slide.className = `slide ${index === 0 ? 'active' : ''}`;
                         slide.style.backgroundImage = `url(${slideData.imageUrl || 'https://placehold.co/1200x600/1c1917/f5f5f4?text=Controlled+Freedom'})`;
 
-                        const link = `/${slideData.type}/${slideData.slug}`;
+                        const link = slideData.isWelcome ? '/' : `/${slideData.type.toLowerCase()}/${slideData.slug}`;
+                        const linkText = slideData.isWelcome ? 'Explore The Site &rarr;' : 'Read More &rarr;';
+                        const titleHtml = slideData.isWelcome 
+                            ? `<div class="typewriter"><h2>${slideData.title}</h2></div>`
+                            : `<h2 class="text-3xl md:text-5xl font-bold my-2 text-shadow-lg">${slideData.title}</h2>`;
+                        const subtitle = slideData.isWelcome ? `<p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">An interactive dashboard to explore the artists, albums, and stories that shaped the music.</p>` : '';
+
 
                         slide.innerHTML = `
                             <div class="slide-content">
                                 <p class="text-lg font-bold text-orange-500 uppercase tracking-widest">${slideData.type}</p>
-                                <h2 class="text-3xl md:text-5xl font-bold my-2 text-shadow-lg">${slideData.title}</h2>
-                                <a href="${link}" class="inline-block mt-4 font-bold text-white hover:text-orange-500 transition-colors">Read More &rarr;</a>
+                                ${titleHtml}
+                                ${subtitle}
+                                <a href="${link}" class="inline-block mt-4 font-bold text-white hover:text-orange-500 transition-colors">${linkText}</a>
                             </div>
                         `;
                         frontpageSlider.appendChild(slide);
