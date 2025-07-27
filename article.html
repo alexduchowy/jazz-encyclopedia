@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Meta Tags for Social Media (will be dynamically updated) -->
     <title>Article - Controlled Freedom</title>
+    <meta name="description" content="An interactive exploration of jazz history and reviews.">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://controlled-freedom.web.app/">
+    <meta property="og:title" content="Controlled Freedom">
+    <meta property="og:description" content="An interactive exploration of jazz history and reviews.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/cf-social-card-default.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://controlled-freedom.web.app/">
+    <meta property="twitter:title" content="Controlled Freedom">
+    <meta property="twitter:description" content="An interactive exploration of jazz history and reviews.">
+    <meta property="twitter:image" content="https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/cf-social-card-default.png">
+    <meta name="twitter:site" content="@controlledjazz">
+
     <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
     
     <!-- External Libraries & Fonts -->
@@ -309,10 +328,46 @@
                     });
                 }
             },
-            init() {
+            // NEW: Function to update meta tags
+            updateMetaTags(article) {
+                const pageUrl = window.location.href;
+                let imageUrl = article.imageUrl || 'https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/cf-social-card-default.png';
+                
+                if (imageUrl && !imageUrl.startsWith('http')) {
+                    imageUrl = `${window.location.origin}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+                }
+
+                let description = 'A new article from Controlled Freedom.';
+                if (article.type === 'review') {
+                    description = `Review of ${article.albumTitle} by ${article.artist}. Rating: ${article.rating}/5.`;
+                } else {
+                    description = article.body.replace(/<[^>]*>/g, '').substring(0, 155).trim() + '...';
+                }
+
+                document.title = `${article.title} - Controlled Freedom`;
+                this.setMeta('description', description);
+                this.setMeta('og:title', article.title);
+                this.setMeta('og:description', description);
+                this.setMeta('og:image', imageUrl);
+                this.setMeta('og:url', pageUrl);
+                this.setMeta('og:type', 'article');
+                this.setMeta('twitter:card', 'summary_large_image');
+                this.setMeta('twitter:title', article.title);
+                this.setMeta('twitter:description', description);
+                this.setMeta('twitter:image', imageUrl);
+            },
+            
+            // NEW: Helper to set meta tags
+            setMeta(metaNameOrProperty, content) {
+                let element = document.querySelector(`meta[name='${metaNameOrProperty}']`) || document.querySelector(`meta[property='${metaNameOrProperty}']`);
+                if (element) {
+                    element.setAttribute('content', content);
+                }
+            },
+            async init() {
                 this.cacheDOMElements();
                 this.methods.setupTheme();
-                this.fetchArticle();
+                await this.fetchArticle(); // Await fetch to ensure meta tags are set
                 this.methods.setupMobileMenu();
                 this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
@@ -377,6 +432,8 @@
                         const articleDoc = querySnapshot.docs[0];
                         const article = articleDoc.data();
                         
+                        this.updateMetaTags(article); // Set meta tags
+                        
                         let albumData = null;
                         if (article.type === 'review') {
                              try {
@@ -404,7 +461,7 @@
                 }
             },
             renderArticle(article, albumData) {
-                document.title = `${article.title} - Controlled Freedom`;
+                // document.title is now set in updateMetaTags
                 let contentHtml = '';
                 const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
 
