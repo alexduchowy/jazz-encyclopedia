@@ -333,7 +333,9 @@
             },
             async fetchArticle() {
                 const path = window.location.pathname;
-                const slug = path.substring(path.lastIndexOf('/') + 1);
+                const pathParts = path.split('/').filter(part => part.length > 0);
+                const slug = pathParts.pop();
+
 
                 if (!slug) {
                     this.renderError("No article specified in the URL.");
@@ -406,6 +408,7 @@
                 // This line dynamically sets the browser tab's title
                 document.title = `${article.title} - Controlled Freedom`;
                 let contentHtml = '';
+                const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
 
                 if (article.type === 'review') {
                     let coverImage = albumData?.cover || article.imageUrl || 'https://placehold.co/600x600/e7e5e4/1c1917?text=No+Image';
@@ -462,7 +465,7 @@
                                         <div class="flex">${starsHtml}</div>
                                     </div>
                                     <div class="mt-6 text-sm text-[var(--text-muted)] border-t border-[var(--border-color)] pt-4">
-                                        <span>Reviewed by ${article.author || 'Staff'}</span> | <span>Published on ${article.publishDate}</span>
+                                        <span>Reviewed by ${article.author || 'Staff'}</span> | <span>Published on ${publishDate}</span>
                                     </div>
                                 </header>
                                 <article class="article-body">
@@ -478,7 +481,7 @@
                             <header class="text-center mb-12">
                                 <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)]">${article.title}</h1>
                                 <div class="text-center mt-6 text-sm text-[var(--text-muted)]">
-                                    <span>By ${article.author || 'Staff'}</span> | <span>Published on ${article.publishDate}</span>
+                                    <span>By ${article.author || 'Staff'}</span> | <span>Published on ${publishDate}</span>
                                 </div>
                             </header>
                             <article class="article-body mx-auto max-w-2xl mt-8">
