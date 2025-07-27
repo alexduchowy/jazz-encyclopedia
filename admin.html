@@ -157,7 +157,6 @@
                         <h2 id="form-title" class="text-2xl font-bold mb-6 text-stone-100">Create New Article</h2>
                         <form id="article-form" class="space-y-6">
                             <input type="hidden" id="article-id">
-                            <input type="hidden" id="existing-image-url">
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -219,12 +218,11 @@
                                 </div>
                             </div>
                             
-                            <!-- Image Upload Section -->
+                            <!-- Image URL Input Section -->
                             <div>
-                                <label for="article-image-upload" class="block text-sm font-medium text-stone-300">Header Image</label>
-                                <input type="file" id="article-image-upload" name="article-image-upload" accept="image/*" class="form-input mt-1 block w-full text-sm text-stone-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+                                <label for="article-image-url" class="block text-sm font-medium text-stone-300">Header Image URL</label>
+                                <input type="text" id="article-image-url" placeholder="Paste Firebase Storage URL here" class="form-input mt-1 block w-full rounded-md shadow-sm">
                                 <img id="image-preview" src="" alt="Image Preview" class="hidden mt-4 rounded-md max-h-60 w-auto border border-stone-600"/>
-                                <p id="upload-progress" class="text-sm text-blue-400 mt-2"></p>
                             </div>
 
                             <div>
@@ -270,7 +268,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+        import { getStorage, ref, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         // --- CONFIG ---
         const firebaseConfig = {
@@ -334,11 +332,9 @@
             reviewGenresInput: document.getElementById('review-genres'),
             reviewPublishDateInput: document.getElementById('review-publish-date'),
             reviewSlugInput: document.getElementById('review-slug'),
-            // Image Upload
-            imageUploadInput: document.getElementById('article-image-upload'),
+            // Image URL
+            imageUrlInput: document.getElementById('article-image-url'),
             imagePreview: document.getElementById('image-preview'),
-            existingImageUrlInput: document.getElementById('existing-image-url'),
-            uploadProgress: document.getElementById('upload-progress'),
             // HTML Shortcuts
             htmlShortcuts: document.getElementById('html-shortcuts'),
             // Confirmation Modal
@@ -371,12 +367,11 @@
 
         elements.logoutBtn.addEventListener('click', () => signOut(auth));
 
-        // --- TV PLAYLIST LOGIC (FIXED) ---
+        // --- TV PLAYLIST LOGIC ---
         const setupTvPlaylistListener = () => {
-            const q = query(collection(db, 'tv_playlist')); // Removed orderBy
+            const q = query(collection(db, 'tv_playlist'));
             onSnapshot(q, (snapshot) => {
                 tvPlaylist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                // Sort client-side to ensure all videos are included and ordered
                 tvPlaylist.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity));
                 renderPlaylistUI(tvPlaylist);
             }, (error) => console.error("Playlist listener error:", error));
@@ -504,9 +499,9 @@
             if (!title) return '';
             return title.toLowerCase()
                 .trim()
-                .replace(/[^\w\s-]/g, '') // remove non-word chars
-                .replace(/[\s_-]+/g, '-') // collapse whitespace and replace by -
-                .replace(/^-+|-+$/g, ''); // remove leading/trailing dashes
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
         };
 
         const toggleReviewFields = () => {
@@ -520,13 +515,12 @@
         const resetArticleForm = () => {
             elements.articleForm.reset();
             elements.articleIdInput.value = '';
-            elements.existingImageUrlInput.value = '';
+            elements.imageUrlInput.value = '';
             elements.formTitle.textContent = 'Create New Article';
             elements.saveArticleBtn.textContent = 'Save Article';
             elements.saveArticleBtn.disabled = false;
             elements.imagePreview.classList.add('hidden');
             elements.imagePreview.src = '';
-            elements.uploadProgress.textContent = '';
             elements.formError.textContent = '';
             elements.reviewAuthorInput.value = 'Staff';
             elements.reviewPublishDateInput.value = new Date().toISOString().slice(0, 10);
@@ -570,23 +564,9 @@
             elements.formError.textContent = '';
 
             const articleId = elements.articleIdInput.value;
-            const imageFile = elements.imageUploadInput.files[0];
-            let imageUrl = elements.existingImageUrlInput.value;
+            const imageUrl = elements.imageUrlInput.value.trim();
 
             try {
-                if (imageFile) {
-                    const filePath = `articles/${Date.now()}_${imageFile.name}`;
-                    const storageRef = ref(storage, filePath);
-                    const uploadTask = uploadBytesResumable(storageRef, imageFile);
-                    await new Promise((resolve, reject) => {
-                        uploadTask.on('state_changed', 
-                            (snapshot) => { elements.uploadProgress.textContent = `Upload is ${((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(0)}% done`; }, 
-                            (error) => { console.error("Upload failed:", error); reject(error); }, 
-                            async () => { imageUrl = await getDownloadURL(uploadTask.snapshot.ref); elements.uploadProgress.textContent = 'Upload complete.'; resolve(); }
-                        );
-                    });
-                }
-
                 const articleData = {
                     type: elements.articleTypeInput.value,
                     title: elements.titleArticleInput.value.trim(),
@@ -643,7 +623,7 @@
                     elements.formTitle.textContent = 'Edit Article';
                     elements.saveArticleBtn.textContent = 'Update Article';
                     
-                    toggleReviewFields(); // Show/hide review fields based on type
+                    toggleReviewFields();
 
                     if (article.type === 'review') {
                         elements.reviewArtistInput.value = article.artist || '';
@@ -658,7 +638,7 @@
                     }
 
                     if (article.imageUrl) {
-                        elements.existingImageUrlInput.value = article.imageUrl;
+                        elements.imageUrlInput.value = article.imageUrl;
                         elements.imagePreview.src = article.imageUrl;
                         elements.imagePreview.classList.remove('hidden');
                     }
@@ -725,11 +705,13 @@
         elements.articlesList.addEventListener('click', handleArticlesListClick);
         elements.clearFormBtn.addEventListener('click', resetArticleForm);
         elements.confirmNoBtn.addEventListener('click', () => elements.confirmModal.style.display = 'none');
-        elements.imageUploadInput.addEventListener('change', (e) => {
-            if (e.target.files && e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (event) => { elements.imagePreview.src = event.target.result; elements.imagePreview.classList.remove('hidden'); }
-                reader.readAsDataURL(e.target.files[0]);
+        elements.imageUrlInput.addEventListener('input', (e) => {
+            const url = e.target.value.trim();
+            if (url) {
+                elements.imagePreview.src = url;
+                elements.imagePreview.classList.remove('hidden');
+            } else {
+                elements.imagePreview.classList.add('hidden');
             }
         });
         elements.htmlShortcuts.addEventListener('click', (e) => {
