@@ -34,11 +34,11 @@
     <style>
         /* Light Theme (Default) */
         :root {
-            --bg-main: #f5f5f4;
-            --bg-secondary: #e7e5e4;
+            --bg-main: #f5f5f4; /* stone-100 */
+            --bg-secondary: #e7e5e4; /* stone-200 */
             --bg-header: rgba(245, 245, 244, 0.8);
-            --text-main: #1c1917;
-            --text-muted: #44403c;
+            --text-main: #1c1917; /* stone-900 */
+            --text-muted: #44403c; /* stone-700 */
             --border-color: #1c1917;
             --accent: #f97316;
             --yellow-accent: #facc15;
@@ -46,11 +46,11 @@
 
         /* Dark Theme Overrides */
         .dark {
-            --bg-main: #1c1917;
-            --bg-secondary: #292524;
+            --bg-main: #1c1917; /* stone-900 */
+            --bg-secondary: #292524; /* stone-800 */
             --bg-header: rgba(28, 25, 23, 0.8);
-            --text-main: #f5f5f4;
-            --text-muted: #a8a29e;
+            --text-main: #f5f5f4; /* stone-100 */
+            --text-muted: #a8a29e; /* stone-400 */
             --border-color: #44403c;
         }
 
@@ -116,6 +116,15 @@
         }
         .article-body p, .article-body ul, .article-body ol {
             margin-bottom: 1.5rem;
+        }
+        /* New styles for lists */
+        .article-body ul {
+            list-style-type: disc;
+            padding-left: 2rem;
+        }
+        .article-body ol {
+            list-style-type: decimal;
+            padding-left: 2rem;
         }
         .article-body h2 {
             font-family: 'Lora', serif;
@@ -255,14 +264,16 @@
             </header>
         </div>
 
-        <main class="py-16 sm:py-20">
-            <div id="article-container" class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+        <!-- MODIFIED: Added bg-[var(--bg-secondary)] to create the sidebars -->
+        <main class="py-16 sm:py-20 bg-[var(--bg-secondary)]">
+            <!-- MODIFIED: Added styles to create a "page" effect for the content -->
+            <div id="article-container" class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl bg-[var(--bg-main)] py-8 md:py-12 rounded-lg shadow-xl border border-[var(--border-color)]">
                 <!-- Article content will be injected here -->
             </div>
         </main>
 
         <!-- Footer -->
-        <footer class="bg-stone-900 text-stone-200 py-8 mt-16">
+        <footer class="bg-stone-900 text-stone-200 py-8">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                  <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
                 <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
