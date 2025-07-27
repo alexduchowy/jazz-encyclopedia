@@ -710,15 +710,32 @@
                             type: 'Welcome',
                             title: 'New ways to discover Jazz History',
                             imageUrl: 'images/bannerindex.jpg',
-                            slug: '/', 
-                            isWelcome: true 
+                            isWelcome: true,
+                            link: '/'
                         };
+                        
+                        // BUG FIX: Refactor fetching and link generation to be more robust.
+                        // Pre-calculate the link for each article and store it directly on the object.
+                        const articleTypesToFetch = ['column', 'news', 'review'];
+                        const pathMap = { 'column': 'column', 'news': 'news', 'review': 'reviews' };
+                        const fetchedArticles = [];
 
-                        const latestColumn = await getLatest('column');
-                        const latestNews = await getLatest('news');
-                        const latestReview = await getLatest('review');
+                        for (const type of articleTypesToFetch) {
+                            const article = await getLatest(type);
+                            if (article) {
+                                const pathSegment = pathMap[type] || type;
+                                // Ensure slug exists before creating a link
+                                if (article.slug) {
+                                    article.link = `/${pathSegment}/${article.slug}`;
+                                } else {
+                                    article.link = '#'; // Fallback for missing slug
+                                    console.warn(`Article of type '${type}' is missing a slug.`, article);
+                                }
+                                fetchedArticles.push(article);
+                            }
+                        }
 
-                        this.state.frontpageSlides = [welcomeSlide, latestColumn, latestNews, latestReview].filter(Boolean);
+                        this.state.frontpageSlides = [welcomeSlide, ...fetchedArticles];
                         this.methods.renderFrontpageSlider();
 
                     } catch (error) {
@@ -735,34 +752,8 @@
                         slide.className = `slide ${index === 0 ? 'active' : ''}`;
                         slide.style.backgroundImage = `url(${slideData.imageUrl || 'https://placehold.co/1200x600/1c1917/f5f5f4?text=Controlled+Freedom'})`;
 
-                        let link = '/';
-                        if (!slideData.isWelcome) {
-                            const type = (slideData.type || '').toLowerCase();
-                            const slug = slideData.slug || '';
-                            
-                            // BUG FIX: Use a clear switch statement to map article type to the correct URL path segment.
-                            // This is more explicit and prevents incorrect paths.
-                            let pathSegment;
-                            switch (type) {
-                                case 'review':
-                                    pathSegment = 'reviews';
-                                    break;
-                                case 'news':
-                                    pathSegment = 'news';
-                                    break;
-                                case 'column':
-                                    pathSegment = 'column';
-                                    break;
-                                default:
-                                    // Fallback for any other types that might be added in the future.
-                                    pathSegment = type;
-                                    break;
-                            }
-                            
-                            if (pathSegment && slug) {
-                                link = `/${pathSegment}/${slug}`;
-                            }
-                        }
+                        // BUG FIX: Use the pre-calculated link from the slideData object.
+                        const link = slideData.link || '#';
                         
                         const linkText = slideData.isWelcome ? 'Explore The Site &rarr;' : 'Read More &rarr;';
                         const titleHtml = slideData.isWelcome 
@@ -770,13 +761,12 @@
                             : `<h2 class="text-3xl md:text-5xl font-bold my-2 text-shadow-lg">${slideData.title}</h2>`;
                         const subtitle = slideData.isWelcome ? `<p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">An interactive dashboard to explore the artists, albums, and stories that shaped the music.</p>` : '';
 
-
                         slide.innerHTML = `
                             <div class="slide-content">
                                 <p class="text-lg font-bold text-orange-500 uppercase tracking-widest">${slideData.type}</p>
                                 ${titleHtml}
                                 ${subtitle}
-                                <a href="${link}" class="inline-block mt-4 font-bold text-white hover:text-orange-500 transition-colors">${linkText}</a>
+                                <a href="${link}" target="_blank" rel="noopener noreferrer" class="inline-block mt-4 font-bold text-white hover:text-orange-500 transition-colors">${linkText}</a>
                             </div>
                         `;
                         frontpageSlider.appendChild(slide);
