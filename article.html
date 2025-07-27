@@ -482,8 +482,22 @@
                 let contentHtml = '';
                 const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
 
-                // The body content is now directly from the article
-                let bodyContent = article.body;
+                // NEW: Process the body content to wrap iframes before rendering
+                let bodyContent = article.body.replace(
+                    /<iframe src="https:\/\/www\.youtube\.com\/embed\/([^"]+)"(.*?)><\/iframe>/g,
+                    (match, videoId, otherAttrs) => {
+                        // Reconstruct the iframe with modern attributes inside the responsive wrapper
+                        return `<div class="video-container">
+                                    <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                            title="YouTube video player" 
+                                            frameborder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                            allowfullscreen
+                                            ${otherAttrs}>
+                                    </iframe>
+                                </div>`;
+                    }
+                );
 
                 if (article.type === 'review') {
                     let coverImage = albumData?.cover || article.imageUrl || 'https://placehold.co/600x600/e7e5e4/1c1917?text=No+Image';
@@ -498,9 +512,9 @@
 
                     let highlightedParagraph = '';
                     if (bodyContent.includes('<highlight>')) {
-                        const parts = bodyContent.split('<highlight>');
-                        bodyContent = parts[0];
-                        const highlightText = parts[1].replace('</highlight>', '');
+                        const highlightParts = bodyContent.split('<highlight>');
+                        bodyContent = highlightParts[0];
+                        const highlightText = highlightParts[1].replace('</highlight>', '');
                         highlightedParagraph = `<div class="dark-box mt-12"><div class="liner-notes-text">${highlightText}</div></div>`;
                     }
 
@@ -543,17 +557,7 @@
                 }
 
                 this.elements.articleContainer.innerHTML = contentHtml;
-                
-                // NEW: Find and wrap iframes after they are in the DOM
-                this.elements.articleContainer.querySelectorAll('iframe[src*="youtube.com"]').forEach(iframe => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'video-container';
-                    iframe.parentNode.insertBefore(wrapper, iframe);
-                    wrapper.appendChild(iframe);
-                    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
-                    iframe.setAttribute('allowfullscreen', '');
-                });
-
+                // The iframe processing is now done before this step, so no need for querySelectorAll here.
             },
             renderError(message) {
                 this.elements.articleContainer.innerHTML = `
