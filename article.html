@@ -195,7 +195,7 @@
             letter-spacing: 0.05em;
         }
 
-        /* NEW: Styles for responsive video embeds */
+        /* Styles for responsive video embeds */
         .video-container {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 aspect ratio */
@@ -482,11 +482,8 @@
                 let contentHtml = '';
                 const publishDate = article.publishDate || (article.createdAt && new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US'));
 
-                // NEW: Automatically wrap iframes for responsive display
-                let bodyContent = article.body.replace(
-                    /<iframe(.+?)><\/iframe>/g, 
-                    '<div class="video-container"><iframe$1></iframe></div>'
-                );
+                // The body content is now directly from the article
+                let bodyContent = article.body;
 
                 if (article.type === 'review') {
                     let coverImage = albumData?.cover || article.imageUrl || 'https://placehold.co/600x600/e7e5e4/1c1917?text=No+Image';
@@ -500,7 +497,6 @@
                     }
 
                     let highlightedParagraph = '';
-
                     if (bodyContent.includes('<highlight>')) {
                         const parts = bodyContent.split('<highlight>');
                         bodyContent = parts[0];
@@ -516,60 +512,48 @@
                                     <div class="mt-6 dark-box">
                                         <h3 class="text-2xl font-bold mb-4">Album Details</h3>
                                         <div class="space-y-3 text-sm">
-                                            <div>
-                                                <p class="font-bold text-[var(--text-main)]">Release Date:</p>
-                                                <p class="text-[var(--text-muted)]">${article.year || 'N/A'}</p>
-                                            </div>
-                                            <div>
-                                                <p class="font-bold text-[var(--text-main)]">Genre:</p>
-                                                <p class="text-[var(--text-muted)]">${(article.genres || []).join(', ')}</p>
-                                            </div>
-                                            <div>
-                                                <p class="font-bold text-[var(--text-main)]">Label:</p>
-                                                <p class="text-[var(--text-muted)]">${article.label || 'N/A'}</p>
-                                            </div>
+                                            <div><p class="font-bold text-[var(--text-main)]">Release Date:</p><p class="text-[var(--text-muted)]">${article.year || 'N/A'}</p></div>
+                                            <div><p class="font-bold text-[var(--text-main)]">Genre:</p><p class="text-[var(--text-muted)]">${(article.genres || []).join(', ')}</p></div>
+                                            <div><p class="font-bold text-[var(--text-main)]">Label:</p><p class="text-[var(--text-muted)]">${article.label || 'N/A'}</p></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="lg:col-span-2">
                                 <header class="mb-8">
                                     <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] mt-1">"${article.title}"</h1>
                                     <p class="text-xl text-[var(--text-muted)] font-semibold mt-2">${article.artist} - <em>${article.albumTitle}</em></p>
-                                    <div class="rating-highlight mt-4" title="Rating: ${article.rating}/5">
-                                        <span>Rating:</span>
-                                        <div class="flex">${starsHtml}</div>
-                                    </div>
-                                    <div class="mt-6 text-sm text-[var(--text-muted)] border-t border-[var(--border-color)] pt-4">
-                                        <span>Reviewed by ${article.author || 'Staff'}</span> | <span>Published on ${publishDate}</span>
-                                    </div>
+                                    <div class="rating-highlight mt-4" title="Rating: ${article.rating}/5"><span>Rating:</span><div class="flex">${starsHtml}</div></div>
+                                    <div class="mt-6 text-sm text-[var(--text-muted)] border-t border-[var(--border-color)] pt-4"><span>Reviewed by ${article.author || 'Staff'}</span> | <span>Published on ${publishDate}</span></div>
                                 </header>
-                                <article class="article-body">
-                                    ${bodyContent}
-                                </article>
+                                <article class="article-body">${bodyContent}</article>
                                 ${highlightedParagraph}
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 } else { // Handles 'news' and 'column'
                     contentHtml = `
                         <div class="max-w-4xl mx-auto">
                              <header class="mb-12">
                                 <img src="${article.imageUrl || 'https://placehold.co/1200x600/e7e5e4/1c1917?text=Controlled+Freedom'}" alt="Header image for ${article.title}" class="w-full h-auto max-h-[50vh] object-cover rounded-lg mb-8" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/e7e5e4/1c1917?text=Controlled+Freedom';">
                                 <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] text-center">${article.title}</h1>
-                                <div class="text-center mt-6 text-sm text-[var(--text-muted)]">
-                                    <span>By ${article.author || 'Staff'}</span> | <span>Published on ${publishDate}</span>
-                                </div>
+                                <div class="text-center mt-6 text-sm text-[var(--text-muted)]"><span>By ${article.author || 'Staff'}</span> | <span>Published on ${publishDate}</span></div>
                             </header>
-                            <article class="article-body mx-auto max-w-3xl mt-8">
-                                ${bodyContent}
-                            </article>
-                        </div>
-                    `;
+                            <article class="article-body mx-auto max-w-3xl mt-8">${bodyContent}</article>
+                        </div>`;
                 }
 
                 this.elements.articleContainer.innerHTML = contentHtml;
+                
+                // NEW: Find and wrap iframes after they are in the DOM
+                this.elements.articleContainer.querySelectorAll('iframe[src*="youtube.com"]').forEach(iframe => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'video-container';
+                    iframe.parentNode.insertBefore(wrapper, iframe);
+                    wrapper.appendChild(iframe);
+                    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+                    iframe.setAttribute('allowfullscreen', '');
+                });
+
             },
             renderError(message) {
                 this.elements.articleContainer.innerHTML = `
