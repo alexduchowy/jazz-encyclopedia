@@ -683,6 +683,7 @@
             },
             methods: {
                 async fetchFrontpageArticles() {
+                    console.log("DEBUG: Starting fetchFrontpageArticles...");
                     const firebaseConfig = {
                         apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
                         authDomain: "controlled-freedom.firebaseapp.com",
@@ -701,9 +702,16 @@
                         
                         const articlesRef = collection(db, "articles");
                         const getLatest = async (type) => {
+                            console.log(`DEBUG: Fetching latest article for type: '${type}'`);
                             const q = query(articlesRef, where("type", "==", type), orderBy("publishDate", "desc"), limit(1));
                             const snapshot = await getDocs(q);
-                            return snapshot.empty ? null : snapshot.docs[0].data();
+                            if (snapshot.empty) {
+                                console.log(`DEBUG: No article found for type: '${type}'`);
+                                return null;
+                            }
+                            const articleData = snapshot.docs[0].data();
+                            console.log(`DEBUG: Found article for type '${type}':`, articleData);
+                            return articleData;
                         };
 
                         const welcomeSlide = {
@@ -714,8 +722,6 @@
                             link: '/'
                         };
                         
-                        // BUG FIX: Refactor fetching and link generation to be more robust.
-                        // Pre-calculate the link for each article and store it directly on the object.
                         const articleTypesToFetch = ['column', 'news', 'review'];
                         const pathMap = { 'column': 'column', 'news': 'news', 'review': 'reviews' };
                         const fetchedArticles = [];
@@ -724,18 +730,19 @@
                             const article = await getLatest(type);
                             if (article) {
                                 const pathSegment = pathMap[type] || type;
-                                // Ensure slug exists before creating a link
                                 if (article.slug) {
                                     article.link = `/${pathSegment}/${article.slug}`;
+                                    console.log(`DEBUG: Generated link for type '${type}': ${article.link}`);
                                 } else {
-                                    article.link = '#'; // Fallback for missing slug
-                                    console.warn(`Article of type '${type}' is missing a slug.`, article);
+                                    article.link = '#';
+                                    console.warn(`DEBUG: Article of type '${type}' is missing a slug.`, article);
                                 }
                                 fetchedArticles.push(article);
                             }
                         }
-
+                        
                         this.state.frontpageSlides = [welcomeSlide, ...fetchedArticles];
+                        console.log("DEBUG: Final frontpageSlides array to be rendered:", JSON.parse(JSON.stringify(this.state.frontpageSlides)));
                         this.methods.renderFrontpageSlider();
 
                     } catch (error) {
@@ -743,17 +750,20 @@
                     }
                 },
                 renderFrontpageSlider() {
+                    console.log("DEBUG: Starting renderFrontpageSlider...");
                     const { frontpageSlider, frontpageDots } = this.elements;
                     frontpageSlider.innerHTML = '';
                     frontpageDots.innerHTML = '';
 
                     this.state.frontpageSlides.forEach((slideData, index) => {
+                        console.log(`DEBUG: Rendering slide at index ${index}:`, JSON.parse(JSON.stringify(slideData)));
+                        
                         const slide = document.createElement('div');
                         slide.className = `slide ${index === 0 ? 'active' : ''}`;
                         slide.style.backgroundImage = `url(${slideData.imageUrl || 'https://placehold.co/1200x600/1c1917/f5f5f4?text=Controlled+Freedom'})`;
 
-                        // BUG FIX: Use the pre-calculated link from the slideData object.
                         const link = slideData.link || '#';
+                        console.log(`DEBUG:   -> Using final link for href: ${link}`);
                         
                         const linkText = slideData.isWelcome ? 'Explore The Site &rarr;' : 'Read More &rarr;';
                         const titleHtml = slideData.isWelcome 
