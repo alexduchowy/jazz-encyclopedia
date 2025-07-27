@@ -737,13 +737,16 @@
 
                         let link = '/';
                         if (!slideData.isWelcome) {
-                            const type = slideData.type.toLowerCase();
+                            const type = (slideData.type || '').toLowerCase();
+                            const slug = slideData.slug || '';
+                            let pathSegment = type;
+
                             if (type === 'review') {
-                                link = `/reviews/${slideData.slug}`;
-                            } else if (type === 'news') {
-                                link = `/news/${slideData.slug}`;
-                            } else if (type === 'column') {
-                                link = `/column/${slideData.slug}`;
+                                pathSegment = 'reviews';
+                            }
+                            
+                            if (pathSegment && slug) {
+                                link = `/${pathSegment}/${slug}`;
                             }
                         }
                         
