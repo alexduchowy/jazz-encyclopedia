@@ -164,6 +164,7 @@
                                     <select id="article-type" name="article-type" class="form-select mt-1 block w-full pl-3 pr-10 py-2 text-base rounded-md">
                                         <option value="news">News</option>
                                         <option value="review">Review</option>
+                                        <option value="column">Column</option>
                                     </select>
                                 </div>
                                 <div>
@@ -587,6 +588,13 @@
                         publishDate: elements.reviewPublishDateInput.value,
                         slug: elements.reviewSlugInput.value.trim()
                     });
+                } else {
+                     // For news and column, we can also set author and publish date
+                    Object.assign(articleData, {
+                        author: elements.reviewAuthorInput.value.trim(),
+                        publishDate: elements.reviewPublishDateInput.value,
+                        slug: generateSlug(articleData.title) // Auto-generate slug for non-reviews too
+                    });
                 }
 
                 if (articleId) {
@@ -635,6 +643,11 @@
                         elements.reviewGenresInput.value = (article.genres || []).join(', ');
                         elements.reviewPublishDateInput.value = article.publishDate || new Date().toISOString().slice(0, 10);
                         elements.reviewSlugInput.value = article.slug || '';
+                    } else {
+                        // Populate common fields for news/column
+                        elements.reviewAuthorInput.value = article.author || 'Staff';
+                        elements.reviewPublishDateInput.value = article.publishDate || new Date().toISOString().slice(0, 10);
+                        elements.reviewSlugInput.value = article.slug || generateSlug(article.title);
                     }
 
                     if (article.imageUrl) {
@@ -719,7 +732,9 @@
         });
         elements.articleTypeInput.addEventListener('change', toggleReviewFields);
         elements.titleArticleInput.addEventListener('keyup', (e) => {
-            elements.reviewSlugInput.value = generateSlug(e.target.value);
+            if (elements.articleTypeInput.value !== 'review') {
+                elements.reviewSlugInput.value = generateSlug(e.target.value);
+            }
         });
         
         // --- INITIAL SETUP ---
