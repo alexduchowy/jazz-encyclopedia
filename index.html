@@ -650,11 +650,14 @@
             },
             async fetchData() {
                 try {
+                    // CACHE BUSTING: Add a unique timestamp to the end of the JSON file URLs
+                    // to ensure the browser always fetches the latest version.
+                    const cacheBuster = `?v=${new Date().getTime()}`;
                     const [dbData, legacyData, artistProfileData, genreData] = await Promise.all([
-                        fetch('database.json').then(res => res.json()),
-                        fetch('legacy.json').then(res => res.json()),
-                        fetch('artists.json').then(res => res.json()),
-                        fetch('genres.json').then(res => res.json())
+                        fetch(`database.json${cacheBuster}`).then(res => res.json()),
+                        fetch(`legacy.json${cacheBuster}`).then(res => res.json()),
+                        fetch(`artists.json${cacheBuster}`).then(res => res.json()),
+                        fetch(`genres.json${cacheBuster}`).then(res => res.json())
                     ]);
                     
                     const timelineAlbums = (dbData.albums || []).map(a => ({...a, isLegacy: false}));
