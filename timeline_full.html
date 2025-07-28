@@ -15,11 +15,12 @@
     <style>
         /* Inheriting the color scheme and basic styles from the proposal */
         :root {
-            --bg-main: #f5f5f4;
+            --bg-main: #e5e7eb; /* Darker background */
+            --bg-card: #f5f5f4;
             --bg-secondary: #292524;
             --text-main: #1c1917;
             --text-muted: #44403c;
-            --border-color: #e7e5e4;
+            --border-color: #d1d5db;
             --accent: #f97316;
             
             /* Genre Colors from timeline.html */
@@ -36,6 +37,7 @@
 
         .dark {
             --bg-main: #1c1917;
+            --bg-card: #292524;
             --bg-secondary: #292524;
             --text-main: #f5f5f4;
             --text-muted: #a8a29e;
@@ -86,12 +88,12 @@
             min-height: 100%;
         }
         
-        /* NEW: Year Container */
+        /* Year Container */
         .year-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 0 1rem;
+            padding: 0 1.5rem;
             border-left: 2px solid var(--text-muted);
             flex-shrink: 0;
         }
@@ -105,18 +107,41 @@
             margin-bottom: 2rem;
             font-weight: 900;
         }
+        /* UPDATED: Year Grid for Block Layout */
         .year-grid {
-            display: flex;
-            align-items: flex-start;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-auto-flow: dense;
             gap: 1.5rem;
+            width: 100%;
+            max-width: 624px; /* 3 columns * (180px width + 1.5rem gap) approx */
+        }
+        @media (max-width: 639px) {
+             .year-grid {
+                grid-template-columns: repeat(1, 1fr);
+                max-width: 204px;
+            }
+        }
+        @media (min-width: 640px) and (max-width: 1023px) {
+            .year-grid {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 420px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .year-grid {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 624px;
+            }
         }
 
-        /* UPDATED: Genre Column */
+
+        /* Genre Column in the Grid */
         .genre-column {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 180px; /* Adjusted width */
+            width: 180px;
             position: relative; 
             z-index: 1;
         }
@@ -126,7 +151,7 @@
             padding: 0.25rem 0.5rem;
             display: inline-block;
             margin-bottom: 1rem;
-            color: var(--bg-main);
+            color: var(--text-main);
             border: 2px solid var(--text-main);
             width: 100%;
             text-align: center;
@@ -134,8 +159,8 @@
 
         /* Album Card */
         .album-card {
-            width: 160px; /* Made smaller */
-            background-color: var(--bg-main);
+            width: 160px;
+            background-color: var(--bg-card);
             border-radius: 0.25rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 4px 4px 0px var(--text-main);
@@ -155,7 +180,7 @@
         }
         .album-card .cover-art {
             width: 100%;
-            height: 160px; /* Made smaller */
+            height: 160px;
             object-fit: cover;
             filter: grayscale(100%);
             transition: filter 0.3s ease;
@@ -198,34 +223,6 @@
             height: 40px;
             fill: white;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-        }
-
-        /* SVG Overlay for Genre Lines */
-        #genre-lines-svg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5; 
-        }
-        .genre-line {
-            fill: none;
-            stroke-width: 3px;
-            opacity: 0.6;
-            transition: opacity 0.3s, stroke-width 0.3s;
-        }
-        body:not(.genre-hover) .genre-line:hover {
-             opacity: 1;
-             stroke-width: 5px;
-        }
-        body.genre-hover .genre-line.dimmed {
-            opacity: 0.1;
-        }
-        body.genre-hover .genre-line.highlighted {
-            opacity: 1;
-            stroke-width: 5px;
         }
 
         /* Floating Audio Player */
@@ -367,7 +364,6 @@
         </header>
 
         <div id="timeline-container">
-            <svg id="genre-lines-svg"></svg>
             <div id="timeline-wrapper">
                 <!-- Year columns will be injected here by JavaScript -->
             </div>
@@ -386,7 +382,6 @@
                 albums: [],
                 genres: {},
                 groupedData: new Map(),
-                albumPositions: new Map(),
                 isDragging: false,
                 startX: 0,
                 scrollLeft: 0,
@@ -398,7 +393,6 @@
                 mainContainer: document.getElementById('main-container'),
                 timelineContainer: document.getElementById('timeline-container'),
                 timelineWrapper: document.getElementById('timeline-wrapper'),
-                svg: document.getElementById('genre-lines-svg'),
                 audioPlayer: document.getElementById('audio-player'),
                 playerIframe: document.getElementById('player-iframe'),
                 playerCloseBtn: document.getElementById('player-close-btn'),
@@ -413,7 +407,6 @@
                     this.processData();
                     this.renderGenreLegend();
                     this.renderTimeline();
-                    this.calculatePositionsAndDrawLines();
                 } catch (error) {
                     console.error("Initialization failed:", error);
                     this.elements.loader.innerHTML = "<p>Failed to load timeline data.</p>";
@@ -461,7 +454,7 @@
                 return colorMap;
             },
 
-            // --- DATA PROCESSING ---
+            // --- DATA PROCESSING (CORRECTED) ---
             processData() {
                 const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
                 
@@ -469,6 +462,8 @@
                      if (typeof album.genres === 'string') {
                         album.genres = album.genres.split(',').map(g => g.trim());
                     }
+                     // Assign a unique ID for tracking
+                     album.uniqueId = `album-${slug(album.artist)}-${slug(album.albumTitle)}`;
                 });
 
                 const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
@@ -492,24 +487,27 @@
                 
                 this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
 
+                // Group by Year -> Main Genre -> [Albums]
+                const processedAlbumIds = new Set();
                 this.state.albums.forEach(album => {
-                    if (!album.year || !album.genres) return;
+                    if (!album.year || !album.genres || processedAlbumIds.has(album.uniqueId)) return;
                     
+                    const primaryGenre = album.genres[0]; // Use the first genre for placement
+
                     if (!this.state.groupedData.has(album.year)) {
                         this.state.groupedData.set(album.year, new Map());
                     }
                     const yearMap = this.state.groupedData.get(album.year);
 
-                    album.genres.forEach(genre => {
-                        if (!yearMap.has(genre)) {
-                            yearMap.set(genre, []);
-                        }
-                        yearMap.get(genre).push(album);
-                    });
+                    if (!yearMap.has(primaryGenre)) {
+                        yearMap.set(primaryGenre, []);
+                    }
+                    yearMap.get(primaryGenre).push(album);
+                    processedAlbumIds.add(album.uniqueId);
                 });
             },
 
-            // --- RENDERING (CORRECTED) ---
+            // --- RENDERING ---
             renderGenreLegend() {
                 const legendFragment = document.createDocumentFragment();
                 const sortedGenres = Object.keys(this.state.genres).sort();
@@ -559,7 +557,7 @@
                         genreColumn.appendChild(genreLabel);
 
                         albums.forEach(album => {
-                           const card = this.createAlbumCard(album, genre);
+                           const card = this.createAlbumCard(album);
                            genreColumn.appendChild(card);
                         });
                         
@@ -572,13 +570,9 @@
                 this.elements.timelineWrapper.appendChild(fragment);
             },
 
-            createAlbumCard(album, genreForId) {
+            createAlbumCard(album) {
                 const card = document.createElement('div');
-                const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-                const cardId = `album-${slug(album.artist)}-${slug(album.albumTitle)}-${slug(genreForId)}`;
-                
                 card.className = 'album-card';
-                card.id = cardId;
                 card.dataset.genres = album.genres.join(',');
                 card.dataset.youtubeId = album.youtubeId || '';
 
@@ -599,83 +593,6 @@
                 return card;
             },
 
-            // --- SVG LINE DRAWING ---
-            calculatePositionsAndDrawLines() {
-                requestAnimationFrame(() => {
-                    if (this.elements.timelineWrapper.scrollWidth === 0) return;
-                    this.elements.svg.setAttribute('viewBox', `0 0 ${this.elements.timelineWrapper.scrollWidth} ${this.elements.timelineWrapper.scrollHeight}`);
-                    this.elements.svg.style.width = `${this.elements.timelineWrapper.scrollWidth}px`;
-                    this.elements.svg.style.height = `${this.elements.timelineWrapper.scrollHeight}px`;
-                    
-                    this.state.albumPositions.clear();
-                    document.querySelectorAll('.album-card').forEach(card => {
-                        const parentYear = card.closest('.year-container');
-                        if (!parentYear) return;
-                        // Calculate position relative to the scrollable wrapper, not the viewport
-                        const x = parentYear.offsetLeft + card.offsetLeft + card.offsetWidth / 2;
-                        const y = parentYear.offsetTop + card.offsetTop + card.offsetHeight / 2;
-                        this.state.albumPositions.set(card.id, { x, y });
-                    });
-                    
-                    this.drawConnections();
-                });
-            },
-
-            drawConnections() {
-                const drawnConnections = new Set();
-                const fragment = document.createDocumentFragment();
-                const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-
-                for (let i = 0; i < this.state.albums.length; i++) {
-                    const album1 = this.state.albums[i];
-                    if (!album1.genres) continue;
-
-                    for (const genre of album1.genres) {
-                        const card1Id = `album-${slug(album1.artist)}-${slug(album1.albumTitle)}-${slug(genre)}`;
-                        const pos1 = this.state.albumPositions.get(card1Id);
-                        if (!pos1) continue;
-
-                        let nextAlbumWithGenre = null;
-                        for (let j = i + 1; j < this.state.albums.length; j++) {
-                            const album2Cand = this.state.albums[j];
-                            if (album2Cand.genres && album2Cand.genres.includes(genre)) {
-                                nextAlbumWithGenre = album2Cand;
-                                break;
-                            }
-                        }
-
-                        if (nextAlbumWithGenre) {
-                            const album2 = nextAlbumWithGenre;
-                            const card2Id = `album-${slug(album2.artist)}-${slug(album2.albumTitle)}-${slug(genre)}`;
-                            const connectionId = `${card1Id}-${card2Id}`;
-                            
-                            if (drawnConnections.has(connectionId)) continue;
-
-                            const pos2 = this.state.albumPositions.get(card2Id);
-                            if (pos1 && pos2) { // Check both positions exist
-                                const path = this.createLine(pos1, pos2, genre);
-                                fragment.appendChild(path);
-                                drawnConnections.add(connectionId);
-                            }
-                        }
-                    }
-                }
-                this.elements.svg.innerHTML = '';
-                this.elements.svg.appendChild(fragment);
-            },
-            
-            createLine(pos1, pos2, genre) {
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                const dx = pos2.x - pos1.x;
-                const d = `M ${pos1.x} ${pos1.y} C ${pos1.x + dx * 0.5} ${pos1.y}, ${pos2.x - dx * 0.5} ${pos2.y}, ${pos2.x} ${pos2.y}`;
-                
-                path.setAttribute('d', d);
-                path.setAttribute('class', 'genre-line');
-                path.setAttribute('data-genre', genre);
-                path.style.stroke = this.state.genres[genre] || 'var(--genre-default)';
-                return path;
-            },
-
             // --- EVENT HANDLING ---
             bindEvents() {
                 this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
@@ -687,9 +604,6 @@
                 this.elements.timelineContainer.addEventListener('touchmove', this.onDragMove.bind(this), { passive: true });
                 this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
-                this.elements.svg.addEventListener('mouseover', this.onLineHover.bind(this));
-                this.elements.svg.addEventListener('mouseout', this.onLineOut.bind(this));
-                window.addEventListener('resize', this.debounce(this.onResize.bind(this), 250));
             },
 
             onDragStart(e) {
@@ -709,7 +623,7 @@
                 if (!this.state.isDragging) return;
                 e.preventDefault();
                 const pageX = e.pageX || e.touches[0].pageX;
-                const x = pageX - this.elements.timelineContainer.offsetLeft;
+                const x = pageX - this.state.startX;
                 const walk = (x - this.state.startX) * 2;
                 this.elements.timelineContainer.scrollLeft = this.state.scrollLeft - walk;
             },
@@ -727,35 +641,6 @@
                 }
             },
             
-            onLineHover(e) {
-                if (e.target.classList.contains('genre-line')) {
-                    const hoveredGenre = e.target.dataset.genre;
-                    document.body.classList.add('genre-hover');
-                    this.elements.svg.querySelectorAll('.genre-line').forEach(line => {
-                        if (line.dataset.genre === hoveredGenre) {
-                            line.classList.add('highlighted');
-                            line.classList.remove('dimmed');
-                        } else {
-                            line.classList.add('dimmed');
-                            line.classList.remove('highlighted');
-                        }
-                    });
-                }
-            },
-
-            onLineOut(e) {
-                 if (e.target.classList.contains('genre-line')) {
-                    document.body.classList.remove('genre-hover');
-                    this.elements.svg.querySelectorAll('.genre-line').forEach(line => {
-                        line.classList.remove('highlighted', 'dimmed');
-                    });
-                }
-            },
-            
-            onResize() {
-                this.calculatePositionsAndDrawLines();
-            },
-
             // --- PLAYER LOGIC ---
             showPlayer(youtubeId) {
                 this.elements.playerIframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
