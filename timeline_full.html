@@ -461,7 +461,7 @@
                 return colorMap;
             },
 
-            // --- DATA PROCESSING (CORRECTED FOR GRID LAYOUT) ---
+            // --- DATA PROCESSING ---
             processData() {
                 const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
                 
@@ -492,8 +492,6 @@
                 
                 this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
 
-                // Group by Year -> Genre -> [Albums]
-                // This logic now allows albums to appear in multiple genre columns
                 this.state.albums.forEach(album => {
                     if (!album.year || !album.genres) return;
                     
@@ -511,7 +509,7 @@
                 });
             },
 
-            // --- RENDERING ---
+            // --- RENDERING (CORRECTED) ---
             renderGenreLegend() {
                 const legendFragment = document.createDocumentFragment();
                 const sortedGenres = Object.keys(this.state.genres).sort();
@@ -534,7 +532,6 @@
             renderTimeline() {
                 const fragment = document.createDocumentFragment();
                 const sortedYears = [...this.state.groupedData.keys()].sort((a, b) => a - b);
-                const allGenresInOrder = Object.keys(this.state.genres).sort();
 
                 for (const year of sortedYears) {
                     const yearData = this.state.groupedData.get(year);
@@ -549,23 +546,23 @@
                     const yearGrid = document.createElement('div');
                     yearGrid.className = 'year-grid';
 
-                    for (const genre of allGenresInOrder) {
+                    const genresInYear = [...yearData.keys()].sort();
+                    for (const genre of genresInYear) {
                         const genreColumn = document.createElement('div');
                         genreColumn.className = 'genre-column';
 
-                        if (yearData.has(genre)) {
-                             const albums = yearData.get(genre);
-                             const genreLabel = document.createElement('div');
-                             genreLabel.className = 'genre-label';
-                             genreLabel.textContent = genre;
-                             genreLabel.style.backgroundColor = this.state.genres[genre] || 'var(--genre-default)';
-                             genreColumn.appendChild(genreLabel);
+                        const albums = yearData.get(genre);
+                        const genreLabel = document.createElement('div');
+                        genreLabel.className = 'genre-label';
+                        genreLabel.textContent = genre;
+                        genreLabel.style.backgroundColor = this.state.genres[genre] || 'var(--genre-default)';
+                        genreColumn.appendChild(genreLabel);
 
-                             albums.forEach(album => {
-                                const card = this.createAlbumCard(album, genre);
-                                genreColumn.appendChild(card);
-                             });
-                        }
+                        albums.forEach(album => {
+                           const card = this.createAlbumCard(album, genre);
+                           genreColumn.appendChild(card);
+                        });
+                        
                         yearGrid.appendChild(genreColumn);
                     }
                     yearContainer.appendChild(yearGrid);
@@ -578,7 +575,6 @@
             createAlbumCard(album, genreForId) {
                 const card = document.createElement('div');
                 const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-                // Make ID unique per instance in the grid
                 const cardId = `album-${slug(album.artist)}-${slug(album.albumTitle)}-${slug(genreForId)}`;
                 
                 card.className = 'album-card';
@@ -613,11 +609,11 @@
                     
                     this.state.albumPositions.clear();
                     document.querySelectorAll('.album-card').forEach(card => {
-                        const cardRect = card.getBoundingClientRect();
-                        const scrollContainerRect = this.elements.timelineContainer.getBoundingClientRect();
+                        const parentYear = card.closest('.year-container');
+                        if (!parentYear) return;
                         // Calculate position relative to the scrollable wrapper, not the viewport
-                        const x = card.offsetLeft + (card.offsetWidth / 2);
-                        const y = card.offsetTop + (card.offsetHeight / 2);
+                        const x = parentYear.offsetLeft + card.offsetLeft + card.offsetWidth / 2;
+                        const y = parentYear.offsetTop + card.offsetTop + card.offsetHeight / 2;
                         this.state.albumPositions.set(card.id, { x, y });
                     });
                     
@@ -656,7 +652,7 @@
                             if (drawnConnections.has(connectionId)) continue;
 
                             const pos2 = this.state.albumPositions.get(card2Id);
-                            if (pos2) {
+                            if (pos1 && pos2) { // Check both positions exist
                                 const path = this.createLine(pos1, pos2, genre);
                                 fragment.appendChild(path);
                                 drawnConnections.add(connectionId);
