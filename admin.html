@@ -381,20 +381,14 @@
 
         // --- TV PLAYLIST LOGIC ---
         const setupTvPlaylistListener = () => {
-            const q = query(collection(db, 'tv_playlist'), orderBy('order'));
+            const q = query(collection(db, 'tv_playlist'));
             onSnapshot(q, (snapshot) => {
                 tvPlaylist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                tvPlaylist.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity));
                 renderPlaylistUI(tvPlaylist);
-            }, (error) => {
-                console.error("Playlist listener error:", error);
-                if (error.code === 'failed-precondition') {
-                    elements.playlistContainer.innerHTML = `<div class="p-4 text-center text-yellow-400 bg-yellow-900/50 rounded-md">
-                        <p class="font-bold">Configuration Error</p>
-                        <p class="text-sm mt-2">A Firestore index is required for ordering the playlist. Please check the browser's developer console. The error message there will provide a direct link to create the necessary index in your Firebase project.</p>
-                    </div>`;
-                }
-            });
+            }, (error) => console.error("Playlist listener error:", error));
         };
+
         const renderPlaylistUI = (playlist) => {
             elements.playlistContainer.innerHTML = '';
             if (!playlist || playlist.length === 0) {
