@@ -88,7 +88,7 @@
         #timeline-wrapper {
             display: inline-flex;
             align-items: flex-start; /* Align columns to the top */
-            padding: 8rem 1rem;
+            padding: 7rem 1rem;
             min-height: 100%;
         }
         
@@ -280,7 +280,8 @@
             left: 0;
             width: 100%;
             padding: 1rem 1.5rem;
-            background: linear-gradient(to bottom, var(--bg-year) 70%, transparent);
+            background-color: var(--bg-year); /* Solid background */
+            border-bottom: 1px solid var(--border-color);
             z-index: 50;
             display: flex;
             justify-content: space-between;
@@ -305,8 +306,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem 1rem;
-            background-color: rgba(245, 245, 244, 0.8);
-            backdrop-filter: blur(4px);
+            background-color: var(--bg-card);
             padding: 0.75rem;
             border-radius: 0.25rem;
             border: 1px solid var(--border-color);
@@ -314,7 +314,7 @@
             align-items: center;
         }
         html.dark #genre-legend {
-             background-color: rgba(31, 41, 55, 0.8);
+             background-color: var(--bg-year);
         }
         .legend-item {
             display: flex;
