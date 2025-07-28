@@ -7,7 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
     
     <!-- External Libraries & Fonts -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn/tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
@@ -48,34 +48,34 @@
         }
 
         /* Dark Theme */
-.dark {
-    --bg-main: #1c1917;
-    --bg-secondary: #292524;
-    --bg-header: rgba(28, 25, 23, 0.8);
-    --text-main: #f5f5f4;
-    --text-muted: #a8a29e;
-    --border-color: #44403c;
+        .dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
 
-    /* Genre Colors */
-    --genre-bebop: #A17A4B;
-    --genre-hard-bop: #8b5cf6;
-    --genre-cool-jazz: #3b82f6;
-    --genre-modal-jazz: #10b981;
-    --genre-post-bop: #f59e0b;
-    --genre-free-jazz: #ef4444;
-    --genre-avant-garde: #ec4899;
-    --genre-jazz-fusion: #06b6d4;
+            /* Genre Colors - More subtle, shaded versions */
+            --genre-bebop: #855b32;
+            --genre-hard-bop: #5c3c92;
+            --genre-cool-jazz: #2c599d;
+            --genre-modal-jazz: #1a7451;
+            --genre-post-bop: #9a642a;
+            --genre-free-jazz: #992828;
+            --genre-avant-garde: #9d3363;
+            --genre-jazz-fusion: #2c7a84;
 
-    /* Era Colors */
-    --era-cool-light: #3b82f6;
-    --era-hard-bop-light: #a855f7;
-    --era-bebop-light: #b45309;
-    --era-modal-light: #059669;
-    --era-post-bop-light: #d97706;
-    --era-free-jazz-light: #dc2626;
-    --era-roots-light: #ca8a04;
-    --era-fusion-light: #0891b2;
-}
+            /* Era Colors - More subtle, shaded versions */
+            --era-cool-light: #2c599d;
+            --era-hard-bop-light: #5c3c92;
+            --era-bebop-light: #855b32;
+            --era-modal-light: #1a7451;
+            --era-post-bop-light: #9a642a;
+            --era-free-jazz-light: #992828;
+            --era-roots-light: #8c6d0e;
+            --era-fusion-light: #2c7a84;
+        }
 
         /* Base body styling */
         body {
@@ -226,7 +226,6 @@
             z-index: 2;
         }
         
-        /* FIX: Added missing Era styles for horizontal layout */
         .era-section {
             padding-top: 1.5rem;
             padding-bottom: 2rem;
@@ -238,7 +237,7 @@
             border-left-color: var(--border-color);
         }
         .era-title {
-            display: none; /* Hides the vertical era titles, as they are now in the sticky header */
+            display: none;
         }
         .era-content {
             display: flex;
@@ -374,7 +373,7 @@
         #artist-slider-container { overflow: hidden; }
         #artist-slider-track { display: flex; transition: transform 0.5s ease-in-out; }
         .artist-slider-page {
-            flex: 0 0 100%; /* FIX: Use flex shorthand for robust sizing */
+            flex: 0 0 100%;
             padding: 0 0.5rem;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -412,8 +411,8 @@
             color: var(--text-main);
         }
         .dark .genre-checkbox-label:has(input:checked) {
-    color: var(--bg-main);
-}
+            color: var(--bg-main);
+        }
         .genre-checkbox-label:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -463,6 +462,8 @@
             transition: color 0.2s;
         }
         .clickable-link:hover { color: var(--accent); }
+        .dark .clickable-link { color: var(--accent); }
+        .dark .clickable-link:hover { color: #fb923c; }
 
         .fade-in-element {
             opacity: 0; transform: translateY(20px);
@@ -506,6 +507,7 @@
         .dark .known-for-box {
             border-color: var(--border-color);
             box-shadow: none;
+            color: var(--bg-main); /* Ensure text is white/light */
         }
         
         .dropdown-btn {
@@ -551,7 +553,10 @@
             width: 180px; height: 50px;
             display: flex; align-items: center; justify-content: center; text-align: center;
         }
-      .dark .era-button { border-color: var(--border-color); color: var(--bg-main); }
+      .dark .era-button { 
+          border-color: var(--border-color); 
+          color: var(--bg-main); /* Change text to white/light in dark mode */
+      }
         .era-button:hover { filter: brightness(95%); transform: translateY(-2px); }
         .dark .era-button:hover { filter: brightness(120%); }
 
@@ -1106,7 +1111,7 @@
                                         name: name, 
                                         instruments: new Set(), 
                                         albums: new Set(), 
-                                        photo: `/images/${slugify(name)}.jpg`, 
+                                        photo: `/images/artists/${slugify(name)}.jpg`, 
                                         isTimelineBandleader: false, 
                                         profile: profiles[name] || { name: name, profile: 'No profile available.'} 
                                     });
@@ -1306,6 +1311,8 @@
                                 card.className = 'timeline-album-card fade-in-element';
                                 const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
                                 card.href = `/album/${albumId}`;
+                                card.target = "_blank";
+                                card.rel = "noopener noreferrer";
                                 card.dataset.albumTitle = album.albumTitle;
                                 card.dataset.artist = album.artist;
                                 card.dataset.genres = Array.isArray(album.genres) ? album.genres.join(', ') : album.genres;
@@ -1564,7 +1571,7 @@
                             card.dataset.artistName = artist.name;
                             card.innerHTML = `
                                 <div class="h-56 artist-photo-container">
-                                    <img src="/${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                    <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
                                 </div>
                                 <div class="p-3">
                                     <h4 class="font-bold text-base text-[var(--text-main)] truncate">${artist.name}</h4>
@@ -1823,7 +1830,7 @@
                         const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
                         return `<li class="artist-modal-timeline-item">
                                     <strong class="text-[var(--text-muted)]">${album.year}:</strong> 
-                                    <a href="/album/${albumId}" class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">
+                                    <a href="/album/${albumId}" target="_blank" rel="noopener noreferrer" class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">
                                         ${album.albumTitle}
                                     </a>
                                     ${landmarkIcon}
@@ -1838,7 +1845,7 @@
                             if (!collaborator) return '';
                             return `
                                 <div class="collaborator-card text-center" data-artist-name="${collaborator.name}">
-                                    <img src="/${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                    <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
                                     <p class="mt-2 text-sm font-bold text-[var(--text-muted)]">${collaborator.name}</p>
                                 </div>
                             `;
@@ -1860,7 +1867,7 @@
                         <div class="flex flex-col sm:flex-row gap-6">
                             <div class="w-full sm:w-1/3 flex-shrink-0">
                                 <div class="artist-photo-container">
-                                    <img src="/${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                    <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
                                 </div>
                                 <p class="mt-4 text-[var(--text-main)] text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
                                 ${bornInModalInfo}
@@ -1943,7 +1950,7 @@
 
                     const landmarkAlbumsHtml = landmarkAlbums.map(album => {
                         const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
-                        return `<li><a href="/album/${albumId}" class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</a></li>`
+                        return `<li><a href="/album/${albumId}" target="_blank" rel="noopener noreferrer" class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</a></li>`
                     }).join('');
 
                     let bodyHtml = `<div class="space-y-6">
@@ -2173,7 +2180,7 @@
                         const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
 
                         onThisDayContainer.innerHTML = `
-                            <a href="/album/${albumId}" class="block p-4 bg-[var(--bg-secondary)] border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--text-main)] dark:shadow-none cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] dark:hover:border-[var(--accent)] hover:-translate-y-1 transition-all">
+                            <a href="/album/${albumId}" target="_blank" rel="noopener noreferrer" class="block p-4 bg-[var(--bg-secondary)] border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--text-main)] dark:shadow-none cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] dark:hover:border-[var(--accent)] hover:-translate-y-1 transition-all">
                                 <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
                                 <div class="flex items-center gap-4 mt-2">
                                     <img src="/${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
