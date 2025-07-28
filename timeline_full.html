@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Jazz Timeline</title>
+    
+    <!-- External Libraries & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS Styling -->
+    <style>
+        /* Inheriting the color scheme and basic styles from the proposal */
+        :root {
+            --bg-main: #f5f5f4;
+            --bg-secondary: #292524;
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --border-color: #e7e5e4;
+            --accent: #f97316;
+            
+            /* Genre Colors from timeline.html */
+            --genre-bebop: #C19A6B;
+            --genre-hard-bop: #d8b4fe;
+            --genre-cool-jazz: #93c5fd;
+            --genre-modal-jazz: #a7f3d0;
+            --genre-post-bop: #fed7aa;
+            --genre-free-jazz: #fca5a5;
+            --genre-avant-garde: #fecdd3;
+            --genre-jazz-fusion: #a5f3fc;
+            --genre-default: #e7e5e4;
+        }
+
+        .dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
+        }
+
+        /* Base body styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow: hidden; /* Prevent body scroll */
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Main container for the full-screen experience */
+        #main-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Scrollable timeline area */
+        #timeline-container {
+            position: absolute;
+            inset: 0;
+            overflow: auto;
+            cursor: grab;
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        #timeline-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        #timeline-container:active {
+            cursor: grabbing;
+        }
+
+        /* Wrapper for all timeline content, allows for padding */
+        #timeline-wrapper {
+            display: inline-flex;
+            align-items: stretch; /* Make columns same height */
+            padding: 8rem 4rem;
+            min-height: 100%;
+        }
+        
+        /* Year Column */
+        .year-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 2rem;
+            border-left: 2px dashed var(--text-muted);
+            position: relative;
+        }
+        .year-column:first-child {
+            border-left: none;
+        }
+        .year-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: var(--text-muted);
+            position: absolute;
+            top: 2rem;
+            opacity: 0.8;
+        }
+
+        /* Genre Section within a Year */
+        .genre-section {
+            margin-bottom: 2rem;
+            width: 220px; /* Fixed width for alignment */
+        }
+        .genre-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.25rem;
+            padding: 0.25rem 0.5rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--bg-main);
+            border: 2px solid var(--text-main);
+        }
+
+        /* Album Card */
+        .album-card {
+            width: 200px;
+            background-color: var(--bg-main);
+            border-radius: 0.25rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 4px 4px 0px var(--text-main);
+            border: 2px solid var(--text-main);
+            margin: 0 auto 1.5rem auto;
+            position: relative;
+            overflow: hidden;
+        }
+        .dark .album-card {
+            box-shadow: none;
+            border-color: var(--border-color);
+        }
+        .album-card:hover {
+            transform: translateY(-5px) rotate(1deg);
+        }
+        .album-card .cover-art {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+            display: block;
+        }
+        .album-card:hover .cover-art {
+            filter: grayscale(0%);
+        }
+        .album-card-info {
+            padding: 0.75rem;
+        }
+        .album-card-info h5 {
+            font-size: 1.1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .album-card-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Play Button Overlay */
+        .play-button-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .album-card:hover .play-button-overlay {
+            opacity: 1;
+        }
+        .play-icon {
+            width: 50px;
+            height: 50px;
+            fill: white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        /* SVG Overlay for Genre Lines */
+        #genre-lines-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .genre-line {
+            fill: none;
+            stroke-width: 3px;
+            opacity: 0.6;
+            transition: opacity 0.3s, stroke-width 0.3s;
+        }
+        body:not(.genre-hover) .genre-line:hover {
+             opacity: 1;
+             stroke-width: 5px;
+        }
+        body.genre-hover .genre-line.dimmed {
+            opacity: 0.1;
+        }
+        body.genre-hover .genre-line.highlighted {
+            opacity: 1;
+            stroke-width: 5px;
+        }
+
+        /* Floating Audio Player */
+        #audio-player {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            background-color: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: transform 0.4s ease-in-out, opacity 0.4s;
+            transform: translateY(200%);
+            opacity: 0;
+        }
+        #audio-player.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        #player-close-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 24px;
+            height: 24px;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        #player-iframe {
+            border: none;
+            width: 320px;
+            height: 180px;
+        }
+        
+        /* Header & Controls */
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(to bottom, var(--bg-main), transparent);
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none; /* Allow dragging through header */
+        }
+        #header > * {
+            pointer-events: auto; /* Re-enable events for children */
+        }
+        #header h1 {
+            font-size: 2rem;
+            color: var(--text-main);
+        }
+        
+        /* Loader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .loader-spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        #loader p {
+            margin-top: 1rem;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-spinner"></div>
+        <p>Loading Musical History...</p>
+    </div>
+
+    <div id="main-container">
+        <header id="header">
+            <h1>Interactive Jazz Timeline</h1>
+            <!-- Future controls like filters can go here -->
+        </header>
+
+        <div id="timeline-container">
+            <svg id="genre-lines-svg"></svg>
+            <div id="timeline-wrapper">
+                <!-- Year columns will be injected here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <div id="audio-player">
+        <button id="player-close-btn">×</button>
+        <iframe id="player-iframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        const JazzTimeline = {
+            // --- STATE & CONFIG ---
+            state: {
+                albums: [],
+                genres: {},
+                groupedData: new Map(),
+                albumPositions: new Map(),
+                isDragging: false,
+                startX: 0,
+                scrollLeft: 0,
+            },
+
+            // --- DOM ELEMENTS ---
+            elements: {
+                loader: document.getElementById('loader'),
+                mainContainer: document.getElementById('main-container'),
+                timelineContainer: document.getElementById('timeline-container'),
+                timelineWrapper: document.getElementById('timeline-wrapper'),
+                svg: document.getElementById('genre-lines-svg'),
+                audioPlayer: document.getElementById('audio-player'),
+                playerIframe: document.getElementById('player-iframe'),
+                playerCloseBtn: document.getElementById('player-close-btn'),
+            },
+
+            // --- INITIALIZATION ---
+            async init() {
+                this.bindEvents();
+                try {
+                    await this.fetchData();
+                    this.processData();
+                    this.renderTimeline();
+                    this.calculatePositionsAndDrawLines();
+                } catch (error) {
+                    console.error("Initialization failed:", error);
+                    this.elements.loader.innerHTML = "<p>Failed to load timeline data.</p>";
+                } finally {
+                    this.elements.loader.style.opacity = '0';
+                    setTimeout(() => this.elements.loader.style.display = 'none', 500);
+                }
+            },
+
+            async fetchData() {
+                const [albumRes, genreRes] = await Promise.all([
+                    fetch('https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/database.json'),
+                    fetch('https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/genres.json')
+                ]);
+                if (!albumRes.ok || !genreRes.ok) {
+                    throw new Error('Network response was not ok.');
+                }
+                const albumData = await albumRes.json();
+                const genreData = await genreRes.json();
+                
+                this.state.albums = albumData.albums;
+                this.state.genres = this.buildGenreColorMap(genreData);
+            },
+            
+            buildGenreColorMap(genreData) {
+                const colorMap = {};
+                if (genreData && genreData.genres) {
+                     Object.entries(genreData.genres).forEach(([name, data]) => {
+                        colorMap[name] = data.color;
+                    });
+                }
+                // Add fallbacks from the CSS variables
+                colorMap['Bebop'] = colorMap['Bebop'] || 'var(--genre-bebop)';
+                colorMap['Hard Bop'] = colorMap['Hard Bop'] || 'var(--genre-hard-bop)';
+                colorMap['Cool Jazz'] = colorMap['Cool Jazz'] || 'var(--genre-cool-jazz)';
+                colorMap['Modal Jazz'] = colorMap['Modal Jazz'] || 'var(--genre-modal-jazz)';
+                colorMap['Post-Bop'] = colorMap['Post-Bop'] || 'var(--genre-post-bop)';
+                colorMap['Free Jazz'] = colorMap['Free Jazz'] || 'var(--genre-free-jazz)';
+                colorMap['Avant-Garde'] = colorMap['Avant-Garde'] || 'var(--genre-avant-garde)';
+                colorMap['Jazz Fusion'] = colorMap['Jazz Fusion'] || 'var(--genre-jazz-fusion)';
+                return colorMap;
+            },
+
+            // --- DATA PROCESSING ---
+            processData() {
+                // 1. Sort albums chronologically
+                const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
+                const parseDate = (dateString) => {
+                    if (!dateString || typeof dateString !== 'string') return new Date(0);
+                    const parts = dateString.replace(/,/g, '').split(' ');
+                    if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
+                    if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 1);
+                    if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 0, 1);
+                    return new Date(0);
+                };
+                
+                this.state.albums.forEach(album => {
+                     if (album.pivotalTracks && album.pivotalTracks.length > 0) {
+                        album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
+                        album.sortingDate = album.pivotalTracks[0].recordingDate;
+                    } else {
+                        album.sortingDate = `${album.year}-01-01`; // Fallback
+                    }
+                });
+                
+                this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
+
+                // 2. Group by Year, then by Genre
+                this.state.albums.forEach(album => {
+                    if (!album.year || !album.genres) return;
+                    
+                    // Ensure genres is an array
+                    if (typeof album.genres === 'string') {
+                        album.genres = album.genres.split(',').map(g => g.trim());
+                    }
+
+                    if (!this.state.groupedData.has(album.year)) {
+                        this.state.groupedData.set(album.year, new Map());
+                    }
+                    const yearMap = this.state.groupedData.get(album.year);
+
+                    album.genres.forEach(genre => {
+                        if (!yearMap.has(genre)) {
+                            yearMap.set(genre, []);
+                        }
+                        // Avoid adding duplicates if an album fits multiple genres we render
+                        if (!yearMap.get(genre).some(a => a.albumId === album.albumId)) {
+                             yearMap.get(genre).push(album);
+                        }
+                    });
+                });
+            },
+
+            // --- RENDERING ---
+            renderTimeline() {
+                const fragment = document.createDocumentFragment();
+                for (const [year, genreMap] of [...this.state.groupedData.entries()]) {
+                    const yearColumn = document.createElement('div');
+                    yearColumn.className = 'year-column';
+                    yearColumn.innerHTML = `<div class="year-label">${year}</div>`;
+
+                    for (const [genre, albums] of [...genreMap.entries()]) {
+                        const genreSection = this.createGenreSection(genre, albums);
+                        yearColumn.appendChild(genreSection);
+                    }
+                    fragment.appendChild(yearColumn);
+                }
+                this.elements.timelineWrapper.appendChild(fragment);
+            },
+
+            createGenreSection(genre, albums) {
+                const section = document.createElement('div');
+                section.className = 'genre-section';
+                
+                const genreColor = this.state.genres[genre] || 'var(--genre-default)';
+                const label = document.createElement('div');
+                label.className = 'genre-label';
+                label.textContent = genre;
+                label.style.backgroundColor = genreColor;
+                section.appendChild(label);
+
+                albums.forEach(album => {
+                    const card = this.createAlbumCard(album);
+                    section.appendChild(card);
+                });
+                return section;
+            },
+
+            createAlbumCard(album) {
+                const card = document.createElement('div');
+                const slug = (text) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+                const albumId = `album-${slug(album.artist)}-${slug(album.albumTitle)}`;
+                album.albumId = albumId; // Store unique ID on album object
+
+                card.className = 'album-card';
+                card.id = albumId;
+                card.dataset.genres = album.genres.join(',');
+                card.dataset.youtubeId = album.youtubeId || '';
+
+                card.innerHTML = `
+                    <div class="play-button-overlay">
+                         <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                    </div>
+                    <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="cover-art" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
+                    <div class="album-card-info">
+                        <h5>${album.albumTitle}</h5>
+                        <p>${album.artist}</p>
+                    </div>
+                `;
+                return card;
+            },
+
+            // --- SVG LINE DRAWING ---
+            calculatePositionsAndDrawLines() {
+                // Let the browser paint first
+                requestAnimationFrame(() => {
+                    const wrapperRect = this.elements.timelineWrapper.getBoundingClientRect();
+                    this.elements.svg.setAttribute('viewBox', `0 0 ${this.elements.timelineWrapper.scrollWidth} ${this.elements.timelineWrapper.scrollHeight}`);
+                    this.elements.svg.style.width = `${this.elements.timelineWrapper.scrollWidth}px`;
+                    this.elements.svg.style.height = `${this.elements.timelineWrapper.scrollHeight}px`;
+                    
+                    // Calculate all album card positions
+                    document.querySelectorAll('.album-card').forEach(card => {
+                        const cardRect = card.getBoundingClientRect();
+                        const x = card.offsetLeft + card.offsetWidth / 2;
+                        const y = card.offsetTop + card.offsetHeight / 2;
+                        this.state.albumPositions.set(card.id, { x, y });
+                    });
+                    
+                    this.drawConnections();
+                });
+            },
+
+            drawConnections() {
+                const drawnConnections = new Set();
+                const fragment = document.createDocumentFragment();
+
+                for (let i = 0; i < this.state.albums.length - 1; i++) {
+                    const album1 = this.state.albums[i];
+                    if (!album1.albumId || !album1.genres) continue;
+
+                    const pos1 = this.state.albumPositions.get(album1.albumId);
+                    if (!pos1) continue;
+
+                    const commonGenres = new Set(album1.genres);
+
+                    // Find the next album that shares a genre
+                    for (let j = i + 1; j < this.state.albums.length; j++) {
+                        const album2 = this.state.albums[j];
+                        if (!album2.albumId || !album2.genres) continue;
+                        
+                        const sharedGenre = album2.genres.find(g => commonGenres.has(g));
+
+                        if (sharedGenre) {
+                            const connectionId = `${album1.albumId}-${album2.albumId}-${sharedGenre}`;
+                            if (drawnConnections.has(connectionId)) continue;
+
+                            const pos2 = this.state.albumPositions.get(album2.albumId);
+                            if (pos2) {
+                                const path = this.createLine(pos1, pos2, sharedGenre);
+                                fragment.appendChild(path);
+                                drawnConnections.add(connectionId);
+                                // We found a connection for this genre, break to find next for album1
+                                break; 
+                            }
+                        }
+                    }
+                }
+                this.elements.svg.appendChild(fragment);
+            },
+            
+            createLine(pos1, pos2, genre) {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                const dx = pos2.x - pos1.x;
+                // Create a gentle curve
+                const d = `M ${pos1.x} ${pos1.y} C ${pos1.x + dx * 0.5} ${pos1.y}, ${pos2.x - dx * 0.5} ${pos2.y}, ${pos2.x} ${pos2.y}`;
+                
+                path.setAttribute('d', d);
+                path.setAttribute('class', 'genre-line');
+                path.setAttribute('data-genre', genre);
+                path.style.stroke = this.state.genres[genre] || 'var(--genre-default)';
+                return path;
+            },
+
+            // --- EVENT HANDLING ---
+            bindEvents() {
+                // Drag to scroll
+                this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
+                this.elements.timelineContainer.addEventListener('mouseleave', this.onDragEnd.bind(this));
+                this.elements.timelineContainer.addEventListener('mouseup', this.onDragEnd.bind(this));
+                this.elements.timelineContainer.addEventListener('mousemove', this.onDragMove.bind(this));
+
+                // Touch to scroll
+                this.elements.timelineContainer.addEventListener('touchstart', this.onDragStart.bind(this), { passive: true });
+                this.elements.timelineContainer.addEventListener('touchend', this.onDragEnd.bind(this));
+                this.elements.timelineContainer.addEventListener('touchmove', this.onDragMove.bind(this), { passive: true });
+
+                // Audio Player
+                this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
+                this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
+                
+                // Genre Line Hover
+                this.elements.svg.addEventListener('mouseover', this.onLineHover.bind(this));
+                this.elements.svg.addEventListener('mouseout', this.onLineOut.bind(this));
+
+                // Resize
+                window.addEventListener('resize', this.debounce(this.onResize.bind(this), 250));
+            },
+
+            onDragStart(e) {
+                this.state.isDragging = true;
+                this.elements.timelineContainer.style.cursor = 'grabbing';
+                const pageX = e.pageX || e.touches[0].pageX;
+                this.state.startX = pageX - this.elements.timelineContainer.offsetLeft;
+                this.state.scrollLeft = this.elements.timelineContainer.scrollLeft;
+            },
+
+            onDragEnd() {
+                this.state.isDragging = false;
+                this.elements.timelineContainer.style.cursor = 'grab';
+            },
+
+            onDragMove(e) {
+                if (!this.state.isDragging) return;
+                e.preventDefault();
+                const pageX = e.pageX || e.touches[0].pageX;
+                const x = pageX - this.elements.timelineContainer.offsetLeft;
+                const walk = (x - this.state.startX) * 2; // Multiplier for faster scrolling
+                this.elements.timelineContainer.scrollLeft = this.state.scrollLeft - walk;
+            },
+
+            onCardClick(e) {
+                const overlay = e.target.closest('.play-button-overlay');
+                if (overlay) {
+                    const card = overlay.closest('.album-card');
+                    const youtubeId = card.dataset.youtubeId;
+                    if (youtubeId) {
+                        this.showPlayer(youtubeId);
+                    } else {
+                        alert('No audio preview available for this album.');
+                    }
+                }
+            },
+            
+            onLineHover(e) {
+                if (e.target.classList.contains('genre-line')) {
+                    const hoveredGenre = e.target.dataset.genre;
+                    document.body.classList.add('genre-hover');
+                    this.elements.svg.querySelectorAll('.genre-line').forEach(line => {
+                        if (line.dataset.genre === hoveredGenre) {
+                            line.classList.add('highlighted');
+                            line.classList.remove('dimmed');
+                        } else {
+                            line.classList.add('dimmed');
+                            line.classList.remove('highlighted');
+                        }
+                    });
+                }
+            },
+
+            onLineOut(e) {
+                 if (e.target.classList.contains('genre-line')) {
+                    document.body.classList.remove('genre-hover');
+                    this.elements.svg.querySelectorAll('.genre-line').forEach(line => {
+                        line.classList.remove('highlighted', 'dimmed');
+                    });
+                }
+            },
+            
+            onResize() {
+                this.elements.svg.innerHTML = ''; // Clear old lines
+                this.calculatePositionsAndDrawLines();
+            },
+
+            // --- PLAYER LOGIC ---
+            showPlayer(youtubeId) {
+                this.elements.playerIframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
+                this.elements.audioPlayer.classList.add('visible');
+            },
+
+            hidePlayer() {
+                this.elements.playerIframe.src = '';
+                this.elements.audioPlayer.classList.remove('visible');
+            },
+            
+            // --- UTILITIES ---
+            debounce(func, delay) {
+                let timeout;
+                return function(...args) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), delay);
+                };
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => JazzTimeline.init());
+    </script>
+
+</body>
+</html>
