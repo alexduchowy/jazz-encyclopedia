@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jazz Evolution Timeline - Controlled Freedom</title>
-    <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
+    <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
     
     <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -599,7 +599,7 @@
         <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
+                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
                     <div class="flex items-center">
                         <div class="nav-bar-behaviour items-center space-x-8">
                             <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
@@ -633,7 +633,7 @@
         <main>
             <!-- Hero Banner Section -->
             <section class="banner-section">
-                <img src="images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
+                <img src="/images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
                 <div class="banner-overlay">
                     <div class="typewriter">
                         <h2>A Jazz Evolution Encyclopedia</h2>
@@ -939,9 +939,9 @@
             methods: {
                 fetchData() {
                     Promise.all([
-                        fetch('database.json').then(res => res.json()),
-                        fetch('artists.json').then(res => res.json()),
-                        fetch('genres.json').then(res => res.json())
+                        fetch('/database.json').then(res => res.json()),
+                        fetch('/artists.json').then(res => res.json()),
+                        fetch('/genres.json').then(res => res.json())
                     ])
                     .then(([dbData, artistProfileData, genreData]) => {
                         this.state.albums = dbData.albums;
@@ -1106,7 +1106,7 @@
                                         name: name, 
                                         instruments: new Set(), 
                                         albums: new Set(), 
-                                        photo: `images/${slugify(name)}.jpg`, 
+                                        photo: `/images/${slugify(name)}.jpg`, 
                                         isTimelineBandleader: false, 
                                         profile: profiles[name] || { name: name, profile: 'No profile available.'} 
                                     });
@@ -1302,10 +1302,10 @@
                             albumList.className = 'timeline-album-list';
                             albumList.id = `album-list-${year}`;
                             groupedByYear[year].forEach(album => {
-                                const card = document.createElement('a'); // Changed to <a> tag
+                                const card = document.createElement('a');
                                 card.className = 'timeline-album-card fade-in-element';
                                 const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
-                                card.href = `album.html?id=${albumId}`; // Set the href to the album page
+                                card.href = `/album/${albumId}`;
                                 card.dataset.albumTitle = album.albumTitle;
                                 card.dataset.artist = album.artist;
                                 card.dataset.genres = Array.isArray(album.genres) ? album.genres.join(', ') : album.genres;
@@ -1329,7 +1329,7 @@
                                     card.style.setProperty('--landmark-color', landmarkColor);
                                 }
 
-                                card.innerHTML = `<img src="${album.cover || ''}" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
+                                card.innerHTML = `<img src="/${album.cover || ''}" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
                                 albumList.appendChild(card);
                             });
                             yearSection.appendChild(albumList);
@@ -1430,9 +1430,6 @@
                             this.methods.applyHighlights(card);
                         }
                     });
-
-                    // ** REMOVED CLICK LISTENER THAT OPENS MODAL **
-                    // The cards are now <a> tags that link directly to album.html
                     
                     timelineContainer.addEventListener('scroll', () => {
                         let currentYear = '';
@@ -1479,7 +1476,6 @@
                 },
                 
                 setupModals() {
-                    // ** ALBUM MODAL LOGIC REMOVED **
                     const { artistModal, genreModal, pathModal, matrixContainer } = this.elements;
                     
                     artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
@@ -1505,11 +1501,10 @@
                     document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeArtistModal(); this.methods.closeGenreModal(); this.methods.closePathModal(); } });
                     
                     artistModal.addEventListener('click', (e) => {
-                        if (e.target.matches('.clickable-link[data-album-title]')) {
-                             e.preventDefault();
-                            const { albumTitle, artist } = e.target.dataset;
-                            const albumId = `${this.methods.slugify(artist)}-${this.methods.slugify(albumTitle)}`;
-                            window.location.href = `album.html?id=${albumId}`;
+                        const target = e.target.closest('a[data-album-title]');
+                        if (target) {
+                            // The link will navigate on its own.
+                            this.methods.closeArtistModal();
                         }
                     });
 
@@ -1532,10 +1527,8 @@
                                 this.methods.closeGenreModal(() => this.methods.openArtistModal(artist));
                             }
                         } else if (target.dataset.albumTitle) {
-                             e.preventDefault();
-                            const { albumTitle, artist } = target.dataset;
-                            const albumId = `${this.methods.slugify(artist)}-${this.methods.slugify(albumTitle)}`;
-                            window.location.href = `album.html?id=${albumId}`;
+                            // This is an <a> tag now, it will navigate on its own.
+                             this.methods.closeGenreModal();
                         }
                     });
                 },
@@ -1571,7 +1564,7 @@
                             card.dataset.artistName = artist.name;
                             card.innerHTML = `
                                 <div class="h-56 artist-photo-container">
-                                    <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                    <img src="/${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
                                 <div class="p-3">
                                     <h4 class="font-bold text-base text-[var(--text-main)] truncate">${artist.name}</h4>
@@ -1827,9 +1820,10 @@
 
                     const albumTimelineHtml = artistAlbumsWithYear.map(album => {
                         const landmarkIcon = isLandmark(album.albumTitle) ? '<span class="landmark-star">★</span>' : '';
+                        const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
                         return `<li class="artist-modal-timeline-item">
                                     <strong class="text-[var(--text-muted)]">${album.year}:</strong> 
-                                    <a href="album.html?id=${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}" class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">
+                                    <a href="/album/${albumId}" class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">
                                         ${album.albumTitle}
                                     </a>
                                     ${landmarkIcon}
@@ -1844,7 +1838,7 @@
                             if (!collaborator) return '';
                             return `
                                 <div class="collaborator-card text-center" data-artist-name="${collaborator.name}">
-                                    <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                    <img src="/${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                     <p class="mt-2 text-sm font-bold text-[var(--text-muted)]">${collaborator.name}</p>
                                 </div>
                             `;
@@ -1866,7 +1860,7 @@
                         <div class="flex flex-col sm:flex-row gap-6">
                             <div class="w-full sm:w-1/3 flex-shrink-0">
                                 <div class="artist-photo-container">
-                                    <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                    <img src="/${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 </div>
                                 <p class="mt-4 text-[var(--text-main)] text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
                                 ${bornInModalInfo}
@@ -1947,9 +1941,10 @@
                         .map(name => `<span class="clickable-link" data-artist-name="${name}">${name}</span>`)
                         .join(', ');
 
-                    const landmarkAlbumsHtml = landmarkAlbums.map(album => 
-                        `<li><a href="album.html?id=${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}" class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</a></li>`
-                    ).join('');
+                    const landmarkAlbumsHtml = landmarkAlbums.map(album => {
+                        const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
+                        return `<li><a href="/album/${albumId}" class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</a></li>`
+                    }).join('');
 
                     let bodyHtml = `<div class="space-y-6">
                         <div>
@@ -2178,10 +2173,10 @@
                         const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
 
                         onThisDayContainer.innerHTML = `
-                            <a href="album.html?id=${albumId}" class="block p-4 bg-[var(--bg-secondary)] border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--text-main)] dark:shadow-none cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] dark:hover:border-[var(--accent)] hover:-translate-y-1 transition-all">
+                            <a href="/album/${albumId}" class="block p-4 bg-[var(--bg-secondary)] border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--text-main)] dark:shadow-none cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] dark:hover:border-[var(--accent)] hover:-translate-y-1 transition-all">
                                 <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
                                 <div class="flex items-center gap-4 mt-2">
-                                    <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
+                                    <img src="/${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
                                     <div>
                                         <p class="text-sm text-[var(--text-muted)]">On <strong>${currentMonth} ${currentDay}</strong>, ${album.year}, the track...</p>
                                         <p class="text-lg font-bold text-[var(--text-main)]">"${featured.title}"</p>
