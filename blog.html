@@ -503,12 +503,12 @@
                         card.innerHTML = `
                             <img src="${coverImage}" alt="Cover for ${review.albumTitle}" class="w-full h-auto aspect-[16/9] object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x338/e7e5e4/1c1917?text=Review';">
                             <div class="p-6 flex flex-col flex-grow">
-                                <div class="flex items-center justify-between mb-1">
+                                <div class="flex items-center justify-between mb-2">
                                     <p class="text-sm text-[var(--text-muted)] truncate">${review.artist}</p>
                                     <div class="flex items-center gap-1 flex-shrink-0" title="Rating: ${review.rating}/5">${starsHtml}</div>
                                 </div>
-                                <h3 class="text-xl font-bold text-[var(--text-main)] mb-2">${review.albumTitle}</h3>
-                                <p class="text-sm text-[var(--text-muted)] font-light flex-grow">${review.body.substring(0, 80).replace(/<[^>]*>?/gm, '')}...</p>
+                                <h3 class="text-2xl font-bold mb-2 text-[var(--text-main)] flex-grow">${review.albumTitle}</h3>
+                                <p class="text-sm text-[var(--text-muted)] font-light">${review.body.substring(0, 80).replace(/<[^>]*>?/gm, '')}...</p>
                                 <span class="inline-block mt-4 font-bold text-orange-600 self-start">Read Review &rarr;</span>
                             </div>
                         `;
