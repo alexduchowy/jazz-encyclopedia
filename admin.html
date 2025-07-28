@@ -381,12 +381,19 @@
 
         // --- TV PLAYLIST LOGIC ---
         const setupTvPlaylistListener = () => {
-            const q = query(collection(db, 'tv_playlist'));
+            const q = query(collection(db, 'tv_playlist'), orderBy('order'));
             onSnapshot(q, (snapshot) => {
                 tvPlaylist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                tvPlaylist.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity));
                 renderPlaylistUI(tvPlaylist);
-            }, (error) => console.error("Playlist listener error:", error));
+            }, (error) => {
+                console.error("Playlist listener error:", error);
+                if (error.code === 'failed-precondition') {
+                    elements.playlistContainer.innerHTML = `<div class="p-4 text-center text-yellow-400 bg-yellow-900/50 rounded-md">
+                        <p class="font-bold">Configuration Error</p>
+                        <p class="text-sm mt-2">A Firestore index is required for ordering the playlist. Please check the browser's developer console. The error message there will provide a direct link to create the necessary index in your Firebase project.</p>
+                    </div>`;
+                }
+            });
         };
         const renderPlaylistUI = (playlist) => {
             elements.playlistContainer.innerHTML = '';
@@ -398,7 +405,7 @@
                 const item = document.createElement('div');
                 item.className = 'playlist-item';
                 item.innerHTML = `
-                    <div class="flex items-center gap-2 overflow-hidden">
+                    <div class="flex items-center gap-2 overflow-hidden flex-grow">
                         <div class="flex flex-col gap-1">
                             <button class="move-btn move-up-btn" data-id="${video.id}" ${index === 0 ? 'disabled' : ''}><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
                             <button class="move-btn move-down-btn" data-id="${video.id}" ${index === playlist.length - 1 ? 'disabled' : ''}><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
@@ -409,7 +416,7 @@
                            <p class="text-xs text-stone-400 truncate">${video.videoId}</p>
                         </div>
                     </div>
-                    <div class="flex gap-2 ml-auto pl-2">
+                    <div class="flex gap-2 ml-auto pl-2 flex-shrink-0">
                         <button class="btn-action edit-btn-tv" data-id="${video.id}">Edit</button>
                         <button class="btn-action remove-btn" data-id="${video.id}">Remove</button>
                     </div>
