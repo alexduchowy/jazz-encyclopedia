@@ -91,7 +91,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 0 2rem;
+            padding: 0 1.5rem;
             border-left: 2px dashed var(--text-muted);
             position: relative;
             flex-shrink: 0;
@@ -101,27 +101,22 @@
         }
         .year-label {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 8rem; /* Made larger for watermark effect */
+            font-size: 2.5rem;
             color: var(--text-muted);
-            position: absolute;
-            top: 4rem;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0.15; /* Reduced opacity */
-            z-index: 0; /* Placed behind content */
-            pointer-events: none;
+            margin-bottom: 2rem;
+            font-weight: 900;
         }
 
         /* Genre Section within a Year */
         .genre-section {
-            margin-bottom: 2rem;
-            width: 220px; /* Fixed width for alignment */
-            position: relative; /* For z-index to work */
+            margin-bottom: 3rem; /* Increased separation */
+            width: 180px; /* Adjusted width */
+            position: relative; 
             z-index: 1;
         }
         .genre-label {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             padding: 0.25rem 0.5rem;
             display: inline-block;
             margin-bottom: 1rem;
@@ -131,15 +126,14 @@
 
         /* Album Card */
         .album-card {
-            width: 200px;
+            width: 160px; /* Made smaller */
             background-color: var(--bg-main);
             border-radius: 0.25rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 4px 4px 0px var(--text-main);
             border: 2px solid var(--text-main);
-            /* Colored border added */
             border-left: 6px solid var(--album-genre-color, var(--text-main));
-            margin: 0 auto 1.5rem auto;
+            margin: 0 auto 1rem auto;
             position: relative;
             overflow: hidden;
         }
@@ -153,7 +147,7 @@
         }
         .album-card .cover-art {
             width: 100%;
-            height: 200px;
+            height: 160px; /* Made smaller */
             object-fit: cover;
             filter: grayscale(100%);
             transition: filter 0.3s ease;
@@ -163,16 +157,16 @@
             filter: grayscale(0%);
         }
         .album-card-info {
-            padding: 0.75rem;
+            padding: 0.5rem;
         }
         .album-card-info h5 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         .album-card-info p {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
 
@@ -192,8 +186,8 @@
             opacity: 1;
         }
         .play-icon {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             fill: white;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
@@ -206,7 +200,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 5; /* Above year label, below genre sections */
+            z-index: 5; 
         }
         .genre-line {
             fill: none;
@@ -272,47 +266,54 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 1rem 2rem;
-            background: linear-gradient(to bottom, var(--bg-main), transparent);
+            padding: 1.5rem 2rem;
+            background: linear-gradient(to bottom, var(--bg-main) 70%, transparent);
             z-index: 50;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            pointer-events: none; /* Allow dragging through header */
+            align-items: center;
+            pointer-events: none;
         }
         #header > * {
-            pointer-events: auto; /* Re-enable events for children */
+            pointer-events: auto;
         }
-        #header h1 {
-            font-size: 2rem;
-            color: var(--text-main);
+        #header-title {
+            transform: rotate(-2deg);
+            display: inline-block;
+            background-color: var(--accent);
+            color: #FFFFFF;
+            padding: 0.5rem 1.5rem;
+            font-size: 1.75rem;
         }
 
         /* Genre Legend */
         #genre-legend {
             display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            background-color: rgba(255,255,255,0.7);
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            background-color: rgba(245, 245, 244, 0.8);
+            backdrop-filter: blur(4px);
             padding: 0.75rem;
             border-radius: 0.25rem;
             border: 1px solid var(--border-color);
+            max-width: 50%;
         }
         .dark #genre-legend {
-             background-color: rgba(28, 25, 23, 0.7);
+             background-color: rgba(28, 25, 23, 0.8);
         }
         .legend-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
         .legend-color-swatch {
-            width: 1rem;
-            height: 1rem;
+            width: 0.75rem;
+            height: 0.75rem;
             border-radius: 0.125rem;
             border: 1px solid var(--text-main);
+            flex-shrink: 0;
         }
         
         /* Loader */
@@ -351,10 +352,10 @@
 
     <div id="main-container">
         <header id="header">
+            <h1 id="header-title">Interactive Jazz Timeline</h1>
             <div id="genre-legend">
                 <!-- Legend items will be injected here -->
             </div>
-            <h1>Interactive Jazz Timeline</h1>
         </header>
 
         <div id="timeline-container">
@@ -433,29 +434,38 @@
             
             buildGenreColorMap(genreData) {
                 const colorMap = {};
+                // Add all genres from genres.json first to establish the full set
                 if (genreData && genreData.genres) {
                      Object.entries(genreData.genres).forEach(([name, data]) => {
+                        // Normalize name for consistency, e.g., "Avant-Garde" -> "Avant-Garde Jazz"
+                        const normalizedName = name.includes("Jazz") ? name : `${name} Jazz`;
                         colorMap[name] = data.color;
+                        if(name === "Avant-Garde") {
+                           colorMap["Avant-Garde Jazz"] = data.color;
+                        }
                     });
                 }
+                // Fallbacks from CSS variables
                 colorMap['Bebop'] = colorMap['Bebop'] || 'var(--genre-bebop)';
                 colorMap['Hard Bop'] = colorMap['Hard Bop'] || 'var(--genre-hard-bop)';
                 colorMap['Cool Jazz'] = colorMap['Cool Jazz'] || 'var(--genre-cool-jazz)';
                 colorMap['Modal Jazz'] = colorMap['Modal Jazz'] || 'var(--genre-modal-jazz)';
                 colorMap['Post-Bop'] = colorMap['Post-Bop'] || 'var(--genre-post-bop)';
                 colorMap['Free Jazz'] = colorMap['Free Jazz'] || 'var(--genre-free-jazz)';
-                colorMap['Avant-Garde'] = colorMap['Avant-Garde'] || 'var(--genre-avant-garde)';
+                colorMap['Avant-Garde Jazz'] = colorMap['Avant-Garde Jazz'] || 'var(--genre-avant-garde)';
                 colorMap['Jazz Fusion'] = colorMap['Jazz Fusion'] || 'var(--genre-jazz-fusion)';
                 return colorMap;
             },
 
-            // --- DATA PROCESSING (CORRECTED) ---
+            // --- DATA PROCESSING ---
             processData() {
                 const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
                 
-                // First, assign a unique ID to every album
                 this.state.albums.forEach(album => {
                     album.albumId = `album-${slug(album.artist)}-${slug(album.albumTitle)}`;
+                     if (typeof album.genres === 'string') {
+                        album.genres = album.genres.split(',').map(g => g.trim());
+                    }
                 });
 
                 const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
@@ -479,16 +489,11 @@
                 
                 this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
 
-                // Group by Year -> Primary Genre -> [Albums] to prevent duplicates
-                const processedAlbumIds = new Set(); // Keep track of albums already placed
+                const processedAlbumIds = new Set();
                 this.state.albums.forEach(album => {
                     if (!album.year || !album.genres || processedAlbumIds.has(album.albumId)) return;
                     
-                    if (typeof album.genres === 'string') {
-                        album.genres = album.genres.split(',').map(g => g.trim());
-                    }
-                    
-                    const primaryGenre = album.genres[0]; // Use the first genre for placement
+                    const primaryGenre = album.genres[0];
 
                     if (!this.state.groupedData.has(album.year)) {
                         this.state.groupedData.set(album.year, new Map());
@@ -503,12 +508,14 @@
                 });
             },
 
-            // --- RENDERING (CORRECTED) ---
+            // --- RENDERING ---
             renderGenreLegend() {
                 const legendFragment = document.createDocumentFragment();
-                for (const [genre, color] of Object.entries(this.state.genres)) {
-                    // Only show genres that are actually in the album data
-                    if (this.state.albums.some(a => a.genres.includes(genre))) {
+                const sortedGenres = Object.keys(this.state.genres).sort();
+
+                for (const genre of sortedGenres) {
+                    const color = this.state.genres[genre];
+                     if (this.state.albums.some(a => a.genres.includes(genre))) {
                         const item = document.createElement('div');
                         item.className = 'legend-item';
                         item.innerHTML = `
@@ -548,7 +555,6 @@
                 const section = document.createElement('div');
                 section.className = 'genre-section';
                 
-                // Only show the label if this genre hasn't been rendered yet
                 if (!this.state.renderedGenres.has(genre)) {
                     const genreColor = this.state.genres[genre] || 'var(--genre-default)';
                     const label = document.createElement('div');
@@ -569,11 +575,10 @@
             createAlbumCard(album) {
                 const card = document.createElement('div');
                 card.className = 'album-card';
-                card.id = album.albumId; // Use pre-assigned ID
+                card.id = album.albumId;
                 card.dataset.genres = album.genres.join(',');
                 card.dataset.youtubeId = album.youtubeId || '';
 
-                // Set color for the border
                 const primaryGenre = album.genres[0];
                 const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
                 card.style.setProperty('--album-genre-color', genreColor);
@@ -582,7 +587,7 @@
                     <div class="play-button-overlay">
                          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
                     </div>
-                    <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';">
+                    <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Image';">
                     <div class="album-card-info">
                         <h5>${album.albumTitle || 'Unknown Title'}</h5>
                         <p>${album.artist || 'Unknown Artist'}</p>
