@@ -86,30 +86,36 @@
             min-height: 100%;
         }
         
-        /* Year Column */
-        .year-column {
+        /* NEW: Year Container */
+        .year-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 0 1.5rem;
-            border-left: 2px dashed var(--text-muted);
-            position: relative;
+            padding: 0 1rem;
+            border-left: 2px solid var(--text-muted);
             flex-shrink: 0;
         }
-        .year-column:first-child {
-            border-left: none;
+        .year-container:first-child {
+             border-left: none;
         }
-        .year-label {
+        .year-header {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2.5rem;
             color: var(--text-muted);
             margin-bottom: 2rem;
             font-weight: 900;
         }
+        .year-grid {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
 
-        /* Genre Section within a Year */
-        .genre-section {
-            margin-bottom: 3rem; /* Increased separation */
+        /* UPDATED: Genre Column */
+        .genre-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 180px; /* Adjusted width */
             position: relative; 
             z-index: 1;
@@ -122,6 +128,8 @@
             margin-bottom: 1rem;
             color: var(--bg-main);
             border: 2px solid var(--text-main);
+            width: 100%;
+            text-align: center;
         }
 
         /* Album Card */
@@ -379,7 +387,6 @@
                 genres: {},
                 groupedData: new Map(),
                 albumPositions: new Map(),
-                renderedGenres: new Set(), // To track first appearance of a genre
                 isDragging: false,
                 startX: 0,
                 scrollLeft: 0,
@@ -434,10 +441,8 @@
             
             buildGenreColorMap(genreData) {
                 const colorMap = {};
-                // Add all genres from genres.json first to establish the full set
                 if (genreData && genreData.genres) {
                      Object.entries(genreData.genres).forEach(([name, data]) => {
-                        // Normalize name for consistency, e.g., "Avant-Garde" -> "Avant-Garde Jazz"
                         const normalizedName = name.includes("Jazz") ? name : `${name} Jazz`;
                         colorMap[name] = data.color;
                         if(name === "Avant-Garde") {
@@ -445,7 +450,6 @@
                         }
                     });
                 }
-                // Fallbacks from CSS variables
                 colorMap['Bebop'] = colorMap['Bebop'] || 'var(--genre-bebop)';
                 colorMap['Hard Bop'] = colorMap['Hard Bop'] || 'var(--genre-hard-bop)';
                 colorMap['Cool Jazz'] = colorMap['Cool Jazz'] || 'var(--genre-cool-jazz)';
@@ -457,12 +461,11 @@
                 return colorMap;
             },
 
-            // --- DATA PROCESSING ---
+            // --- DATA PROCESSING (CORRECTED FOR GRID LAYOUT) ---
             processData() {
                 const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
                 
                 this.state.albums.forEach(album => {
-                    album.albumId = `album-${slug(album.artist)}-${slug(album.albumTitle)}`;
                      if (typeof album.genres === 'string') {
                         album.genres = album.genres.split(',').map(g => g.trim());
                     }
@@ -489,22 +492,22 @@
                 
                 this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
 
-                const processedAlbumIds = new Set();
+                // Group by Year -> Genre -> [Albums]
+                // This logic now allows albums to appear in multiple genre columns
                 this.state.albums.forEach(album => {
-                    if (!album.year || !album.genres || processedAlbumIds.has(album.albumId)) return;
+                    if (!album.year || !album.genres) return;
                     
-                    const primaryGenre = album.genres[0];
-
                     if (!this.state.groupedData.has(album.year)) {
                         this.state.groupedData.set(album.year, new Map());
                     }
                     const yearMap = this.state.groupedData.get(album.year);
 
-                    if (!yearMap.has(primaryGenre)) {
-                        yearMap.set(primaryGenre, []);
-                    }
-                    yearMap.get(primaryGenre).push(album);
-                    processedAlbumIds.add(album.albumId);
+                    album.genres.forEach(genre => {
+                        if (!yearMap.has(genre)) {
+                            yearMap.set(genre, []);
+                        }
+                        yearMap.get(genre).push(album);
+                    });
                 });
             },
 
@@ -531,51 +534,55 @@
             renderTimeline() {
                 const fragment = document.createDocumentFragment();
                 const sortedYears = [...this.state.groupedData.keys()].sort((a, b) => a - b);
+                const allGenresInOrder = Object.keys(this.state.genres).sort();
 
                 for (const year of sortedYears) {
-                    const genreMap = this.state.groupedData.get(year);
-                    const yearColumn = document.createElement('div');
-                    yearColumn.className = 'year-column';
-                    yearColumn.innerHTML = `<div class="year-label">${year}</div>`;
+                    const yearData = this.state.groupedData.get(year);
+                    const yearContainer = document.createElement('div');
+                    yearContainer.className = 'year-container';
+                    
+                    const yearHeader = document.createElement('div');
+                    yearHeader.className = 'year-header';
+                    yearHeader.textContent = year;
+                    yearContainer.appendChild(yearHeader);
 
-                    const sortedGenres = [...genreMap.keys()].sort();
+                    const yearGrid = document.createElement('div');
+                    yearGrid.className = 'year-grid';
 
-                    for (const genre of sortedGenres) {
-                        const albums = genreMap.get(genre);
-                        const genreSection = this.createGenreSection(genre, albums);
-                        yearColumn.appendChild(genreSection);
+                    for (const genre of allGenresInOrder) {
+                        const genreColumn = document.createElement('div');
+                        genreColumn.className = 'genre-column';
+
+                        if (yearData.has(genre)) {
+                             const albums = yearData.get(genre);
+                             const genreLabel = document.createElement('div');
+                             genreLabel.className = 'genre-label';
+                             genreLabel.textContent = genre;
+                             genreLabel.style.backgroundColor = this.state.genres[genre] || 'var(--genre-default)';
+                             genreColumn.appendChild(genreLabel);
+
+                             albums.forEach(album => {
+                                const card = this.createAlbumCard(album, genre);
+                                genreColumn.appendChild(card);
+                             });
+                        }
+                        yearGrid.appendChild(genreColumn);
                     }
-                    fragment.appendChild(yearColumn);
+                    yearContainer.appendChild(yearGrid);
+                    fragment.appendChild(yearContainer);
                 }
                 this.elements.timelineWrapper.innerHTML = '';
                 this.elements.timelineWrapper.appendChild(fragment);
             },
 
-            createGenreSection(genre, albums) {
-                const section = document.createElement('div');
-                section.className = 'genre-section';
-                
-                if (!this.state.renderedGenres.has(genre)) {
-                    const genreColor = this.state.genres[genre] || 'var(--genre-default)';
-                    const label = document.createElement('div');
-                    label.className = 'genre-label';
-                    label.textContent = genre;
-                    label.style.backgroundColor = genreColor;
-                    section.appendChild(label);
-                    this.state.renderedGenres.add(genre);
-                }
-
-                albums.forEach(album => {
-                    const card = this.createAlbumCard(album);
-                    section.appendChild(card);
-                });
-                return section;
-            },
-
-            createAlbumCard(album) {
+            createAlbumCard(album, genreForId) {
                 const card = document.createElement('div');
+                const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+                // Make ID unique per instance in the grid
+                const cardId = `album-${slug(album.artist)}-${slug(album.albumTitle)}-${slug(genreForId)}`;
+                
                 card.className = 'album-card';
-                card.id = album.albumId;
+                card.id = cardId;
                 card.dataset.genres = album.genres.join(',');
                 card.dataset.youtubeId = album.youtubeId || '';
 
@@ -606,8 +613,11 @@
                     
                     this.state.albumPositions.clear();
                     document.querySelectorAll('.album-card').forEach(card => {
-                        const x = card.offsetLeft + card.offsetWidth / 2;
-                        const y = card.offsetTop + card.offsetHeight / 2;
+                        const cardRect = card.getBoundingClientRect();
+                        const scrollContainerRect = this.elements.timelineContainer.getBoundingClientRect();
+                        // Calculate position relative to the scrollable wrapper, not the viewport
+                        const x = card.offsetLeft + (card.offsetWidth / 2);
+                        const y = card.offsetTop + (card.offsetHeight / 2);
                         this.state.albumPositions.set(card.id, { x, y });
                     });
                     
@@ -618,30 +628,34 @@
             drawConnections() {
                 const drawnConnections = new Set();
                 const fragment = document.createDocumentFragment();
+                const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 
                 for (let i = 0; i < this.state.albums.length; i++) {
                     const album1 = this.state.albums[i];
-                    if (!album1.albumId || !album1.genres) continue;
-
-                    const pos1 = this.state.albumPositions.get(album1.albumId);
-                    if (!pos1) continue;
+                    if (!album1.genres) continue;
 
                     for (const genre of album1.genres) {
+                        const card1Id = `album-${slug(album1.artist)}-${slug(album1.albumTitle)}-${slug(genre)}`;
+                        const pos1 = this.state.albumPositions.get(card1Id);
+                        if (!pos1) continue;
+
                         let nextAlbumWithGenre = null;
                         for (let j = i + 1; j < this.state.albums.length; j++) {
-                            const album2 = this.state.albums[j];
-                            if (album2.genres && album2.genres.includes(genre)) {
-                                nextAlbumWithGenre = album2;
+                            const album2Cand = this.state.albums[j];
+                            if (album2Cand.genres && album2Cand.genres.includes(genre)) {
+                                nextAlbumWithGenre = album2Cand;
                                 break;
                             }
                         }
 
                         if (nextAlbumWithGenre) {
                             const album2 = nextAlbumWithGenre;
-                            const connectionId = `${album1.albumId}-${album2.albumId}-${genre}`;
+                            const card2Id = `album-${slug(album2.artist)}-${slug(album2.albumTitle)}-${slug(genre)}`;
+                            const connectionId = `${card1Id}-${card2Id}`;
+                            
                             if (drawnConnections.has(connectionId)) continue;
 
-                            const pos2 = this.state.albumPositions.get(album2.albumId);
+                            const pos2 = this.state.albumPositions.get(card2Id);
                             if (pos2) {
                                 const path = this.createLine(pos1, pos2, genre);
                                 fragment.appendChild(path);
