@@ -137,6 +137,8 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 4px 4px 0px var(--text-main);
             border: 2px solid var(--text-main);
+            /* Colored border added */
+            border-left: 6px solid var(--album-genre-color, var(--text-main));
             margin: 0 auto 1.5rem auto;
             position: relative;
             overflow: hidden;
@@ -144,6 +146,7 @@
         .dark .album-card {
             box-shadow: none;
             border-color: var(--border-color);
+            border-left-color: var(--album-genre-color, var(--border-color));
         }
         .album-card:hover {
             transform: translateY(-5px) rotate(1deg);
@@ -274,7 +277,7 @@
             z-index: 50;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             pointer-events: none; /* Allow dragging through header */
         }
         #header > * {
@@ -283,6 +286,33 @@
         #header h1 {
             font-size: 2rem;
             color: var(--text-main);
+        }
+
+        /* Genre Legend */
+        #genre-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            background-color: rgba(255,255,255,0.7);
+            padding: 0.75rem;
+            border-radius: 0.25rem;
+            border: 1px solid var(--border-color);
+        }
+        .dark #genre-legend {
+             background-color: rgba(28, 25, 23, 0.7);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .legend-color-swatch {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 0.125rem;
+            border: 1px solid var(--text-main);
         }
         
         /* Loader */
@@ -321,8 +351,10 @@
 
     <div id="main-container">
         <header id="header">
+            <div id="genre-legend">
+                <!-- Legend items will be injected here -->
+            </div>
             <h1>Interactive Jazz Timeline</h1>
-            <!-- Future controls like filters can go here -->
         </header>
 
         <div id="timeline-container">
@@ -346,6 +378,7 @@
                 genres: {},
                 groupedData: new Map(),
                 albumPositions: new Map(),
+                renderedGenres: new Set(), // To track first appearance of a genre
                 isDragging: false,
                 startX: 0,
                 scrollLeft: 0,
@@ -361,6 +394,7 @@
                 audioPlayer: document.getElementById('audio-player'),
                 playerIframe: document.getElementById('player-iframe'),
                 playerCloseBtn: document.getElementById('player-close-btn'),
+                genreLegend: document.getElementById('genre-legend'),
             },
 
             // --- INITIALIZATION ---
@@ -369,6 +403,7 @@
                 try {
                     await this.fetchData();
                     this.processData();
+                    this.renderGenreLegend();
                     this.renderTimeline();
                     this.calculatePositionsAndDrawLines();
                 } catch (error) {
@@ -416,6 +451,13 @@
 
             // --- DATA PROCESSING (CORRECTED) ---
             processData() {
+                const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+                
+                // First, assign a unique ID to every album
+                this.state.albums.forEach(album => {
+                    album.albumId = `album-${slug(album.artist)}-${slug(album.albumTitle)}`;
+                });
+
                 const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
                 const parseDate = (dateString) => {
                     if (!dateString || typeof dateString !== 'string') return new Date(0);
@@ -438,9 +480,9 @@
                 this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
 
                 // Group by Year -> Primary Genre -> [Albums] to prevent duplicates
-                const processedAlbums = new Set(); // Keep track of albums already placed
+                const processedAlbumIds = new Set(); // Keep track of albums already placed
                 this.state.albums.forEach(album => {
-                    if (!album.year || !album.genres || processedAlbums.has(album.albumId)) return;
+                    if (!album.year || !album.genres || processedAlbumIds.has(album.albumId)) return;
                     
                     if (typeof album.genres === 'string') {
                         album.genres = album.genres.split(',').map(g => g.trim());
@@ -457,14 +499,30 @@
                         yearMap.set(primaryGenre, []);
                     }
                     yearMap.get(primaryGenre).push(album);
-                    processedAlbums.add(album.albumId);
+                    processedAlbumIds.add(album.albumId);
                 });
             },
 
             // --- RENDERING (CORRECTED) ---
+            renderGenreLegend() {
+                const legendFragment = document.createDocumentFragment();
+                for (const [genre, color] of Object.entries(this.state.genres)) {
+                    // Only show genres that are actually in the album data
+                    if (this.state.albums.some(a => a.genres.includes(genre))) {
+                        const item = document.createElement('div');
+                        item.className = 'legend-item';
+                        item.innerHTML = `
+                            <div class="legend-color-swatch" style="background-color: ${color};"></div>
+                            <span>${genre}</span>
+                        `;
+                        legendFragment.appendChild(item);
+                    }
+                }
+                this.elements.genreLegend.appendChild(legendFragment);
+            },
+
             renderTimeline() {
                 const fragment = document.createDocumentFragment();
-                // Sort years numerically before rendering
                 const sortedYears = [...this.state.groupedData.keys()].sort((a, b) => a - b);
 
                 for (const year of sortedYears) {
@@ -473,7 +531,7 @@
                     yearColumn.className = 'year-column';
                     yearColumn.innerHTML = `<div class="year-label">${year}</div>`;
 
-                    const sortedGenres = [...genreMap.keys()].sort(); // Sort genres alphabetically
+                    const sortedGenres = [...genreMap.keys()].sort();
 
                     for (const genre of sortedGenres) {
                         const albums = genreMap.get(genre);
@@ -482,7 +540,7 @@
                     }
                     fragment.appendChild(yearColumn);
                 }
-                this.elements.timelineWrapper.innerHTML = ''; // Clear previous content
+                this.elements.timelineWrapper.innerHTML = '';
                 this.elements.timelineWrapper.appendChild(fragment);
             },
 
@@ -490,12 +548,16 @@
                 const section = document.createElement('div');
                 section.className = 'genre-section';
                 
-                const genreColor = this.state.genres[genre] || 'var(--genre-default)';
-                const label = document.createElement('div');
-                label.className = 'genre-label';
-                label.textContent = genre;
-                label.style.backgroundColor = genreColor;
-                section.appendChild(label);
+                // Only show the label if this genre hasn't been rendered yet
+                if (!this.state.renderedGenres.has(genre)) {
+                    const genreColor = this.state.genres[genre] || 'var(--genre-default)';
+                    const label = document.createElement('div');
+                    label.className = 'genre-label';
+                    label.textContent = genre;
+                    label.style.backgroundColor = genreColor;
+                    section.appendChild(label);
+                    this.state.renderedGenres.add(genre);
+                }
 
                 albums.forEach(album => {
                     const card = this.createAlbumCard(album);
@@ -506,14 +568,15 @@
 
             createAlbumCard(album) {
                 const card = document.createElement('div');
-                const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-                const albumId = `album-${slug(album.artist)}-${slug(album.albumTitle)}`;
-                album.albumId = albumId;
-
                 card.className = 'album-card';
-                card.id = albumId;
+                card.id = album.albumId; // Use pre-assigned ID
                 card.dataset.genres = album.genres.join(',');
                 card.dataset.youtubeId = album.youtubeId || '';
+
+                // Set color for the border
+                const primaryGenre = album.genres[0];
+                const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
+                card.style.setProperty('--album-genre-color', genreColor);
 
                 card.innerHTML = `
                     <div class="play-button-overlay">
@@ -559,7 +622,6 @@
                     if (!pos1) continue;
 
                     for (const genre of album1.genres) {
-                        // Find the very next album with this genre
                         let nextAlbumWithGenre = null;
                         for (let j = i + 1; j < this.state.albums.length; j++) {
                             const album2 = this.state.albums[j];
@@ -583,7 +645,7 @@
                         }
                     }
                 }
-                this.elements.svg.innerHTML = ''; // Clear old lines
+                this.elements.svg.innerHTML = '';
                 this.elements.svg.appendChild(fragment);
             },
             
