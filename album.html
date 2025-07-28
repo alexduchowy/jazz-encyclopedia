@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Album Details - Controlled Freedom</title>
+    <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
+    
+    <!-- External Libraries & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS Styling (Copied from timeline.html for consistency) -->
+    <style>
+        :root {
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-header: rgba(255,255,255,0.8);
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --border-color: #e7e5e4;
+            --accent: #f97316;
+        }
+        .dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+        }
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+        .nav-bar-behaviour { display: none; }
+        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
+        #loader {
+            position: fixed; inset: 0;
+            background-color: var(--bg-main);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .content-hidden { display: none; }
+        .album-page-container {
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+        }
+        .dark .album-page-container { border-color: var(--border-color); }
+        #modal-analysis-section {
+            background-color: #1a1a1a;
+            padding: 1.5rem; margin-top: 2rem;
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
+        }
+        .dark #modal-analysis-section {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        #modal-analysis-section h5 { color: #f5f5f4; }
+        .liner-notes-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem; line-height: 1.6;
+            color: #d4d4d2; 
+        }
+        audio.styled-player { height: 35px; accent-color: var(--accent); }
+         .genre-tag {
+            padding: 0.25rem 0.75rem; border-radius: 9999px;
+            font-size: 0.875rem; font-weight: 600;
+            color: var(--text-main);
+            border: 2px solid var(--text-main);
+        }
+        .dark .genre-tag { border-color: var(--border-color); }
+
+        .clickable-link {
+            cursor: pointer; text-decoration: underline;
+            text-decoration-color: var(--accent);
+            transition: color 0.2s;
+        }
+        .clickable-link:hover { color: var(--accent); }
+    </style>
+</head>
+<body class="text-stone-900">
+
+    <div id="loader" class="loader"><div class="loader-spinner"></div></div>
+
+    <div id="page-content" class="content-hidden">
+        <!-- Standardized Sticky Header -->
+        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+            <header class="container mx-auto h-full">
+                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
+                    <div class="flex items-center">
+                        <div class="nav-bar-behaviour items-center space-x-8">
+                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                            <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Legacy</a>
+                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                                <span>@controlledjazz</span>
+                            </a>
+                        </div>
+                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </button>
+                    </div>
+                </nav>
+            </header>
+        </div>
+
+        <main class="py-12">
+            <div id="album-content-wrapper" class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Album content will be injected here -->
+                <div id="album-placeholder" class="text-center py-20">
+                    <h2 class="text-3xl text-[var(--text-muted)]">Loading album...</h2>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-stone-900 text-stone-200 py-8 mt-12">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p id="footer-copyright" class="text-xs text-stone-400"></p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const AlbumPage = {
+            state: {
+                albums: [],
+                artistsData: [], // Needed for clickable artist links
+                fullGenreColorMap: {},
+            },
+
+            init() {
+                this.setupTheme();
+                this.fetchDataAndRender();
+            },
+
+            setupTheme() {
+                const themeToggle = document.getElementById('theme-toggle');
+                const lightIcon = document.getElementById('theme-icon-light');
+                const darkIcon = document.getElementById('theme-icon-dark');
+
+                const applyTheme = (theme) => {
+                    if (theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                        lightIcon.classList.add('hidden');
+                        darkIcon.classList.remove('hidden');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        lightIcon.classList.remove('hidden');
+                        darkIcon.classList.add('hidden');
+                    }
+                };
+
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                
+                applyTheme(currentTheme);
+
+                themeToggle.addEventListener('click', () => {
+                    const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                    localStorage.setItem('theme', newTheme);
+                    applyTheme(newTheme);
+                });
+            },
+
+            slugify(text) {
+                if (!text) return '';
+                return text.toString().toLowerCase()
+                    .replace(/\s+/g, '-')           // Replace spaces with -
+                    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+                    .replace(/^-+/, '')             // Trim - from start of text
+                    .replace(/-+$/, '');            // Trim - from end of text
+            },
+
+            getAlbumIdFromUrl() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('id');
+            },
+            
+            fetchDataAndRender() {
+                const albumId = this.getAlbumIdFromUrl();
+                if (!albumId) {
+                    this.renderError("No album specified.");
+                    return;
+                }
+
+                Promise.all([
+                    fetch('database.json').then(res => res.json()),
+                    fetch('artists.json').then(res => res.json()),
+                    fetch('genres.json').then(res => res.json())
+                ])
+                .then(([dbData, artistProfiles, genreData]) => {
+                    this.state.albums = dbData.albums;
+                    this.state.artistsData = Object.values(artistProfiles); // Assuming artists.json is an object of profiles
+                    
+                    // Build genre color map
+                    this.state.fullGenreColorMap = Object.keys(genreData.genres).reduce((acc, genre) => {
+                        acc[genre] = genreData.genres[genre].color;
+                        return acc;
+                    }, {});
+                    this.state.fullGenreColorMap['Free Jazz'] = 'var(--genre-free-jazz)';
+                    this.state.fullGenreColorMap['Avant-Garde Jazz'] = 'var(--genre-avant-garde)'; 
+                    this.state.fullGenreColorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
+
+
+                    const album = this.state.albums.find(a => {
+                        const currentAlbumId = `${this.slugify(a.artist)}-${this.slugify(a.albumTitle)}`;
+                        return currentAlbumId === albumId;
+                    });
+
+                    if (album) {
+                        this.renderAlbum(album);
+                    } else {
+                        this.renderError(`Album with ID "${albumId}" not found.`);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    this.renderError("Could not load album data.");
+                });
+            },
+            
+            renderError(message) {
+                const wrapper = document.getElementById('album-content-wrapper');
+                wrapper.innerHTML = `<div class="text-center py-20">
+                    <h2 class="text-4xl text-orange-500">Error</h2>
+                    <p class="text-xl text-[var(--text-muted)] mt-4">${message}</p>
+                    <a href="/timeline" class="mt-8 inline-block px-6 py-3 bg-[var(--accent)] text-white font-bold rounded-sm hover:opacity-90">Back to Timeline</a>
+                </div>`;
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('page-content').classList.remove('content-hidden');
+            },
+
+            renderAlbum(album) {
+                document.title = `${album.albumTitle} by ${album.artist} - Controlled Freedom`;
+                const wrapper = document.getElementById('album-content-wrapper');
+
+                const pivotalTrack = album.pivotalTracks ? album.pivotalTracks[0] : {};
+                
+                let genreArray = [];
+                if (Array.isArray(album.genres)) {
+                    genreArray = album.genres;
+                } else if (typeof album.genres === 'string') {
+                    genreArray = album.genres.split(', ');
+                }
+
+                const genreTags = genreArray.map(genre => `<span class="genre-tag" style="background-color: ${this.state.fullGenreColorMap[genre.trim()] || 'var(--genre-default)'}">${genre.trim()}</span>`).join(' ');
+                
+                const lineupHtml = (pivotalTrack.lineup || 'N/A').split(/, (?![^()]*\))/).map(personnel => {
+                    const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
+                    // Check if artist exists in our data for a clickable link
+                    if (match && this.state.artistsData.some(a => a.name === match[1].trim())) {
+                        return `<span class="clickable-link" data-artist-name="${match[1].trim()}">${match[1].trim()}</span> (${match[2]})`;
+                    }
+                    return personnel;
+                }).join(', ');
+                
+                const pivotalTracksHtml = album.pivotalTracks.map(track => {
+                    const songFileName = this.slugify(track.title);
+                    return `<div class="mb-8 last:mb-0">
+                                <div class="flex justify-between items-center gap-4 flex-wrap">
+                                    <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                    <div id="player-container-${songFileName}" class="w-full sm:w-52 h-[35px]">
+                                        <audio controls class="styled-player w-full" src="songs/${songFileName}.mp3" preload="none"></audio>
+                                    </div>
+                                </div>
+                                <p class="liner-notes-text">${track.analysis}</p>
+                            </div>`;
+                }).join('<hr class="border-stone-700 my-8">');
+
+                const albumIndex = this.state.albums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
+                const prevAlbum = albumIndex > 0 ? this.state.albums[albumIndex - 1] : null;
+                const nextAlbum = albumIndex < this.state.albums.length - 1 ? this.state.albums[albumIndex + 1] : null;
+
+                const prevButtonHtml = prevAlbum ? `<a href="album.html?id=${this.slugify(prevAlbum.artist)}-${this.slugify(prevAlbum.albumTitle)}" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors">Previous Album</a>` : `<button class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold opacity-50 cursor-not-allowed" disabled>Previous Album</button>`;
+                const nextButtonHtml = nextAlbum ? `<a href="album.html?id=${this.slugify(nextAlbum.artist)}-${this.slugify(nextAlbum.albumTitle)}" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors">Next Album</a>` : `<button class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold opacity-50 cursor-not-allowed" disabled>Next Album</button>`;
+
+
+                wrapper.innerHTML = `
+                    <div class="album-page-container rounded-sm shadow-2xl w-full max-w-4xl mx-auto flex flex-col">
+                        <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
+                            <div>
+                                <h3 class="text-4xl text-orange-500">${album.albumTitle}</h3>
+                                <p class="text-xl text-[var(--text-muted)]">${album.artist}</p>
+                            </div>
+                            <a href="/timeline#year-${album.year}" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500" title="Back to Timeline">×</a>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex flex-col md:flex-row gap-6">
+                                <div class="w-full md:w-1/3 flex-shrink-0">
+                                    <img src="${album.cover || ''}" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';">
+                                </div>
+                                <div class="w-full md:w-2/3">
+                                    <h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4>
+                                    <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]">
+                                        <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                                        <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span>
+                                        <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
+                                        <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="relative mt-4">
+                                <div id="modal-analysis-section">${pivotalTracksHtml}</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center p-4 border-t-2 flex-shrink-0 bg-[var(--bg-secondary)]">
+                            ${prevButtonHtml}
+                            ${nextButtonHtml}
+                        </div>
+                    </div>
+                `;
+                
+                // Add error handlers for audio players
+                album.pivotalTracks.forEach(track => {
+                    const songFileName = this.slugify(track.title);
+                    const player = wrapper.querySelector(`audio[src="songs/${songFileName}.mp3"]`);
+                    if (player) {
+                        player.onerror = () => {
+                            const playerContainer = document.getElementById(`player-container-${songFileName}`);
+                            if (playerContainer) {
+                                playerContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-stone-700 text-stone-400 text-sm rounded">Preview Not Available</div>`;
+                            }
+                        };
+                    }
+                });
+
+
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('page-content').classList.remove('content-hidden');
+                document.getElementById('footer-copyright').textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => AlbumPage.init());
+    </script>
+</body>
+</html>
