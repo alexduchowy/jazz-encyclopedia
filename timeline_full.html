@@ -81,7 +81,7 @@
         /* Wrapper for all timeline content, allows for padding */
         #timeline-wrapper {
             display: inline-flex;
-            align-items: stretch; /* Make columns same height */
+            align-items: flex-start; /* Align columns to the top */
             padding: 8rem 4rem;
             min-height: 100%;
         }
@@ -94,23 +94,30 @@
             padding: 0 2rem;
             border-left: 2px dashed var(--text-muted);
             position: relative;
+            flex-shrink: 0;
         }
         .year-column:first-child {
             border-left: none;
         }
         .year-label {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 3rem;
+            font-size: 8rem; /* Made larger for watermark effect */
             color: var(--text-muted);
             position: absolute;
-            top: 2rem;
-            opacity: 0.8;
+            top: 4rem;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0.15; /* Reduced opacity */
+            z-index: 0; /* Placed behind content */
+            pointer-events: none;
         }
 
         /* Genre Section within a Year */
         .genre-section {
             margin-bottom: 2rem;
             width: 220px; /* Fixed width for alignment */
+            position: relative; /* For z-index to work */
+            z-index: 1;
         }
         .genre-label {
             font-family: 'Bebas Neue', sans-serif;
@@ -196,7 +203,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: -1;
+            z-index: 5; /* Above year label, below genre sections */
         }
         .genre-line {
             fill: none;
@@ -373,9 +380,8 @@
                 }
             },
 
-            // --- DATA FETCHING (CORRECTED) ---
+            // --- DATA FETCHING ---
             async fetchData() {
-                // Use relative paths, same as the working timeline.html
                 const [albumRes, genreRes] = await Promise.all([
                     fetch('/database.json'),
                     fetch('/genres.json')
@@ -397,7 +403,6 @@
                         colorMap[name] = data.color;
                     });
                 }
-                // Add fallbacks from the CSS variables
                 colorMap['Bebop'] = colorMap['Bebop'] || 'var(--genre-bebop)';
                 colorMap['Hard Bop'] = colorMap['Hard Bop'] || 'var(--genre-hard-bop)';
                 colorMap['Cool Jazz'] = colorMap['Cool Jazz'] || 'var(--genre-cool-jazz)';
@@ -409,9 +414,8 @@
                 return colorMap;
             },
 
-            // --- DATA PROCESSING ---
+            // --- DATA PROCESSING (CORRECTED) ---
             processData() {
-                // 1. Sort albums chronologically
                 const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
                 const parseDate = (dateString) => {
                     if (!dateString || typeof dateString !== 'string') return new Date(0);
@@ -427,52 +431,58 @@
                         album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
                         album.sortingDate = album.pivotalTracks[0].recordingDate;
                     } else {
-                        album.sortingDate = `${album.year}-01-01`; // Fallback
+                        album.sortingDate = `${album.year}-01-01`;
                     }
                 });
                 
                 this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
 
-                // 2. Group by Year, then by Genre
+                // Group by Year -> Primary Genre -> [Albums] to prevent duplicates
+                const processedAlbums = new Set(); // Keep track of albums already placed
                 this.state.albums.forEach(album => {
-                    if (!album.year || !album.genres) return;
+                    if (!album.year || !album.genres || processedAlbums.has(album.albumId)) return;
                     
-                    // Ensure genres is an array
                     if (typeof album.genres === 'string') {
                         album.genres = album.genres.split(',').map(g => g.trim());
                     }
+                    
+                    const primaryGenre = album.genres[0]; // Use the first genre for placement
 
                     if (!this.state.groupedData.has(album.year)) {
                         this.state.groupedData.set(album.year, new Map());
                     }
                     const yearMap = this.state.groupedData.get(album.year);
 
-                    album.genres.forEach(genre => {
-                        if (!yearMap.has(genre)) {
-                            yearMap.set(genre, []);
-                        }
-                        // Avoid adding duplicates if an album fits multiple genres we render
-                        if (!yearMap.get(genre).some(a => a.albumId === album.albumId)) {
-                             yearMap.get(genre).push(album);
-                        }
-                    });
+                    if (!yearMap.has(primaryGenre)) {
+                        yearMap.set(primaryGenre, []);
+                    }
+                    yearMap.get(primaryGenre).push(album);
+                    processedAlbums.add(album.albumId);
                 });
             },
 
-            // --- RENDERING ---
+            // --- RENDERING (CORRECTED) ---
             renderTimeline() {
                 const fragment = document.createDocumentFragment();
-                for (const [year, genreMap] of [...this.state.groupedData.entries()]) {
+                // Sort years numerically before rendering
+                const sortedYears = [...this.state.groupedData.keys()].sort((a, b) => a - b);
+
+                for (const year of sortedYears) {
+                    const genreMap = this.state.groupedData.get(year);
                     const yearColumn = document.createElement('div');
                     yearColumn.className = 'year-column';
                     yearColumn.innerHTML = `<div class="year-label">${year}</div>`;
 
-                    for (const [genre, albums] of [...genreMap.entries()]) {
+                    const sortedGenres = [...genreMap.keys()].sort(); // Sort genres alphabetically
+
+                    for (const genre of sortedGenres) {
+                        const albums = genreMap.get(genre);
                         const genreSection = this.createGenreSection(genre, albums);
                         yearColumn.appendChild(genreSection);
                     }
                     fragment.appendChild(yearColumn);
                 }
+                this.elements.timelineWrapper.innerHTML = ''; // Clear previous content
                 this.elements.timelineWrapper.appendChild(fragment);
             },
 
@@ -496,9 +506,9 @@
 
             createAlbumCard(album) {
                 const card = document.createElement('div');
-                const slug = (text = '') => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+                const slug = (text = '') => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
                 const albumId = `album-${slug(album.artist)}-${slug(album.albumTitle)}`;
-                album.albumId = albumId; // Store unique ID on album object
+                album.albumId = albumId;
 
                 card.className = 'album-card';
                 card.id = albumId;
@@ -520,16 +530,14 @@
 
             // --- SVG LINE DRAWING ---
             calculatePositionsAndDrawLines() {
-                // Let the browser paint first
                 requestAnimationFrame(() => {
-                    const wrapperRect = this.elements.timelineWrapper.getBoundingClientRect();
+                    if (this.elements.timelineWrapper.scrollWidth === 0) return;
                     this.elements.svg.setAttribute('viewBox', `0 0 ${this.elements.timelineWrapper.scrollWidth} ${this.elements.timelineWrapper.scrollHeight}`);
                     this.elements.svg.style.width = `${this.elements.timelineWrapper.scrollWidth}px`;
                     this.elements.svg.style.height = `${this.elements.timelineWrapper.scrollHeight}px`;
                     
-                    // Calculate all album card positions
+                    this.state.albumPositions.clear();
                     document.querySelectorAll('.album-card').forEach(card => {
-                        const cardRect = card.getBoundingClientRect();
                         const x = card.offsetLeft + card.offsetWidth / 2;
                         const y = card.offsetTop + card.offsetHeight / 2;
                         this.state.albumPositions.set(card.id, { x, y });
@@ -543,44 +551,45 @@
                 const drawnConnections = new Set();
                 const fragment = document.createDocumentFragment();
 
-                for (let i = 0; i < this.state.albums.length - 1; i++) {
+                for (let i = 0; i < this.state.albums.length; i++) {
                     const album1 = this.state.albums[i];
                     if (!album1.albumId || !album1.genres) continue;
 
                     const pos1 = this.state.albumPositions.get(album1.albumId);
                     if (!pos1) continue;
 
-                    const commonGenres = new Set(album1.genres);
+                    for (const genre of album1.genres) {
+                        // Find the very next album with this genre
+                        let nextAlbumWithGenre = null;
+                        for (let j = i + 1; j < this.state.albums.length; j++) {
+                            const album2 = this.state.albums[j];
+                            if (album2.genres && album2.genres.includes(genre)) {
+                                nextAlbumWithGenre = album2;
+                                break;
+                            }
+                        }
 
-                    // Find the next album that shares a genre
-                    for (let j = i + 1; j < this.state.albums.length; j++) {
-                        const album2 = this.state.albums[j];
-                        if (!album2.albumId || !album2.genres) continue;
-                        
-                        const sharedGenre = album2.genres.find(g => commonGenres.has(g));
-
-                        if (sharedGenre) {
-                            const connectionId = `${album1.albumId}-${album2.albumId}-${sharedGenre}`;
+                        if (nextAlbumWithGenre) {
+                            const album2 = nextAlbumWithGenre;
+                            const connectionId = `${album1.albumId}-${album2.albumId}-${genre}`;
                             if (drawnConnections.has(connectionId)) continue;
 
                             const pos2 = this.state.albumPositions.get(album2.albumId);
                             if (pos2) {
-                                const path = this.createLine(pos1, pos2, sharedGenre);
+                                const path = this.createLine(pos1, pos2, genre);
                                 fragment.appendChild(path);
                                 drawnConnections.add(connectionId);
-                                // We found a connection for this genre, break to find next for album1
-                                break; 
                             }
                         }
                     }
                 }
+                this.elements.svg.innerHTML = ''; // Clear old lines
                 this.elements.svg.appendChild(fragment);
             },
             
             createLine(pos1, pos2, genre) {
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 const dx = pos2.x - pos1.x;
-                // Create a gentle curve
                 const d = `M ${pos1.x} ${pos1.y} C ${pos1.x + dx * 0.5} ${pos1.y}, ${pos2.x - dx * 0.5} ${pos2.y}, ${pos2.x} ${pos2.y}`;
                 
                 path.setAttribute('d', d);
@@ -592,26 +601,17 @@
 
             // --- EVENT HANDLING ---
             bindEvents() {
-                // Drag to scroll
                 this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
                 this.elements.timelineContainer.addEventListener('mouseleave', this.onDragEnd.bind(this));
                 this.elements.timelineContainer.addEventListener('mouseup', this.onDragEnd.bind(this));
                 this.elements.timelineContainer.addEventListener('mousemove', this.onDragMove.bind(this));
-
-                // Touch to scroll
                 this.elements.timelineContainer.addEventListener('touchstart', this.onDragStart.bind(this), { passive: true });
                 this.elements.timelineContainer.addEventListener('touchend', this.onDragEnd.bind(this));
                 this.elements.timelineContainer.addEventListener('touchmove', this.onDragMove.bind(this), { passive: true });
-
-                // Audio Player
                 this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
-                
-                // Genre Line Hover
                 this.elements.svg.addEventListener('mouseover', this.onLineHover.bind(this));
                 this.elements.svg.addEventListener('mouseout', this.onLineOut.bind(this));
-
-                // Resize
                 window.addEventListener('resize', this.debounce(this.onResize.bind(this), 250));
             },
 
@@ -633,7 +633,7 @@
                 e.preventDefault();
                 const pageX = e.pageX || e.touches[0].pageX;
                 const x = pageX - this.elements.timelineContainer.offsetLeft;
-                const walk = (x - this.state.startX) * 2; // Multiplier for faster scrolling
+                const walk = (x - this.state.startX) * 2;
                 this.elements.timelineContainer.scrollLeft = this.state.scrollLeft - walk;
             },
 
@@ -676,8 +676,6 @@
             },
             
             onResize() {
-                this.elements.svg.innerHTML = ''; // Clear old lines
-                this.state.albumPositions.clear();
                 this.calculatePositionsAndDrawLines();
             },
 
