@@ -143,6 +143,11 @@
                     </div>
                     <div>
                         <h3 class="text-xl font-bold mb-4 text-stone-200">Current Playlist</h3>
+                        <div id="playlist-actions" class="hidden mb-4 flex items-center gap-4">
+                            <button id="save-order-btn" class="flex-grow bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition-all">Save New Order</button>
+                            <button id="cancel-order-btn" class="flex-grow bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Cancel</button>
+                            <p id="playlist-status" class="text-sm text-stone-400 whitespace-nowrap"></p>
+                        </div>
                         <div id="playlist-container" class="bg-stone-900 rounded-md h-96 overflow-y-auto text-stone-200 border border-stone-700"></div>
                     </div>
                 </div>
@@ -278,7 +283,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getStorage, ref, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         // --- CONFIG ---
@@ -300,6 +305,8 @@
 
         // --- GLOBAL STATE ---
         let tvPlaylist = [];
+        let originalTvPlaylist = [];
+        let isPlaylistOrderDirty = false;
         let editingVideoId = null;
 
         // --- DOM ELEMENTS ---
@@ -321,6 +328,10 @@
             descInput: document.getElementById('video-desc-input'),
             playlistContainer: document.getElementById('playlist-container'),
             addVideoError: document.getElementById('add-video-error'),
+            playlistActions: document.getElementById('playlist-actions'),
+            saveOrderBtn: document.getElementById('save-order-btn'),
+            cancelOrderBtn: document.getElementById('cancel-order-btn'),
+            playlistStatus: document.getElementById('playlist-status'),
             // Articles
             articleForm: document.getElementById('article-form'),
             articlesList: document.getElementById('articles-list'),
@@ -346,7 +357,7 @@
             // Image URL & YouTube
             imageUrlInput: document.getElementById('article-image-url'),
             imagePreview: document.getElementById('image-preview'),
-            youtubeIdInput: document.getElementById('youtube-id'), // NEW
+            youtubeIdInput: document.getElementById('youtube-id'),
             // HTML Shortcuts
             htmlShortcuts: document.getElementById('html-shortcuts'),
             // Confirmation Modal
@@ -385,6 +396,11 @@
             onSnapshot(q, (snapshot) => {
                 tvPlaylist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 tvPlaylist.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity));
+                
+                originalTvPlaylist = JSON.parse(JSON.stringify(tvPlaylist));
+                isPlaylistOrderDirty = false;
+                elements.playlistActions.classList.add('hidden');
+                
                 renderPlaylistUI(tvPlaylist);
             }, (error) => console.error("Playlist listener error:", error));
         };
@@ -418,6 +434,7 @@
                 elements.playlistContainer.appendChild(item);
             });
         };
+        
         const resetTvForm = () => {
             elements.tvPlaylistForm.reset();
             editingVideoId = null;
@@ -426,6 +443,7 @@
             elements.tvFormCancelBtn.classList.add('hidden');
             elements.urlInput.disabled = false;
         };
+        
         const handleTvFormSubmit = async (e) => {
             e.preventDefault();
             const url = elements.urlInput.value.trim();
@@ -453,22 +471,59 @@
                 elements.addVideoError.textContent = "Could not save video.";
             }
         };
-        const movePlaylistItem = async (docId, direction) => {
+
+        const movePlaylistItem = (docId, direction) => {
             const currentIndex = tvPlaylist.findIndex(v => v.id === docId);
             if (currentIndex === -1) return;
+
             const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
             if (targetIndex < 0 || targetIndex >= tvPlaylist.length) return;
-            const currentItem = tvPlaylist[currentIndex];
-            const targetItem = tvPlaylist[targetIndex];
-            try {
-                const currentRef = doc(db, 'tv_playlist', currentItem.id);
-                const targetRef = doc(db, 'tv_playlist', targetItem.id);
-                const currentOrder = currentItem.order ?? currentIndex;
-                const targetOrder = targetItem.order ?? targetIndex;
-                await updateDoc(currentRef, { order: targetOrder });
-                await updateDoc(targetRef, { order: currentOrder });
-            } catch (error) { console.error("Error reordering playlist:", error); }
+
+            [tvPlaylist[currentIndex], tvPlaylist[targetIndex]] = [tvPlaylist[targetIndex], tvPlaylist[currentIndex]];
+            
+            isPlaylistOrderDirty = true;
+            elements.playlistActions.classList.remove('hidden');
+            elements.playlistStatus.textContent = '';
+            
+            renderPlaylistUI(tvPlaylist);
         };
+
+        const savePlaylistOrder = async () => {
+            elements.saveOrderBtn.disabled = true;
+            elements.cancelOrderBtn.disabled = true;
+            elements.playlistStatus.textContent = 'Saving...';
+
+            try {
+                const batch = writeBatch(db);
+                tvPlaylist.forEach((video, index) => {
+                    const docRef = doc(db, 'tv_playlist', video.id);
+                    batch.update(docRef, { order: index });
+                });
+                await batch.commit();
+
+                elements.playlistStatus.textContent = 'Order saved!';
+                setTimeout(() => {
+                    elements.playlistActions.classList.add('hidden');
+                    elements.playlistStatus.textContent = '';
+                }, 2000);
+                isPlaylistOrderDirty = false;
+            } catch (error) {
+                console.error("Error saving playlist order:", error);
+                elements.playlistStatus.textContent = 'Error saving order.';
+            } finally {
+                elements.saveOrderBtn.disabled = false;
+                elements.cancelOrderBtn.disabled = false;
+            }
+        };
+
+        const cancelOrderChanges = () => {
+            tvPlaylist = JSON.parse(JSON.stringify(originalTvPlaylist));
+            renderPlaylistUI(tvPlaylist);
+            isPlaylistOrderDirty = false;
+            elements.playlistActions.classList.add('hidden');
+            elements.playlistStatus.textContent = '';
+        };
+        
         const handlePlaylistClick = (e) => {
             const button = e.target.closest('button');
             if (!button) return;
@@ -502,9 +557,12 @@
             const match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
         };
+        
         elements.tvPlaylistForm.addEventListener('submit', handleTvFormSubmit);
         elements.playlistContainer.addEventListener('click', handlePlaylistClick);
         elements.tvFormCancelBtn.addEventListener('click', resetTvForm);
+        elements.saveOrderBtn.addEventListener('click', savePlaylistOrder);
+        elements.cancelOrderBtn.addEventListener('click', cancelOrderChanges);
 
 
         // --- ARTICLE MANAGEMENT LOGIC ---
