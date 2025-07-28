@@ -130,8 +130,8 @@
             transition: background-color: 0.1s ease-in-out;
         }
         .dark .matrix-table td {
-    color: var(--text-main);
-}
+            color: var(--text-main);
+        }
         .matrix-table thead th {
             background-color: var(--text-main);
             color: var(--bg-main);
@@ -154,10 +154,10 @@
             border-right: 2px solid var(--bg-secondary);
             background-color: var(--bg-main); /* Ensure sticky header has background */
         }
-    .dark .matrix-table tbody th {
-     border-right-color: var(--border-color);
-     color: var(--text-main);
-}
+        .dark .matrix-table tbody th {
+            border-right-color: var(--border-color);
+            color: var(--text-main);
+        }
         .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td {
             border-bottom: none;
         }
@@ -1111,7 +1111,7 @@
                                         name: name, 
                                         instruments: new Set(), 
                                         albums: new Set(), 
-                                        photo: `/images/artists/${slugify(name)}.jpg`, 
+                                        photo: `/images/${slugify(name)}.jpg`, 
                                         isTimelineBandleader: false, 
                                         profile: profiles[name] || { name: name, profile: 'No profile available.'} 
                                     });
