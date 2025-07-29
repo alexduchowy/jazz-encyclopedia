@@ -405,7 +405,6 @@
             transition: all 0.2s ease; flex-shrink: 0;
         }
         .dark .genre-checkbox-label { border-color: var(--border-color); }
-        .genre-checkbox-label input { display: none; }
         .genre-checkbox-label:has(input:checked) {
             background-color: var(--genre-color, var(--accent));
             color: var(--text-main);
@@ -592,6 +591,24 @@
             .typewriter h2 { font-size: 3rem; max-width: none; }
             .banner-subtitle { font-size: 1.125rem; }
         }
+
+        /* NEW MODAL STYLES */
+        #modal-analysis-section {
+            background-color: #1a1a1a; padding: 1.5rem; margin-top: 2rem;
+            border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main);
+        }
+        .dark #modal-analysis-section { border-color: var(--border-color); box-shadow: none; }
+        #modal-analysis-section h5 { color: #f5f5f4; }
+
+        .liner-notes-text { font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; color: #d4d4d2; }
+
+        .modal-genre-tag {
+            padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem;
+            font-weight: 600; color: #FFFFFF;
+            border: 2px solid rgba(0,0,0,0.1);
+            text-decoration: none; display: inline-block;
+        }
+        .dark .modal-genre-tag { border-color: rgba(255,255,255,0.2); }
    
     </style>
 </head>
@@ -738,6 +755,15 @@
                             <div id="custom-scrollbar-thumb" class="h-full bg-[var(--text-main)] rounded-full absolute top-0 cursor-grab"></div>
                         </div>
                     </div>
+
+                    <!-- Full Timeline Button -->
+                    <div class="mt-12">
+                        <a href="https://controlledfreedom.com/timeline_full" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            View Full Interactive Timeline &rarr;
+                        </a>
+                        <p class="text-sm text-[var(--text-muted)] mt-3">Explore a different view with all albums from 1950-1969 displayed vertically.</p>
+                    </div>
+
                 </div>
             </section>
 
@@ -804,7 +830,7 @@
         </footer>
     </div>
     
-    <!-- Modals (Artist, Genre, Path only. Album modal removed) -->
+    <!-- Modals -->
     <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
              <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
@@ -830,6 +856,28 @@
                  <button id="close-path-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
              </div>
              <div id="path-modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- NEW Universal Album Modal -->
+    <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-content-album" class="modal-content rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
+                <div>
+                    <h3 id="album-modal-title" class="text-4xl text-orange-500"></h3>
+                    <p id="album-modal-artist" class="text-xl text-[var(--text-muted)]"></p>
+                </div>
+                <button id="close-album-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+            </div>
+            <div id="album-modal-body" class="p-6 overflow-y-auto">
+                <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/3 flex-shrink-0">
+                        <img id="album-modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)]" alt="Album Art" loading="lazy">
+                    </div>
+                    <div id="album-modal-album-details" class="w-full md:w-2/3"></div>
+                </div>
+                <div id="analysis-wrapper" class="relative mt-4"></div>
+            </div>
         </div>
     </div>
 
@@ -938,6 +986,15 @@
                     themeToggle: document.getElementById('theme-toggle'),
                     themeIconLight: document.getElementById('theme-icon-light'),
                     themeIconDark: document.getElementById('theme-icon-dark'),
+                    // Album Modal Elements
+                    albumModal: document.getElementById('album-modal'),
+                    albumModalTitle: document.getElementById('album-modal-title'),
+                    albumModalArtist: document.getElementById('album-modal-artist'),
+                    albumModalBody: document.getElementById('album-modal-body'),
+                    albumModalAlbumArt: document.getElementById('album-modal-album-art'),
+                    albumModalAlbumDetails: document.getElementById('album-modal-album-details'),
+                    analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
+                    closeAlbumModalBtn: document.getElementById('close-album-modal'),
                 };
             },
 
@@ -1077,6 +1134,7 @@
                             album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
                             album.sortingDate = album.pivotalTracks[0].recordingDate;
                         }
+                        album.uniqueId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
                     });
                     
                     const timelineAlbums = this.state.albums.filter(a => a.year <= 1969);
@@ -1307,12 +1365,9 @@
                             albumList.className = 'timeline-album-list';
                             albumList.id = `album-list-${year}`;
                             groupedByYear[year].forEach(album => {
-                                const card = document.createElement('a');
+                                const card = document.createElement('div');
                                 card.className = 'timeline-album-card fade-in-element';
-                                const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
-                                card.href = `/album/${albumId}`;
-                                card.target = "_blank";
-                                card.rel = "noopener noreferrer";
+                                card.dataset.albumId = album.uniqueId;
                                 card.dataset.albumTitle = album.albumTitle;
                                 card.dataset.artist = album.artist;
                                 card.dataset.genres = Array.isArray(album.genres) ? album.genres.join(', ') : album.genres;
@@ -1483,7 +1538,7 @@
                 },
                 
                 setupModals() {
-                    const { artistModal, genreModal, pathModal, matrixContainer } = this.elements;
+                    const { artistModal, genreModal, pathModal, matrixContainer, albumModal, closeAlbumModalBtn } = this.elements;
                     
                     artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
                     artistModal.addEventListener('click', e => { 
@@ -1504,8 +1559,30 @@
 
                     pathModal.querySelector('#close-path-modal').addEventListener('click', () => this.methods.closePathModal());
                     pathModal.addEventListener('click', e => { if (e.target.id === 'path-modal') this.methods.closePathModal(); });
+
+                    // Album Modal Listeners
+                    closeAlbumModalBtn.addEventListener('click', () => this.methods.closeAlbumModal());
+                    albumModal.addEventListener('click', e => {
+                        if (e.target.id === 'album-modal') this.methods.closeAlbumModal();
+                    });
+                     this.elements.timelineWrapper.addEventListener('click', e => {
+                        const card = e.target.closest('.timeline-album-card');
+                        if (card && card.dataset.albumId) {
+                            const album = this.state.albums.find(a => a.uniqueId === card.dataset.albumId);
+                            if (album) {
+                                this.methods.openAlbumModal(album);
+                            }
+                        }
+                    });
                     
-                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeArtistModal(); this.methods.closeGenreModal(); this.methods.closePathModal(); } });
+                    document.addEventListener('keydown', e => { 
+                        if (e.key === "Escape") { 
+                            this.methods.closeArtistModal(); 
+                            this.methods.closeGenreModal(); 
+                            this.methods.closePathModal(); 
+                            this.methods.closeAlbumModal();
+                        } 
+                    });
                     
                     artistModal.addEventListener('click', (e) => {
                         const target = e.target.closest('a[data-album-title]');
@@ -2024,6 +2101,65 @@
                     const { pathModal } = this.elements;
                     pathModal.classList.add('opacity-0', 'pointer-events-none');
                     pathModal.querySelector('.modal-content').classList.add('scale-95');
+                },
+
+                openAlbumModal(album) {
+                    if (!album) return;
+
+                    const { 
+                        albumModal, albumModalTitle, albumModalArtist, 
+                        albumModalAlbumArt, albumModalAlbumDetails, analysisWrapper 
+                    } = this.elements;
+
+                    albumModalTitle.textContent = album.albumTitle;
+                    albumModalArtist.textContent = album.artist;
+                    
+                    albumModalAlbumArt.src = `/${album.cover}` || '';
+                    albumModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
+                    albumModalAlbumArt.onerror = function() { this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
+
+                    const pivotalTrack = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks[0] : {};
+                    
+                    const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A');
+
+                    const genres = album.genres || [];
+                    const genreTags = genres.map(g => 
+                        `<span class="modal-genre-tag" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`
+                    ).join(' ');
+
+                    albumModalAlbumDetails.innerHTML = `
+                        <h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4>
+                        <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]">
+                            <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                            <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span>
+                            <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
+                            <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
+                        </div>
+                        <div class="mt-6 flex justify-end">
+                            <a href="/album/${album.uniqueId}" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-md transition-colors duration-300 no-underline">
+                                Read More &rarr;
+                            </a>
+                        </div>`;
+
+                    const analysisHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) 
+                        ? album.pivotalTracks.map(track => `
+                            <div class="mb-8 last:mb-0">
+                                <h5 class="text-2xl font-bold text-white">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                <p class="liner-notes-text">${track.analysis}</p>
+                            </div>`).join('<hr class="border-stone-700 my-8">')
+                        : `<p class="liner-notes-text">${album.analysis || 'Analysis not available.'}</p>`;
+                    
+                    analysisWrapper.innerHTML = `<div id="modal-analysis-section">${analysisHtml}</div>`;
+
+                    albumModal.classList.remove('opacity-0', 'pointer-events-none');
+                    albumModal.querySelector('.modal-content').classList.remove('scale-95');
+                    this.elements.albumModalBody.scrollTop = 0;
+                },
+
+                closeAlbumModal() {
+                    const { albumModal } = this.elements;
+                    albumModal.classList.add('opacity-0', 'pointer-events-none');
+                    albumModal.querySelector('.modal-content').classList.add('scale-95');
                 },
                 
                 populateInstrumentFilter(artists) {
