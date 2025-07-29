@@ -139,34 +139,12 @@
             margin-top: -1.5rem;
             border-bottom: 1px solid var(--border-color);
         }
-
-        .era-marker {
-            width: 100%;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 0.25rem;
-            text-align: center;
-            background-color: var(--era-bg-color);
-            border: 2px solid var(--text-main);
-        }
-        .era-marker h3 {
-            font-size: 2rem;
-            color: var(--text-main);
-            font-weight: 900;
-        }
-        html.dark .era-marker {
-            background-color: var(--era-bg-color-dark);
-            border-color: var(--border-color);
-        }
-        html.dark .era-marker h3 {
-            color: var(--text-main);
-        }
         
         .genre-block {
             width: 100%;
             margin-bottom: 2rem;
             transition: opacity 0.3s, max-height 0.5s, margin 0.5s;
-            max-height: 2000px; /* Increased max-height */
+            max-height: 2000px; 
             overflow: hidden;
         }
         .genre-block.filtered { opacity: 0; max-height: 0; margin-bottom: 0; }
@@ -259,14 +237,13 @@
         #current-era-display {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.5rem;
-            color: var(--accent);
             flex-shrink: 0;
             width: 280px;
             text-align: left;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s, color 0.3s;
         }
         
         #genre-legend {
@@ -371,7 +348,8 @@
             transition: .4s;
             border-radius: 34px;
         }
-        #view-toggle:checked + .toggle-switch-slider:before {
+        #view-toggle:checked + .toggle-switch-slider:before,
+        #view-toggle-mobile:checked + .toggle-switch-slider:before {
             transform: translateX(96px);
         }
         .toggle-label {
@@ -446,7 +424,7 @@
         <p>Loading Musical History...</p>
     </div>
 
-    <!-- ** MODIFIED MAIN NAVIGATION HEADER ** -->
+    <!-- Main Navigation Header -->
     <div class="sticky top-0 z-50 h-16 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
         <header class="container mx-auto h-full">
             <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
@@ -483,7 +461,7 @@
 
 
     <div id="main-container">
-        <!-- ** MODIFIED CONTROLS HEADER ** -->
+        <!-- Controls Header -->
         <header id="controls-header">
             <!-- Sticky Era Title -->
             <div id="current-era-display"></div>
@@ -545,14 +523,14 @@
                 artistsData: [],
                 fullArtistsData: {},
                 eras: [
-                    { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: '#dbeafe', colorDark: '#1e3a8a' },
-                    { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: '#f3e8ff', colorDark: '#5b21b6' },
-                    { title: "Hard Bop At Its Peak", startYear: 1957, endYear: 1958, color: '#EADDCA', colorDark: '#422006' },
-                    { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: '#d1fae5', colorDark: '#064e3b' },
-                    { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: '#ffedd5', colorDark: '#7c2d12' },
-                    { title: "Spiritual Awakening", startYear: 1964, endYear: 1966, color: '#fee2e2', colorDark: '#7f1d1d' },
-                    { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: '#fef9c3', colorDark: '#713f12' },
-                    { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: '#cffafe', colorDark: '#164e63' }
+                    { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: '#3b82f6', colorDark: '#60a5fa' },
+                    { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: '#8b5cf6', colorDark: '#a78bfa' },
+                    { title: "Hard Bop At Its Peak", startYear: 1957, endYear: 1958, color: '#a0522d', colorDark: '#b97245' },
+                    { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: '#10b981', colorDark: '#34d399' },
+                    { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: '#f59e0b', colorDark: '#fbbf24' },
+                    { title: "Spiritual Awakening", startYear: 1964, endYear: 1966, color: '#ef4444', colorDark: '#f87171' },
+                    { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: '#ec4899', colorDark: '#f472b6' },
+                    { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: '#06b6d4', colorDark: '#22d3ee' }
                 ],
                 groupedDataByGenre: new Map(),
                 groupedDataChronological: new Map(),
@@ -562,8 +540,9 @@
                 startX: 0,
                 scrollLeft: 0,
                 isAllGenresActive: true,
-                timelineView: 'genre', // 'genre' or 'chronological'
+                timelineView: 'genre',
                 intersectionObserver: null,
+                currentStickyEra: null,
             },
 
             // --- DOM ELEMENTS ---
@@ -782,24 +761,12 @@
 
                 const fragment = document.createDocumentFragment();
                 const sortedYears = [...this.state.groupedDataByGenre.keys()].sort((a, b) => a - b);
-                let renderedEras = new Set();
 
                 for (const year of sortedYears) {
                     const yearContainer = document.createElement('div');
                     yearContainer.className = 'year-container';
                     yearContainer.dataset.year = year;
                     yearContainer.id = `year-${year}`;
-
-                    const currentEra = this.state.eras.find(e => year >= e.startYear && year <= e.endYear);
-                    if (currentEra && !renderedEras.has(currentEra.title)) {
-                        const eraMarker = document.createElement('div');
-                        eraMarker.className = 'era-marker';
-                        eraMarker.style.setProperty('--era-bg-color', currentEra.color);
-                        eraMarker.style.setProperty('--era-bg-color-dark', currentEra.colorDark);
-                        eraMarker.innerHTML = `<h3>${currentEra.title}</h3>`;
-                        yearContainer.prepend(eraMarker);
-                        renderedEras.add(currentEra.title);
-                    }
                     
                     const yearHeader = document.createElement('div');
                     yearHeader.className = 'year-header';
@@ -887,6 +854,8 @@
                         this.elements.themeIconLight.classList.remove('hidden');
                         this.elements.themeIconDark.classList.add('hidden');
                     }
+                    // Update era color after theme change
+                    this.updateStickyEraDisplay(this.state.currentStickyEra);
                 };
                 
                 const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -904,7 +873,6 @@
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
                 
-                // Bind both desktop and mobile toggles
                 this.elements.viewToggle.addEventListener('change', this.onViewToggle.bind(this));
                 this.elements.viewToggleMobile.addEventListener('change', this.onViewToggle.bind(this));
 
@@ -917,7 +885,6 @@
                 const isChecked = e.target.checked;
                 this.state.timelineView = isChecked ? 'chronological' : 'genre';
                 
-                // Sync the other toggle
                 if (e.target === this.elements.viewToggle) {
                     this.elements.viewToggleMobile.checked = isChecked;
                 } else {
@@ -937,7 +904,7 @@
                 if (yearContainer) {
                     const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
                     const elementPosition = yearContainer.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + this.elements.timelineContainer.scrollTop - headerOffset;
+                    const offsetPosition = elementPosition + this.elements.timelineContainer.scrollTop - headerOffset - 16; // 16px padding
 
                     this.elements.timelineContainer.scrollTo({
                         top: offsetPosition,
@@ -1064,7 +1031,7 @@
                 const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
                 const observerOptions = {
                     root: this.elements.timelineContainer,
-                    rootMargin: `-${headerOffset}px 0px -85% 0px`,
+                    rootMargin: `-${headerOffset}px 0px -90% 0px`,
                     threshold: 0
                 };
 
@@ -1074,28 +1041,25 @@
             },
 
             handleEraIntersection(entries) {
-                let topVisibleEra = null;
+                const visibleEntries = entries.filter(e => e.isIntersecting);
 
-                for (const entry of entries) {
-                    if (entry.isIntersecting) {
-                        const year = entry.target.dataset.year;
-                        const era = this.state.eras.find(e => year >= e.startYear && year <= e.endYear);
-                        if (era) {
-                           topVisibleEra = era;
-                           break; // Found the topmost visible one
-                        }
-                    }
+                if (visibleEntries.length > 0) {
+                    visibleEntries.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+                    const topYear = visibleEntries[0].target.dataset.year;
+                    const currentEra = this.state.eras.find(e => topYear >= e.startYear && e.endYear >= topYear);
+                    this.updateStickyEraDisplay(currentEra);
                 }
-                
-                if (topVisibleEra) {
-                    this.elements.currentEraDisplay.textContent = topVisibleEra.title;
+            },
+            
+            updateStickyEraDisplay(era) {
+                this.state.currentStickyEra = era;
+                if (era) {
+                    const isDark = document.documentElement.classList.contains('dark');
+                    this.elements.currentEraDisplay.textContent = era.title;
+                    this.elements.currentEraDisplay.style.color = isDark ? era.colorDark : era.color;
                     this.elements.currentEraDisplay.style.opacity = '1';
                 } else {
-                     // If nothing is intersecting at the top, check scroll position to find the last passed era
-                    const firstYearContainer = this.elements.timelineWrapper.querySelector('.year-container');
-                    if(firstYearContainer && this.elements.timelineContainer.scrollTop < firstYearContainer.offsetTop) {
-                        this.elements.currentEraDisplay.style.opacity = '0';
-                    }
+                    this.elements.currentEraDisplay.style.opacity = '0';
                 }
             },
             
