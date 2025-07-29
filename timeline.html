@@ -818,6 +818,8 @@
                 lastKnownYear: '',
                 lastKnownEraTitle: '',
                 lastHoveredGenre: null,
+                activeGenres: new Set(),
+                isAllGenresActive: true,
             },
 
             // DOM Elements
@@ -1020,6 +1022,8 @@
                     const excludedGenres = ['Afro-Cuban Jazz', 'Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock', 'ECM Style Jazz', 'Neo-Bop', 'Cape Jazz', 'Vocal Jazz', 'Swing', 'Orchestral Jazz', 'Blues', 'Mainstream Jazz'];
                     const filterableGenres = Array.from(allGenresInDB).filter(genre => !excludedGenres.includes(genre)).sort();
                     
+                    this.state.activeGenres = new Set(filterableGenres);
+
                     genreFilterContainer.innerHTML = '';
                     const allButton = document.createElement('button');
                     allButton.className = 'genre-button active';
@@ -1043,23 +1047,40 @@
                     });
 
                     genreFilterContainer.addEventListener('click', (e) => {
-                        if (e.target.matches('.genre-button')) {
-                            const clickedButton = e.target;
-                            const genre = clickedButton.dataset.genre;
-                            const allGenreButtons = genreFilterContainer.querySelectorAll('.genre-button[data-genre!="all"]');
-                            const allButton = genreFilterContainer.querySelector('.genre-button[data-genre="all"]');
+                        const button = e.target.closest('.genre-button');
+                        if (!button) return;
 
-                            if (genre === 'all') {
-                                const isBecomingActive = !allButton.classList.contains('active');
-                                allButton.classList.toggle('active', isBecomingActive);
-                                allGenreButtons.forEach(btn => btn.classList.toggle('active', isBecomingActive));
-                            } else {
-                                clickedButton.classList.toggle('active');
-                                const areAllActive = Array.from(allGenreButtons).every(btn => btn.classList.contains('active'));
-                                allButton.classList.toggle('active', areAllActive);
+                        const genre = button.dataset.genre;
+
+                        if (genre === 'all') {
+                            this.state.isAllGenresActive = true;
+                            this.state.activeGenres = new Set(filterableGenres);
+                        } else {
+                            if (this.state.isAllGenresActive || !e.shiftKey) {
+                                this.state.isAllGenresActive = false;
+                                if (this.state.activeGenres.size === 1 && this.state.activeGenres.has(genre)) {
+                                    this.state.isAllGenresActive = true;
+                                    this.state.activeGenres = new Set(filterableGenres);
+                                } else {
+                                    this.state.activeGenres.clear();
+                                    this.state.activeGenres.add(genre);
+                                }
+                            } else { 
+                                this.state.isAllGenresActive = false;
+                                if (this.state.activeGenres.has(genre)) {
+                                    this.state.activeGenres.delete(genre);
+                                } else {
+                                    this.state.activeGenres.add(genre);
+                                }
                             }
-                            this.methods.filterTimeline();
                         }
+                        
+                        if (this.state.activeGenres.size === 0) {
+                            this.state.isAllGenresActive = true;
+                            this.state.activeGenres = new Set(filterableGenres);
+                        }
+
+                        this.methods.filterTimeline();
                     });
 
                     genreFilterList.addEventListener('click', (e) => {
@@ -1067,17 +1088,14 @@
                         const link = e.target.closest('.genre-filter-link');
                         if (link) {
                             const selectedGenre = link.dataset.genre;
-                            const allGenreButtons = genreFilterContainer.querySelectorAll('.genre-button[data-genre!="all"]');
-                            const allButton = genreFilterContainer.querySelector('.genre-button[data-genre="all"]');
-
+                           
                             if (selectedGenre === 'all') {
-                                allButton.classList.add('active');
-                                allGenreButtons.forEach(btn => btn.classList.add('active'));
+                                this.state.isAllGenresActive = true;
+                                this.state.activeGenres = new Set(filterableGenres);
                             } else {
-                                allButton.classList.remove('active');
-                                allGenreButtons.forEach(btn => {
-                                    btn.classList.toggle('active', btn.dataset.genre === selectedGenre);
-                                });
+                                this.state.isAllGenresActive = false;
+                                this.state.activeGenres.clear();
+                                this.state.activeGenres.add(selectedGenre);
                             }
                             
                             this.methods.filterTimeline();
@@ -1479,12 +1497,24 @@
                 },
 
                 filterTimeline() {
-                    const selectedGenres = Array.from(this.elements.genreFilterContainer.querySelectorAll('.genre-button.active:not([data-genre="all"])')).map(button => button.dataset.genre);
+                    // 1. Update button styles based on state
+                    const allButtons = this.elements.genreFilterContainer.querySelectorAll('.genre-button');
+                    allButtons.forEach(btn => {
+                        const genre = btn.dataset.genre;
+                        if (genre === 'all') {
+                            btn.classList.toggle('active', this.state.isAllGenresActive);
+                        } else {
+                            btn.classList.toggle('active', this.state.activeGenres.has(genre));
+                        }
+                    });
 
+                    // 2. Filter albums based on state
+                    const selectedGenres = this.state.activeGenres;
                     this.state.visibleAlbums = this.state.albums.filter(album => 
-                        album.genres.some(genre => selectedGenres.includes(genre))
+                        album.genres.some(genre => selectedGenres.has(genre))
                     );
                     
+                    // 3. Update DOM visibility
                     document.querySelectorAll('.timeline-album-card').forEach(card => {
                         const isVisible = this.state.visibleAlbums.some(a => a.uniqueId === card.dataset.albumId);
                         card.classList.toggle('hidden', !isVisible);
