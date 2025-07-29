@@ -113,9 +113,10 @@
         }
 
         #timeline-wrapper {
-            /* FIX: Changed from 'inline-flex' to 'flex' to improve sticky positioning behavior on all platforms. */
-            display: flex;
-            align-items: flex-start;
+            /* FIX: Reverted to inline-flex and changed align-items to stretch. */
+            /* This provides a better context for sticky positioning on mobile without altering the desktop layout. */
+            display: inline-flex;
+            align-items: stretch;
             padding: 7.5rem 1rem 2rem 1rem; 
             min-height: 100%;
         }
@@ -193,13 +194,12 @@
              border-color: rgba(255,255,255,0.2);
         }
         
-        /* FIX: Changed to a responsive grid layout that works on all screen sizes. */
+        /* FIX: Reverted to original flex layout for desktop to preserve alignment. */
         .album-grid {
-            display: grid;
+            display: flex;
+            flex-wrap: wrap;
             gap: 0.75rem;
-            /* This single line creates a responsive grid. It will fit as many 120px columns as possible,
-               which results in ~3 columns on desktop and 2 on mobile automatically. */
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            justify-content: flex-start;
         }
 
         .album-card {
@@ -214,8 +214,7 @@
             overflow: hidden;
             cursor: pointer;
             display: block;
-            /* This ensures the card stays centered in its grid column on mobile */
-            margin: 0 auto;
+            /* FIX: Removed margin: 0 auto; to restore original alignment. */
         }
         html.dark .album-card {
             border-color: var(--border-color);
@@ -467,7 +466,16 @@
                 padding-left: 0.5rem; 
                 padding-right: 0.5rem; 
             }
-            /* FIX: The .album-grid rule is no longer needed here as the default style is now responsive. */
+            /* FIX: Added back the specific mobile grid layout to ensure a consistent two-column view. */
+            .album-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                justify-items: center;
+                gap: 0.75rem;
+            }
+             .album-card {
+                /* The card width is already 120px, which fits well */
+            }
         }
 
     </style>
