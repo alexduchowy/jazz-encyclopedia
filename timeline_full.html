@@ -242,22 +242,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            overflow: hidden;
         }
         
-        #genre-legend {
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 0.75rem;
-            align-items: center;
-            overflow-x: auto;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            padding-bottom: 1rem;
-            margin-bottom: -1rem;
-        }
-        #genre-legend::-webkit-scrollbar { display: none; }
-
         .legend-item {
             display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;
             font-weight: 600; cursor: pointer; transition: opacity 0.2s;
@@ -269,13 +255,6 @@
         .legend-item.active { background-color: var(--accent); color: white; border-color: var(--accent); }
         .legend-item.inactive { opacity: 0.5; }
         .legend-color-swatch { width: 0.75rem; height: 0.75rem; border-radius: 0.125rem; border: 1px solid var(--text-main); flex-shrink: 0; }
-        
-        #show-all-btn {
-            background: var(--bg-secondary); border: 1px solid var(--text-muted); color: var(--text-muted);
-            font-size: 0.8rem; font-weight: bold; border-radius: 99px; padding: 0.25rem 0.75rem;
-            cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-        }
-        #show-all-btn:hover, #show-all-btn.active { background-color: var(--accent); color: white; border-color: var(--accent); }
         
         #loader {
             position: fixed; inset: 0; background-color: var(--bg-main);
@@ -368,7 +347,7 @@
         .toggle-label-genre { left: 22px; }
         .toggle-label-chrono { right: 12px; }
 
-        /* Era Dropdown */
+        /* Dropdown */
         .dropdown-container { position: relative; }
         .dropdown-btn {
             background: var(--bg-secondary); border: 1px solid var(--text-muted); color: var(--text-muted);
@@ -390,15 +369,19 @@
             width: 250px;
             overflow: hidden;
             display: none;
+            max-height: 50vh;
+            overflow-y: auto;
         }
         .dropdown-container:hover .dropdown-list { display: block; }
-        .dropdown-list a {
+        .dropdown-list a, .dropdown-list button {
             display: block;
             padding: 0.5rem 1rem;
             font-size: 0.9rem;
             transition: background-color 0.2s;
+            width: 100%;
+            text-align: left;
         }
-        .dropdown-list a:hover {
+        .dropdown-list a:hover, .dropdown-list button:hover {
             background-color: var(--accent);
             color: white;
         }
@@ -452,7 +435,15 @@
 
     <div id="main-container">
         <header id="controls-header">
-            <div id="genre-legend"></div>
+             <div id="genre-filter-container" class="dropdown-container">
+                <button class="dropdown-btn">
+                    Filter by Genre
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                </button>
+                <div id="genre-legend" class="dropdown-list">
+                    <!-- Genre buttons injected here -->
+                </div>
+            </div>
             <div class="flex items-center gap-4">
                 <div id="era-jump-container" class="dropdown-container">
                     <button class="dropdown-btn">
@@ -546,6 +537,7 @@
                 closeAlbumModalBtn: document.getElementById('close-album-modal'),
                 viewToggle: document.getElementById('view-toggle'),
                 eraJumpList: document.getElementById('era-jump-list'),
+                genreFilterContainer: document.getElementById('genre-filter-container'),
             },
 
             // --- INITIALIZATION ---
@@ -553,13 +545,14 @@
                 this.setupTheme();
                 this.bindEvents();
                 this.setupModals();
-                this.calculateHeaderHeight();
                 try {
                     await this.fetchData();
                     this.processData();
                     this.renderGenreLegend();
                     this.renderEraJumpList();
                     this.renderTimeline();
+                    // Recalculate header height AFTER content is rendered
+                    this.calculateHeaderHeight(); 
                 } catch (error) {
                     console.error("Initialization failed:", error);
                     this.elements.loader.innerHTML = "<p>Failed to load timeline data.</p>";
@@ -567,7 +560,6 @@
                     this.elements.loader.style.opacity = '0';
                     setTimeout(() => {
                         this.elements.loader.style.display = 'none';
-                        this.calculateHeaderHeight();
                     }, 500);
                 }
             },
@@ -701,6 +693,7 @@
                 
                 const showAllBtn = document.createElement('button');
                 showAllBtn.id = 'show-all-btn';
+                showAllBtn.className = 'legend-item active';
                 showAllBtn.textContent = 'ALL GENRES';
                 legendFragment.appendChild(showAllBtn);
 
@@ -860,7 +853,7 @@
             
             onViewToggle(e) {
                 this.state.timelineView = e.target.checked ? 'chronological' : 'genre';
-                this.elements.genreLegend.style.display = this.state.timelineView === 'genre' ? 'flex' : 'none';
+                this.elements.genreFilterContainer.style.display = this.state.timelineView === 'genre' ? 'block' : 'none';
                 this.renderTimeline();
             },
 
