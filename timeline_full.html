@@ -460,8 +460,13 @@
 
         /* Responsive Styles */
         @media (max-width: 767px) {
-            .year-container { width: 220px; margin: 0 0.5rem;}
+            /* MODIFIED: Increased width to fit two album columns */
+            .year-container { width: 270px; margin: 0 0.5rem;}
             #timeline-wrapper { padding-left: 0.5rem; padding-right: 0.5rem; }
+             /* MODIFIED: Center the album grid content */
+            .album-grid {
+                justify-content: center;
+            }
         }
 
     </style>
