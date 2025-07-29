@@ -950,7 +950,6 @@
                 }
             },
 
-            // MODIFIED: This function now scrolls horizontally instead of vertically.
             onEraJump(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1086,17 +1085,12 @@
                 });
             },
 
-            // --- STICKY ERA OBSERVER ---
+            // --- STICKY ERA OBSERVER (MODIFIED) ---
             setupStickyEraObserver() {
-                // The true offset is the padding-top of the scroll container, which we set dynamically.
-                const headerOffset = parseFloat(this.elements.timelineContainer.style.paddingTop) || 112;
-                const rootMarginTop = headerOffset + 1;
                 const observerOptions = {
                     root: this.elements.timelineContainer,
-                    // The rootMargin's negative top value tells the observer to trigger when an element
-                    // hits the line defined by the bottom of the fixed headers.
-                    rootMargin: `-${rootMarginTop}px 0px -${this.elements.timelineContainer.clientHeight - rootMarginTop - 1}px 0px`,
-                    threshold: 0
+                    rootMargin: '0px', // Observe the entire container viewport
+                    threshold: 0.01 // Trigger if even a small part of an element is visible
                 };
 
                 this.state.intersectionObserver = new IntersectionObserver(this.handleEraIntersection.bind(this), observerOptions);
@@ -1104,12 +1098,21 @@
                 yearContainers.forEach(container => this.state.intersectionObserver.observe(container));
             },
 
+            // MODIFIED: This function now correctly determines the rightmost visible year.
             handleEraIntersection(entries) {
-                const visibleEntries = entries.filter(e => e.isIntersecting);
+                // Find all year containers that are currently intersecting with the viewport
+                const visibleEntries = entries.filter(entry => entry.isIntersecting);
 
                 if (visibleEntries.length > 0) {
-                    const topYear = visibleEntries[0].target.dataset.year;
-                    const currentEra = this.state.eras.find(e => topYear >= e.startYear && e.endYear >= topYear);
+                    // From the visible entries, find the one that is the furthest to the right
+                    const rightmostEntry = visibleEntries.reduce((latest, current) => {
+                        return current.boundingClientRect.right > latest.boundingClientRect.right ? current : latest;
+                    });
+
+                    const year = rightmostEntry.target.dataset.year;
+                    // Find the corresponding era for that year.
+                    const currentEra = this.state.eras.find(e => year >= e.startYear && year <= e.endYear);
+                    
                     this.updateStickyEraDisplay(currentEra);
                 }
             },
@@ -1122,7 +1125,12 @@
                     this.elements.currentEraDisplay.style.color = isDark ? era.colorDark : era.color;
                     this.elements.currentEraDisplay.style.opacity = '1';
                 } else {
-                    this.elements.currentEraDisplay.style.opacity = '0';
+                    // It's possible to scroll to a position where no era is defined (e.g., between years)
+                    // In this case, we can choose to do nothing or hide the display.
+                    // Let's keep the last known era visible for a smoother experience unless it's null.
+                    if (!this.state.currentStickyEra) {
+                        this.elements.currentEraDisplay.style.opacity = '0';
+                    }
                 }
             },
             
