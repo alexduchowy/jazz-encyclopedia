@@ -150,14 +150,15 @@
             font-weight: 900;
             position: sticky;
             top: 112px; /* Positioned below both headers */
-            /* MODIFIED: Use a solid background to prevent content overlap */
             background-color: var(--bg-main);
-            z-index: 30; /* Lower z-index to stay below controls */
+            z-index: 30;
             width: calc(100% + 3rem); /* Fill parent padding */
             text-align: center;
             padding: 1rem 0;
             margin-top: -1.5rem; /* Overlap parent padding */
             border-bottom: 1px solid var(--border-color);
+            /* ADDED: Force a new stacking context to prevent rendering glitches with sticky position */
+            transform: translateZ(0);
         }
         
         /* Genre Block */
@@ -461,7 +462,7 @@
         /* Responsive Styles */
         @media (max-width: 767px) {
             /* MODIFIED: Increased width to fit two album columns */
-            .year-container { width: 270px; margin: 0 0.5rem;}
+            .year-container { width: 300px; margin: 0 0.5rem;}
             #timeline-wrapper { padding-left: 0.5rem; padding-right: 0.5rem; }
              /* MODIFIED: Center the album grid content */
             .album-grid {
