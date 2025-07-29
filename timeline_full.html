@@ -13,14 +13,14 @@
     
     <!-- Custom CSS Styling -->
     <style>
-        /* MODIFIED: Updated light theme with subtle gray tones and new genre colors */
+        /* MODIFIED: Updated light theme with a three-tone gray palette */
         :root {
-            --bg-main: #e4e4e7; /* zinc-200 */
-            --bg-secondary: #d4d4d8; /* zinc-300 */
-            --bg-header: rgba(228, 228, 231, 0.8);
+            --bg-main: #e4e4e7; /* zinc-200 - Darker background for timeline content */
+            --bg-secondary: #f4f4f5; /* zinc-100 - Mid-tone for headers/filters */
+            --bg-header: rgba(250, 250, 250, 0.8); /* zinc-50 - Lightest tone for top nav */
             --text-main: #18181b; /* zinc-900 */
             --text-muted: #52525b; /* zinc-600 */
-            --border-color: #d4d4d8; /* zinc-300 */
+            --border-color: #a1a1aa; /* zinc-400 */
             --accent: #f97316;
             --yellow-accent: #facc15;
             --sticky-top-offset: 112px; /* Default fallback value */
@@ -45,8 +45,6 @@
             --text-main: #f5f5f4;
             --text-muted: #a8a29e;
             --border-color: #44403c;
-
-            /* MODIFIED: Adjusted dark theme genre colors for consistency */
             --genre-bebop: #b97245; 
             --genre-hard-bop: #6d28d9;
             --genre-cool-jazz: #2563eb;
@@ -57,10 +55,10 @@
             --genre-jazz-fusion: #0891b2;
         }
 
-        /* Base body styling */
+        /* Base body styling - uses the mid-tone gray */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-main);
+            background-color: var(--bg-secondary);
             color: var(--text-main);
             overflow: hidden; /* Prevent body scroll */
         }
@@ -96,6 +94,7 @@
             position: relative;
         }
 
+        /* Timeline container - uses the darkest gray */
         #timeline-container {
             position: absolute;
             inset: 0;
@@ -137,6 +136,7 @@
              border-left: none;
         }
 
+        /* Year header - uses the mid-tone gray */
         .year-header {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2.5rem;
@@ -145,7 +145,7 @@
             font-weight: 900;
             position: sticky;
             top: var(--sticky-top-offset);
-            background-color: var(--bg-main);
+            background-color: var(--bg-secondary);
             z-index: 30;
             width: calc(100% + 3rem);
             text-align: center;
@@ -167,7 +167,6 @@
             margin-bottom: 0;
         }
 
-        /* MODIFIED: Updated genre label styling for better contrast */
         .genre-label {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.1rem;
@@ -175,12 +174,11 @@
             display: inline-block;
             margin-bottom: 1rem;
             color: var(--text-main);
-            border: 2px solid transparent; /* Default to transparent border */
+            border: 2px solid transparent;
             text-align: center;
             border-radius: 9999px;
             transition: all 0.2s;
         }
-        /* When JS adds a background color, make the text white for contrast */
         .genre-label[style*="background-color"] {
             color: #FFFFFF;
             border-color: rgba(0,0,0,0.1);
@@ -199,12 +197,13 @@
             justify-content: flex-start;
         }
 
+        /* Album card - uses the darkest gray to match its container */
         .album-card {
             width: 120px;
             background-color: var(--bg-main);
             border-radius: 0.25rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border: 2px solid var(--text-main);
+            border: 2px solid var(--text-muted);
             border-top-width: 6px;
             border-top-color: var(--album-genre-color, var(--text-main));
             position: relative;
@@ -348,13 +347,14 @@
             border-radius: 0.25rem;
         }
         
+        /* Controls header - uses the mid-tone gray */
         #controls-header {
             position: fixed;
             top: 64px;
             left: 0;
             width: 100%;
             padding: 0.5rem 1rem;
-            background-color: var(--bg-main);
+            background-color: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             z-index: 40;
             display: flex;
@@ -388,8 +388,11 @@
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             border: 1px solid var(--text-muted);
-            background-color: var(--bg-secondary);
+            background-color: #fafafa; /* Lightest gray for buttons */
             flex-shrink: 0;
+        }
+        html.dark .legend-item {
+             background-color: var(--bg-secondary);
         }
         .legend-item:hover {
             border-color: var(--accent);
@@ -410,7 +413,7 @@
             flex-shrink: 0;
         }
         #show-all-btn {
-            background: var(--bg-secondary);
+            background: #fafafa; /* Lightest gray for buttons */
             border: 1px solid var(--text-muted);
             color: var(--text-muted);
             font-size: 0.8rem;
@@ -420,6 +423,9 @@
             cursor: pointer;
             transition: all 0.2s;
             flex-shrink: 0;
+        }
+         html.dark #show-all-btn {
+             background-color: var(--bg-secondary);
         }
         #show-all-btn:hover, #show-all-btn.active {
             background-color: var(--accent);
