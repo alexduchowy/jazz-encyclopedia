@@ -104,8 +104,6 @@
 
         #timeline-wrapper {
             display: inline-flex;
-            /* FIX: Removed align-items: stretch to prevent unwanted vertical stretching that creates a gap. */
-            /* align-items: stretch; */
             padding: 7.5rem 1rem 2rem 1rem; 
             min-height: 100%;
         }
@@ -145,7 +143,7 @@
             width: 100%;
             margin-bottom: 2rem;
             transition: opacity 0.3s, max-height 0.5s, margin 0.5s;
-            max-height: 1000px;
+            max-height: 2000px; /* Increased max-height */
             overflow: hidden;
         }
         .genre-block.filtered { opacity: 0; max-height: 0; margin-bottom: 0; }
@@ -226,6 +224,7 @@
             z-index: 40;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             overflow: hidden;
         }
         
@@ -306,6 +305,53 @@
         }
         .clickable-link:hover { color: var(--accent); }
 
+        /* View Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 200px;
+            height: 34px;
+        }
+        .toggle-switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-secondary);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid var(--text-muted);
+        }
+        .toggle-switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 96px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--accent);
+            transition: .4s;
+            border-radius: 34px;
+        }
+        #view-toggle:checked + .toggle-switch-slider:before {
+            transform: translateX(96px);
+        }
+        .toggle-label {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--text-main);
+            z-index: 10;
+            pointer-events: none;
+        }
+        .toggle-label-genre { left: 22px; }
+        .toggle-label-chrono { right: 12px; }
+
+
         /* Responsive Styles */
         @media (max-width: 767px) {
             .year-container { width: 300px; margin: 0 0.5rem; }
@@ -355,6 +401,14 @@
     <div id="main-container">
         <header id="controls-header">
             <div id="genre-legend"></div>
+            <div class="flex items-center gap-4">
+                <label for="view-toggle" class="toggle-switch">
+                    <input type="checkbox" id="view-toggle" class="hidden">
+                    <span class="toggle-switch-slider"></span>
+                    <span class="toggle-label toggle-label-genre">By Genre</span>
+                    <span class="toggle-label toggle-label-chrono">Chronological</span>
+                </label>
+            </div>
         </header>
 
         <div id="timeline-container">
@@ -392,12 +446,14 @@
                 genres: {},
                 artistsData: [],
                 fullArtistsData: {},
-                groupedData: new Map(),
+                groupedDataByGenre: new Map(),
+                groupedDataChronological: new Map(),
                 activeGenres: new Set(),
                 isDragging: false,
                 startX: 0,
                 scrollLeft: 0,
                 isAllGenresActive: true,
+                timelineView: 'genre', // 'genre' or 'chronological'
             },
 
             // --- DOM ELEMENTS ---
@@ -419,6 +475,7 @@
                 albumModalAlbumDetails: document.getElementById('album-modal-album-details'),
                 analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
                 closeAlbumModalBtn: document.getElementById('close-album-modal'),
+                viewToggle: document.getElementById('view-toggle'),
             },
 
             // --- INITIALIZATION ---
@@ -431,7 +488,7 @@
                     await this.fetchData();
                     this.processData();
                     this.renderGenreLegend();
-                    this.filterTimeline();
+                    this.renderTimeline();
                 } catch (error) {
                     console.error("Initialization failed:", error);
                     this.elements.loader.innerHTML = "<p>Failed to load timeline data.</p>";
@@ -539,21 +596,29 @@
                 this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
 
                 const processedAlbumIds = new Set();
-                this.state.groupedData.clear();
+                this.state.groupedDataByGenre.clear();
+                this.state.groupedDataChronological.clear();
+
                 this.state.albums.forEach(album => {
                     if (!album.year || !album.genres || processedAlbumIds.has(album.uniqueId)) return;
                     
+                    // Group by Genre
                     const primaryGenre = album.genres[0];
-
-                    if (!this.state.groupedData.has(album.year)) {
-                        this.state.groupedData.set(album.year, new Map());
+                    if (!this.state.groupedDataByGenre.has(album.year)) {
+                        this.state.groupedDataByGenre.set(album.year, new Map());
                     }
-                    const yearMap = this.state.groupedData.get(album.year);
-
-                    if (!yearMap.has(primaryGenre)) {
-                        yearMap.set(primaryGenre, []);
+                    const yearMapGenre = this.state.groupedDataByGenre.get(album.year);
+                    if (!yearMapGenre.has(primaryGenre)) {
+                        yearMapGenre.set(primaryGenre, []);
                     }
-                    yearMap.get(primaryGenre).push(album);
+                    yearMapGenre.get(primaryGenre).push(album);
+
+                    // Group Chronologically
+                    if (!this.state.groupedDataChronological.has(album.year)) {
+                        this.state.groupedDataChronological.set(album.year, []);
+                    }
+                    this.state.groupedDataChronological.get(album.year).push(album);
+
                     processedAlbumIds.add(album.uniqueId);
                 });
             },
@@ -590,13 +655,22 @@
                 this.elements.genreLegend.innerHTML = '';
                 this.elements.genreLegend.appendChild(legendFragment);
             },
-
+            
             renderTimeline() {
+                if (this.state.timelineView === 'genre') {
+                    this.methods.renderTimelineByGenre();
+                } else {
+                    this.methods.renderTimelineChronological();
+                }
+                this.methods.filterTimeline(); // Apply filters after rendering
+            },
+
+            renderTimelineByGenre() {
                 const fragment = document.createDocumentFragment();
-                const sortedYears = [...this.state.groupedData.keys()].sort((a, b) => a - b);
+                const sortedYears = [...this.state.groupedDataByGenre.keys()].sort((a, b) => a - b);
 
                 for (const year of sortedYears) {
-                    const yearData = this.state.groupedData.get(year);
+                    const yearData = this.state.groupedDataByGenre.get(year);
                     const yearContainer = document.createElement('div');
                     yearContainer.className = 'year-container';
                     yearContainer.dataset.year = year;
@@ -628,6 +702,38 @@
                         genreBlock.appendChild(albumGrid);
                         yearContainer.appendChild(genreBlock);
                     }
+                    fragment.appendChild(yearContainer);
+                }
+                this.elements.timelineWrapper.innerHTML = '';
+                this.elements.timelineWrapper.appendChild(fragment);
+            },
+
+            renderTimelineChronological() {
+                const fragment = document.createDocumentFragment();
+                const sortedYears = [...this.state.groupedDataChronological.keys()].sort((a, b) => a - b);
+
+                for (const year of sortedYears) {
+                    const albums = this.state.groupedDataChronological.get(year);
+                    const yearContainer = document.createElement('div');
+                    yearContainer.className = 'year-container';
+                    yearContainer.dataset.year = year;
+
+                    const yearHeader = document.createElement('div');
+                    yearHeader.className = 'year-header';
+                    yearHeader.textContent = year;
+                    yearContainer.appendChild(yearHeader);
+
+                    const genreBlock = document.createElement('div');
+                    genreBlock.className = 'genre-block';
+                    
+                    const albumGrid = document.createElement('div');
+                    albumGrid.className = 'album-grid';
+                    albums.forEach(album => {
+                        const card = this.createAlbumCard(album);
+                        albumGrid.appendChild(card);
+                    });
+                    genreBlock.appendChild(albumGrid);
+                    yearContainer.appendChild(genreBlock);
                     fragment.appendChild(yearContainer);
                 }
                 this.elements.timelineWrapper.innerHTML = '';
@@ -681,7 +787,14 @@
                 this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
+                this.elements.viewToggle.addEventListener('change', this.onViewToggle.bind(this));
                 window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
+            },
+            
+            onViewToggle(e) {
+                this.state.timelineView = e.target.checked ? 'chronological' : 'genre';
+                this.elements.genreLegend.style.display = this.state.timelineView === 'genre' ? 'flex' : 'none';
+                this.renderTimeline();
             },
 
             onDragStart(e) {
@@ -727,13 +840,15 @@
                 const target = e.target.closest('button');
                 if (!target) return;
 
+                const allFilterableGenres = Array.from(this.elements.genreLegend.querySelectorAll('.legend-item')).map(item => item.dataset.genre);
+
                 if (target.id === 'show-all-btn') {
                     this.state.isAllGenresActive = true;
-                    this.state.activeGenres = new Set(Object.keys(this.state.genres));
+                    this.state.activeGenres = new Set(allFilterableGenres);
                 } else {
                     const genre = target.dataset.genre;
                     if (genre) {
-                        if (this.state.isAllGenresActive || e.shiftKey) {
+                        if (this.state.isAllGenresActive || !e.shiftKey) {
                             this.state.activeGenres.clear();
                             this.state.activeGenres.add(genre);
                             this.state.isAllGenresActive = false;
@@ -746,17 +861,15 @@
                         }
                     }
                 }
-                if (this.state.activeGenres.size === 0) {
+                if (this.state.activeGenres.size === 0 || this.state.activeGenres.size === allFilterableGenres.length) {
                     this.state.isAllGenresActive = true;
-                    this.state.activeGenres = new Set(Object.keys(this.state.genres));
+                    this.state.activeGenres = new Set(allFilterableGenres);
                 }
                 
                 this.filterTimeline();
             },
 
             filterTimeline() {
-                this.renderTimeline();
-
                 const showAllBtn = this.elements.genreLegend.querySelector('#show-all-btn');
                 if (showAllBtn) {
                     showAllBtn.classList.toggle('active', this.state.isAllGenresActive);
@@ -772,10 +885,16 @@
                     }
                 });
 
-                this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => {
-                    const genre = block.dataset.genre;
-                    block.classList.toggle('filtered', !this.state.activeGenres.has(genre));
-                });
+                if (this.state.timelineView === 'genre') {
+                    this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => {
+                        const genre = block.dataset.genre;
+                        block.classList.toggle('filtered', !this.state.activeGenres.has(genre));
+                    });
+                } else {
+                     this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => {
+                        block.classList.remove('filtered');
+                    });
+                }
                 
                 this.elements.timelineWrapper.querySelectorAll('.year-container').forEach(year => {
                     const visibleBlocks = year.querySelectorAll('.genre-block:not(.filtered)');
