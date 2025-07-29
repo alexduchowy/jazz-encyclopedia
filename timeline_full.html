@@ -38,13 +38,13 @@
 
         /* Dark Theme - Refined Black & Gray */
         html.dark {
-            --bg-timeline: #2a2a2a;
-            --bg-year: #3a3a3a;
-            --bg-card: #4a4a4a;
+            --bg-timeline: #111111;
+            --bg-year: #1c1c1c;
+            --bg-card: #2a2a2a;
             --bg-secondary: #292524;
             --text-main: #f5f5f4;
-            --text-muted: #9ca3af;
-            --border-color: #6b7280;
+            --text-muted: #aaaaaa;
+            --border-color: #444444;
         }
 
         /* Base body styling */
@@ -120,13 +120,13 @@
             margin-bottom: 2rem;
             font-weight: 900;
             position: sticky;
-            top: 0;
+            top: -1.5rem; /* Stick to the top of the padded container */
             background-color: var(--bg-year);
             z-index: 10;
-            width: 100%;
+            width: calc(100% + 3rem); /* Fill parent padding */
             text-align: center;
             padding: 1rem 0;
-            margin: -1.5rem -1.5rem 2rem -1.5rem; /* Adjust margin to fill parent padding */
+            margin-top: -1.5rem; /* Overlap parent padding */
             border-bottom: 1px solid var(--border-color);
         }
         
@@ -740,10 +740,8 @@
             },
 
             bindEvents() {
-                // Attach drag listeners to the document for robustness
                 this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
                 
-                // Other event listeners
                 this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
@@ -751,7 +749,6 @@
                     e.stopPropagation();
                     this.elements.genreLegend.classList.toggle('mobile-visible');
                 });
-                // Close mobile dropdown if clicking outside
                 document.addEventListener('click', (e) => {
                     if (!this.elements.mobileFilterBtn.contains(e.target) && !this.elements.genreLegend.contains(e.target)) {
                         this.elements.genreLegend.classList.remove('mobile-visible');
@@ -762,12 +759,11 @@
             onDragStart(e) {
                 this.state.isDragging = true;
                 this.elements.timelineContainer.style.cursor = 'grabbing';
-                document.body.style.cursor = 'grabbing'; // Apply to whole page
+                document.body.style.cursor = 'grabbing';
                 
                 this.state.startX = e.pageX - this.elements.timelineContainer.offsetLeft;
                 this.state.scrollLeft = this.elements.timelineContainer.scrollLeft;
                 
-                // Add move and up listeners to the whole document
                 document.addEventListener('mousemove', this.onDragMove);
                 document.addEventListener('mouseup', this.onDragEnd);
             },
@@ -777,7 +773,6 @@
                 this.elements.timelineContainer.style.cursor = 'grab';
                 document.body.style.cursor = 'default';
 
-                // Remove global listeners
                 document.removeEventListener('mousemove', this.onDragMove);
                 document.removeEventListener('mouseup', this.onDragEnd);
             },
@@ -786,7 +781,7 @@
                 if (!this.state.isDragging) return;
                 e.preventDefault();
                 const x = e.pageX - this.elements.timelineContainer.offsetLeft;
-                const walk = (x - this.state.startX) * 2; // Scroll faster
+                const walk = (x - this.state.startX) * 2;
                 this.elements.timelineContainer.scrollLeft = this.state.scrollLeft - walk;
             },
 
@@ -850,7 +845,6 @@
             }
         };
 
-        // Bind methods that will be used as event listeners to the document
         JazzTimeline.onDragMove = JazzTimeline.onDragMove.bind(JazzTimeline);
         JazzTimeline.onDragEnd = JazzTimeline.onDragEnd.bind(JazzTimeline);
 
