@@ -814,6 +814,7 @@
                     `<span class="genre-tag" style="background-color: ${this.state.genres[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`
                 ).join(' ');
 
+                // MODIFICATION: Added a "Read More" button
                 albumModalAlbumDetails.innerHTML = `
                     <h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4>
                     <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]">
@@ -821,6 +822,11 @@
                         <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span>
                         <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
                         <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <a href="/album/${album.uniqueId}" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-md transition-colors duration-300 no-underline">
+                            Read More &rarr;
+                        </a>
                     </div>`;
 
                 const analysisHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) 
