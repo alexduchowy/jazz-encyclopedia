@@ -113,7 +113,8 @@
         }
 
         #timeline-wrapper {
-            display: inline-flex;
+            /* FIX: Changed from 'inline-flex' to 'flex' to improve sticky positioning behavior on all platforms. */
+            display: flex;
             align-items: flex-start;
             padding: 7.5rem 1rem 2rem 1rem; 
             min-height: 100%;
@@ -192,11 +193,13 @@
              border-color: rgba(255,255,255,0.2);
         }
         
+        /* FIX: Changed to a responsive grid layout that works on all screen sizes. */
         .album-grid {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
             gap: 0.75rem;
-            justify-content: flex-start;
+            /* This single line creates a responsive grid. It will fit as many 120px columns as possible,
+               which results in ~3 columns on desktop and 2 on mobile automatically. */
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         }
 
         .album-card {
@@ -211,6 +214,8 @@
             overflow: hidden;
             cursor: pointer;
             display: block;
+            /* This ensures the card stays centered in its grid column on mobile */
+            margin: 0 auto;
         }
         html.dark .album-card {
             border-color: var(--border-color);
@@ -462,15 +467,7 @@
                 padding-left: 0.5rem; 
                 padding-right: 0.5rem; 
             }
-            .album-grid {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                justify-items: center;
-                gap: 0.75rem;
-            }
-             .album-card {
-                /* The card width is already 120px, which fits well */
-            }
+            /* FIX: The .album-grid rule is no longer needed here as the default style is now responsive. */
         }
 
     </style>
