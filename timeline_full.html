@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Jazz Timeline</title>
+    <title>Full Interactive Jazz Timeline</title>
     
     <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
     <!-- Custom CSS Styling -->
     <style>
-        /* Light Theme (Default) */
+        /* Light Theme (Default) - Adopted from timeline.html */
         :root {
-            --bg-timeline: #d1d5db; /* Main timeline background */
-            --bg-year: #e5e7eb;     /* Year column background */
-            --bg-card: #f5f5f4;
-            --bg-secondary: #292524;
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-header: rgba(245,245,244,0.8);
             --text-main: #1c1917;
             --text-muted: #44403c;
-            --border-color: #d1d5db;
+            --border-color: #e7e5e4;
             --accent: #f97316;
-            
-            /* Genre Colors from timeline.html */
+            --yellow-accent: #facc15;
+
+            /* Genre Colors */
             --genre-bebop: #C19A6B;
             --genre-hard-bop: #d8b4fe;
             --genre-cool-jazz: #93c5fd;
@@ -36,21 +36,29 @@
             --genre-default: #e7e5e4;
         }
 
-        /* Dark Theme - Refined Black & Gray */
+        /* Dark Theme - Adopted from timeline.html */
         html.dark {
-            --bg-timeline: #111111;
-            --bg-year: #1c1c1c;
-            --bg-card: #2a2a2a;
+            --bg-main: #1c1917;
             --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
             --text-main: #f5f5f4;
-            --text-muted: #aaaaaa;
-            --border-color: #444444;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
+
+            --genre-bebop: #855b32;
+            --genre-hard-bop: #5c3c92;
+            --genre-cool-jazz: #2c599d;
+            --genre-modal-jazz: #1a7451;
+            --genre-post-bop: #9a642a;
+            --genre-free-jazz: #992828;
+            --genre-avant-garde: #9d3363;
+            --genre-jazz-fusion: #2c7a84;
         }
 
         /* Base body styling */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-timeline);
+            background-color: var(--bg-main);
             color: var(--text-main);
             overflow: hidden; /* Prevent body scroll */
         }
@@ -58,6 +66,18 @@
         h1, h2, h3, h4, h5 {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
+        }
+
+        /* Re-usable nav link style from timeline.html */
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
         }
 
         /* Main container for the full-screen experience */
@@ -73,7 +93,7 @@
             inset: 0;
             overflow: auto;
             cursor: grab;
-            background-color: var(--bg-timeline);
+            background-color: var(--bg-main);
             -ms-overflow-style: none; /* IE and Edge */
             scrollbar-width: none; /* Firefox */
         }
@@ -88,7 +108,7 @@
         #timeline-wrapper {
             display: inline-flex;
             align-items: flex-start; /* Align columns to the top */
-            padding: 5.5rem 1rem; /* Adjusted top padding for thinner header */
+            padding: 8rem 1rem 2rem 1rem; /* Adjusted top padding for new header */
             min-height: 100%;
         }
         
@@ -98,11 +118,9 @@
             flex-direction: column;
             align-items: center;
             padding: 1.5rem;
-            border-left: 2px solid var(--text-muted);
+            border-left: 2px solid var(--border-color);
             flex-shrink: 0;
             width: 460px;
-            background-color: var(--bg-year);
-            border-radius: 0.5rem;
             margin: 0 1rem;
             transition: opacity 0.3s, transform 0.3s;
         }
@@ -112,6 +130,7 @@
         .year-container:first-child {
              border-left: none;
         }
+
         /* Sticky Year Header */
         .year-header {
             font-family: 'Bebas Neue', sans-serif;
@@ -120,8 +139,8 @@
             margin-bottom: 2rem;
             font-weight: 900;
             position: sticky;
-            top: 54px; /* Stick below the main header */
-            background-color: var(--bg-year);
+            top: 100px; /* Stick below the main header */
+            background-color: var(--bg-main);
             z-index: 40;
             width: calc(100% + 3rem); /* Fill parent padding */
             text-align: center;
@@ -147,79 +166,75 @@
         .genre-label {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.1rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.25rem 0.75rem;
             display: inline-block;
             margin-bottom: 1rem;
             color: var(--text-main);
             border: 2px solid var(--text-main);
             text-align: center;
+            border-radius: 9999px;
         }
         html.dark .genre-label {
-            color: var(--text-muted);
             border-color: var(--border-color);
         }
         
-        /* Album Grid (for horizontal layout) */
+        /* Album Grid */
         .album-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem;
+            gap: 1.5rem; /* Increased gap for better spacing */
+            justify-content: center;
         }
 
-        /* Album Card */
+        /* Album Card - Styled to match timeline.html */
         .album-card {
-            width: 120px;
-            background-color: var(--bg-card);
+            width: 180px;
+            background-color: var(--bg-main);
             border-radius: 0.25rem;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 4px 4px 0px var(--text-main);
             border: 2px solid var(--text-main);
-            border-top-color: var(--album-genre-color, var(--text-main));
-            border-top-width: 6px;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
         html.dark .album-card {
             border-color: var(--border-color);
-            border-top-color: var(--album-genre-color, var(--border-color));
+            box-shadow: none;
         }
         .album-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 8px 8px 0px var(--accent);
+        }
+        html.dark .album-card:hover {
+            border-color: var(--accent);
         }
         .album-card .cover-art {
             width: 100%;
-            height: 120px;
+            height: 180px;
             object-fit: cover;
             display: block;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
         }
-        
-        /* Album Info (Hidden by default) */
+        .album-card:hover .cover-art {
+            filter: grayscale(0%);
+        }
         .album-card-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 0.5rem;
-            opacity: 0;
-            transform: translateY(100%);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .album-card:hover .album-card-info {
-            opacity: 1;
-            transform: translateY(0);
+            padding: 0.75rem;
+            text-align: left;
         }
         .album-card-info h5 {
-            font-size: 0.8rem;
+            font-size: 1rem;
             font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--text-main);
         }
         .album-card-info p {
-            font-size: 0.7rem;
-            color: #ccc;
+            font-size: 0.8rem;
+            color: var(--text-muted);
         }
 
         /* Play Button Overlay */
@@ -228,21 +243,22 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 120px;
+            height: 180px;
             background-color: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             transition: opacity 0.3s ease;
-            cursor: pointer;
+            pointer-events: none; /* Let clicks pass through unless targeted */
         }
         .album-card:hover .play-button-overlay {
             opacity: 1;
+            pointer-events: auto; /* Allow clicks on hover */
         }
         .play-icon {
-            width: 32px;
-            height: 32px;
+            width: 48px;
+            height: 48px;
             fill: white;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
@@ -260,6 +276,10 @@
             transition: transform 0.4s ease-in-out, opacity 0.4s;
             transform: translateY(200%);
             opacity: 0;
+            border: 2px solid var(--text-main);
+        }
+        html.dark #audio-player {
+            border-color: var(--border-color);
         }
         #audio-player.visible {
             transform: translateY(0);
@@ -267,77 +287,72 @@
         }
         #player-close-btn {
             position: absolute;
-            top: -10px;
-            right: -10px;
-            width: 24px;
-            height: 24px;
+            top: -12px;
+            right: -12px;
+            width: 28px;
+            height: 28px;
             background-color: var(--accent);
             color: white;
             border-radius: 50%;
-            border: none;
+            border: 2px solid var(--text-main);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 1.2rem;
         }
         #player-iframe {
             border: none;
             width: 300px;
             height: 150px;
+            border-radius: 0.25rem;
         }
         
-        /* Header & Controls */
-        #header {
+        /* Header Controls */
+        #controls-header {
             position: fixed;
-            top: 0;
+            top: 96px; /* Position below main nav header */
             left: 0;
             width: 100%;
-            padding: 0.75rem 1.5rem; /* Thinner padding */
-            background-color: var(--bg-year); /* Solid background */
+            padding: 0.75rem 1.5rem;
+            background-color: var(--bg-main);
             border-bottom: 1px solid var(--border-color);
             z-index: 50;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end; /* Align controls to the right */
             align-items: center;
-            pointer-events: none;
         }
-        #header > * {
-            pointer-events: auto;
-        }
-        #header-title {
-            transform: rotate(-2deg);
-            display: inline-block;
-            background-color: var(--accent);
-            color: #FFFFFF;
-            padding: 0.4rem 1.25rem;
-            font-size: 1.25rem;
-            transition: font-size 0.3s;
-        }
-
+        
         /* Genre Legend */
         #genre-legend {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem 1rem;
-            background-color: var(--bg-card);
+            background-color: var(--bg-secondary);
             padding: 0.75rem;
             border-radius: 0.25rem;
             border: 1px solid var(--border-color);
-            max-width: 50%;
+            max-width: 80%;
             align-items: center;
         }
         html.dark #genre-legend {
-             background-color: var(--bg-year);
+             background-color: var(--bg-secondary);
         }
         .legend-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: opacity 0.2s;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            border: 1px solid transparent;
+        }
+        .legend-item:hover {
+            border-color: var(--text-muted);
         }
         .legend-item.inactive {
             opacity: 0.4;
@@ -366,25 +381,6 @@
             border-color: var(--accent);
         }
         
-        /* Theme Toggle */
-        #theme-toggle {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            margin-left: 1rem;
-        }
-        #theme-toggle svg {
-            width: 18px;
-            height: 18px;
-            color: var(--text-main);
-        }
-        
         /* Mobile Filter Dropdown */
         #mobile-filter-btn { display: none; }
         
@@ -392,7 +388,7 @@
         #loader {
             position: fixed;
             inset: 0;
-            background-color: var(--bg-year);
+            background-color: var(--bg-main);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -401,7 +397,7 @@
             transition: opacity 0.5s ease;
         }
         .loader-spinner {
-            border: 4px solid var(--border-color);
+            border: 4px solid var(--bg-secondary);
             border-top: 4px solid var(--accent);
             border-radius: 50%; width: 50px; height: 50px;
             animation: spin 1s linear infinite;
@@ -416,20 +412,22 @@
 
         /* Responsive Styles */
         @media (max-width: 1023px) {
+            #timeline-wrapper { padding-top: 12rem; } /* Adjust for stacked headers */
             .year-container { width: 420px; }
-            #header-title { font-size: 1.1rem; padding: 0.4rem 1rem;}
             #genre-legend { display: none; }
             #mobile-filter-btn {
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                background-color: var(--bg-card);
+                background-color: var(--bg-secondary);
                 border: 1px solid var(--border-color);
                 padding: 0.5rem 1rem;
                 border-radius: 0.25rem;
                 font-size: 0.9rem;
                 font-weight: bold;
             }
+            #controls-header { justify-content: space-between; }
+            .back-button-container { display: none; } /* Hide desktop back button */
             #genre-legend.mobile-visible {
                 display: flex;
                 position: absolute;
@@ -439,11 +437,18 @@
                 max-width: 100%;
                 flex-direction: column;
                 align-items: flex-start;
+                z-index: 60;
             }
         }
-        @media (max-width: 639px) {
-            .year-container { width: 220px; margin: 0 0.5rem;}
-            #header { padding: 0.75rem 1rem; }
+        @media (max-width: 767px) {
+            .year-container { width: 300px; margin: 0 0.5rem;}
+            .album-card { width: 120px; }
+            .album-card .cover-art { height: 120px; }
+            .album-card-info h5 { font-size: 0.8rem; }
+            .album-card-info p { font-size: 0.7rem; }
+            .play-icon { width: 32px; height: 32px; }
+            .play-button-overlay { height: 120px; }
+            #controls-header { padding: 0.75rem 1rem; }
             #timeline-wrapper { padding-left: 0.5rem; padding-right: 0.5rem; }
         }
 
@@ -456,9 +461,39 @@
         <p>Loading Musical History...</p>
     </div>
 
+    <!-- Standardized Sticky Header from timeline.html -->
+    <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+        <header class="container mx-auto h-full">
+            <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                <a href="timeline.html"><img src="https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://placehold.co/200x80/1c1917/f5f5f4?text=Logo';"></a>
+                <div class="flex items-center">
+                    <div class="flex items-center space-x-8">
+                        <a href="timeline.html" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            Back to Main Timeline
+                        </a>
+                    </div>
+                    <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                        <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+
     <div id="main-container">
-        <header id="header">
-            <h1 id="header-title">Interactive Jazz Timeline</h1>
+        <!-- Header for Controls -->
+        <header id="controls-header">
+             <div class="back-button-container md:hidden">
+                 <a href="timeline.html" class="nav-link px-3 py-2 rounded-md font-medium text-sm flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    Back
+                </a>
+            </div>
             <div class="flex items-center">
                 <div class="relative">
                     <button id="mobile-filter-btn">
@@ -469,10 +504,6 @@
                         <!-- Legend items will be injected here -->
                     </div>
                 </div>
-                <button id="theme-toggle" title="Toggle theme">
-                    <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg>
-                    <svg id="theme-icon-dark" class="hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>
-                </button>
             </div>
         </header>
 
@@ -537,6 +568,7 @@
 
             // --- DATA FETCHING ---
             async fetchData() {
+                 // Using absolute paths for JSON files as per timeline.html
                 const [albumRes, genreRes] = await Promise.all([
                     fetch('/database.json'),
                     fetch('/genres.json')
@@ -554,15 +586,16 @@
             
             buildGenreColorMap(genreData) {
                 const colorMap = {};
+                // Use the genre data directly to get colors
                 if (genreData && genreData.genres) {
                      Object.entries(genreData.genres).forEach(([name, data]) => {
-                        const normalizedName = name.includes("Jazz") ? name : `${name} Jazz`;
                         colorMap[name] = data.color;
                         if(name === "Avant-Garde") {
                            colorMap["Avant-Garde Jazz"] = data.color;
                         }
                     });
                 }
+                // Fallbacks using CSS variables
                 colorMap['Bebop'] = colorMap['Bebop'] || 'var(--genre-bebop)';
                 colorMap['Hard Bop'] = colorMap['Hard Bop'] || 'var(--genre-hard-bop)';
                 colorMap['Cool Jazz'] = colorMap['Cool Jazz'] || 'var(--genre-cool-jazz)';
@@ -600,6 +633,7 @@
                         album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
                         album.sortingDate = album.pivotalTracks[0].recordingDate;
                     } else {
+                        // Use year for sorting if no specific date
                         album.sortingDate = `${album.year}-01-01`;
                     }
                 });
@@ -610,6 +644,7 @@
                 this.state.albums.forEach(album => {
                     if (!album.year || !album.genres || processedAlbumIds.has(album.uniqueId)) return;
                     
+                    // Group by the primary genre
                     const primaryGenre = album.genres[0];
 
                     if (!this.state.groupedData.has(album.year)) {
@@ -632,7 +667,8 @@
 
                 for (const genre of sortedGenres) {
                     const color = this.state.genres[genre];
-                     if (this.state.albums.some(a => a.genres[0] === genre)) {
+                     // Only show genres that are actually present in the data
+                     if (this.state.albums.some(a => a.genres.includes(genre))) {
                         const item = document.createElement('div');
                         item.className = 'legend-item';
                         item.dataset.genre = genre;
@@ -698,15 +734,11 @@
                 card.className = 'album-card';
                 card.dataset.youtubeId = album.youtubeId || '';
 
-                const primaryGenre = album.genres[0];
-                const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
-                card.style.setProperty('--album-genre-color', genreColor);
-
                 card.innerHTML = `
                     <div class="play-button-overlay">
                          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
                     </div>
-                    <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="this.onerror=null;this.src='https://placehold.co/120x120/1c1917/f5f5f4?text=No+Img';">
+                    <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="this.onerror=null;this.src='https://placehold.co/180x180/1c1917/f5f5f4?text=No+Img';">
                     <div class="album-card-info">
                         <h5>${album.albumTitle || 'Unknown Title'}</h5>
                         <p>${album.artist || 'Unknown Artist'}</p>
@@ -717,38 +749,43 @@
 
             // --- EVENT HANDLING & THEME ---
             setupTheme() {
-                const savedTheme = localStorage.getItem('theme') || 'light';
-                this.applyTheme(savedTheme);
+                const applyTheme = (theme) => {
+                    if (theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                        this.elements.themeIconLight.classList.add('hidden');
+                        this.elements.themeIconDark.classList.remove('hidden');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        this.elements.themeIconLight.classList.remove('hidden');
+                        this.elements.themeIconDark.classList.add('hidden');
+                    }
+                };
+                
+                const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                applyTheme(savedTheme);
 
                 this.elements.themeToggle.addEventListener('click', () => {
                     const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-                    this.applyTheme(newTheme);
+                    applyTheme(newTheme);
                     localStorage.setItem('theme', newTheme);
                 });
             },
-            
-            applyTheme(theme) {
-                 if (theme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                    this.elements.themeIconLight.classList.add('hidden');
-                    this.elements.themeIconDark.classList.remove('hidden');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    this.elements.themeIconLight.classList.remove('hidden');
-                    this.elements.themeIconDark.classList.add('hidden');
-                }
-            },
 
             bindEvents() {
+                // Drag to scroll events
                 this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
                 
+                // Player events
                 this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
+
+                // Filter events
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
                 this.elements.mobileFilterBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     this.elements.genreLegend.classList.toggle('mobile-visible');
                 });
+                // Close mobile filter when clicking outside
                 document.addEventListener('click', (e) => {
                     if (!this.elements.mobileFilterBtn.contains(e.target) && !this.elements.genreLegend.contains(e.target)) {
                         this.elements.genreLegend.classList.remove('mobile-visible');
@@ -757,6 +794,7 @@
             },
 
             onDragStart(e) {
+                if (e.target.closest('.album-card')) return; // Don't drag if clicking a card
                 this.state.isDragging = true;
                 this.elements.timelineContainer.style.cursor = 'grabbing';
                 document.body.style.cursor = 'grabbing';
@@ -764,11 +802,13 @@
                 this.state.startX = e.pageX - this.elements.timelineContainer.offsetLeft;
                 this.state.scrollLeft = this.elements.timelineContainer.scrollLeft;
                 
+                // Bind move and end to the document to capture mouse leaving the container
                 document.addEventListener('mousemove', this.onDragMove);
                 document.addEventListener('mouseup', this.onDragEnd);
             },
 
             onDragEnd() {
+                if (!this.state.isDragging) return;
                 this.state.isDragging = false;
                 this.elements.timelineContainer.style.cursor = 'grab';
                 document.body.style.cursor = 'default';
@@ -781,19 +821,19 @@
                 if (!this.state.isDragging) return;
                 e.preventDefault();
                 const x = e.pageX - this.elements.timelineContainer.offsetLeft;
-                const walk = (x - this.state.startX) * 2;
+                const walk = (x - this.state.startX) * 2; // Multiplier for faster scrolling
                 this.elements.timelineContainer.scrollLeft = this.state.scrollLeft - walk;
             },
 
             onCardClick(e) {
-                const overlay = e.target.closest('.play-button-overlay');
-                if (overlay) {
-                    const card = overlay.closest('.album-card');
+                const card = e.target.closest('.album-card');
+                if (card) {
                     const youtubeId = card.dataset.youtubeId;
                     if (youtubeId) {
                         this.showPlayer(youtubeId);
                     } else {
-                        alert('No audio preview available for this album.');
+                        // Using a custom, non-blocking message box would be better
+                        console.warn('No audio preview available for this album.');
                     }
                 }
             },
@@ -806,10 +846,15 @@
                     const legendItem = target.closest('.legend-item');
                     if (legendItem) {
                         const genre = legendItem.dataset.genre;
-                        if (this.state.activeGenres.has(genre)) {
-                            this.state.activeGenres.delete(genre);
-                        } else {
+                        if (e.shiftKey) { // Hold shift to select only one
+                            this.state.activeGenres.clear();
                             this.state.activeGenres.add(genre);
+                        } else { // Toggle otherwise
+                            if (this.state.activeGenres.has(genre)) {
+                                this.state.activeGenres.delete(genre);
+                            } else {
+                                this.state.activeGenres.add(genre);
+                            }
                         }
                     }
                 }
@@ -817,16 +862,19 @@
             },
 
             filterTimeline() {
+                // Update legend UI
                 this.elements.genreLegend.querySelectorAll('.legend-item').forEach(item => {
                     const genre = item.dataset.genre;
                     item.classList.toggle('inactive', !this.state.activeGenres.has(genre));
                 });
 
+                // Filter genre blocks
                 this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => {
                     const genre = block.dataset.genre;
                     block.classList.toggle('filtered', !this.state.activeGenres.has(genre));
                 });
                 
+                // Hide empty year columns
                 this.elements.timelineWrapper.querySelectorAll('.year-container').forEach(year => {
                     const visibleBlocks = year.querySelectorAll('.genre-block:not(.filtered)');
                     year.classList.toggle('filtered', visibleBlocks.length === 0);
@@ -845,6 +893,7 @@
             }
         };
 
+        // Bind 'this' for drag move/end methods to avoid context issues
         JazzTimeline.onDragMove = JazzTimeline.onDragMove.bind(JazzTimeline);
         JazzTimeline.onDragEnd = JazzTimeline.onDragEnd.bind(JazzTimeline);
 
