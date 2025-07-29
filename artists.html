@@ -123,14 +123,20 @@
         }
         .artist-placeholder svg { width: 50%; height: 50%; color: var(--text-muted); }
         
+        /* UPDATED: Artist Grid Layout */
         #artist-grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(1, 1fr); /* Mobile-first: 1 column */
             gap: 1.5rem;
         }
-        @media (min-width: 768px) {
+        @media (min-width: 640px) { /* sm: 2 columns */
             #artist-grid-container {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1024px) { /* lg: 3 columns */
+            #artist-grid-container {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
         
@@ -199,10 +205,11 @@
             transform: rotate(-2deg); display: inline-block;
             font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem;
         }
+        /* UPDATED: Dark mode color for known-for-box */
         .dark .known-for-box {
             border-color: var(--border-color);
             box-shadow: none;
-            color: var(--bg-main);
+            color: #FFFFFF;
         }
         
         .dropdown-container { position: relative; }
@@ -237,6 +244,44 @@
         .dropdown-list a:hover {
             background-color: var(--accent); color: var(--bg-main);
             transform: translateX(4px);
+        }
+
+        /* ADDED: Pagination Styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--text-main);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 0.25rem;
+        }
+        .dark .pagination-btn {
+            border-color: var(--border-color);
+        }
+        .pagination-btn:hover:not(:disabled) {
+            background-color: var(--accent);
+            color: #FFFFFF;
+            border-color: var(--accent);
+        }
+        .pagination-btn.active {
+            background-color: var(--accent);
+            color: #FFFFFF;
+            border-color: var(--accent);
+        }
+        .pagination-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
         }
     </style>
 </head>
@@ -296,10 +341,16 @@
                     <h2 class="section-header text-5xl">The Architects</h2>
                     <p class="text-center text-lg text-[var(--text-muted)] mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined an era.</p>
                     
-                    <!-- Instrument Filter Dropdown -->
-                    <div class="flex justify-center mb-8">
-                        <div class="w-full max-w-xs styled-select">
-                            <label for="instrument-filter" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-center">Filter by Instrument:</label>
+                    <!-- UPDATED: Filters Section -->
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-8 w-full max-w-3xl mx-auto">
+                        <!-- Search Input -->
+                        <div class="w-full sm:w-1/2">
+                            <label for="search-input" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">SEARCH BY NAME:</label>
+                            <input type="text" id="search-input" placeholder="e.g., Miles Davis" class="block w-full rounded-sm border-2 py-2 px-3 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold bg-[var(--bg-main)] border-[var(--text-main)] dark:border-[var(--border-color)] text-[var(--text-main)]">
+                        </div>
+                        <!-- Instrument Filter Dropdown -->
+                        <div class="w-full sm:w-1/2 styled-select">
+                            <label for="instrument-filter" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">FILTER BY INSTRUMENT:</label>
                             <select id="instrument-filter" class="block w-full rounded-sm border-2 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
                             </select>
                         </div>
@@ -309,6 +360,9 @@
                     <div id="artist-grid-container" class="min-h-[600px]">
                         <!-- Artist cards will be injected here -->
                     </div>
+
+                    <!-- ADDED: Pagination Container -->
+                    <div id="pagination-container" class="pagination-container"></div>
                 </div>
             </section>
         </main>
@@ -366,6 +420,8 @@
                 artistProfiles: {},
                 artistsData: [],
                 styleMatrix: {},
+                currentPage: 1,       // ADDED: For pagination
+                artistsPerPage: 18,   // ADDED: For pagination (3 cols x 6 rows)
             },
 
             // DOM Elements
@@ -374,6 +430,7 @@
             // Initialization
             init() {
                 this.cacheDOMElements();
+                // Bind all methods in the 'methods' object to the correct 'this' context
                 for (const key in this.methods) {
                     if (typeof this.methods[key] === 'function') {
                         this.methods[key] = this.methods[key].bind(this);
@@ -389,7 +446,9 @@
                     pageContent: document.getElementById('page-content'),
                     artistModal: document.getElementById('artist-modal'),
                     instrumentFilter: document.getElementById('instrument-filter'),
+                    searchInput: document.getElementById('search-input'), // ADDED
                     artistGridContainer: document.getElementById('artist-grid-container'),
+                    paginationContainer: document.getElementById('pagination-container'), // ADDED
                     mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
@@ -434,7 +493,8 @@
                 initializeAppUI() {
                     this.methods.processAndSortData();
                     this.methods.setupModals();
-                    this.methods.renderArtistGrid();
+                    this.methods.populateInstrumentFilter(this.state.artistsData); // Populate filter once
+                    this.methods.renderArtistGrid(); // Initial render
                     this.methods.setupMobileMenu();
                     this.methods.setupGeneralEventListeners();
                     this.methods.showPage();
@@ -556,33 +616,95 @@
                     document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeArtistModal(); } });
                 },
 
+                // UPDATED: Renders grid based on filters and current page
                 renderArtistGrid() {
-                    const { instrumentFilter, artistGridContainer } = this.elements;
-                    this.methods.populateInstrumentFilter(this.state.artistsData);
-
+                    const { instrumentFilter, searchInput, artistGridContainer } = this.elements;
+                    
                     const selectedInstrument = instrumentFilter.value;
-                    const filteredArtists = (selectedInstrument === 'all' ? [...this.state.artistsData] : this.state.artistsData.filter(artist => artist.instruments.includes(selectedInstrument)))
-                        .sort((a, b) => {
-                            if (a.tier !== b.tier) return a.tier - b.tier;
-                            return a.name.localeCompare(b.name);
-                        });
+                    const searchTerm = searchInput.value.toLowerCase().trim();
 
-                    artistGridContainer.innerHTML = '';
-                    filteredArtists.forEach(artist => {
-                        const card = document.createElement('div');
-                        card.className = 'artist-card';
-                        if (artist.tier === 1) card.classList.add('bandleader');
-                        if (artist.tier === 2) card.classList.add('influential-sideman');
-                        card.dataset.artistName = artist.name;
-                        card.innerHTML = `
-                            <div class="h-56 artist-photo-container">
-                                <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
-                            </div>
-                            <div class="p-3">
-                                <h4 class="font-bold text-base text-[var(--text-main)] truncate">${artist.name}</h4>
-                            </div>`;
-                        artistGridContainer.appendChild(card);
+                    // 1. Filter artists by search term and instrument
+                    let filteredArtists = this.state.artistsData.filter(artist => {
+                        const nameMatch = artist.name.toLowerCase().includes(searchTerm);
+                        const instrumentMatch = (selectedInstrument === 'all' || artist.instruments.includes(selectedInstrument));
+                        return nameMatch && instrumentMatch;
                     });
+
+                    // 2. Sort the filtered artists
+                    filteredArtists.sort((a, b) => {
+                        if (a.tier !== b.tier) return a.tier - b.tier;
+                        return a.name.localeCompare(b.name);
+                    });
+
+                    // 3. Paginate the results
+                    const startIndex = (this.state.currentPage - 1) * this.state.artistsPerPage;
+                    const endIndex = startIndex + this.state.artistsPerPage;
+                    const paginatedArtists = filteredArtists.slice(startIndex, endIndex);
+
+                    // 4. Render artist cards to the DOM
+                    artistGridContainer.innerHTML = '';
+                    if (paginatedArtists.length === 0) {
+                        artistGridContainer.innerHTML = `<p class="text-[var(--text-muted)] col-span-full text-center py-10">No artists found matching your criteria.</p>`;
+                    } else {
+                        paginatedArtists.forEach(artist => {
+                            const card = document.createElement('div');
+                            card.className = 'artist-card';
+                            if (artist.tier === 1) card.classList.add('bandleader');
+                            if (artist.tier === 2) card.classList.add('influential-sideman');
+                            card.dataset.artistName = artist.name;
+                            card.innerHTML = `
+                                <div class="h-56 artist-photo-container">
+                                    <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                </div>
+                                <div class="p-3">
+                                    <h4 class="font-bold text-base text-[var(--text-main)] truncate">${artist.name}</h4>
+                                </div>`;
+                            artistGridContainer.appendChild(card);
+                        });
+                    }
+                    
+                    // 5. Update pagination controls
+                    this.methods.renderPagination(filteredArtists.length);
+                },
+
+                // ADDED: Renders pagination controls
+                renderPagination(totalArtists) {
+                    const { paginationContainer } = this.elements;
+                    const { currentPage, artistsPerPage } = this.state;
+                    paginationContainer.innerHTML = '';
+
+                    const totalPages = Math.ceil(totalArtists / artistsPerPage);
+                    if (totalPages <= 1) return; // Don't show pagination if there's only one page
+
+                    // Previous Button
+                    const prevButton = document.createElement('button');
+                    prevButton.textContent = '« Prev';
+                    prevButton.className = 'pagination-btn';
+                    prevButton.disabled = currentPage === 1;
+                    prevButton.addEventListener('click', () => {
+                        this.state.currentPage--;
+                        this.methods.renderArtistGrid();
+                        window.scrollTo(0, this.elements.artistGridContainer.offsetTop - 100);
+                    });
+                    paginationContainer.appendChild(prevButton);
+
+                    // Page Info Span
+                    const pageInfo = document.createElement('span');
+                    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                    pageInfo.className = 'p-2 text-sm font-semibold text-[var(--text-muted)]';
+                    paginationContainer.appendChild(pageInfo);
+
+                    // Next Button
+                    const nextButton = document.createElement('button');
+                    nextButton.textContent = 'Next »';
+                    nextButton.className = 'pagination-btn';
+                    nextButton.disabled = currentPage === totalPages;
+                    nextButton.addEventListener('click', () => {
+                        this.state.currentPage++;
+                        this.methods.renderArtistGrid();
+                        window.scrollTo(0, this.elements.artistGridContainer.offsetTop - 100);
+                    });
+                    paginationContainer.appendChild(nextButton);
                 },
                 
                 setupMobileMenu() {
@@ -605,10 +727,15 @@
                     });
                 },
 
+                // UPDATED: Event listeners for new search input
                 setupGeneralEventListeners() {
-                    this.elements.instrumentFilter.addEventListener('change', () => {
+                    const handleFilterChange = () => {
+                        this.state.currentPage = 1; // Reset to first page on any filter change
                         this.methods.renderArtistGrid();
-                    });
+                    };
+
+                    this.elements.instrumentFilter.addEventListener('change', handleFilterChange);
+                    this.elements.searchInput.addEventListener('input', handleFilterChange);
                     
                     this.elements.artistGridContainer.addEventListener('click', (e) => {
                         const card = e.target.closest('.artist-card');
@@ -679,7 +806,7 @@
                             <div class="w-full sm:w-2/3">
                                 ${artistProfile.profile && artistProfile.profile !== 'No profile available.' ? `<h4 class="text-2xl text-[var(--text-main)] mb-2">Profile</h4><p class="text-base text-[var(--text-muted)] leading-relaxed mb-4">${artistProfile.profile}</p>` : ''}
                                 <h4 class="text-2xl text-[var(--text-main)] mb-3">Key Album Appearances</h4>
-                                <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml}</ul>
+                                <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml || '<li class="text-[var(--text-muted)]">No key appearances found in timeline.</li>'}</ul>
                             </div>
                         </div>
                     `;
