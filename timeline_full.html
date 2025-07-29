@@ -234,16 +234,23 @@
             gap: 1rem;
         }
         
+        #era-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
         #current-era-display {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.5rem;
             flex-shrink: 0;
-            width: 280px;
             text-align: left;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             transition: opacity 0.3s, color 0.3s;
+            max-width: 280px;
         }
         
         #genre-legend {
@@ -406,8 +413,8 @@
 
 
         /* Responsive Styles */
-        @media (max-width: 1024px) {
-            #current-era-display { display: none; }
+        @media (max-width: 1200px) {
+            #era-controls { display: none; }
         }
         @media (max-width: 767px) {
             .year-container { width: 300px; margin: 0 0.5rem; }
@@ -461,24 +468,26 @@
 
 
     <div id="main-container">
-        <!-- Controls Header -->
+        <!-- ** MODIFIED CONTROLS HEADER ** -->
         <header id="controls-header">
-            <!-- Sticky Era Title -->
-            <div id="current-era-display"></div>
+            <!-- Era Display and Jump Controls -->
+            <div id="era-controls">
+                <div id="current-era-display"></div>
+                <div id="era-jump-container" class="dropdown-container">
+                    <button class="dropdown-btn">
+                        Jump to Era
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <div id="era-jump-list" class="dropdown-list"></div>
+                </div>
+            </div>
             
             <!-- Genre Filters -->
             <div id="genre-legend">
                 <!-- Genre buttons will be injected here by JavaScript -->
             </div>
             
-            <!-- Jump to Era Dropdown -->
-            <div id="era-jump-container" class="dropdown-container">
-                <button class="dropdown-btn">
-                    Jump to Era
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                </button>
-                <div id="era-jump-list" class="dropdown-list"></div>
-            </div>
+            <!-- Mobile View Toggle -->
             <label for="view-toggle-mobile" class="toggle-switch lg:hidden">
                 <input type="checkbox" id="view-toggle-mobile" class="hidden">
                 <span class="toggle-switch-slider"></span>
@@ -854,7 +863,6 @@
                         this.elements.themeIconLight.classList.remove('hidden');
                         this.elements.themeIconDark.classList.add('hidden');
                     }
-                    // Update era color after theme change
                     this.updateStickyEraDisplay(this.state.currentStickyEra);
                 };
                 
@@ -894,6 +902,7 @@
                 this.renderTimeline();
             },
 
+            // ** MODIFIED onEraJump **
             onEraJump(e) {
                 e.preventDefault();
                 const target = e.target.closest('a[data-year]');
@@ -903,8 +912,8 @@
                 const yearContainer = document.getElementById(`year-${year}`);
                 if (yearContainer) {
                     const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
-                    const elementPosition = yearContainer.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + this.elements.timelineContainer.scrollTop - headerOffset - 16; // 16px padding
+                    // Use offsetTop for a more reliable position relative to the scroll parent
+                    const offsetPosition = yearContainer.offsetTop - headerOffset - 8; // 8px padding
 
                     this.elements.timelineContainer.scrollTo({
                         top: offsetPosition,
@@ -914,7 +923,7 @@
             },
 
             onDragStart(e) {
-                if (e.target.closest('.album-card, .legend-item')) return;
+                if (e.target.closest('.album-card, .legend-item, .dropdown-container')) return;
                 this.state.isDragging = true;
                 this.elements.timelineContainer.style.cursor = 'grabbing';
                 document.body.style.cursor = 'grabbing';
@@ -1029,9 +1038,11 @@
             // --- STICKY ERA OBSERVER ---
             setupStickyEraObserver() {
                 const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
+                // This rootMargin creates a 1px thin line just below the header to act as a trigger.
+                const rootMarginTop = headerOffset + 1;
                 const observerOptions = {
                     root: this.elements.timelineContainer,
-                    rootMargin: `-${headerOffset}px 0px -90% 0px`,
+                    rootMargin: `-${rootMarginTop}px 0px -${this.elements.timelineContainer.clientHeight - rootMarginTop}px 0px`,
                     threshold: 0
                 };
 
@@ -1044,7 +1055,6 @@
                 const visibleEntries = entries.filter(e => e.isIntersecting);
 
                 if (visibleEntries.length > 0) {
-                    visibleEntries.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
                     const topYear = visibleEntries[0].target.dataset.year;
                     const currentEra = this.state.eras.find(e => topYear >= e.startYear && e.endYear >= topYear);
                     this.updateStickyEraDisplay(currentEra);
