@@ -104,7 +104,7 @@
 
         #timeline-wrapper {
             display: inline-flex;
-            padding: 2rem 1rem;
+            padding: 0.5rem 1rem 2rem 1rem; /* Reduced top padding */
             min-height: 100%;
             align-items: flex-start;
         }
@@ -383,28 +383,37 @@
         .dropdown-btn:hover { background-color: var(--accent); color: white; border-color: var(--accent); }
         .dropdown-list {
             position: absolute;
-            top: 100%;
+            top: calc(100% + 0.5rem);
             right: 0;
-            margin-top: 0.5rem;
             background-color: var(--bg-main);
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--text-main);
             border-radius: 0.25rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             z-index: 50;
-            width: 250px;
+            width: 280px;
             overflow: hidden;
-            display: none;
-            max-height: 50vh;
-            overflow-y: auto;
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
-        .dropdown-container:hover .dropdown-list { display: block; }
+        html.dark .dropdown-list { border-color: var(--border-color); }
+        .dropdown-container.open .dropdown-list {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
         .dropdown-list a, .dropdown-list button {
             display: block;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1rem;
             font-size: 0.9rem;
             transition: background-color 0.2s;
             width: 100%;
             text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .dropdown-list a:last-child, .dropdown-list button:last-child {
+            border-bottom: none;
         }
         .dropdown-list a:hover, .dropdown-list button:hover {
             background-color: var(--accent);
@@ -575,6 +584,7 @@
                 closeAlbumModalBtn: document.getElementById('close-album-modal'),
                 viewToggle: document.getElementById('view-toggle'),
                 viewToggleMobile: document.getElementById('view-toggle-mobile'),
+                eraJumpContainer: document.getElementById('era-jump-container'),
                 eraJumpList: document.getElementById('era-jump-list'),
                 currentEraDisplay: document.getElementById('current-era-display'),
             },
@@ -884,7 +894,10 @@
                 this.elements.viewToggle.addEventListener('change', this.onViewToggle.bind(this));
                 this.elements.viewToggleMobile.addEventListener('change', this.onViewToggle.bind(this));
 
+                this.elements.eraJumpContainer.querySelector('.dropdown-btn').addEventListener('click', this.onEraDropdownToggle.bind(this));
                 this.elements.eraJumpList.addEventListener('click', this.onEraJump.bind(this));
+                
+                window.addEventListener('click', this.closeAllDropdowns.bind(this));
                 window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
                 window.addEventListener('load', this.calculateHeaderHeight.bind(this));
             },
@@ -902,7 +915,17 @@
                 this.renderTimeline();
             },
 
-            // ** MODIFIED onEraJump **
+            onEraDropdownToggle(e) {
+                e.stopPropagation();
+                this.elements.eraJumpContainer.classList.toggle('open');
+            },
+
+            closeAllDropdowns(e) {
+                if (!this.elements.eraJumpContainer.contains(e.target)) {
+                    this.elements.eraJumpContainer.classList.remove('open');
+                }
+            },
+
             onEraJump(e) {
                 e.preventDefault();
                 const target = e.target.closest('a[data-year]');
@@ -912,14 +935,14 @@
                 const yearContainer = document.getElementById(`year-${year}`);
                 if (yearContainer) {
                     const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
-                    // Use offsetTop for a more reliable position relative to the scroll parent
-                    const offsetPosition = yearContainer.offsetTop - headerOffset - 8; // 8px padding
+                    const offsetPosition = yearContainer.offsetTop - headerOffset - 16; 
 
                     this.elements.timelineContainer.scrollTo({
                         top: offsetPosition,
                         behavior: 'smooth'
                     });
                 }
+                this.elements.eraJumpContainer.classList.remove('open');
             },
 
             onDragStart(e) {
@@ -1038,11 +1061,10 @@
             // --- STICKY ERA OBSERVER ---
             setupStickyEraObserver() {
                 const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
-                // This rootMargin creates a 1px thin line just below the header to act as a trigger.
                 const rootMarginTop = headerOffset + 1;
                 const observerOptions = {
                     root: this.elements.timelineContainer,
-                    rootMargin: `-${rootMarginTop}px 0px -${this.elements.timelineContainer.clientHeight - rootMarginTop}px 0px`,
+                    rootMargin: `-${rootMarginTop}px 0px -${this.elements.timelineContainer.clientHeight - rootMarginTop - 1}px 0px`,
                     threshold: 0
                 };
 
