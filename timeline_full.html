@@ -620,7 +620,6 @@
             },
             
             // --- DYNAMIC CALCULATIONS ---
-            // MODIFIED: This function now correctly offsets the timeline content
             calculateHeaderHeight() {
                 const mainNav = document.querySelector('.sticky.top-0.z-50');
                 const controlsHeader = this.elements.controlsHeader;
@@ -951,6 +950,7 @@
                 }
             },
 
+            // MODIFIED: This function now scrolls horizontally instead of vertically.
             onEraJump(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -961,12 +961,12 @@
                 const yearContainer = document.getElementById(`year-${year}`);
                 
                 if (yearContainer) {
-                    // The offset is now 0 because the sticky header sticks to the top of the padded container
-                    const headerOffset = 0; 
-                    const offsetPosition = yearContainer.offsetTop - headerOffset; 
+                    // Get the horizontal position of the year container relative to its offset parent.
+                    const offsetPosition = yearContainer.offsetLeft;
 
+                    // Scroll the timeline container horizontally to the target year's position.
                     this.elements.timelineContainer.scrollTo({
-                        top: offsetPosition,
+                        left: offsetPosition,
                         behavior: 'smooth'
                     });
                 }
@@ -1087,7 +1087,6 @@
             },
 
             // --- STICKY ERA OBSERVER ---
-            // MODIFIED: This function now correctly calculates the observer margin
             setupStickyEraObserver() {
                 // The true offset is the padding-top of the scroll container, which we set dynamically.
                 const headerOffset = parseFloat(this.elements.timelineContainer.style.paddingTop) || 112;
