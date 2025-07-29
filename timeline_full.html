@@ -13,27 +13,28 @@
     
     <!-- Custom CSS Styling -->
     <style>
-        /* Light Theme (Default) */
+        /* MODIFIED: Updated light theme with subtle gray tones and new genre colors */
         :root {
-            --bg-main: #f5f5f4;
-            --bg-secondary: #e7e5e4;
-            --bg-header: rgba(245,245,244,0.8);
-            --text-main: #1c1917;
-            --text-muted: #44403c;
-            --border-color: #e7e5e4;
+            --bg-main: #e4e4e7; /* zinc-200 */
+            --bg-secondary: #d4d4d8; /* zinc-300 */
+            --bg-header: rgba(228, 228, 231, 0.8);
+            --text-main: #18181b; /* zinc-900 */
+            --text-muted: #52525b; /* zinc-600 */
+            --border-color: #d4d4d8; /* zinc-300 */
             --accent: #f97316;
             --yellow-accent: #facc15;
+            --sticky-top-offset: 112px; /* Default fallback value */
 
             /* Genre Colors */
             --genre-bebop: #a0522d;
-            --genre-hard-bop: #d8b4fe;
-            --genre-cool-jazz: #93c5fd;
-            --genre-modal-jazz: #a7f3d0;
-            --genre-post-bop: #fed7aa;
-            --genre-free-jazz: #fca5a5;
-            --genre-avant-garde: #fecdd3;
-            --genre-jazz-fusion: #a5f3fc;
-            --genre-default: #e7e5e4;
+            --genre-hard-bop: #8b5cf6;
+            --genre-cool-jazz: #3b82f6;
+            --genre-modal-jazz: #10b981;
+            --genre-post-bop: #f59e0b;
+            --genre-free-jazz: #ef4444;
+            --genre-avant-garde: #ec4899;
+            --genre-jazz-fusion: #06b6d4;
+            --genre-default: #d4d4d8;
         }
 
         /* Dark Theme */
@@ -45,15 +46,15 @@
             --text-muted: #a8a29e;
             --border-color: #44403c;
 
-            /* Dark Mode Genre Colors */
+            /* MODIFIED: Adjusted dark theme genre colors for consistency */
             --genre-bebop: #b97245; 
-            --genre-hard-bop: #5c3c92;
-            --genre-cool-jazz: #2c599d;
-            --genre-modal-jazz: #1a7451;
-            --genre-post-bop: #9a642a;
-            --genre-free-jazz: #992828;
-            --genre-avant-garde: #9d3363;
-            --genre-jazz-fusion: #2c7a84;
+            --genre-hard-bop: #6d28d9;
+            --genre-cool-jazz: #2563eb;
+            --genre-modal-jazz: #059669;
+            --genre-post-bop: #d97706;
+            --genre-free-jazz: #dc2626;
+            --genre-avant-garde: #db2777;
+            --genre-jazz-fusion: #0891b2;
         }
 
         /* Base body styling */
@@ -136,7 +137,6 @@
              border-left: none;
         }
 
-        /* Sticky Year Header */
         .year-header {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2.5rem;
@@ -144,7 +144,7 @@
             margin-bottom: 1.5rem;
             font-weight: 900;
             position: sticky;
-            top: 112px;
+            top: var(--sticky-top-offset);
             background-color: var(--bg-main);
             z-index: 30;
             width: calc(100% + 3rem);
@@ -167,6 +167,7 @@
             margin-bottom: 0;
         }
 
+        /* MODIFIED: Updated genre label styling for better contrast */
         .genre-label {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.1rem;
@@ -174,12 +175,21 @@
             display: inline-block;
             margin-bottom: 1rem;
             color: var(--text-main);
-            border: 2px solid var(--text-main);
+            border: 2px solid transparent; /* Default to transparent border */
             text-align: center;
             border-radius: 9999px;
+            transition: all 0.2s;
+        }
+        /* When JS adds a background color, make the text white for contrast */
+        .genre-label[style*="background-color"] {
+            color: #FFFFFF;
+            border-color: rgba(0,0,0,0.1);
         }
         html.dark .genre-label {
             border-color: var(--border-color);
+        }
+        html.dark .genre-label[style*="background-color"] {
+             border-color: rgba(255,255,255,0.2);
         }
         
         .album-grid {
@@ -559,6 +569,7 @@
             async init() {
                 this.setupTheme();
                 this.bindEvents();
+                this.calculateHeaderHeight();
                 try {
                     await this.fetchData();
                     this.processData();
@@ -571,10 +582,21 @@
                     this.elements.loader.style.opacity = '0';
                     setTimeout(() => {
                         this.elements.loader.style.display = 'none';
+                        this.calculateHeaderHeight(); // Recalculate after content is loaded
                     }, 500);
                 }
             },
             
+            // --- DYNAMIC CALCULATIONS ---
+            calculateHeaderHeight() {
+                const mainNav = document.querySelector('.sticky.top-0.z-50');
+                const controlsHeader = this.elements.controlsHeader;
+                if (mainNav && controlsHeader) {
+                    const totalHeight = mainNav.offsetHeight + controlsHeader.offsetHeight;
+                    document.documentElement.style.setProperty('--sticky-top-offset', `${totalHeight}px`);
+                }
+            },
+
             // --- DATA FETCHING ---
             async fetchData() {
                 const [albumRes, genreRes] = await Promise.all([
@@ -800,6 +822,7 @@
                 this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
+                window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
             },
 
             onDragStart(e) {
