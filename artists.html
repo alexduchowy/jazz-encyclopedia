@@ -109,7 +109,6 @@
         .artist-card.influential-sideman { box-shadow: 4px 4px 0px var(--yellow-accent); }
         .dark .artist-card.influential-sideman { box-shadow: none; border-color: var(--yellow-accent); }
         
-        /* UPDATED: Card photo height */
         .artist-card .artist-photo-container { height: 192px; width: 100%; }
         .artist-card img {
               width: 100%; height: 100%;
@@ -124,27 +123,14 @@
         }
         .artist-placeholder svg { width: 50%; height: 50%; color: var(--text-muted); }
         
-        /* UPDATED: Artist Grid Layout */
         #artist-grid-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Start with 2 columns on mobile */
-            gap: 1rem; /* Slightly smaller gap */
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
         }
-        @media (min-width: 640px) { /* sm: 3 columns */
-            #artist-grid-container {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        @media (min-width: 768px) { /* md: 4 columns */
-            #artist-grid-container {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        @media (min-width: 1280px) { /* xl: 6 columns */
-            #artist-grid-container {
-                grid-template-columns: repeat(6, 1fr);
-            }
-        }
+        @media (min-width: 640px) { #artist-grid-container { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 768px) { #artist-grid-container { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 1280px) { #artist-grid-container { grid-template-columns: repeat(6, 1fr); } }
         
         .styled-select select {
             -webkit-appearance: none; -moz-appearance: none; appearance: none;
@@ -251,7 +237,6 @@
             transform: translateX(4px);
         }
 
-        /* ADDED: Pagination Styles */
         .pagination-container {
             display: flex;
             justify-content: center;
@@ -271,9 +256,7 @@
             transition: all 0.2s ease;
             border-radius: 0.25rem;
         }
-        .dark .pagination-btn {
-            border-color: var(--border-color);
-        }
+        .dark .pagination-btn { border-color: var(--border-color); }
         .pagination-btn:hover:not(:disabled) {
             background-color: var(--accent);
             color: #FFFFFF;
@@ -287,6 +270,80 @@
         .pagination-btn:disabled {
             cursor: not-allowed;
             opacity: 0.5;
+        }
+
+        /* ADDED: Banner Styles */
+        .banner-section {
+            position: relative;
+            width: 100%;
+            height: 35vh;
+            max-height: 200px;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            border-bottom: 4px solid var(--text-main);
+        }
+        .dark .banner-section { border-bottom-color: var(--border-color); }
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.3;
+            animation: banner-fade-in 2s ease-out forwards;
+        }
+        @keyframes banner-fade-in {
+            from { opacity: 0; transform: scale(1.05); }
+            to { opacity: 0.3; transform: scale(1); }
+        }
+        .banner-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1rem;
+            color: #f5f5f4;
+        }
+        .typewriter h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.75rem;
+            max-width: 90vw;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            overflow: hidden;
+            border-right: .15em solid var(--accent);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .1em;
+            animation:
+                typing 3.5s steps(40, end),
+                blink-caret .75s step-end infinite;
+        }
+        .banner-subtitle {
+            font-size: 0.9rem;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent); }
+        }
+        @media (min-width: 768px) {
+            .banner-section {
+                height: 30vh;
+                max-height: 250px;
+            }
+            .typewriter h2 {
+                font-size: 3rem;
+                max-width: none;
+            }
+            .banner-subtitle {
+                font-size: 1.125rem;
+            }
         }
     </style>
 </head>
@@ -340,13 +397,22 @@
 
 
         <main>
+            <!-- ADDED: Banner Section -->
+            <section class="banner-section">
+                <img src="images/artists-banner.jpg" alt="Jazz musicians on stage" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop';">
+                <div class="banner-overlay">
+                    <div class="typewriter">
+                        <h2>The Architects</h2>
+                    </div>
+                    <p class="banner-subtitle text-stone-300 max-w-3xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Explore the musicians who defined an era.</p>
+                </div>
+            </section>
+            
             <!-- Key Artists Grid Section -->
-            <section id="artists" class="py-16 sm:py-20 bg-[var(--bg-secondary)] border-y-4 border-[var(--text-main)] dark:border-[var(--border-color)]">
+            <section id="artists" class="py-16 sm:py-20 bg-[var(--bg-secondary)]">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 class="section-header text-5xl">The Architects</h2>
-                    <p class="text-center text-lg text-[var(--text-muted)] mb-12 max-w-3xl mx-auto italic">Explore the musicians who defined an era.</p>
                     
-                    <!-- UPDATED: Filters Section -->
+                    <!-- Filters Section -->
                     <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-8 w-full max-w-3xl mx-auto">
                         <!-- Search Input -->
                         <div class="w-full sm:w-1/2">
@@ -366,7 +432,7 @@
                         <!-- Artist cards will be injected here -->
                     </div>
 
-                    <!-- ADDED: Pagination Container -->
+                    <!-- Pagination Container -->
                     <div id="pagination-container" class="pagination-container"></div>
                 </div>
             </section>
@@ -426,7 +492,7 @@
                 artistsData: [],
                 styleMatrix: {},
                 currentPage: 1,
-                artistsPerPage: 24,   // UPDATED: For pagination (6 cols x 4 rows)
+                artistsPerPage: 24,
             },
 
             // DOM Elements
@@ -435,7 +501,6 @@
             // Initialization
             init() {
                 this.cacheDOMElements();
-                // Bind all methods in the 'methods' object to the correct 'this' context
                 for (const key in this.methods) {
                     if (typeof this.methods[key] === 'function') {
                         this.methods[key] = this.methods[key].bind(this);
@@ -498,8 +563,8 @@
                 initializeAppUI() {
                     this.methods.processAndSortData();
                     this.methods.setupModals();
-                    this.methods.populateInstrumentFilter(this.state.artistsData); // Populate filter once
-                    this.methods.renderArtistGrid(); // Initial render
+                    this.methods.populateInstrumentFilter(this.state.artistsData);
+                    this.methods.renderArtistGrid();
                     this.methods.setupMobileMenu();
                     this.methods.setupGeneralEventListeners();
                     this.methods.showPage();
@@ -627,25 +692,21 @@
                     const selectedInstrument = instrumentFilter.value;
                     const searchTerm = searchInput.value.toLowerCase().trim();
 
-                    // 1. Filter artists by search term and instrument
                     let filteredArtists = this.state.artistsData.filter(artist => {
                         const nameMatch = artist.name.toLowerCase().includes(searchTerm);
                         const instrumentMatch = (selectedInstrument === 'all' || artist.instruments.includes(selectedInstrument));
                         return nameMatch && instrumentMatch;
                     });
 
-                    // 2. Sort the filtered artists
                     filteredArtists.sort((a, b) => {
                         if (a.tier !== b.tier) return a.tier - b.tier;
                         return a.name.localeCompare(b.name);
                     });
 
-                    // 3. Paginate the results
                     const startIndex = (this.state.currentPage - 1) * this.state.artistsPerPage;
                     const endIndex = startIndex + this.state.artistsPerPage;
                     const paginatedArtists = filteredArtists.slice(startIndex, endIndex);
 
-                    // 4. Render artist cards to the DOM
                     artistGridContainer.innerHTML = '';
                     if (paginatedArtists.length === 0) {
                         artistGridContainer.innerHTML = `<p class="text-[var(--text-muted)] col-span-full text-center py-10">No artists found matching your criteria.</p>`;
@@ -656,7 +717,6 @@
                             if (artist.tier === 1) card.classList.add('bandleader');
                             if (artist.tier === 2) card.classList.add('influential-sideman');
                             card.dataset.artistName = artist.name;
-                            // UPDATED: Removed h-56 class, changed text-base to text-sm
                             card.innerHTML = `
                                 <div class="artist-photo-container">
                                     <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
@@ -668,7 +728,6 @@
                         });
                     }
                     
-                    // 5. Update pagination controls
                     this.methods.renderPagination(filteredArtists.length);
                 },
 
