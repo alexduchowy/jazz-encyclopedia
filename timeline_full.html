@@ -13,7 +13,7 @@
     
     <!-- Custom CSS Styling -->
     <style>
-        /* MODIFIED: Updated light theme with a three-tone gray palette */
+        /* Light Theme with a three-tone gray palette */
         :root {
             --bg-main: #e4e4e7; /* zinc-200 - Darker background for timeline content */
             --bg-secondary: #f4f4f5; /* zinc-100 - Mid-tone for headers/filters */
@@ -575,6 +575,7 @@
             async init() {
                 this.setupTheme();
                 this.bindEvents();
+                // MODIFIED: Calculate height on init and after full load for robustness
                 this.calculateHeaderHeight();
                 try {
                     await this.fetchData();
@@ -589,7 +590,7 @@
                     setTimeout(() => {
                         this.elements.loader.style.display = 'none';
                         this.calculateHeaderHeight(); // Recalculate after content is loaded
-                    }, 500);
+                    }, 100); // A small delay for rendering to settle
                 }
             },
             
@@ -829,6 +830,10 @@
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
                 window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
+                // MODIFIED: Use window.onload for the most reliable timing
+                window.onload = () => {
+                    this.calculateHeaderHeight();
+                };
             },
 
             onDragStart(e) {
