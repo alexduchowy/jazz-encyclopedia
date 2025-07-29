@@ -183,7 +183,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
-            justify-content: center;
+            justify-content: flex-start; /* Left-aligned */
         }
 
         /* Album Card - Reverted to original compact style */
@@ -193,12 +193,12 @@
             border-radius: 0.25rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             border: 2px solid var(--text-main);
-            /* Special top border for genre color */
             border-top-width: 6px;
             border-top-color: var(--album-genre-color, var(--text-main));
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            display: block; /* Make the <a> tag a block element */
         }
         html.dark .album-card {
             border-color: var(--border-color);
@@ -315,36 +315,37 @@
             border-radius: 0.25rem;
         }
         
-        /* Header Controls */
+        /* Header Controls - Now a single line */
         #controls-header {
             position: fixed;
             top: 64px; /* Position below main nav header */
             left: 0;
             width: 100%;
-            padding: 0.75rem 1.5rem;
+            padding: 0.5rem 1rem; /* Reduced padding */
             background-color: var(--bg-main);
             border-bottom: 1px solid var(--border-color);
             z-index: 50;
             display: flex;
-            justify-content: flex-end; /* Align controls to the right */
             align-items: center;
+            overflow: hidden; /* Hide overflow from the container */
         }
         
-        /* Genre Legend */
+        /* Genre Legend - Now a horizontally scrolling container */
         #genre-legend {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem 1rem;
-            background-color: var(--bg-secondary);
-            padding: 0.75rem;
-            border-radius: 0.25rem;
-            border: 1px solid var(--border-color);
-            max-width: 80%;
+            flex-wrap: nowrap; /* Prevent wrapping */
+            gap: 0.75rem;
             align-items: center;
+            overflow-x: auto; /* Enable horizontal scroll */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+            padding-bottom: 1rem; /* Add padding to make space for scrollbar without it being visible */
+            margin-bottom: -1rem; /* Counteract the padding */
         }
-        html.dark #genre-legend {
-             background-color: var(--bg-secondary);
+        #genre-legend::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
         }
+
         .legend-item {
             display: flex;
             align-items: center;
@@ -353,15 +354,22 @@
             font-weight: 600;
             cursor: pointer;
             transition: opacity 0.2s;
-            padding: 0.25rem 0.5rem;
+            padding: 0.25rem 0.75rem;
             border-radius: 9999px;
-            border: 1px solid transparent;
+            border: 1px solid var(--text-muted);
+            background-color: var(--bg-secondary);
+            flex-shrink: 0; /* Prevent items from shrinking */
         }
         .legend-item:hover {
-            border-color: var(--text-muted);
+            border-color: var(--accent);
+        }
+        .legend-item.active {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
         }
         .legend-item.inactive {
-            opacity: 0.4;
+            opacity: 0.5;
         }
         .legend-color-swatch {
             width: 0.75rem;
@@ -371,24 +379,22 @@
             flex-shrink: 0;
         }
         #show-all-btn {
-            background: none;
+            background: var(--bg-secondary);
             border: 1px solid var(--text-muted);
             color: var(--text-muted);
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             font-weight: bold;
             border-radius: 99px;
-            padding: 0.1rem 0.6rem;
+            padding: 0.25rem 0.75rem;
             cursor: pointer;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
-        #show-all-btn:hover {
+        #show-all-btn:hover, #show-all-btn.active {
             background-color: var(--accent);
             color: white;
             border-color: var(--accent);
         }
-        
-        /* Mobile Filter Dropdown */
-        #mobile-filter-btn { display: none; }
         
         /* Loader */
         #loader {
@@ -417,37 +423,8 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Responsive Styles */
-        @media (max-width: 1023px) {
-            .year-container { width: 420px; }
-            #genre-legend { display: none; }
-            #mobile-filter-btn {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                background-color: var(--bg-secondary);
-                border: 1px solid var(--border-color);
-                padding: 0.5rem 1rem;
-                border-radius: 0.25rem;
-                font-size: 0.9rem;
-                font-weight: bold;
-            }
-            #controls-header { justify-content: space-between; }
-            .back-button-container { display: none; } /* Hide desktop back button */
-            #genre-legend.mobile-visible {
-                display: flex;
-                position: absolute;
-                top: 110%;
-                right: 0;
-                width: 280px;
-                max-width: 100%;
-                flex-direction: column;
-                align-items: flex-start;
-                z-index: 60;
-            }
-        }
         @media (max-width: 767px) {
             .year-container { width: 220px; margin: 0 0.5rem;}
-            #controls-header { padding: 0.75rem 1rem; }
             #timeline-wrapper { padding-left: 0.5rem; padding-right: 0.5rem; }
         }
 
@@ -478,6 +455,11 @@
                         <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
+                    <div class="md:hidden ml-2">
+                         <a href="timeline.html" class="nav-link p-2 rounded-md font-medium text-sm flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        </a>
+                    </div>
                 </div>
             </nav>
         </header>
@@ -487,22 +469,8 @@
     <div id="main-container">
         <!-- Header for Controls -->
         <header id="controls-header">
-             <div class="md:hidden">
-                 <a href="timeline.html" class="nav-link px-3 py-2 rounded-md font-medium text-sm flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                    Back
-                </a>
-            </div>
-            <div class="flex items-center">
-                <div class="relative">
-                    <button id="mobile-filter-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.572a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" /></svg>
-                        Filter Genres
-                    </button>
-                    <div id="genre-legend">
-                        <!-- Legend items will be injected here -->
-                    </div>
-                </div>
+            <div id="genre-legend">
+                <!-- Legend items will be injected here -->
             </div>
         </header>
 
@@ -529,6 +497,8 @@
                 isDragging: false,
                 startX: 0,
                 scrollLeft: 0,
+                clickTimer: null, // For handling single vs double clicks
+                isAllGenresActive: true,
             },
 
             // --- DOM ELEMENTS ---
@@ -544,7 +514,6 @@
                 themeToggle: document.getElementById('theme-toggle'),
                 themeIconLight: document.getElementById('theme-icon-light'),
                 themeIconDark: document.getElementById('theme-icon-dark'),
-                mobileFilterBtn: document.getElementById('mobile-filter-btn'),
             },
 
             // --- INITIALIZATION ---
@@ -555,7 +524,7 @@
                     await this.fetchData();
                     this.processData();
                     this.renderGenreLegend();
-                    this.renderTimeline();
+                    this.filterTimeline(); // Initial render based on filters
                 } catch (error) {
                     console.error("Initialization failed:", error);
                     this.elements.loader.innerHTML = "<p>Failed to load timeline data.</p>";
@@ -567,7 +536,6 @@
 
             // --- DATA FETCHING ---
             async fetchData() {
-                 // Using absolute paths for JSON files as per timeline.html
                 const [albumRes, genreRes] = await Promise.all([
                     fetch('/database.json'),
                     fetch('/genres.json')
@@ -580,12 +548,12 @@
                 
                 this.state.albums = albumData.albums;
                 this.state.genres = this.buildGenreColorMap(genreData);
+                // Initially, all genres are active
                 this.state.activeGenres = new Set(Object.keys(this.state.genres));
             },
             
             buildGenreColorMap(genreData) {
                 const colorMap = {};
-                // Use the genre data directly to get colors
                 if (genreData && genreData.genres) {
                      Object.entries(genreData.genres).forEach(([name, data]) => {
                         colorMap[name] = data.color;
@@ -594,7 +562,6 @@
                         }
                     });
                 }
-                // Fallbacks using CSS variables
                 colorMap['Bebop'] = colorMap['Bebop'] || 'var(--genre-bebop)';
                 colorMap['Hard Bop'] = colorMap['Hard Bop'] || 'var(--genre-hard-bop)';
                 colorMap['Cool Jazz'] = colorMap['Cool Jazz'] || 'var(--genre-cool-jazz)';
@@ -615,6 +582,7 @@
                         album.genres = album.genres.split(',').map(g => g.trim());
                     }
                      album.uniqueId = `album-${slug(album.artist)}-${slug(album.albumTitle)}`;
+                     album.link = `/album/${album.uniqueId}`; // Add link property
                 });
 
                 const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
@@ -632,7 +600,6 @@
                         album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
                         album.sortingDate = album.pivotalTracks[0].recordingDate;
                     } else {
-                        // Use year for sorting if no specific date
                         album.sortingDate = `${album.year}-01-01`;
                     }
                 });
@@ -640,10 +607,10 @@
                 this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
 
                 const processedAlbumIds = new Set();
+                this.state.groupedData.clear(); // Clear previous data
                 this.state.albums.forEach(album => {
                     if (!album.year || !album.genres || processedAlbumIds.has(album.uniqueId)) return;
                     
-                    // Group by the primary genre
                     const primaryGenre = album.genres[0];
 
                     if (!this.state.groupedData.has(album.year)) {
@@ -662,26 +629,32 @@
             // --- RENDERING ---
             renderGenreLegend() {
                 const legendFragment = document.createDocumentFragment();
-                const sortedGenres = Object.keys(this.state.genres).sort();
+                
+                const showAllBtn = document.createElement('button');
+                showAllBtn.id = 'show-all-btn';
+                showAllBtn.textContent = 'ALL GENRES';
+                legendFragment.appendChild(showAllBtn);
 
+                const sortedGenres = Object.keys(this.state.genres).sort();
                 for (const genre of sortedGenres) {
-                    const color = this.state.genres[genre];
-                     // Only show genres that are actually present in the data
                      if (this.state.albums.some(a => a.genres.includes(genre))) {
-                        const item = document.createElement('div');
+                        const item = document.createElement('button');
                         item.className = 'legend-item';
                         item.dataset.genre = genre;
-                        item.innerHTML = `
-                            <div class="legend-color-swatch" style="background-color: ${color};"></div>
-                            <span>${genre}</span>
-                        `;
+                        
+                        const colorSwatch = document.createElement('div');
+                        colorSwatch.className = 'legend-color-swatch';
+                        colorSwatch.style.backgroundColor = this.state.genres[genre];
+                        item.appendChild(colorSwatch);
+
+                        const textSpan = document.createElement('span');
+                        textSpan.textContent = genre;
+                        item.appendChild(textSpan);
+                        
                         legendFragment.appendChild(item);
                     }
                 }
-                const showAllBtn = document.createElement('button');
-                showAllBtn.id = 'show-all-btn';
-                showAllBtn.textContent = 'SHOW ALL';
-                legendFragment.appendChild(showAllBtn);
+                this.elements.genreLegend.innerHTML = '';
                 this.elements.genreLegend.appendChild(legendFragment);
             },
 
@@ -729,11 +702,13 @@
             },
 
             createAlbumCard(album) {
-                const card = document.createElement('div');
+                const card = document.createElement('a'); // Use an <a> tag for the card
+                card.href = album.link;
+                card.target = '_blank';
+                card.rel = 'noopener noreferrer';
                 card.className = 'album-card';
                 card.dataset.youtubeId = album.youtubeId || '';
 
-                // Set genre color for top border
                 const primaryGenre = album.genres[0];
                 const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
                 card.style.setProperty('--album-genre-color', genreColor);
@@ -776,37 +751,19 @@
             },
 
             bindEvents() {
-                // Drag to scroll events
                 this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
-                
-                // Player events
                 this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
-
-                // Filter events
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
-                this.elements.mobileFilterBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.elements.genreLegend.classList.toggle('mobile-visible');
-                });
-                // Close mobile filter when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!this.elements.mobileFilterBtn.contains(e.target) && !this.elements.genreLegend.contains(e.target)) {
-                        this.elements.genreLegend.classList.remove('mobile-visible');
-                    }
-                })
             },
 
             onDragStart(e) {
-                if (e.target.closest('.album-card')) return; // Don't drag if clicking a card
+                if (e.target.closest('.album-card')) return;
                 this.state.isDragging = true;
                 this.elements.timelineContainer.style.cursor = 'grabbing';
                 document.body.style.cursor = 'grabbing';
-                
                 this.state.startX = e.pageX - this.elements.timelineContainer.offsetLeft;
                 this.state.scrollLeft = this.elements.timelineContainer.scrollLeft;
-                
-                // Bind move and end to the document to capture mouse leaving the container
                 document.addEventListener('mousemove', this.onDragMove);
                 document.addEventListener('mouseup', this.onDragEnd);
             },
@@ -816,7 +773,6 @@
                 this.state.isDragging = false;
                 this.elements.timelineContainer.style.cursor = 'grab';
                 document.body.style.cursor = 'default';
-
                 document.removeEventListener('mousemove', this.onDragMove);
                 document.removeEventListener('mouseup', this.onDragEnd);
             },
@@ -825,35 +781,48 @@
                 if (!this.state.isDragging) return;
                 e.preventDefault();
                 const x = e.pageX - this.elements.timelineContainer.offsetLeft;
-                const walk = (x - this.state.startX) * 2; // Multiplier for faster scrolling
+                const walk = (x - this.state.startX) * 2;
                 this.elements.timelineContainer.scrollLeft = this.state.scrollLeft - walk;
             },
 
             onCardClick(e) {
                 const card = e.target.closest('.album-card');
                 if (card) {
-                    const youtubeId = card.dataset.youtubeId;
-                    if (youtubeId) {
-                        this.showPlayer(youtubeId);
-                    } else {
-                        // Using a custom, non-blocking message box would be better
-                        console.warn('No audio preview available for this album.');
+                    e.preventDefault(); // Always prevent default link navigation
+
+                    if (this.state.clickTimer) { // Double-click detected
+                        clearTimeout(this.state.clickTimer);
+                        this.state.clickTimer = null;
+                        window.open(card.href, '_blank'); // Double-click action
+                    } else { // First click
+                        this.state.clickTimer = setTimeout(() => {
+                            const youtubeId = card.dataset.youtubeId;
+                            if (youtubeId) {
+                                this.showPlayer(youtubeId); // Single-click action
+                            }
+                            this.state.clickTimer = null;
+                        }, 250); // Wait 250ms for a potential second click
                     }
                 }
             },
             
             onFilterClick(e) {
-                const target = e.target;
+                const target = e.target.closest('button');
+                if (!target) return;
+
                 if (target.id === 'show-all-btn') {
+                    this.state.isAllGenresActive = true;
                     this.state.activeGenres = new Set(Object.keys(this.state.genres));
                 } else {
-                    const legendItem = target.closest('.legend-item');
-                    if (legendItem) {
-                        const genre = legendItem.dataset.genre;
-                        if (e.shiftKey) { // Hold shift to select only one
+                    const genre = target.dataset.genre;
+                    if (genre) {
+                        if (this.state.isAllGenresActive || e.shiftKey) {
+                            // If 'All' was active, or Shift is pressed, start a new selection
                             this.state.activeGenres.clear();
                             this.state.activeGenres.add(genre);
-                        } else { // Toggle otherwise
+                            this.state.isAllGenresActive = false;
+                        } else {
+                             // Toggle genres in the current selection
                             if (this.state.activeGenres.has(genre)) {
                                 this.state.activeGenres.delete(genre);
                             } else {
@@ -862,23 +831,42 @@
                         }
                     }
                 }
+                // If all genres are deselected, revert to the "All Genres" state
+                if (this.state.activeGenres.size === 0) {
+                    this.state.isAllGenresActive = true;
+                    this.state.activeGenres = new Set(Object.keys(this.state.genres));
+                }
+                
                 this.filterTimeline();
             },
 
             filterTimeline() {
+                // Re-render the timeline with the current active genres
+                this.renderTimeline();
+
                 // Update legend UI
+                const showAllBtn = this.elements.genreLegend.querySelector('#show-all-btn');
+                if (showAllBtn) {
+                    showAllBtn.classList.toggle('active', this.state.isAllGenresActive);
+                }
+
                 this.elements.genreLegend.querySelectorAll('.legend-item').forEach(item => {
                     const genre = item.dataset.genre;
-                    item.classList.toggle('inactive', !this.state.activeGenres.has(genre));
+                    if (this.state.isAllGenresActive) {
+                        item.classList.remove('active');
+                        item.classList.remove('inactive');
+                    } else {
+                        item.classList.toggle('active', this.state.activeGenres.has(genre));
+                        item.classList.toggle('inactive', !this.state.activeGenres.has(genre));
+                    }
                 });
 
-                // Filter genre blocks
+                // Filter the already rendered DOM elements
                 this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => {
                     const genre = block.dataset.genre;
                     block.classList.toggle('filtered', !this.state.activeGenres.has(genre));
                 });
                 
-                // Hide empty year columns
                 this.elements.timelineWrapper.querySelectorAll('.year-container').forEach(year => {
                     const visibleBlocks = year.querySelectorAll('.genre-block:not(.filtered)');
                     year.classList.toggle('filtered', visibleBlocks.length === 0);
@@ -897,9 +885,9 @@
             }
         };
 
-        // Bind 'this' for drag move/end methods to avoid context issues
         JazzTimeline.onDragMove = JazzTimeline.onDragMove.bind(JazzTimeline);
         JazzTimeline.onDragEnd = JazzTimeline.onDragEnd.bind(JazzTimeline);
+        JazzTimeline.onCardClick = JazzTimeline.onCardClick.bind(JazzTimeline);
 
         document.addEventListener('DOMContentLoaded', () => JazzTimeline.init());
     </script>
