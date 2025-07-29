@@ -190,13 +190,17 @@
             width: 120px;
             background-color: var(--bg-main);
             border-radius: 0.25rem;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
             border: 2px solid var(--text-main);
             border-top-width: 6px;
             border-top-color: var(--album-genre-color, var(--text-main));
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+        }
+        .album-card.filtered-out {
+            opacity: 0.2;
+            transform: scale(0.95);
         }
         html.dark .album-card {
             border-color: var(--border-color);
@@ -236,14 +240,32 @@
             left: 0;
             width: 100%;
             padding: 0.5rem 1rem;
-            background-color: var(--bg-main);
+            background-color: var(--bg-header);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
             z-index: 40;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         
+        #genre-legend {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 0.25rem;
+            flex-grow: 1;
+            min-width: 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #genre-legend::-webkit-scrollbar {
+            display: none;
+        }
+
         .legend-item {
             display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;
             font-weight: 600; cursor: pointer; transition: opacity 0.2s;
@@ -392,7 +414,6 @@
             .year-container { width: 300px; margin: 0 0.5rem; }
             #timeline-wrapper { padding-left: 0.5rem; padding-right: 0.5rem; }
             .album-grid { display: grid; grid-template-columns: repeat(2, 1fr); justify-items: left; gap: 0.75rem; }
-            .year-header { top: calc(var(--sticky-top-offset) - 4rem); }
         }
     </style>
 </head>
@@ -434,17 +455,15 @@
 
 
     <div id="main-container">
+        <!-- ** MODIFIED CONTROLS HEADER ** -->
         <header id="controls-header">
-             <div id="genre-filter-container" class="dropdown-container">
-                <button class="dropdown-btn">
-                    Filter by Genre
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                </button>
-                <div id="genre-legend" class="dropdown-list">
-                    <!-- Genre buttons injected here -->
-                </div>
+            <!-- Genre Filters -->
+            <div id="genre-legend">
+                <!-- Genre buttons will be injected here by JavaScript -->
             </div>
-            <div class="flex items-center gap-4">
+            
+            <!-- Right-side Controls -->
+            <div class="flex items-center gap-4 flex-shrink-0">
                 <div id="era-jump-container" class="dropdown-container">
                     <button class="dropdown-btn">
                         Jump to Era
@@ -508,6 +527,7 @@
                 ],
                 groupedDataByGenre: new Map(),
                 groupedDataChronological: new Map(),
+                albumMap: new Map(),
                 activeGenres: new Set(),
                 isDragging: false,
                 startX: 0,
@@ -537,7 +557,6 @@
                 closeAlbumModalBtn: document.getElementById('close-album-modal'),
                 viewToggle: document.getElementById('view-toggle'),
                 eraJumpList: document.getElementById('era-jump-list'),
-                genreFilterContainer: document.getElementById('genre-filter-container'),
             },
 
             // --- INITIALIZATION ---
@@ -551,7 +570,7 @@
                     this.renderGenreLegend();
                     this.renderEraJumpList();
                     this.renderTimeline();
-                    // Recalculate header height AFTER content is rendered
+                    // Recalculate header height AFTER content is rendered and on window load
                     this.calculateHeaderHeight(); 
                 } catch (error) {
                     console.error("Initialization failed:", error);
@@ -684,6 +703,9 @@
 
                     processedAlbumIds.add(album.uniqueId);
                 });
+                
+                // Create a map for quick album lookups by ID
+                this.state.albumMap = new Map(this.state.albums.map(a => [a.uniqueId, a]));
             },
 
             // --- RENDERING ---
@@ -796,7 +818,7 @@
                 }
                 this.elements.timelineWrapper.innerHTML = '';
                 this.elements.timelineWrapper.appendChild(fragment);
-                this.methods.filterTimeline();
+                this.filterTimeline();
             },
 
             createAlbumCard(album) {
@@ -848,12 +870,14 @@
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
                 this.elements.viewToggle.addEventListener('change', this.onViewToggle.bind(this));
                 this.elements.eraJumpList.addEventListener('click', this.onEraJump.bind(this));
+                // ** MODIFIED BINDINGS for sticky header fix **
                 window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
+                window.addEventListener('load', this.calculateHeaderHeight.bind(this));
             },
             
             onViewToggle(e) {
                 this.state.timelineView = e.target.checked ? 'chronological' : 'genre';
-                this.elements.genreFilterContainer.style.display = this.state.timelineView === 'genre' ? 'block' : 'none';
+                // ** REMOVED line that hid filters **
                 this.renderTimeline();
             },
 
@@ -877,7 +901,7 @@
             },
 
             onDragStart(e) {
-                if (e.target.closest('.album-card')) return;
+                if (e.target.closest('.album-card, .legend-item')) return;
                 this.state.isDragging = true;
                 this.elements.timelineContainer.style.cursor = 'grabbing';
                 document.body.style.cursor = 'grabbing';
@@ -909,17 +933,17 @@
                 if (!card) return;
                 
                 const albumId = card.dataset.uniqueId;
-                const album = this.state.albums.find(a => a.uniqueId === albumId);
+                const album = this.state.albumMap.get(albumId);
                 if (album) {
                     this.openAlbumModal(album);
                 }
             },
             
             onFilterClick(e) {
-                const target = e.target.closest('button');
+                const target = e.target.closest('button.legend-item');
                 if (!target) return;
 
-                const allFilterableGenres = Array.from(this.elements.genreLegend.querySelectorAll('.legend-item')).map(item => item.dataset.genre);
+                const allFilterableGenres = Array.from(this.elements.genreLegend.querySelectorAll('.legend-item[data-genre]')).map(item => item.dataset.genre);
 
                 if (target.id === 'show-all-btn') {
                     this.state.isAllGenresActive = true;
@@ -927,11 +951,12 @@
                 } else {
                     const genre = target.dataset.genre;
                     if (genre) {
+                        // If "All" was active, or if user is not holding shift, start a new selection
                         if (this.state.isAllGenresActive || !e.shiftKey) {
                             this.state.activeGenres.clear();
                             this.state.activeGenres.add(genre);
                             this.state.isAllGenresActive = false;
-                        } else {
+                        } else { // If holding shift, add/remove from selection
                             if (this.state.activeGenres.has(genre)) {
                                 this.state.activeGenres.delete(genre);
                             } else {
@@ -940,6 +965,7 @@
                         }
                     }
                 }
+                // If selection is empty or contains all genres, reset to "All"
                 if (this.state.activeGenres.size === 0 || this.state.activeGenres.size === allFilterableGenres.length) {
                     this.state.isAllGenresActive = true;
                     this.state.activeGenres = new Set(allFilterableGenres);
@@ -948,13 +974,14 @@
                 this.filterTimeline();
             },
 
+            // ** MODIFIED filterTimeline LOGIC **
             filterTimeline() {
+                // Update legend button active states
                 const showAllBtn = this.elements.genreLegend.querySelector('#show-all-btn');
                 if (showAllBtn) {
                     showAllBtn.classList.toggle('active', this.state.isAllGenresActive);
                 }
-
-                this.elements.genreLegend.querySelectorAll('.legend-item').forEach(item => {
+                this.elements.genreLegend.querySelectorAll('.legend-item[data-genre]').forEach(item => {
                     const genre = item.dataset.genre;
                     if (this.state.isAllGenresActive) {
                         item.classList.remove('active', 'inactive');
@@ -964,20 +991,31 @@
                     }
                 });
 
+                // Apply filters based on the current view
                 if (this.state.timelineView === 'genre') {
+                    this.elements.timelineWrapper.querySelectorAll('.album-card').forEach(card => card.classList.remove('filtered-out'));
                     this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => {
                         const genre = block.dataset.genre;
                         block.classList.toggle('filtered', !this.state.activeGenres.has(genre));
                     });
-                } else {
-                     this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => {
-                        block.classList.remove('filtered');
+                } else { // Chronological view
+                    this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => block.classList.remove('filtered'));
+                    this.elements.timelineWrapper.querySelectorAll('.album-card').forEach(card => {
+                        const albumId = card.dataset.uniqueId;
+                        const album = this.state.albumMap.get(albumId);
+                        if (album && album.genres) {
+                            const hasActiveGenre = this.state.isAllGenresActive || album.genres.some(g => this.state.activeGenres.has(g));
+                            card.classList.toggle('filtered-out', !hasActiveGenre);
+                        }
                     });
                 }
                 
+                // Hide any year container that becomes empty after filtering
                 this.elements.timelineWrapper.querySelectorAll('.year-container').forEach(year => {
+                    const visibleCards = year.querySelectorAll('.album-card:not(.filtered-out)');
                     const visibleBlocks = year.querySelectorAll('.genre-block:not(.filtered)');
-                    year.classList.toggle('filtered', visibleBlocks.length === 0);
+                    const isEmpty = (this.state.timelineView === 'genre') ? visibleBlocks.length === 0 : visibleCards.length === 0;
+                    year.classList.toggle('filtered', isEmpty);
                 });
             },
             
