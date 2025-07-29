@@ -36,15 +36,15 @@
             --genre-default: #e7e5e4;
         }
 
-        /* Dark Theme - Black & Gray */
+        /* Dark Theme - Refined Black & Gray */
         html.dark {
-            --bg-timeline: #121212;
-            --bg-year: #1e1e1e;
-            --bg-card: #2a2a2a;
+            --bg-timeline: #2a2a2a;
+            --bg-year: #3a3a3a;
+            --bg-card: #4a4a4a;
             --bg-secondary: #292524;
             --text-main: #f5f5f4;
             --text-muted: #9ca3af;
-            --border-color: #4a4a4a;
+            --border-color: #6b7280;
         }
 
         /* Base body styling */
@@ -153,6 +153,10 @@
             color: var(--text-main);
             border: 2px solid var(--text-main);
             text-align: center;
+        }
+        html.dark .genre-label {
+            color: var(--text-muted);
+            border-color: var(--border-color);
         }
         
         /* Album Grid (for horizontal layout) */
@@ -736,40 +740,53 @@
             },
 
             bindEvents() {
+                // Attach drag listeners to the document for robustness
                 this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
-                this.elements.timelineContainer.addEventListener('mouseleave', this.onDragEnd.bind(this));
-                this.elements.timelineContainer.addEventListener('mouseup', this.onDragEnd.bind(this));
-                this.elements.timelineContainer.addEventListener('mousemove', this.onDragMove.bind(this));
-                this.elements.timelineContainer.addEventListener('touchstart', this.onDragStart.bind(this), { passive: true });
-                this.elements.timelineContainer.addEventListener('touchend', this.onDragEnd.bind(this));
-                this.elements.timelineContainer.addEventListener('touchmove', this.onDragMove.bind(this), { passive: true });
+                
+                // Other event listeners
                 this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
-                this.elements.mobileFilterBtn.addEventListener('click', () => {
+                this.elements.mobileFilterBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     this.elements.genreLegend.classList.toggle('mobile-visible');
                 });
+                // Close mobile dropdown if clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!this.elements.mobileFilterBtn.contains(e.target) && !this.elements.genreLegend.contains(e.target)) {
+                        this.elements.genreLegend.classList.remove('mobile-visible');
+                    }
+                })
             },
 
             onDragStart(e) {
                 this.state.isDragging = true;
                 this.elements.timelineContainer.style.cursor = 'grabbing';
-                const pageX = e.pageX || e.touches[0].pageX;
-                this.state.startX = pageX - this.elements.timelineContainer.offsetLeft;
+                document.body.style.cursor = 'grabbing'; // Apply to whole page
+                
+                this.state.startX = e.pageX - this.elements.timelineContainer.offsetLeft;
                 this.state.scrollLeft = this.elements.timelineContainer.scrollLeft;
+                
+                // Add move and up listeners to the whole document
+                document.addEventListener('mousemove', this.onDragMove);
+                document.addEventListener('mouseup', this.onDragEnd);
             },
 
             onDragEnd() {
                 this.state.isDragging = false;
                 this.elements.timelineContainer.style.cursor = 'grab';
+                document.body.style.cursor = 'default';
+
+                // Remove global listeners
+                document.removeEventListener('mousemove', this.onDragMove);
+                document.removeEventListener('mouseup', this.onDragEnd);
             },
 
             onDragMove(e) {
                 if (!this.state.isDragging) return;
                 e.preventDefault();
-                const pageX = e.pageX || e.touches[0].pageX;
-                const x = pageX - this.state.startX;
-                const walk = (x - this.state.startX) * 2;
+                const x = e.pageX - this.elements.timelineContainer.offsetLeft;
+                const walk = (x - this.state.startX) * 2; // Scroll faster
                 this.elements.timelineContainer.scrollLeft = this.state.scrollLeft - walk;
             },
 
@@ -832,6 +849,10 @@
                 this.elements.audioPlayer.classList.remove('visible');
             }
         };
+
+        // Bind methods that will be used as event listeners to the document
+        JazzTimeline.onDragMove = JazzTimeline.onDragMove.bind(JazzTimeline);
+        JazzTimeline.onDragEnd = JazzTimeline.onDragEnd.bind(JazzTimeline);
 
         document.addEventListener('DOMContentLoaded', () => JazzTimeline.init());
     </script>
