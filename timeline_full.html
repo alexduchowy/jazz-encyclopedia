@@ -13,20 +13,31 @@
     
     <!-- Custom CSS Styling -->
     <style>
-        /* Light Theme (Default) - Adopted from timeline.html */
+        /* MODIFIED: Updated light theme with subtle gray tones and new genre colors */
         :root {
-            --bg-main: #f5f5f4;
-            --bg-secondary: #e7e5e4;
-            --bg-header: rgba(245,245,244,0.8);
-            --text-main: #1c1917;
-            --text-muted: #44403c;
-            --border-color: #e7e5e4;
+            --bg-main: #e4e4e7; /* zinc-200 */
+            --bg-secondary: #d4d4d8; /* zinc-300 */
+            --bg-header: rgba(228, 228, 231, 0.8);
+            --text-main: #18181b; /* zinc-900 */
+            --text-muted: #52525b; /* zinc-600 */
+            --border-color: #d4d4d8; /* zinc-300 */
             --accent: #f97316;
             --yellow-accent: #facc15;
             --sticky-top-offset: 112px; /* Default fallback value */
+
+            /* Genre Colors */
+            --genre-bebop: #a0522d;
+            --genre-hard-bop: #8b5cf6;
+            --genre-cool-jazz: #3b82f6;
+            --genre-modal-jazz: #10b981;
+            --genre-post-bop: #f59e0b;
+            --genre-free-jazz: #ef4444;
+            --genre-avant-garde: #ec4899;
+            --genre-jazz-fusion: #06b6d4;
+            --genre-default: #d4d4d8;
         }
 
-        /* Dark Theme - Adopted from timeline.html */
+        /* Dark Theme */
         html.dark {
             --bg-main: #1c1917;
             --bg-secondary: #292524;
@@ -35,15 +46,15 @@
             --text-muted: #a8a29e;
             --border-color: #44403c;
 
-            /* Bebop color adjusted for dark mode */
+            /* MODIFIED: Adjusted dark theme genre colors for consistency */
             --genre-bebop: #b97245; 
-            --genre-hard-bop: #5c3c92;
-            --genre-cool-jazz: #2c599d;
-            --genre-modal-jazz: #1a7451;
-            --genre-post-bop: #9a642a;
-            --genre-free-jazz: #992828;
-            --genre-avant-garde: #9d3363;
-            --genre-jazz-fusion: #2c7a84;
+            --genre-hard-bop: #6d28d9;
+            --genre-cool-jazz: #2563eb;
+            --genre-modal-jazz: #059669;
+            --genre-post-bop: #d97706;
+            --genre-free-jazz: #dc2626;
+            --genre-avant-garde: #db2777;
+            --genre-jazz-fusion: #0891b2;
         }
 
         /* Base body styling */
@@ -68,7 +79,6 @@
             font-size: 1.25rem;
         }
 
-        /* Re-usable nav link style from timeline.html */
         .nav-link {
             transition: color 0.2s;
             font-family: 'Bebas Neue', sans-serif;
@@ -80,39 +90,35 @@
             color: var(--accent);
         }
 
-        /* Main container for the full-screen experience */
         #main-container {
             width: 100vw;
             height: 100vh;
             position: relative;
         }
 
-        /* Scrollable timeline area */
         #timeline-container {
             position: absolute;
             inset: 0;
             overflow: auto;
             cursor: grab;
             background-color: var(--bg-main);
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         #timeline-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
+            display: none;
         }
         #timeline-container:active {
             cursor: grabbing;
         }
 
-        /* Wrapper for all timeline content, allows for padding */
         #timeline-wrapper {
             display: inline-flex;
-            align-items: flex-start; /* Align columns to the top */
+            align-items: flex-start;
             padding: 7.5rem 1rem 2rem 1rem; 
             min-height: 100%;
         }
         
-        /* Year Container */
         .year-container {
             display: flex;
             flex-direction: column;
@@ -131,7 +137,6 @@
              border-left: none;
         }
 
-        /* Sticky Year Header */
         .year-header {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2.5rem;
@@ -139,23 +144,21 @@
             margin-bottom: 1.5rem;
             font-weight: 900;
             position: sticky;
-            /* MODIFIED: Use a CSS variable for the top offset, calculated by JS */
             top: var(--sticky-top-offset);
             background-color: var(--bg-main);
             z-index: 30;
-            width: calc(100% + 3rem); /* Fill parent padding */
+            width: calc(100% + 3rem);
             text-align: center;
             padding: 1rem 0;
-            margin-top: -1.5rem; /* Overlap parent padding */
+            margin-top: -1.5rem;
             border-bottom: 1px solid var(--border-color);
         }
         
-        /* Genre Block */
         .genre-block {
             width: 100%;
             margin-bottom: 2rem;
             transition: opacity 0.3s, max-height 0.5s, margin 0.5s;
-            max-height: 1000px; /* Arbitrary large value */
+            max-height: 1000px;
             overflow: hidden;
         }
         .genre-block.filtered {
@@ -164,6 +167,7 @@
             margin-bottom: 0;
         }
 
+        /* MODIFIED: Updated genre label styling for better contrast */
         .genre-label {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.1rem;
@@ -171,23 +175,30 @@
             display: inline-block;
             margin-bottom: 1rem;
             color: var(--text-main);
-            border: 2px solid var(--text-main);
+            border: 2px solid transparent; /* Default to transparent border */
             text-align: center;
             border-radius: 9999px;
+            transition: all 0.2s;
+        }
+        /* When JS adds a background color, make the text white for contrast */
+        .genre-label[style*="background-color"] {
+            color: #FFFFFF;
+            border-color: rgba(0,0,0,0.1);
         }
         html.dark .genre-label {
             border-color: var(--border-color);
         }
+        html.dark .genre-label[style*="background-color"] {
+             border-color: rgba(255,255,255,0.2);
+        }
         
-        /* Album Grid */
         .album-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
-            justify-content: flex-start; /* Left-aligned */
+            justify-content: flex-start;
         }
 
-        /* Album Card */
         .album-card {
             width: 120px;
             background-color: var(--bg-main);
@@ -199,7 +210,7 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            display: block; /* Make the <a> tag a block element */
+            display: block;
         }
         html.dark .album-card {
             border-color: var(--border-color);
@@ -216,7 +227,6 @@
             display: block;
         }
 
-        /* Album Info (Hidden by default, appears on hover) */
         .album-card-info {
             position: absolute;
             bottom: 0;
@@ -246,7 +256,6 @@
             color: #ccc;
         }
 
-        /* Play Button & Mini Player Icon */
         .play-button-container {
             position: absolute;
             top: 0;
@@ -277,7 +286,7 @@
             height: 20px;
             background-color: var(--accent);
             border-radius: 50%;
-            display: none; /* Hidden by default */
+            display: none;
             align-items: center;
             justify-content: center;
             border: 1px solid white;
@@ -288,14 +297,12 @@
             fill: white;
         }
         .album-card.is-playing .mini-play-icon {
-            display: flex; /* Show when playing */
+            display: flex;
         }
         .album-card.is-playing .play-button-container {
-            opacity: 1; /* Keep overlay visible when playing */
+            opacity: 1;
         }
 
-
-        /* Floating Audio Player */
         #audio-player {
             position: fixed;
             bottom: 1rem;
@@ -341,35 +348,33 @@
             border-radius: 0.25rem;
         }
         
-        /* Header Controls - Now a single line */
         #controls-header {
             position: fixed;
-            top: 64px; /* Position below main nav header */
+            top: 64px;
             left: 0;
             width: 100%;
-            padding: 0.5rem 1rem; /* Reduced padding */
+            padding: 0.5rem 1rem;
             background-color: var(--bg-main);
             border-bottom: 1px solid var(--border-color);
-            z-index: 40; /* Above year headers but below main nav */
+            z-index: 40;
             display: flex;
             align-items: center;
-            overflow: hidden; /* Hide overflow from the container */
+            overflow: hidden;
         }
         
-        /* Genre Legend - Now a horizontally scrolling container */
         #genre-legend {
             display: flex;
-            flex-wrap: nowrap; /* Prevent wrapping */
+            flex-wrap: nowrap;
             gap: 0.75rem;
             align-items: center;
-            overflow-x: auto; /* Enable horizontal scroll */
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-            padding-bottom: 1rem; /* Add padding to make space for scrollbar without it being visible */
-            margin-bottom: -1rem; /* Counteract the padding */
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            padding-bottom: 1rem;
+            margin-bottom: -1rem;
         }
         #genre-legend::-webkit-scrollbar {
-            display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+            display: none;
         }
 
         .legend-item {
@@ -384,7 +389,7 @@
             border-radius: 9999px;
             border: 1px solid var(--text-muted);
             background-color: var(--bg-secondary);
-            flex-shrink: 0; /* Prevent items from shrinking */
+            flex-shrink: 0;
         }
         .legend-item:hover {
             border-color: var(--accent);
@@ -422,7 +427,6 @@
             border-color: var(--accent);
         }
         
-        /* Loader */
         #loader {
             position: fixed;
             inset: 0;
@@ -458,7 +462,6 @@
                 padding-left: 0.5rem; 
                 padding-right: 0.5rem; 
             }
-            /* Switched to CSS Grid for a robust 2-column layout */
             .album-grid {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
@@ -589,9 +592,7 @@
                 const mainNav = document.querySelector('.sticky.top-0.z-50');
                 const controlsHeader = this.elements.controlsHeader;
                 if (mainNav && controlsHeader) {
-                    // Sum of the main nav and the controls header heights
                     const totalHeight = mainNav.offsetHeight + controlsHeader.offsetHeight;
-                    // Set the value as a CSS variable on the root element
                     document.documentElement.style.setProperty('--sticky-top-offset', `${totalHeight}px`);
                 }
             },
@@ -610,7 +611,6 @@
                 
                 this.state.albums = albumData.albums;
                 this.state.genres = this.buildGenreColorMap(genreData);
-                // Initially, all genres are active
                 this.state.activeGenres = new Set(Object.keys(this.state.genres));
             },
             
@@ -670,7 +670,7 @@
                 this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
 
                 const processedAlbumIds = new Set();
-                this.state.groupedData.clear(); // Clear previous data
+                this.state.groupedData.clear();
                 this.state.albums.forEach(album => {
                     if (!album.year || !album.genres || processedAlbumIds.has(album.uniqueId)) return;
                     
@@ -766,7 +766,7 @@
             },
 
             createAlbumCard(album) {
-                const card = document.createElement('a'); // Use an <a> tag for the card
+                const card = document.createElement('a');
                 card.className = 'album-card';
                 card.href = album.link;
                 card.target = '_blank';
@@ -822,7 +822,6 @@
                 this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
-                // Recalculate header height on window resize
                 window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
             },
 
@@ -858,7 +857,6 @@
                 const card = e.target.closest('.album-card');
                 if (!card) return;
 
-                // If the click is on the play button container, prevent link and play video
                 if (e.target.closest('.play-button-container')) {
                     e.preventDefault(); 
                     const youtubeId = card.dataset.youtubeId;
@@ -866,7 +864,6 @@
                         this.showPlayer(youtubeId, card);
                     }
                 }
-                // If the click is anywhere else, the default <a> tag behavior will open the link.
             },
             
             onFilterClick(e) {
@@ -931,16 +928,13 @@
             
             // --- PLAYER LOGIC ---
             showPlayer(youtubeId, cardElement) {
-                // If there's a card currently playing, remove its playing state
                 if (this.state.currentlyPlayingCard) {
                     this.state.currentlyPlayingCard.classList.remove('is-playing');
                 }
                 
-                // Set the new card as the one that's playing
                 this.state.currentlyPlayingCard = cardElement;
                 this.state.currentlyPlayingCard.classList.add('is-playing');
 
-                // Load the video and autoplay
                 this.elements.playerIframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
                 this.elements.audioPlayer.classList.add('visible');
             },
@@ -948,7 +942,6 @@
             hidePlayer() {
                 this.elements.playerIframe.src = '';
                 this.elements.audioPlayer.classList.remove('visible');
-                // When player is closed, remove the playing state from the card
                 if (this.state.currentlyPlayingCard) {
                     this.state.currentlyPlayingCard.classList.remove('is-playing');
                     this.state.currentlyPlayingCard = null;
