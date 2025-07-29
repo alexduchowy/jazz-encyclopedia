@@ -13,28 +13,27 @@
     
     <!-- Custom CSS Styling -->
     <style>
-        /* Light Theme with a three-tone gray palette */
+        /* Light Theme (Default) */
         :root {
-            --bg-main: #e4e4e7; /* zinc-200 - Darker background for timeline content */
-            --bg-secondary: #f4f4f5; /* zinc-100 - Mid-tone for headers/filters */
-            --bg-header: rgba(250, 250, 250, 0.8); /* zinc-50 - Lightest tone for top nav */
-            --text-main: #18181b; /* zinc-900 */
-            --text-muted: #52525b; /* zinc-600 */
-            --border-color: #a1a1aa; /* zinc-400 */
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-header: rgba(245,245,244,0.8);
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --border-color: #e7e5e4;
             --accent: #f97316;
             --yellow-accent: #facc15;
-            --sticky-top-offset: 112px; /* Default fallback value */
 
             /* Genre Colors */
             --genre-bebop: #a0522d;
-            --genre-hard-bop: #8b5cf6;
-            --genre-cool-jazz: #3b82f6;
-            --genre-modal-jazz: #10b981;
-            --genre-post-bop: #f59e0b;
-            --genre-free-jazz: #ef4444;
-            --genre-avant-garde: #ec4899;
-            --genre-jazz-fusion: #06b6d4;
-            --genre-default: #d4d4d8;
+            --genre-hard-bop: #d8b4fe;
+            --genre-cool-jazz: #93c5fd;
+            --genre-modal-jazz: #a7f3d0;
+            --genre-post-bop: #fed7aa;
+            --genre-free-jazz: #fca5a5;
+            --genre-avant-garde: #fecdd3;
+            --genre-jazz-fusion: #a5f3fc;
+            --genre-default: #e7e5e4;
         }
 
         /* Dark Theme */
@@ -45,20 +44,22 @@
             --text-main: #f5f5f4;
             --text-muted: #a8a29e;
             --border-color: #44403c;
+
+            /* Dark Mode Genre Colors */
             --genre-bebop: #b97245; 
-            --genre-hard-bop: #6d28d9;
-            --genre-cool-jazz: #2563eb;
-            --genre-modal-jazz: #059669;
-            --genre-post-bop: #d97706;
-            --genre-free-jazz: #dc2626;
-            --genre-avant-garde: #db2777;
-            --genre-jazz-fusion: #0891b2;
+            --genre-hard-bop: #5c3c92;
+            --genre-cool-jazz: #2c599d;
+            --genre-modal-jazz: #1a7451;
+            --genre-post-bop: #9a642a;
+            --genre-free-jazz: #992828;
+            --genre-avant-garde: #9d3363;
+            --genre-jazz-fusion: #2c7a84;
         }
 
-        /* Base body styling - uses the mid-tone gray */
+        /* Base body styling */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-main);
             color: var(--text-main);
             overflow: hidden; /* Prevent body scroll */
         }
@@ -94,7 +95,6 @@
             position: relative;
         }
 
-        /* Timeline container - uses the darkest gray */
         #timeline-container {
             position: absolute;
             inset: 0;
@@ -136,7 +136,7 @@
              border-left: none;
         }
 
-        /* Year header - uses the mid-tone gray */
+        /* Sticky Year Header */
         .year-header {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2.5rem;
@@ -144,8 +144,8 @@
             margin-bottom: 1.5rem;
             font-weight: 900;
             position: sticky;
-            top: var(--sticky-top-offset);
-            background-color: var(--bg-secondary);
+            top: 112px;
+            background-color: var(--bg-main);
             z-index: 30;
             width: calc(100% + 3rem);
             text-align: center;
@@ -174,20 +174,12 @@
             display: inline-block;
             margin-bottom: 1rem;
             color: var(--text-main);
-            border: 2px solid transparent;
+            border: 2px solid var(--text-main);
             text-align: center;
             border-radius: 9999px;
-            transition: all 0.2s;
-        }
-        .genre-label[style*="background-color"] {
-            color: #FFFFFF;
-            border-color: rgba(0,0,0,0.1);
         }
         html.dark .genre-label {
             border-color: var(--border-color);
-        }
-        html.dark .genre-label[style*="background-color"] {
-             border-color: rgba(255,255,255,0.2);
         }
         
         .album-grid {
@@ -197,13 +189,12 @@
             justify-content: flex-start;
         }
 
-        /* Album card - uses the darkest gray to match its container */
         .album-card {
             width: 120px;
             background-color: var(--bg-main);
             border-radius: 0.25rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border: 2px solid var(--text-muted);
+            border: 2px solid var(--text-main);
             border-top-width: 6px;
             border-top-color: var(--album-genre-color, var(--text-main));
             position: relative;
@@ -347,14 +338,13 @@
             border-radius: 0.25rem;
         }
         
-        /* Controls header - uses the mid-tone gray */
         #controls-header {
             position: fixed;
             top: 64px;
             left: 0;
             width: 100%;
             padding: 0.5rem 1rem;
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-main);
             border-bottom: 1px solid var(--border-color);
             z-index: 40;
             display: flex;
@@ -388,11 +378,8 @@
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             border: 1px solid var(--text-muted);
-            background-color: #fafafa; /* Lightest gray for buttons */
+            background-color: var(--bg-secondary);
             flex-shrink: 0;
-        }
-        html.dark .legend-item {
-             background-color: var(--bg-secondary);
         }
         .legend-item:hover {
             border-color: var(--accent);
@@ -413,7 +400,7 @@
             flex-shrink: 0;
         }
         #show-all-btn {
-            background: #fafafa; /* Lightest gray for buttons */
+            background: var(--bg-secondary);
             border: 1px solid var(--text-muted);
             color: var(--text-muted);
             font-size: 0.8rem;
@@ -423,9 +410,6 @@
             cursor: pointer;
             transition: all 0.2s;
             flex-shrink: 0;
-        }
-         html.dark #show-all-btn {
-             background-color: var(--bg-secondary);
         }
         #show-all-btn:hover, #show-all-btn.active {
             background-color: var(--accent);
@@ -575,8 +559,6 @@
             async init() {
                 this.setupTheme();
                 this.bindEvents();
-                // MODIFIED: Calculate height on init and after full load for robustness
-                this.calculateHeaderHeight();
                 try {
                     await this.fetchData();
                     this.processData();
@@ -589,21 +571,10 @@
                     this.elements.loader.style.opacity = '0';
                     setTimeout(() => {
                         this.elements.loader.style.display = 'none';
-                        this.calculateHeaderHeight(); // Recalculate after content is loaded
-                    }, 100); // A small delay for rendering to settle
+                    }, 500);
                 }
             },
             
-            // --- DYNAMIC CALCULATIONS ---
-            calculateHeaderHeight() {
-                const mainNav = document.querySelector('.sticky.top-0.z-50');
-                const controlsHeader = this.elements.controlsHeader;
-                if (mainNav && controlsHeader) {
-                    const totalHeight = mainNav.offsetHeight + controlsHeader.offsetHeight;
-                    document.documentElement.style.setProperty('--sticky-top-offset', `${totalHeight}px`);
-                }
-            },
-
             // --- DATA FETCHING ---
             async fetchData() {
                 const [albumRes, genreRes] = await Promise.all([
@@ -829,11 +800,6 @@
                 this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
-                window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
-                // MODIFIED: Use window.onload for the most reliable timing
-                window.onload = () => {
-                    this.calculateHeaderHeight();
-                };
             },
 
             onDragStart(e) {
