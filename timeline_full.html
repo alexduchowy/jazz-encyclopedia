@@ -23,17 +23,7 @@
             --border-color: #e7e5e4;
             --accent: #f97316;
             --yellow-accent: #facc15;
-
-            /* Genre Colors - Bebop color adjusted for better contrast */
-            --genre-bebop: #a0522d; /* Sienna */
-            --genre-hard-bop: #d8b4fe;
-            --genre-cool-jazz: #93c5fd;
-            --genre-modal-jazz: #a7f3d0;
-            --genre-post-bop: #fed7aa;
-            --genre-free-jazz: #fca5a5;
-            --genre-avant-garde: #fecdd3;
-            --genre-jazz-fusion: #a5f3fc;
-            --genre-default: #e7e5e4;
+            --sticky-top-offset: 112px; /* Default fallback value */
         }
 
         /* Dark Theme - Adopted from timeline.html */
@@ -149,7 +139,8 @@
             margin-bottom: 1.5rem;
             font-weight: 900;
             position: sticky;
-            top: 112px; /* Positioned below both headers */
+            /* MODIFIED: Use a CSS variable for the top offset, calculated by JS */
+            top: var(--sticky-top-offset);
             background-color: var(--bg-main);
             z-index: 30;
             width: calc(100% + 3rem); /* Fill parent padding */
@@ -459,7 +450,6 @@
 
         /* Responsive Styles */
         @media (max-width: 767px) {
-            /* MODIFIED: Increased width to fit two album columns */
             .year-container { 
                 width: 300px; 
                 margin: 0 0.5rem;
@@ -468,7 +458,7 @@
                 padding-left: 0.5rem; 
                 padding-right: 0.5rem; 
             }
-            /* MODIFIED: Switched to CSS Grid for a robust 2-column layout */
+            /* Switched to CSS Grid for a robust 2-column layout */
             .album-grid {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
@@ -565,6 +555,7 @@
                 audioPlayer: document.getElementById('audio-player'),
                 playerIframe: document.getElementById('player-iframe'),
                 playerCloseBtn: document.getElementById('player-close-btn'),
+                controlsHeader: document.getElementById('controls-header'),
                 genreLegend: document.getElementById('genre-legend'),
                 themeToggle: document.getElementById('theme-toggle'),
                 themeIconLight: document.getElementById('theme-icon-light'),
@@ -575,6 +566,7 @@
             async init() {
                 this.setupTheme();
                 this.bindEvents();
+                this.calculateHeaderHeight();
                 try {
                     await this.fetchData();
                     this.processData();
@@ -585,7 +577,22 @@
                     this.elements.loader.innerHTML = "<p>Failed to load timeline data.</p>";
                 } finally {
                     this.elements.loader.style.opacity = '0';
-                    setTimeout(() => this.elements.loader.style.display = 'none', 500);
+                    setTimeout(() => {
+                        this.elements.loader.style.display = 'none';
+                        this.calculateHeaderHeight(); // Recalculate after content is loaded
+                    }, 500);
+                }
+            },
+            
+            // --- DYNAMIC CALCULATIONS ---
+            calculateHeaderHeight() {
+                const mainNav = document.querySelector('.sticky.top-0.z-50');
+                const controlsHeader = this.elements.controlsHeader;
+                if (mainNav && controlsHeader) {
+                    // Sum of the main nav and the controls header heights
+                    const totalHeight = mainNav.offsetHeight + controlsHeader.offsetHeight;
+                    // Set the value as a CSS variable on the root element
+                    document.documentElement.style.setProperty('--sticky-top-offset', `${totalHeight}px`);
                 }
             },
 
@@ -815,6 +822,8 @@
                 this.elements.playerCloseBtn.addEventListener('click', this.hidePlayer.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
+                // Recalculate header height on window resize
+                window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
             },
 
             onDragStart(e) {
