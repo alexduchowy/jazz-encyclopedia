@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -475,6 +475,14 @@
             }
              .album-card {
                 /* The card width is already 120px, which fits well */
+            }
+            
+            /* NEW FIX: Adjust the sticky position for year headers on mobile.
+               The dynamically calculated '--sticky-top-offset' includes the main navigation height,
+               which is not needed here as the scrolling container is already positioned below it.
+               We subtract 4rem (the height of the main nav) to correct the position. */
+            .year-header {
+                top: calc(var(--sticky-top-offset) - 4rem);
             }
         }
 
