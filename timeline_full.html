@@ -123,21 +123,21 @@
         .year-container.filtered { display: none; }
         .year-container:first-child { border-left: none; }
 
+        /* ** MODIFIED Year Header Styling ** */
         .year-header {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 2.5rem;
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            color: var(--text-main);
             font-weight: 900;
             position: sticky;
             top: var(--sticky-top-offset);
-            background-color: var(--bg-main);
             z-index: 30;
-            width: calc(100% + 3rem);
-            text-align: center;
-            padding: 1rem 0;
-            margin-top: -1.5rem;
-            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            padding: 0.25rem 1rem;
+            border-radius: 9999px;
+            margin-bottom: 2rem;
+            display: inline-block;
+            border: 1px solid var(--border-color);
         }
         
         .genre-block {
@@ -477,7 +477,7 @@
 
 
     <div id="main-container">
-        <!-- ** MODIFIED CONTROLS HEADER ** -->
+        <!-- Controls Header -->
         <header id="controls-header">
             <!-- Era Display and Jump Controls -->
             <div id="era-controls">
@@ -926,16 +926,19 @@
                 }
             },
 
+            // ** MODIFIED onEraJump **
             onEraJump(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 const target = e.target.closest('a[data-year]');
                 if (!target) return;
 
                 const year = target.dataset.year;
                 const yearContainer = document.getElementById(`year-${year}`);
+                
                 if (yearContainer) {
                     const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
-                    const offsetPosition = yearContainer.offsetTop - headerOffset - 16; 
+                    const offsetPosition = yearContainer.offsetTop - headerOffset; 
 
                     this.elements.timelineContainer.scrollTo({
                         top: offsetPosition,
