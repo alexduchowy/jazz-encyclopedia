@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+x<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -24,8 +24,8 @@
             --accent: #f97316;
             --yellow-accent: #facc15;
 
-            /* Genre Colors */
-            --genre-bebop: #C19A6B;
+            /* Genre Colors - Bebop color adjusted for better contrast */
+            --genre-bebop: #a0522d; /* Sienna */
             --genre-hard-bop: #d8b4fe;
             --genre-cool-jazz: #93c5fd;
             --genre-modal-jazz: #a7f3d0;
@@ -45,7 +45,8 @@
             --text-muted: #a8a29e;
             --border-color: #44403c;
 
-            --genre-bebop: #855b32;
+            /* Bebop color adjusted for dark mode */
+            --genre-bebop: #b97245; 
             --genre-hard-bop: #5c3c92;
             --genre-cool-jazz: #2c599d;
             --genre-modal-jazz: #1a7451;
@@ -108,7 +109,7 @@
         #timeline-wrapper {
             display: inline-flex;
             align-items: flex-start; /* Align columns to the top */
-            padding: 7rem 1rem 2rem 1rem; /* Adjusted top padding for new header */
+            padding: 8rem 1rem 2rem 1rem; /* Adjusted top padding for new header */
             min-height: 100%;
         }
         
@@ -139,7 +140,7 @@
             margin-bottom: 2rem;
             font-weight: 900;
             position: sticky;
-            top: 108px; /* Stick below the main header */
+            top: 112px; /* Positioned below both headers */
             background-color: var(--bg-main);
             z-index: 30; /* Lower z-index to stay below controls */
             width: calc(100% + 3rem); /* Fill parent padding */
@@ -465,7 +466,10 @@
     <div class="sticky top-0 z-50 h-16 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
         <header class="container mx-auto h-full">
             <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                <a href="timeline.html"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-12 sm:h-14" onerror="this.onerror=null;this.src='https://placehold.co/160x56/1c1917/f5f5f4?text=Logo';"></a>
+                <div class="flex items-center gap-4">
+                    <a href="timeline.html"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-12 sm:h-14" onerror="this.onerror=null;this.src='https://placehold.co/160x56/1c1917/f5f5f4?text=Logo';"></a>
+                    <h1 class="hidden md:block text-2xl text-[var(--text-main)]">Interactive Jazz Timeline</h1>
+                </div>
                 <div class="flex items-center">
                     <div class="hidden md:flex items-center space-x-8">
                         <a href="timeline.html" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
@@ -586,14 +590,14 @@
                         }
                     });
                 }
-                colorMap['Bebop'] = colorMap['Bebop'] || 'var(--genre-bebop)';
-                colorMap['Hard Bop'] = colorMap['Hard Bop'] || 'var(--genre-hard-bop)';
-                colorMap['Cool Jazz'] = colorMap['Cool Jazz'] || 'var(--genre-cool-jazz)';
-                colorMap['Modal Jazz'] = colorMap['Modal Jazz'] || 'var(--genre-modal-jazz)';
-                colorMap['Post-Bop'] = colorMap['Post-Bop'] || 'var(--genre-post-bop)';
-                colorMap['Free Jazz'] = colorMap['Free Jazz'] || 'var(--genre-free-jazz)';
-                colorMap['Avant-Garde Jazz'] = colorMap['Avant-Garde Jazz'] || 'var(--genre-avant-garde)';
-                colorMap['Jazz Fusion'] = colorMap['Jazz Fusion'] || 'var(--genre-jazz-fusion)';
+                colorMap['Bebop'] = 'var(--genre-bebop)';
+                colorMap['Hard Bop'] = 'var(--genre-hard-bop)';
+                colorMap['Cool Jazz'] = 'var(--genre-cool-jazz)';
+                colorMap['Modal Jazz'] = 'var(--genre-modal-jazz)';
+                colorMap['Post-Bop'] = 'var(--genre-post-bop)';
+                colorMap['Free Jazz'] = 'var(--genre-free-jazz)';
+                colorMap['Avant-Garde Jazz'] = 'var(--genre-avant-garde)';
+                colorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
                 return colorMap;
             },
 
@@ -903,8 +907,8 @@
                 this.state.currentlyPlayingCard = cardElement;
                 this.state.currentlyPlayingCard.classList.add('is-playing');
 
-                // Load the video but don't autoplay immediately
-                this.elements.playerIframe.src = `https://www.youtube.com/embed/${youtubeId}`;
+                // Load the video and autoplay
+                this.elements.playerIframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
                 this.elements.audioPlayer.classList.add('visible');
             },
 
