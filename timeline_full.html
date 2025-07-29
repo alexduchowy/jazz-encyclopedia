@@ -138,6 +138,23 @@
             margin-top: -1.5rem;
             border-bottom: 1px solid var(--border-color);
         }
+
+        .era-marker {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 0.25rem;
+            border: 2px solid var(--text-main);
+            text-align: center;
+        }
+        html.dark .era-marker {
+            border-color: var(--border-color);
+        }
+        .era-marker h3 {
+            font-size: 2rem;
+            color: var(--text-main);
+            font-weight: 900;
+        }
         
         .genre-block {
             width: 100%;
@@ -351,6 +368,41 @@
         .toggle-label-genre { left: 22px; }
         .toggle-label-chrono { right: 12px; }
 
+        /* Era Dropdown */
+        .dropdown-container { position: relative; }
+        .dropdown-btn {
+            background: var(--bg-secondary); border: 1px solid var(--text-muted); color: var(--text-muted);
+            font-size: 0.8rem; font-weight: bold; border-radius: 99px; padding: 0.5rem 1rem;
+            cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+            display: flex; align-items: center; gap: 0.25rem;
+        }
+        .dropdown-btn:hover { background-color: var(--accent); color: white; border-color: var(--accent); }
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 50;
+            width: 250px;
+            overflow: hidden;
+            display: none;
+        }
+        .dropdown-container:hover .dropdown-list { display: block; }
+        .dropdown-list a {
+            display: block;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        .dropdown-list a:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+
 
         /* Responsive Styles */
         @media (max-width: 767px) {
@@ -402,6 +454,13 @@
         <header id="controls-header">
             <div id="genre-legend"></div>
             <div class="flex items-center gap-4">
+                <div id="era-jump-container" class="dropdown-container">
+                    <button class="dropdown-btn">
+                        Jump to Era
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <div id="era-jump-list" class="dropdown-list"></div>
+                </div>
                 <label for="view-toggle" class="toggle-switch">
                     <input type="checkbox" id="view-toggle" class="hidden">
                     <span class="toggle-switch-slider"></span>
@@ -446,6 +505,16 @@
                 genres: {},
                 artistsData: [],
                 fullArtistsData: {},
+                eras: [
+                    { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: '#dbeafe' },
+                    { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: '#f3e8ff' },
+                    { title: "Hard Bop At Its Peak", startYear: 1957, endYear: 1958, color: '#EADDCA' },
+                    { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: '#d1fae5' },
+                    { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: '#ffedd5' },
+                    { title: "Spiritual Awakening", startYear: 1964, endYear: 1966, color: '#fee2e2' },
+                    { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: '#fef9c3' },
+                    { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: '#cffafe' }
+                ],
                 groupedDataByGenre: new Map(),
                 groupedDataChronological: new Map(),
                 activeGenres: new Set(),
@@ -476,6 +545,7 @@
                 analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
                 closeAlbumModalBtn: document.getElementById('close-album-modal'),
                 viewToggle: document.getElementById('view-toggle'),
+                eraJumpList: document.getElementById('era-jump-list'),
             },
 
             // --- INITIALIZATION ---
@@ -488,6 +558,7 @@
                     await this.fetchData();
                     this.processData();
                     this.renderGenreLegend();
+                    this.renderEraJumpList();
                     this.renderTimeline();
                 } catch (error) {
                     console.error("Initialization failed:", error);
@@ -655,49 +726,75 @@
                 this.elements.genreLegend.innerHTML = '';
                 this.elements.genreLegend.appendChild(legendFragment);
             },
+
+            renderEraJumpList() {
+                this.elements.eraJumpList.innerHTML = this.state.eras.map(era => 
+                    `<a href="#" data-year="${era.startYear}">${era.title} (${era.startYear}-${era.endYear})</a>`
+                ).join('');
+            },
             
             renderTimeline() {
-                if (this.state.timelineView === 'genre') {
-                    this.methods.renderTimelineByGenre();
-                } else {
-                    this.methods.renderTimelineChronological();
-                }
-                this.methods.filterTimeline(); // Apply filters after rendering
-            },
-
-            renderTimelineByGenre() {
                 const fragment = document.createDocumentFragment();
                 const sortedYears = [...this.state.groupedDataByGenre.keys()].sort((a, b) => a - b);
+                let renderedEras = new Set();
 
                 for (const year of sortedYears) {
-                    const yearData = this.state.groupedDataByGenre.get(year);
+                    // Add Era Marker
+                    const currentEra = this.state.eras.find(e => year >= e.startYear && year <= e.endYear);
+                    if (currentEra && !renderedEras.has(currentEra.title)) {
+                        const eraMarker = document.createElement('div');
+                        eraMarker.className = 'era-marker';
+                        eraMarker.id = `era-${currentEra.startYear}`;
+                        eraMarker.style.backgroundColor = currentEra.color;
+                        eraMarker.innerHTML = `<h3>${currentEra.title}</h3>`;
+                        fragment.appendChild(eraMarker);
+                        renderedEras.add(currentEra.title);
+                    }
+
                     const yearContainer = document.createElement('div');
                     yearContainer.className = 'year-container';
                     yearContainer.dataset.year = year;
+                    yearContainer.id = `year-${year}`;
                     
                     const yearHeader = document.createElement('div');
                     yearHeader.className = 'year-header';
                     yearHeader.textContent = year;
                     yearContainer.appendChild(yearHeader);
 
-                    const genresInYear = [...yearData.keys()].sort();
-                    for (const genre of genresInYear) {
+                    if (this.state.timelineView === 'genre') {
+                        const yearData = this.state.groupedDataByGenre.get(year);
+                        const genresInYear = [...yearData.keys()].sort();
+                        for (const genre of genresInYear) {
+                            const genreBlock = document.createElement('div');
+                            genreBlock.className = 'genre-block';
+                            genreBlock.dataset.genre = genre;
+                            
+                            const albums = yearData.get(genre);
+                            const genreLabel = document.createElement('div');
+                            genreLabel.className = 'genre-label';
+                            genreLabel.textContent = genre;
+                            genreLabel.style.backgroundColor = this.state.genres[genre] || 'var(--genre-default)';
+                            genreBlock.appendChild(genreLabel);
+
+                            const albumGrid = document.createElement('div');
+                            albumGrid.className = 'album-grid';
+                            albums.forEach(album => {
+                               const card = this.createAlbumCard(album);
+                               albumGrid.appendChild(card);
+                            });
+                            genreBlock.appendChild(albumGrid);
+                            yearContainer.appendChild(genreBlock);
+                        }
+                    } else { // Chronological view
+                        const albums = this.state.groupedDataChronological.get(year);
                         const genreBlock = document.createElement('div');
                         genreBlock.className = 'genre-block';
-                        genreBlock.dataset.genre = genre;
                         
-                        const albums = yearData.get(genre);
-                        const genreLabel = document.createElement('div');
-                        genreLabel.className = 'genre-label';
-                        genreLabel.textContent = genre;
-                        genreLabel.style.backgroundColor = this.state.genres[genre] || 'var(--genre-default)';
-                        genreBlock.appendChild(genreLabel);
-
                         const albumGrid = document.createElement('div');
                         albumGrid.className = 'album-grid';
                         albums.forEach(album => {
-                           const card = this.createAlbumCard(album);
-                           albumGrid.appendChild(card);
+                            const card = this.createAlbumCard(album);
+                            albumGrid.appendChild(card);
                         });
                         genreBlock.appendChild(albumGrid);
                         yearContainer.appendChild(genreBlock);
@@ -706,38 +803,7 @@
                 }
                 this.elements.timelineWrapper.innerHTML = '';
                 this.elements.timelineWrapper.appendChild(fragment);
-            },
-
-            renderTimelineChronological() {
-                const fragment = document.createDocumentFragment();
-                const sortedYears = [...this.state.groupedDataChronological.keys()].sort((a, b) => a - b);
-
-                for (const year of sortedYears) {
-                    const albums = this.state.groupedDataChronological.get(year);
-                    const yearContainer = document.createElement('div');
-                    yearContainer.className = 'year-container';
-                    yearContainer.dataset.year = year;
-
-                    const yearHeader = document.createElement('div');
-                    yearHeader.className = 'year-header';
-                    yearHeader.textContent = year;
-                    yearContainer.appendChild(yearHeader);
-
-                    const genreBlock = document.createElement('div');
-                    genreBlock.className = 'genre-block';
-                    
-                    const albumGrid = document.createElement('div');
-                    albumGrid.className = 'album-grid';
-                    albums.forEach(album => {
-                        const card = this.createAlbumCard(album);
-                        albumGrid.appendChild(card);
-                    });
-                    genreBlock.appendChild(albumGrid);
-                    yearContainer.appendChild(genreBlock);
-                    fragment.appendChild(yearContainer);
-                }
-                this.elements.timelineWrapper.innerHTML = '';
-                this.elements.timelineWrapper.appendChild(fragment);
+                this.methods.filterTimeline();
             },
 
             createAlbumCard(album) {
@@ -788,6 +854,7 @@
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
                 this.elements.viewToggle.addEventListener('change', this.onViewToggle.bind(this));
+                this.elements.eraJumpList.addEventListener('click', this.onEraJump.bind(this));
                 window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
             },
             
@@ -795,6 +862,25 @@
                 this.state.timelineView = e.target.checked ? 'chronological' : 'genre';
                 this.elements.genreLegend.style.display = this.state.timelineView === 'genre' ? 'flex' : 'none';
                 this.renderTimeline();
+            },
+
+            onEraJump(e) {
+                e.preventDefault();
+                const target = e.target.closest('a[data-year]');
+                if (!target) return;
+
+                const year = target.dataset.year;
+                const eraMarker = document.getElementById(`era-${year}`);
+                if (eraMarker) {
+                    const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
+                    const elementPosition = eraMarker.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + this.elements.timelineContainer.scrollTop - headerOffset - 16; // 16 for extra padding
+
+                    this.elements.timelineContainer.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
             },
 
             onDragStart(e) {
