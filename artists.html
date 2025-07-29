@@ -109,7 +109,8 @@
         .artist-card.influential-sideman { box-shadow: 4px 4px 0px var(--yellow-accent); }
         .dark .artist-card.influential-sideman { box-shadow: none; border-color: var(--yellow-accent); }
         
-        .artist-card .artist-photo-container { height: 224px; width: 100%; }
+        /* UPDATED: Card photo height */
+        .artist-card .artist-photo-container { height: 192px; width: 100%; }
         .artist-card img {
               width: 100%; height: 100%;
               object-fit: cover; object-position: center;
@@ -126,17 +127,22 @@
         /* UPDATED: Artist Grid Layout */
         #artist-grid-container {
             display: grid;
-            grid-template-columns: repeat(1, 1fr); /* Mobile-first: 1 column */
-            gap: 1.5rem;
+            grid-template-columns: repeat(2, 1fr); /* Start with 2 columns on mobile */
+            gap: 1rem; /* Slightly smaller gap */
         }
-        @media (min-width: 640px) { /* sm: 2 columns */
-            #artist-grid-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (min-width: 1024px) { /* lg: 3 columns */
+        @media (min-width: 640px) { /* sm: 3 columns */
             #artist-grid-container {
                 grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (min-width: 768px) { /* md: 4 columns */
+            #artist-grid-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        @media (min-width: 1280px) { /* xl: 6 columns */
+            #artist-grid-container {
+                grid-template-columns: repeat(6, 1fr);
             }
         }
         
@@ -205,7 +211,6 @@
             transform: rotate(-2deg); display: inline-block;
             font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem;
         }
-        /* UPDATED: Dark mode color for known-for-box */
         .dark .known-for-box {
             border-color: var(--border-color);
             box-shadow: none;
@@ -420,8 +425,8 @@
                 artistProfiles: {},
                 artistsData: [],
                 styleMatrix: {},
-                currentPage: 1,       // ADDED: For pagination
-                artistsPerPage: 18,   // ADDED: For pagination (3 cols x 6 rows)
+                currentPage: 1,
+                artistsPerPage: 24,   // UPDATED: For pagination (6 cols x 4 rows)
             },
 
             // DOM Elements
@@ -446,9 +451,9 @@
                     pageContent: document.getElementById('page-content'),
                     artistModal: document.getElementById('artist-modal'),
                     instrumentFilter: document.getElementById('instrument-filter'),
-                    searchInput: document.getElementById('search-input'), // ADDED
+                    searchInput: document.getElementById('search-input'),
                     artistGridContainer: document.getElementById('artist-grid-container'),
-                    paginationContainer: document.getElementById('pagination-container'), // ADDED
+                    paginationContainer: document.getElementById('pagination-container'),
                     mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
@@ -616,7 +621,6 @@
                     document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeArtistModal(); } });
                 },
 
-                // UPDATED: Renders grid based on filters and current page
                 renderArtistGrid() {
                     const { instrumentFilter, searchInput, artistGridContainer } = this.elements;
                     
@@ -652,12 +656,13 @@
                             if (artist.tier === 1) card.classList.add('bandleader');
                             if (artist.tier === 2) card.classList.add('influential-sideman');
                             card.dataset.artistName = artist.name;
+                            // UPDATED: Removed h-56 class, changed text-base to text-sm
                             card.innerHTML = `
-                                <div class="h-56 artist-photo-container">
+                                <div class="artist-photo-container">
                                     <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
                                 </div>
                                 <div class="p-3">
-                                    <h4 class="font-bold text-base text-[var(--text-main)] truncate">${artist.name}</h4>
+                                    <h4 class="font-bold text-sm text-[var(--text-main)] truncate">${artist.name}</h4>
                                 </div>`;
                             artistGridContainer.appendChild(card);
                         });
@@ -667,16 +672,14 @@
                     this.methods.renderPagination(filteredArtists.length);
                 },
 
-                // ADDED: Renders pagination controls
                 renderPagination(totalArtists) {
                     const { paginationContainer } = this.elements;
                     const { currentPage, artistsPerPage } = this.state;
                     paginationContainer.innerHTML = '';
 
                     const totalPages = Math.ceil(totalArtists / artistsPerPage);
-                    if (totalPages <= 1) return; // Don't show pagination if there's only one page
+                    if (totalPages <= 1) return;
 
-                    // Previous Button
                     const prevButton = document.createElement('button');
                     prevButton.textContent = '« Prev';
                     prevButton.className = 'pagination-btn';
@@ -688,13 +691,11 @@
                     });
                     paginationContainer.appendChild(prevButton);
 
-                    // Page Info Span
                     const pageInfo = document.createElement('span');
                     pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
                     pageInfo.className = 'p-2 text-sm font-semibold text-[var(--text-muted)]';
                     paginationContainer.appendChild(pageInfo);
 
-                    // Next Button
                     const nextButton = document.createElement('button');
                     nextButton.textContent = 'Next »';
                     nextButton.className = 'pagination-btn';
@@ -727,10 +728,9 @@
                     });
                 },
 
-                // UPDATED: Event listeners for new search input
                 setupGeneralEventListeners() {
                     const handleFilterChange = () => {
-                        this.state.currentPage = 1; // Reset to first page on any filter change
+                        this.state.currentPage = 1;
                         this.methods.renderArtistGrid();
                     };
 
