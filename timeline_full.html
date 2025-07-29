@@ -253,8 +253,20 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
             gap: 1rem;
+        }
+        
+        #current-era-display {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            flex-shrink: 0;
+            width: 280px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: opacity 0.3s;
         }
         
         #genre-legend {
@@ -376,7 +388,7 @@
         .toggle-label-chrono { right: 12px; }
 
         /* Dropdown */
-        .dropdown-container { position: relative; }
+        .dropdown-container { position: relative; flex-shrink: 0; }
         .dropdown-btn {
             background: var(--bg-secondary); border: 1px solid var(--text-muted); color: var(--text-muted);
             font-size: 0.8rem; font-weight: bold; border-radius: 99px; padding: 0.5rem 1rem;
@@ -416,10 +428,14 @@
 
 
         /* Responsive Styles */
+        @media (max-width: 1024px) {
+            #current-era-display { display: none; }
+        }
         @media (max-width: 767px) {
             .year-container { width: 300px; margin: 0 0.5rem; }
             #timeline-wrapper { padding-left: 0.5rem; padding-right: 0.5rem; }
             .album-grid { display: grid; grid-template-columns: repeat(2, 1fr); justify-items: left; gap: 0.75rem; }
+            #controls-header { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
@@ -430,7 +446,7 @@
         <p>Loading Musical History...</p>
     </div>
 
-    <!-- Main Navigation Header -->
+    <!-- ** MODIFIED MAIN NAVIGATION HEADER ** -->
     <div class="sticky top-0 z-50 h-16 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
         <header class="container mx-auto h-full">
             <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
@@ -438,14 +454,20 @@
                     <a href="timeline.html"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-12 sm:h-14" onerror="this.onerror=null;this.src='https://placehold.co/160x56/1c1917/f5f5f4?text=Logo';"></a>
                     <h1 class="hidden md:block header-title-styled">Interactive Jazz Timeline</h1>
                 </div>
-                <div class="flex items-center">
+                <div class="flex items-center gap-4">
                     <div class="hidden md:flex items-center space-x-8">
                         <a href="timeline.html" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
                             Back to Main Timeline
                         </a>
                     </div>
-                    <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                    <label for="view-toggle" class="toggle-switch hidden lg:inline-block">
+                        <input type="checkbox" id="view-toggle" class="hidden">
+                        <span class="toggle-switch-slider"></span>
+                        <span class="toggle-label toggle-label-genre">By Genre</span>
+                        <span class="toggle-label toggle-label-chrono">Chronological</span>
+                    </label>
+                    <button id="theme-toggle" class="p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
                         <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
@@ -463,27 +485,28 @@
     <div id="main-container">
         <!-- ** MODIFIED CONTROLS HEADER ** -->
         <header id="controls-header">
+            <!-- Sticky Era Title -->
+            <div id="current-era-display"></div>
+            
             <!-- Genre Filters -->
             <div id="genre-legend">
                 <!-- Genre buttons will be injected here by JavaScript -->
             </div>
             
-            <!-- Right-side Controls -->
-            <div class="flex items-center gap-4 flex-shrink-0">
-                <label for="view-toggle" class="toggle-switch">
-                    <input type="checkbox" id="view-toggle" class="hidden">
-                    <span class="toggle-switch-slider"></span>
-                    <span class="toggle-label toggle-label-genre">By Genre</span>
-                    <span class="toggle-label toggle-label-chrono">Chronological</span>
-                </label>
-                <div id="era-jump-container" class="dropdown-container">
-                    <button class="dropdown-btn">
-                        Jump to Era
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                    </button>
-                    <div id="era-jump-list" class="dropdown-list"></div>
-                </div>
+            <!-- Jump to Era Dropdown -->
+            <div id="era-jump-container" class="dropdown-container">
+                <button class="dropdown-btn">
+                    Jump to Era
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                </button>
+                <div id="era-jump-list" class="dropdown-list"></div>
             </div>
+            <label for="view-toggle-mobile" class="toggle-switch lg:hidden">
+                <input type="checkbox" id="view-toggle-mobile" class="hidden">
+                <span class="toggle-switch-slider"></span>
+                <span class="toggle-label toggle-label-genre">By Genre</span>
+                <span class="toggle-label toggle-label-chrono">Chronological</span>
+            </label>
         </header>
 
         <div id="timeline-container">
@@ -521,7 +544,6 @@
                 genres: {},
                 artistsData: [],
                 fullArtistsData: {},
-                // ** MODIFIED ERAS with dark mode colors **
                 eras: [
                     { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: '#dbeafe', colorDark: '#1e3a8a' },
                     { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: '#f3e8ff', colorDark: '#5b21b6' },
@@ -541,6 +563,7 @@
                 scrollLeft: 0,
                 isAllGenresActive: true,
                 timelineView: 'genre', // 'genre' or 'chronological'
+                intersectionObserver: null,
             },
 
             // --- DOM ELEMENTS ---
@@ -563,7 +586,9 @@
                 analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
                 closeAlbumModalBtn: document.getElementById('close-album-modal'),
                 viewToggle: document.getElementById('view-toggle'),
+                viewToggleMobile: document.getElementById('view-toggle-mobile'),
                 eraJumpList: document.getElementById('era-jump-list'),
+                currentEraDisplay: document.getElementById('current-era-display'),
             },
 
             // --- INITIALIZATION ---
@@ -631,7 +656,6 @@
                         }
                     });
                 }
-                // Add hardcoded overrides/defaults
                 colorMap['Bebop'] = 'var(--genre-bebop)';
                 colorMap['Hard Bop'] = 'var(--genre-hard-bop)';
                 colorMap['Cool Jazz'] = 'var(--genre-cool-jazz)';
@@ -751,8 +775,11 @@
                 ).join('');
             },
             
-            // ** MODIFIED RENDER TIMELINE LOGIC **
             renderTimeline() {
+                if (this.state.intersectionObserver) {
+                    this.state.intersectionObserver.disconnect();
+                }
+
                 const fragment = document.createDocumentFragment();
                 const sortedYears = [...this.state.groupedDataByGenre.keys()].sort((a, b) => a - b);
                 let renderedEras = new Set();
@@ -763,17 +790,14 @@
                     yearContainer.dataset.year = year;
                     yearContainer.id = `year-${year}`;
 
-                    // Add Era Marker inside the year container for the first year of an era
                     const currentEra = this.state.eras.find(e => year >= e.startYear && year <= e.endYear);
                     if (currentEra && !renderedEras.has(currentEra.title)) {
                         const eraMarker = document.createElement('div');
                         eraMarker.className = 'era-marker';
-                        eraMarker.id = `era-${currentEra.startYear}`;
-                        // Set CSS variables for dynamic coloring
                         eraMarker.style.setProperty('--era-bg-color', currentEra.color);
                         eraMarker.style.setProperty('--era-bg-color-dark', currentEra.colorDark);
                         eraMarker.innerHTML = `<h3>${currentEra.title}</h3>`;
-                        yearContainer.prepend(eraMarker); // Prepend to put it at the top
+                        yearContainer.prepend(eraMarker);
                         renderedEras.add(currentEra.title);
                     }
                     
@@ -789,7 +813,7 @@
                             const genreBlock = this.createGenreBlock(genre, yearData.get(genre));
                             yearContainer.appendChild(genreBlock);
                         }
-                    } else { // Chronological view
+                    } else { 
                         const albums = this.state.groupedDataChronological.get(year);
                         const genreBlock = document.createElement('div');
                         genreBlock.className = 'genre-block';
@@ -808,6 +832,7 @@
                 this.elements.timelineWrapper.innerHTML = '';
                 this.elements.timelineWrapper.appendChild(fragment);
                 this.filterTimeline();
+                this.setupStickyEraObserver();
             },
 
             createGenreBlock(genre, albums) {
@@ -878,14 +903,27 @@
                 this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
                 this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
+                
+                // Bind both desktop and mobile toggles
                 this.elements.viewToggle.addEventListener('change', this.onViewToggle.bind(this));
+                this.elements.viewToggleMobile.addEventListener('change', this.onViewToggle.bind(this));
+
                 this.elements.eraJumpList.addEventListener('click', this.onEraJump.bind(this));
                 window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
                 window.addEventListener('load', this.calculateHeaderHeight.bind(this));
             },
             
             onViewToggle(e) {
-                this.state.timelineView = e.target.checked ? 'chronological' : 'genre';
+                const isChecked = e.target.checked;
+                this.state.timelineView = isChecked ? 'chronological' : 'genre';
+                
+                // Sync the other toggle
+                if (e.target === this.elements.viewToggle) {
+                    this.elements.viewToggleMobile.checked = isChecked;
+                } else {
+                    this.elements.viewToggle.checked = isChecked;
+                }
+
                 this.renderTimeline();
             },
 
@@ -1019,6 +1057,46 @@
                     const isEmpty = (this.state.timelineView === 'genre') ? visibleBlocks.length === 0 : visibleCards.length === 0;
                     year.classList.toggle('filtered', isEmpty);
                 });
+            },
+
+            // --- STICKY ERA OBSERVER ---
+            setupStickyEraObserver() {
+                const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
+                const observerOptions = {
+                    root: this.elements.timelineContainer,
+                    rootMargin: `-${headerOffset}px 0px -85% 0px`,
+                    threshold: 0
+                };
+
+                this.state.intersectionObserver = new IntersectionObserver(this.handleEraIntersection.bind(this), observerOptions);
+                const yearContainers = this.elements.timelineWrapper.querySelectorAll('.year-container');
+                yearContainers.forEach(container => this.state.intersectionObserver.observe(container));
+            },
+
+            handleEraIntersection(entries) {
+                let topVisibleEra = null;
+
+                for (const entry of entries) {
+                    if (entry.isIntersecting) {
+                        const year = entry.target.dataset.year;
+                        const era = this.state.eras.find(e => year >= e.startYear && year <= e.endYear);
+                        if (era) {
+                           topVisibleEra = era;
+                           break; // Found the topmost visible one
+                        }
+                    }
+                }
+                
+                if (topVisibleEra) {
+                    this.elements.currentEraDisplay.textContent = topVisibleEra.title;
+                    this.elements.currentEraDisplay.style.opacity = '1';
+                } else {
+                     // If nothing is intersecting at the top, check scroll position to find the last passed era
+                    const firstYearContainer = this.elements.timelineWrapper.querySelector('.year-container');
+                    if(firstYearContainer && this.elements.timelineContainer.scrollTop < firstYearContainer.offsetTop) {
+                        this.elements.currentEraDisplay.style.opacity = '0';
+                    }
+                }
             },
             
             // --- MODAL LOGIC ---
