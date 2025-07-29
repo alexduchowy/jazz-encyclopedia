@@ -208,6 +208,7 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            display: block; /* Make the <a> tag a block element */
         }
         html.dark .album-card {
             border-color: var(--border-color);
@@ -741,10 +742,12 @@
             },
 
             createAlbumCard(album) {
-                const card = document.createElement('div');
+                const card = document.createElement('a'); // Use an <a> tag for the card
                 card.className = 'album-card';
+                card.href = album.link;
+                card.target = '_blank';
+                card.rel = 'noopener noreferrer';
                 card.dataset.youtubeId = album.youtubeId || '';
-                card.dataset.link = album.link;
 
                 const primaryGenre = album.genres[0];
                 const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
@@ -829,20 +832,15 @@
                 const card = e.target.closest('.album-card');
                 if (!card) return;
 
-                // If the click is on the play button container, handle play logic
+                // If the click is on the play button container, prevent link and play video
                 if (e.target.closest('.play-button-container')) {
+                    e.preventDefault(); 
                     const youtubeId = card.dataset.youtubeId;
                     if (youtubeId) {
                         this.showPlayer(youtubeId, card);
                     }
-                    return; // Stop further execution
                 }
-
-                // Otherwise, it's a click on the card itself, so navigate
-                const link = card.dataset.link;
-                if (link) {
-                    window.open(link, '_blank');
-                }
+                // If the click is anywhere else, the default <a> tag behavior will open the link.
             },
             
             onFilterClick(e) {
