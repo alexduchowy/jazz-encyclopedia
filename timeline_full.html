@@ -112,7 +112,7 @@
         .year-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            /* align-items: center; Removed to allow full-width header wrapper */
             padding: 1.5rem;
             border-left: 2px solid var(--border-color);
             flex-shrink: 0;
@@ -127,16 +127,12 @@
         .year-header {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2rem;
-            color: var(--text-main);
+            color: var(--accent); /* Changed to accent color */
             font-weight: 900;
-            position: sticky;
-            top: var(--sticky-top-offset);
-            z-index: 30;
             background-color: var(--bg-secondary);
             padding: 0.25rem 1rem;
             border-radius: 9999px;
-            margin-bottom: 2rem;
-            display: inline-block;
+            display: inline-block; /* Keeps the pill shape */
             border: 1px solid var(--border-color);
         }
         
@@ -773,6 +769,7 @@
                 ).join('');
             },
             
+            // ** MODIFIED renderTimeline **
             renderTimeline() {
                 if (this.state.intersectionObserver) {
                     this.state.intersectionObserver.disconnect();
@@ -787,10 +784,21 @@
                     yearContainer.dataset.year = year;
                     yearContainer.id = `year-${year}`;
                     
+                    // Create a wrapper for the sticky header to control its layout
+                    const yearHeaderWrapper = document.createElement('div');
+                    yearHeaderWrapper.style.width = '100%';
+                    yearHeaderWrapper.style.textAlign = 'center';
+                    yearHeaderWrapper.style.position = 'sticky';
+                    yearHeaderWrapper.style.top = `var(--sticky-top-offset)`;
+                    yearHeaderWrapper.style.zIndex = '30';
+                    yearHeaderWrapper.style.marginBottom = '2rem';
+
                     const yearHeader = document.createElement('div');
                     yearHeader.className = 'year-header';
                     yearHeader.textContent = year;
-                    yearContainer.appendChild(yearHeader);
+                    
+                    yearHeaderWrapper.appendChild(yearHeader);
+                    yearContainer.appendChild(yearHeaderWrapper);
 
                     if (this.state.timelineView === 'genre') {
                         const yearData = this.state.groupedDataByGenre.get(year);
@@ -926,7 +934,6 @@
                 }
             },
 
-            // ** MODIFIED onEraJump **
             onEraJump(e) {
                 e.preventDefault();
                 e.stopPropagation();
