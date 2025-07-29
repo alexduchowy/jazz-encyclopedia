@@ -88,7 +88,7 @@
         #timeline-wrapper {
             display: inline-flex;
             align-items: flex-start; /* Align columns to the top */
-            padding: 7rem 1rem;
+            padding: 5.5rem 1rem; /* Adjusted top padding for thinner header */
             min-height: 100%;
         }
         
@@ -112,12 +112,22 @@
         .year-container:first-child {
              border-left: none;
         }
+        /* Sticky Year Header */
         .year-header {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2.5rem;
             color: var(--text-muted);
             margin-bottom: 2rem;
             font-weight: 900;
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-year);
+            z-index: 10;
+            width: 100%;
+            text-align: center;
+            padding: 1rem 0;
+            margin: -1.5rem -1.5rem 2rem -1.5rem; /* Adjust margin to fill parent padding */
+            border-bottom: 1px solid var(--border-color);
         }
         
         /* Genre Block */
@@ -279,7 +289,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 1rem 1.5rem;
+            padding: 0.75rem 1.5rem; /* Thinner padding */
             background-color: var(--bg-year); /* Solid background */
             border-bottom: 1px solid var(--border-color);
             z-index: 50;
@@ -296,8 +306,8 @@
             display: inline-block;
             background-color: var(--accent);
             color: #FFFFFF;
-            padding: 0.5rem 1.5rem;
-            font-size: 1.5rem;
+            padding: 0.4rem 1.25rem;
+            font-size: 1.25rem;
             transition: font-size 0.3s;
         }
 
@@ -357,8 +367,8 @@
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -366,8 +376,8 @@
             margin-left: 1rem;
         }
         #theme-toggle svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             color: var(--text-main);
         }
         
@@ -403,7 +413,7 @@
         /* Responsive Styles */
         @media (max-width: 1023px) {
             .year-container { width: 420px; }
-            #header-title { font-size: 1.25rem; padding: 0.4rem 1rem;}
+            #header-title { font-size: 1.1rem; padding: 0.4rem 1rem;}
             #genre-legend { display: none; }
             #mobile-filter-btn {
                 display: flex;
@@ -419,7 +429,7 @@
             #genre-legend.mobile-visible {
                 display: flex;
                 position: absolute;
-                top: 100%;
+                top: 110%;
                 right: 0;
                 width: 280px;
                 max-width: 100%;
@@ -428,8 +438,9 @@
             }
         }
         @media (max-width: 639px) {
-            .year-container { width: 220px; }
-            #header { padding: 1rem; }
+            .year-container { width: 220px; margin: 0 0.5rem;}
+            #header { padding: 0.75rem 1rem; }
+            #timeline-wrapper { padding-left: 0.5rem; padding-right: 0.5rem; }
         }
 
     </style>
