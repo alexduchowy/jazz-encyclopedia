@@ -1,4 +1,4 @@
-x<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -68,6 +68,15 @@ x<!DOCTYPE html>
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
         }
+        
+        .header-title-styled {
+            transform: rotate(-2deg);
+            display: inline-block;
+            background-color: var(--accent);
+            color: #FFFFFF;
+            padding: 0.4rem 1.25rem;
+            font-size: 1.25rem;
+        }
 
         /* Re-usable nav link style from timeline.html */
         .nav-link {
@@ -109,7 +118,7 @@ x<!DOCTYPE html>
         #timeline-wrapper {
             display: inline-flex;
             align-items: flex-start; /* Align columns to the top */
-            padding: 8rem 1rem 2rem 1rem; /* Adjusted top padding for new header */
+            padding: 8.5rem 1rem 2rem 1rem; /* Adjusted top padding for new header */
             min-height: 100%;
         }
         
@@ -468,7 +477,7 @@ x<!DOCTYPE html>
             <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-4">
                     <a href="timeline.html"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-12 sm:h-14" onerror="this.onerror=null;this.src='https://placehold.co/160x56/1c1917/f5f5f4?text=Logo';"></a>
-                    <h1 class="hidden md:block text-2xl text-[var(--text-main)]">Interactive Jazz Timeline</h1>
+                    <h1 class="hidden md:block header-title-styled">Interactive Jazz Timeline</h1>
                 </div>
                 <div class="flex items-center">
                     <div class="hidden md:flex items-center space-x-8">
