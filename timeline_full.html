@@ -104,7 +104,8 @@
 
         #timeline-wrapper {
             display: inline-flex;
-            padding: 0.5rem 1rem 2rem 1rem; /* Reduced top padding */
+            /* MODIFIED: Removed top padding to eliminate initial gap */
+            padding: 0 1rem 2rem 1rem;
             min-height: 100%;
             align-items: flex-start;
         }
@@ -112,8 +113,8 @@
         .year-container {
             display: flex;
             flex-direction: column;
-            /* align-items: center; Removed to allow full-width header wrapper */
-            padding: 1.5rem;
+            /* MODIFIED: Removed top padding */
+            padding: 0 1.5rem 1.5rem 1.5rem;
             border-left: 2px solid var(--border-color);
             flex-shrink: 0;
             width: 460px;
@@ -123,16 +124,25 @@
         .year-container.filtered { display: none; }
         .year-container:first-child { border-left: none; }
 
-        /* ** MODIFIED Year Header Styling ** */
+        .year-header-wrapper {
+            width: 100%;
+            text-align: center;
+            position: sticky;
+            /* The 'top' value is now set by JS via --sticky-top-offset */
+            top: var(--sticky-top-offset);
+            z-index: 30;
+            margin-bottom: 2rem;
+        }
+
         .year-header {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2rem;
-            color: var(--accent); /* Changed to accent color */
+            color: var(--accent);
             font-weight: 900;
             background-color: var(--bg-secondary);
             padding: 0.25rem 1rem;
             border-radius: 9999px;
-            display: inline-block; /* Keeps the pill shape */
+            display: inline-block;
             border: 1px solid var(--border-color);
         }
         
@@ -591,12 +601,13 @@
                 this.bindEvents();
                 this.setupModals();
                 try {
+                    // This needs to be called once early to set initial layout
+                    this.calculateHeaderHeight(); 
                     await this.fetchData();
                     this.processData();
                     this.renderGenreLegend();
                     this.renderEraJumpList();
                     this.renderTimeline();
-                    this.calculateHeaderHeight(); 
                 } catch (error) {
                     console.error("Initialization failed:", error);
                     this.elements.loader.innerHTML = "<p>Failed to load timeline data.</p>";
@@ -609,12 +620,24 @@
             },
             
             // --- DYNAMIC CALCULATIONS ---
+            // MODIFIED: This function now correctly offsets the timeline content
             calculateHeaderHeight() {
                 const mainNav = document.querySelector('.sticky.top-0.z-50');
                 const controlsHeader = this.elements.controlsHeader;
                 if (mainNav && controlsHeader) {
-                    const totalHeight = mainNav.offsetHeight + controlsHeader.offsetHeight;
-                    document.documentElement.style.setProperty('--sticky-top-offset', `${totalHeight}px`);
+                    // Use rAF to ensure styles are computed after render, preventing race conditions
+                    requestAnimationFrame(() => {
+                        const totalHeight = mainNav.offsetHeight + controlsHeader.offsetHeight;
+                        
+                        // Set padding on the main scroll container to push content down
+                        // below the fixed headers so it's not obscured.
+                        this.elements.timelineContainer.style.paddingTop = `${totalHeight}px`;
+
+                        // The sticky year headers are inside timelineContainer. They should stick
+                        // right at the top of the scrollable area (the padding edge).
+                        // So their 'top' value should be 0 relative to the container.
+                        document.documentElement.style.setProperty('--sticky-top-offset', `0px`);
+                    });
                 }
             },
 
@@ -769,7 +792,6 @@
                 ).join('');
             },
             
-            // ** MODIFIED renderTimeline **
             renderTimeline() {
                 if (this.state.intersectionObserver) {
                     this.state.intersectionObserver.disconnect();
@@ -784,14 +806,9 @@
                     yearContainer.dataset.year = year;
                     yearContainer.id = `year-${year}`;
                     
-                    // Create a wrapper for the sticky header to control its layout
+                    // Create a wrapper for the sticky header
                     const yearHeaderWrapper = document.createElement('div');
-                    yearHeaderWrapper.style.width = '100%';
-                    yearHeaderWrapper.style.textAlign = 'center';
-                    yearHeaderWrapper.style.position = 'sticky';
-                    yearHeaderWrapper.style.top = `var(--sticky-top-offset)`;
-                    yearHeaderWrapper.style.zIndex = '30';
-                    yearHeaderWrapper.style.marginBottom = '2rem';
+                    yearHeaderWrapper.className = 'year-header-wrapper';
 
                     const yearHeader = document.createElement('div');
                     yearHeader.className = 'year-header';
@@ -906,8 +923,8 @@
                 this.elements.eraJumpList.addEventListener('click', this.onEraJump.bind(this));
                 
                 window.addEventListener('click', this.closeAllDropdowns.bind(this));
+                // Recalculate header height on resize for responsive changes
                 window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
-                window.addEventListener('load', this.calculateHeaderHeight.bind(this));
             },
             
             onViewToggle(e) {
@@ -944,7 +961,8 @@
                 const yearContainer = document.getElementById(`year-${year}`);
                 
                 if (yearContainer) {
-                    const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
+                    // The offset is now 0 because the sticky header sticks to the top of the padded container
+                    const headerOffset = 0; 
                     const offsetPosition = yearContainer.offsetTop - headerOffset; 
 
                     this.elements.timelineContainer.scrollTo({
@@ -1069,11 +1087,15 @@
             },
 
             // --- STICKY ERA OBSERVER ---
+            // MODIFIED: This function now correctly calculates the observer margin
             setupStickyEraObserver() {
-                const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-top-offset'), 10) || 112;
+                // The true offset is the padding-top of the scroll container, which we set dynamically.
+                const headerOffset = parseFloat(this.elements.timelineContainer.style.paddingTop) || 112;
                 const rootMarginTop = headerOffset + 1;
                 const observerOptions = {
                     root: this.elements.timelineContainer,
+                    // The rootMargin's negative top value tells the observer to trigger when an element
+                    // hits the line defined by the bottom of the fixed headers.
                     rootMargin: `-${rootMarginTop}px 0px -${this.elements.timelineContainer.clientHeight - rootMarginTop - 1}px 0px`,
                     threshold: 0
                 };
