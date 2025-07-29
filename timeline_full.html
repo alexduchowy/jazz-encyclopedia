@@ -141,7 +141,7 @@
             position: sticky;
             top: 108px; /* Stick below the main header */
             background-color: var(--bg-main);
-            z-index: 40;
+            z-index: 30; /* Lower z-index to stay below controls */
             width: calc(100% + 3rem); /* Fill parent padding */
             text-align: center;
             padding: 1rem 0;
@@ -186,7 +186,7 @@
             justify-content: flex-start; /* Left-aligned */
         }
 
-        /* Album Card - Reverted to original compact style */
+        /* Album Card */
         .album-card {
             width: 120px;
             background-color: var(--bg-main);
@@ -198,7 +198,6 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            display: block; /* Make the <a> tag a block element */
         }
         html.dark .album-card {
             border-color: var(--border-color);
@@ -245,13 +244,13 @@
             color: #ccc;
         }
 
-        /* Play Button Overlay */
-        .play-button-overlay {
+        /* Play Button & Mini Player Icon */
+        .play-button-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 120px; /* Match cover art height */
+            height: 120px;
             background-color: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
@@ -259,15 +258,40 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        .album-card:hover .play-button-overlay {
+        .album-card:hover .play-button-container {
             opacity: 1;
         }
         .play-icon {
-            width: 32px; /* Smaller icon for smaller card */
+            width: 32px;
             height: 32px;
             fill: white;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
+        .mini-play-icon {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            border: 1px solid white;
+        }
+        .mini-play-icon svg {
+            width: 10px;
+            height: 10px;
+            fill: white;
+        }
+        .album-card.is-playing .mini-play-icon {
+            display: flex; /* Show when playing */
+        }
+        .album-card.is-playing .play-button-container {
+            opacity: 1; /* Keep overlay visible when playing */
+        }
+
 
         /* Floating Audio Player */
         #audio-player {
@@ -324,7 +348,7 @@
             padding: 0.5rem 1rem; /* Reduced padding */
             background-color: var(--bg-main);
             border-bottom: 1px solid var(--border-color);
-            z-index: 50;
+            z-index: 40; /* Above year headers but below main nav */
             display: flex;
             align-items: center;
             overflow: hidden; /* Hide overflow from the container */
@@ -437,7 +461,7 @@
         <p>Loading Musical History...</p>
     </div>
 
-    <!-- Standardized Sticky Header from timeline.html -->
+    <!-- Main Navigation Header -->
     <div class="sticky top-0 z-50 h-16 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
         <header class="container mx-auto h-full">
             <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
@@ -497,8 +521,8 @@
                 isDragging: false,
                 startX: 0,
                 scrollLeft: 0,
-                clickTimer: null, // For handling single vs double clicks
                 isAllGenresActive: true,
+                currentlyPlayingCard: null,
             },
 
             // --- DOM ELEMENTS ---
@@ -581,8 +605,9 @@
                      if (typeof album.genres === 'string') {
                         album.genres = album.genres.split(',').map(g => g.trim());
                     }
-                     album.uniqueId = `album-${slug(album.artist)}-${slug(album.albumTitle)}`;
-                     album.link = `/album/${album.uniqueId}`; // Add link property
+                     const albumSlug = `${slug(album.artist)}-${slug(album.albumTitle)}`;
+                     album.uniqueId = albumSlug;
+                     album.link = `/album/${albumSlug}`;
                 });
 
                 const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
@@ -629,6 +654,7 @@
             // --- RENDERING ---
             renderGenreLegend() {
                 const legendFragment = document.createDocumentFragment();
+                const excludedGenres = ['Afro-Jazz', 'Latin Jazz', 'Soul Jazz'];
                 
                 const showAllBtn = document.createElement('button');
                 showAllBtn.id = 'show-all-btn';
@@ -637,7 +663,7 @@
 
                 const sortedGenres = Object.keys(this.state.genres).sort();
                 for (const genre of sortedGenres) {
-                     if (this.state.albums.some(a => a.genres.includes(genre))) {
+                     if (this.state.albums.some(a => a.genres.includes(genre)) && !excludedGenres.includes(genre)) {
                         const item = document.createElement('button');
                         item.className = 'legend-item';
                         item.dataset.genre = genre;
@@ -702,25 +728,26 @@
             },
 
             createAlbumCard(album) {
-                const card = document.createElement('a'); // Use an <a> tag for the card
-                card.href = album.link;
-                card.target = '_blank';
-                card.rel = 'noopener noreferrer';
+                const card = document.createElement('div');
                 card.className = 'album-card';
                 card.dataset.youtubeId = album.youtubeId || '';
+                card.dataset.link = album.link;
 
                 const primaryGenre = album.genres[0];
                 const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
                 card.style.setProperty('--album-genre-color', genreColor);
 
                 card.innerHTML = `
-                    <div class="play-button-overlay">
+                    <div class="play-button-container">
                          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
                     </div>
                     <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="this.onerror=null;this.src='https://placehold.co/120x120/1c1917/f5f5f4?text=No+Img';">
                     <div class="album-card-info">
                         <h5>${album.albumTitle || 'Unknown Title'}</h5>
                         <p>${album.artist || 'Unknown Artist'}</p>
+                    </div>
+                    <div class="mini-play-icon">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
                     </div>
                 `;
                 return card;
@@ -787,22 +814,21 @@
 
             onCardClick(e) {
                 const card = e.target.closest('.album-card');
-                if (card) {
-                    e.preventDefault(); // Always prevent default link navigation
+                if (!card) return;
 
-                    if (this.state.clickTimer) { // Double-click detected
-                        clearTimeout(this.state.clickTimer);
-                        this.state.clickTimer = null;
-                        window.open(card.href, '_blank'); // Double-click action
-                    } else { // First click
-                        this.state.clickTimer = setTimeout(() => {
-                            const youtubeId = card.dataset.youtubeId;
-                            if (youtubeId) {
-                                this.showPlayer(youtubeId); // Single-click action
-                            }
-                            this.state.clickTimer = null;
-                        }, 250); // Wait 250ms for a potential second click
+                // If the click is on the play button container, handle play logic
+                if (e.target.closest('.play-button-container')) {
+                    const youtubeId = card.dataset.youtubeId;
+                    if (youtubeId) {
+                        this.showPlayer(youtubeId, card);
                     }
+                    return; // Stop further execution
+                }
+
+                // Otherwise, it's a click on the card itself, so navigate
+                const link = card.dataset.link;
+                if (link) {
+                    window.open(link, '_blank');
                 }
             },
             
@@ -817,12 +843,10 @@
                     const genre = target.dataset.genre;
                     if (genre) {
                         if (this.state.isAllGenresActive || e.shiftKey) {
-                            // If 'All' was active, or Shift is pressed, start a new selection
                             this.state.activeGenres.clear();
                             this.state.activeGenres.add(genre);
                             this.state.isAllGenresActive = false;
                         } else {
-                             // Toggle genres in the current selection
                             if (this.state.activeGenres.has(genre)) {
                                 this.state.activeGenres.delete(genre);
                             } else {
@@ -831,7 +855,6 @@
                         }
                     }
                 }
-                // If all genres are deselected, revert to the "All Genres" state
                 if (this.state.activeGenres.size === 0) {
                     this.state.isAllGenresActive = true;
                     this.state.activeGenres = new Set(Object.keys(this.state.genres));
@@ -841,10 +864,8 @@
             },
 
             filterTimeline() {
-                // Re-render the timeline with the current active genres
                 this.renderTimeline();
 
-                // Update legend UI
                 const showAllBtn = this.elements.genreLegend.querySelector('#show-all-btn');
                 if (showAllBtn) {
                     showAllBtn.classList.toggle('active', this.state.isAllGenresActive);
@@ -853,15 +874,13 @@
                 this.elements.genreLegend.querySelectorAll('.legend-item').forEach(item => {
                     const genre = item.dataset.genre;
                     if (this.state.isAllGenresActive) {
-                        item.classList.remove('active');
-                        item.classList.remove('inactive');
+                        item.classList.remove('active', 'inactive');
                     } else {
                         item.classList.toggle('active', this.state.activeGenres.has(genre));
                         item.classList.toggle('inactive', !this.state.activeGenres.has(genre));
                     }
                 });
 
-                // Filter the already rendered DOM elements
                 this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => {
                     const genre = block.dataset.genre;
                     block.classList.toggle('filtered', !this.state.activeGenres.has(genre));
@@ -874,20 +893,34 @@
             },
             
             // --- PLAYER LOGIC ---
-            showPlayer(youtubeId) {
-                this.elements.playerIframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
+            showPlayer(youtubeId, cardElement) {
+                // If there's a card currently playing, remove its playing state
+                if (this.state.currentlyPlayingCard) {
+                    this.state.currentlyPlayingCard.classList.remove('is-playing');
+                }
+                
+                // Set the new card as the one that's playing
+                this.state.currentlyPlayingCard = cardElement;
+                this.state.currentlyPlayingCard.classList.add('is-playing');
+
+                // Load the video but don't autoplay immediately
+                this.elements.playerIframe.src = `https://www.youtube.com/embed/${youtubeId}`;
                 this.elements.audioPlayer.classList.add('visible');
             },
 
             hidePlayer() {
                 this.elements.playerIframe.src = '';
                 this.elements.audioPlayer.classList.remove('visible');
+                // When player is closed, remove the playing state from the card
+                if (this.state.currentlyPlayingCard) {
+                    this.state.currentlyPlayingCard.classList.remove('is-playing');
+                    this.state.currentlyPlayingCard = null;
+                }
             }
         };
 
         JazzTimeline.onDragMove = JazzTimeline.onDragMove.bind(JazzTimeline);
         JazzTimeline.onDragEnd = JazzTimeline.onDragEnd.bind(JazzTimeline);
-        JazzTimeline.onCardClick = JazzTimeline.onCardClick.bind(JazzTimeline);
 
         document.addEventListener('DOMContentLoaded', () => JazzTimeline.init());
     </script>
