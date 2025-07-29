@@ -108,7 +108,7 @@
         #timeline-wrapper {
             display: inline-flex;
             align-items: flex-start; /* Align columns to the top */
-            padding: 8rem 1rem 2rem 1rem; /* Adjusted top padding for new header */
+            padding: 7rem 1rem 2rem 1rem; /* Adjusted top padding for new header */
             min-height: 100%;
         }
         
@@ -139,7 +139,7 @@
             margin-bottom: 2rem;
             font-weight: 900;
             position: sticky;
-            top: 100px; /* Stick below the main header */
+            top: 108px; /* Stick below the main header */
             background-color: var(--bg-main);
             z-index: 40;
             width: calc(100% + 3rem); /* Fill parent padding */
@@ -182,59 +182,67 @@
         .album-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem; /* Increased gap for better spacing */
+            gap: 0.75rem;
             justify-content: center;
         }
 
-        /* Album Card - Styled to match timeline.html */
+        /* Album Card - Reverted to original compact style */
         .album-card {
-            width: 180px;
+            width: 120px;
             background-color: var(--bg-main);
             border-radius: 0.25rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 4px 4px 0px var(--text-main);
             border: 2px solid var(--text-main);
+            /* Special top border for genre color */
+            border-top-width: 6px;
+            border-top-color: var(--album-genre-color, var(--text-main));
             position: relative;
             overflow: hidden;
             cursor: pointer;
         }
         html.dark .album-card {
             border-color: var(--border-color);
-            box-shadow: none;
+            border-top-color: var(--album-genre-color, var(--border-color));
         }
         .album-card:hover {
-            transform: translateY(-5px) rotate(2deg);
-            box-shadow: 8px 8px 0px var(--accent);
-        }
-        html.dark .album-card:hover {
-            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
         }
         .album-card .cover-art {
             width: 100%;
-            height: 180px;
+            height: 120px;
             object-fit: cover;
             display: block;
-            filter: grayscale(100%);
-            transition: filter 0.3s ease;
         }
-        .album-card:hover .cover-art {
-            filter: grayscale(0%);
-        }
+
+        /* Album Info (Hidden by default, appears on hover) */
         .album-card-info {
-            padding: 0.75rem;
-            text-align: left;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.75);
+            color: white;
+            padding: 0.5rem;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+        .album-card:hover .album-card-info {
+            opacity: 1;
+            transform: translateY(0);
         }
         .album-card-info h5 {
-            font-size: 1rem;
+            font-size: 0.8rem;
             font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: var(--text-main);
         }
         .album-card-info p {
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            font-size: 0.7rem;
+            color: #ccc;
         }
 
         /* Play Button Overlay */
@@ -243,22 +251,20 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 180px;
+            height: 120px; /* Match cover art height */
             background-color: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             transition: opacity 0.3s ease;
-            pointer-events: none; /* Let clicks pass through unless targeted */
         }
         .album-card:hover .play-button-overlay {
             opacity: 1;
-            pointer-events: auto; /* Allow clicks on hover */
         }
         .play-icon {
-            width: 48px;
-            height: 48px;
+            width: 32px; /* Smaller icon for smaller card */
+            height: 32px;
             fill: white;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
@@ -312,7 +318,7 @@
         /* Header Controls */
         #controls-header {
             position: fixed;
-            top: 96px; /* Position below main nav header */
+            top: 64px; /* Position below main nav header */
             left: 0;
             width: 100%;
             padding: 0.75rem 1.5rem;
@@ -412,7 +418,6 @@
 
         /* Responsive Styles */
         @media (max-width: 1023px) {
-            #timeline-wrapper { padding-top: 12rem; } /* Adjust for stacked headers */
             .year-container { width: 420px; }
             #genre-legend { display: none; }
             #mobile-filter-btn {
@@ -441,13 +446,7 @@
             }
         }
         @media (max-width: 767px) {
-            .year-container { width: 300px; margin: 0 0.5rem;}
-            .album-card { width: 120px; }
-            .album-card .cover-art { height: 120px; }
-            .album-card-info h5 { font-size: 0.8rem; }
-            .album-card-info p { font-size: 0.7rem; }
-            .play-icon { width: 32px; height: 32px; }
-            .play-button-overlay { height: 120px; }
+            .year-container { width: 220px; margin: 0 0.5rem;}
             #controls-header { padding: 0.75rem 1rem; }
             #timeline-wrapper { padding-left: 0.5rem; padding-right: 0.5rem; }
         }
@@ -462,12 +461,12 @@
     </div>
 
     <!-- Standardized Sticky Header from timeline.html -->
-    <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+    <div class="sticky top-0 z-50 h-16 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
         <header class="container mx-auto h-full">
             <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                <a href="timeline.html"><img src="https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://placehold.co/200x80/1c1917/f5f5f4?text=Logo';"></a>
+                <a href="timeline.html"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-12 sm:h-14" onerror="this.onerror=null;this.src='https://placehold.co/160x56/1c1917/f5f5f4?text=Logo';"></a>
                 <div class="flex items-center">
-                    <div class="flex items-center space-x-8">
+                    <div class="hidden md:flex items-center space-x-8">
                         <a href="timeline.html" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                               <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -488,7 +487,7 @@
     <div id="main-container">
         <!-- Header for Controls -->
         <header id="controls-header">
-             <div class="back-button-container md:hidden">
+             <div class="md:hidden">
                  <a href="timeline.html" class="nav-link px-3 py-2 rounded-md font-medium text-sm flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
                     Back
@@ -734,11 +733,16 @@
                 card.className = 'album-card';
                 card.dataset.youtubeId = album.youtubeId || '';
 
+                // Set genre color for top border
+                const primaryGenre = album.genres[0];
+                const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
+                card.style.setProperty('--album-genre-color', genreColor);
+
                 card.innerHTML = `
                     <div class="play-button-overlay">
                          <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
                     </div>
-                    <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="this.onerror=null;this.src='https://placehold.co/180x180/1c1917/f5f5f4?text=No+Img';">
+                    <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="this.onerror=null;this.src='https://placehold.co/120x120/1c1917/f5f5f4?text=No+Img';">
                     <div class="album-card-info">
                         <h5>${album.albumTitle || 'Unknown Title'}</h5>
                         <p>${album.artist || 'Unknown Artist'}</p>
