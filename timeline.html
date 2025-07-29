@@ -1479,7 +1479,7 @@
                 },
 
                 filterTimeline() {
-                    const selectedGenres = Array.from(this.elements.genreFilterContainer.querySelectorAll('.genre-button.active[data-genre!="all"]')).map(button => button.dataset.genre);
+                    const selectedGenres = Array.from(this.elements.genreFilterContainer.querySelectorAll('.genre-button.active:not([data-genre="all"])')).map(button => button.dataset.genre);
 
                     this.state.visibleAlbums = this.state.albums.filter(album => 
                         album.genres.some(genre => selectedGenres.includes(genre))
