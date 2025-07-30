@@ -345,7 +345,6 @@
                 font-size: 1.125rem;
             }
         }
-        /* ADDED: Collaborator card styles */
         .collaborator-card {
             cursor: pointer;
             transition: transform 0.2s ease;
@@ -683,7 +682,6 @@
                     return artistsArray;
                 },
                 
-                // UPDATED: Added collaborator click handling
                 setupModals() {
                     const { artistModal } = this.elements;
                     
@@ -699,7 +697,6 @@
                             const collaboratorName = collaboratorCard.dataset.artistName;
                             const collaborator = this.state.artistsData.find(a => a.name === collaboratorName);
                             if (collaborator) {
-                                // Close the current modal and open the new one after the close animation
                                 this.methods.closeArtistModal(() => this.methods.openArtistModal(collaborator));
                             }
                         }
@@ -839,7 +836,6 @@
                         .replace(/-+$/, '');
                 },
                 
-                // UPDATED: Added collaborator rendering logic
                 openArtistModal(artist) {
                     const { artistModal } = this.elements;
                     const artistProfile = artist.profile || {};
@@ -875,16 +871,18 @@
                     
                     const bornInModalInfo = artist.profile && artist.profile.bornIn ? `<p class="mt-2 text-[var(--text-main)] text-sm"><strong class="font-bold">Born:</strong> ${artist.profile.bornIn}</p>` : '';
 
-                    // ADDED: Logic to get and render top collaborators
                     const topCollaborators = this.methods.getTopCollaborators(artist.name);
                     let collaboratorsHtml = '';
                     if (topCollaborators.length > 0) {
                         const collaboratorCards = topCollaborators.map(name => {
                             const collaborator = this.state.artistsData.find(a => a.name === name);
                             if (!collaborator) return '';
+                            // UPDATED: Wrapped image in a div to fix onerror bug
                             return `
                                 <div class="collaborator-card text-center" data-artist-name="${collaborator.name}">
-                                    <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-24 h-24 mx-auto rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md flex items-center justify-center bg-stone-300 dark:bg-stone-600\\'><svg class=\\'w-12 h-12 text-stone-500\\' xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                    <div class="w-24 h-24 mx-auto">
+                                        <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-full h-full object-cover rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-full rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md flex items-center justify-center bg-stone-300 dark:bg-stone-600\\'><svg class=\\'w-12 h-12 text-stone-500\\' xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                    </div>
                                     <p class="mt-2 text-sm font-bold text-[var(--text-muted)]">${collaborator.name}</p>
                                 </div>
                             `;
@@ -923,7 +921,6 @@
                     artistModal.querySelector('.modal-content').classList.remove('scale-95');
                 },
 
-                // ADDED: Function to calculate top collaborators
                 getTopCollaborators(artistName) {
                     const collaborations = new Map();
                     const getCanonicalName = this.methods.getCanonicalName;
@@ -951,9 +948,9 @@
                     });
 
                     return Array.from(collaborations.entries())
-                        .sort((a, b) => b[1] - a[1]) // Sort by count descending
-                        .slice(0, 3) // Take top 3
-                        .map(entry => entry[0]); // Return just the names
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 3)
+                        .map(entry => entry[0]);
                 },
 
                 closeArtistModal(callback) {
