@@ -661,7 +661,7 @@
 
                 isLikelyIndividual(name) {
                     if (!name) return false;
-                    const groupKeywords = ['Ensemble', 'Quartet', 'Quintet', 'Sextet', 'Septet', 'Trio', '&', ' and ', 'With', ' featuring ', 'Orchestra', 'Arkestra', 'Band', 'Lifetime'];
+                    const groupKeywords = ['Ensemble', 'Quartet', 'Quintet', 'Sextet', 'Septet', 'Trio', '&', ' and ', 'With', ' featuring ', 'Orchestra', 'Arkestra', 'Band', 'Lifetime', 'Messengers'];
                     
                     if (name.includes(',') || name.includes('/')) return false;
 
@@ -678,6 +678,22 @@
 
                     const getOrCreateArtist = (name) => {
                         const canonicalName = getCanonicalName(name);
+                        if (!isLikelyIndividual(name) && name !== canonicalName) {
+                           // This is a group moniker, get the actual artist
+                           if(!artistsMap.has(canonicalName)) {
+                                artistsMap.set(canonicalName, {
+                                    name: canonicalName,
+                                    instruments: new Set(),
+                                    albums: new Set(),
+                                    photo: `/images/${slugify(canonicalName)}.jpg`,
+                                    profile: profiles[canonicalName] || { name: canonicalName, profile: 'No profile available.' },
+                                    isDatabaseBandleader: false,
+                                    isLegacyBandleader: false,
+                                });
+                           }
+                           return artistsMap.get(canonicalName);
+                        }
+                        
                         if (!artistsMap.has(canonicalName)) {
                             artistsMap.set(canonicalName, {
                                 name: canonicalName,
@@ -720,19 +736,27 @@
                         processLineup(lineup, albumTitle);
 
                         if (album.artist) {
-                             // Handle multi-bandleader credits (e.g., "Artist A, Artist B")
-                            const bandleaderNames = album.artist.split(/[,/&]/).map(name => name.trim());
-                            bandleaderNames.forEach(name => {
-                                const cleanName = name.replace(/ and /g, '').trim();
-                                if (isLikelyIndividual(cleanName)) {
-                                    const bandleader = getOrCreateArtist(cleanName);
-                                    if (isLegacy) {
-                                        bandleader.isLegacyBandleader = true;
-                                    } else {
-                                        bandleader.isDatabaseBandleader = true;
+                            const bandleaderNames = album.artist.split(/[,/&]/).map(name => name.trim().replace(/ and /g, '').trim());
+                            
+                            if(bandleaderNames.length > 1) {
+                                bandleaderNames.forEach(name => {
+                                    if (isLikelyIndividual(name)) {
+                                        const bandleader = getOrCreateArtist(name);
+                                        if (isLegacy) bandleader.isLegacyBandleader = true;
+                                        else bandleader.isDatabaseBandleader = true;
+                                    }
+                                });
+                            } else if (lineup) {
+                                const firstInLineupMatch = lineup.match(/(.+?)\s\((.+)\)/);
+                                if (firstInLineupMatch) {
+                                    const firstArtistName = firstInLineupMatch[1].trim();
+                                    if (album.artist.includes(firstArtistName)) {
+                                        const bandleader = getOrCreateArtist(firstArtistName);
+                                        if (isLegacy) bandleader.isLegacyBandleader = true;
+                                        else bandleader.isDatabaseBandleader = true;
                                     }
                                 }
-                            });
+                            }
                         }
                     };
 
