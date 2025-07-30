@@ -188,6 +188,7 @@
             background-color: var(--bg-main);
             transition: all 0.2s ease; cursor: pointer;
             display: flex; align-items: center; gap: 0.5rem;
+            color: var(--text-muted); /* FIX: Explicitly set text color */
         }
         .dark .dropdown-btn { border-color: var(--border-color); }
         .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
@@ -233,7 +234,7 @@
                         <a href="/tv.html" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
                         <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
                         <div class="dropdown-container">
-                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] dropdown-btn">
+                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium dropdown-btn">
                                 Legacy
                                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                             </a>
