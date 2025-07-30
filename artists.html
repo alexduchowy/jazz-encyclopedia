@@ -678,22 +678,6 @@
 
                     const getOrCreateArtist = (name) => {
                         const canonicalName = getCanonicalName(name);
-                        if (!isLikelyIndividual(name) && name !== canonicalName) {
-                           // This is a group moniker, get the actual artist
-                           if(!artistsMap.has(canonicalName)) {
-                                artistsMap.set(canonicalName, {
-                                    name: canonicalName,
-                                    instruments: new Set(),
-                                    albums: new Set(),
-                                    photo: `/images/${slugify(canonicalName)}.jpg`,
-                                    profile: profiles[canonicalName] || { name: canonicalName, profile: 'No profile available.' },
-                                    isDatabaseBandleader: false,
-                                    isLegacyBandleader: false,
-                                });
-                           }
-                           return artistsMap.get(canonicalName);
-                        }
-                        
                         if (!artistsMap.has(canonicalName)) {
                             artistsMap.set(canonicalName, {
                                 name: canonicalName,
@@ -781,7 +765,7 @@
                             artist.tier = 1; // Orange
                         } else if (artist.isLegacyBandleader) {
                             artist.tier = 2; // Blue
-                        } else if (artist.albums.size >= 4) {
+                        } else if (artist.albums.length >= 4) {
                             artist.tier = 3; // Yellow
                         } else {
                             artist.tier = 4; // Default
