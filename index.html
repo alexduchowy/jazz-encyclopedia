@@ -392,6 +392,45 @@
              border-color: var(--border-color);
         }
         
+        .dropdown-container { position: relative; }
+        .dropdown-btn {
+            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
+            padding: 0.5rem 1.5rem;
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            background-color: var(--bg-main);
+            transition: all 0.2s ease; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .dark .dropdown-btn { border-color: var(--border-color); }
+        .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
+        .dropdown-list {
+            position: absolute;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            z-index: 20; width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+        }
+        .dropdown-container:hover .dropdown-list {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dark .dropdown-list {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a:hover {
+            background-color: var(--accent); color: var(--bg-main);
+            transform: translateX(4px);
+        }
+
         @media (max-width: 1023px) {
             #mobile-card-container {
                 display: flex;
@@ -422,7 +461,17 @@
                             <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
                             <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
                             <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
-                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Legacy</a>
+                            <div class="dropdown-container">
+                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] dropdown-btn">
+                                    Legacy
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </a>
+                                <div class="dropdown-list">
+                                    <a href="/legacy">Legacy Paths</a>
+                                    <a href="/genres.html">Genres</a>
+                                    <a href="https://controlledfreedom.com/artists">Artists</a>
+                                </div>
+                            </div>
                             <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
                             <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
                                 <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
@@ -541,6 +590,8 @@
                 <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
                 <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
                 <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Genres</a>
+                <a href="https://controlledfreedom.com/artists" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
                  <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
@@ -935,9 +986,11 @@
                     
                     if (!album) return;
 
+                    const albumSlug = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
+
                     albumModalTitle.textContent = album.albumTitle;
                     albumModalArtist.textContent = album.artist;
-                    albumModalArtist.href = album.isLegacy ? `/legacy#artists` : `/timeline#artists`;
+                    albumModalArtist.href = `https://controlledfreedom.com/artists#${this.methods.slugify(album.artist)}`;
                     
                     albumModalAlbumArt.src = album.cover || '';
                     albumModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
@@ -948,16 +1001,14 @@
                     const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A').split(/, (?![^()]*\))/).map(personnel => {
                         const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
                         if (match && this.state.artistsData.some(a => a.name === match[1].trim())) {
-                            const artistLink = album.isLegacy ? `/legacy#artists` : `/timeline#artists`;
-                            return `<a href="${artistLink}" class="clickable-link">${match[1].trim()}</a> (${match[2]})`;
+                            return `<a href="https://controlledfreedom.com/artists#${this.methods.slugify(match[1].trim())}" class="clickable-link">${match[1].trim()}</a> (${match[2]})`;
                         }
                         return personnel;
                     }).join(', ');
 
                     const genres = album.genres ? (Array.isArray(album.genres) ? album.genres : String(album.genres).split(',')) : [];
                     const genreTags = genres.map(g => {
-                        const genreLink = album.isLegacy ? `/legacy#legacy-genres` : `/timeline#matrix`;
-                        return `<a href="${genreLink}" class="genre-tag" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</a>`
+                        return `<a href="/genres.html" class="genre-tag" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</a>`
                     }).join(' ');
 
                     albumModalAlbumDetails.innerHTML = `
@@ -967,6 +1018,11 @@
                             <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span>
                             <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
                             <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
+                        </div>
+                        <div class="mt-6 flex justify-end">
+                           <a href="/album/${albumSlug}" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-md transition-colors duration-300 no-underline">
+                                Read More &rarr;
+                           </a>
                         </div>`;
 
                     const analysisHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) 
