@@ -624,7 +624,6 @@
                     const trimmedName = name.trim();
 
                     // --- Moniker Normalization ---
-                    // Maps group names/variations to a single artist.
                     if (trimmedName.startsWith('Art Blakey')) return 'Art Blakey';
                     if (trimmedName.startsWith('Sun Ra')) return 'Sun Ra';
                     
@@ -637,10 +636,26 @@
                     return trimmedName;
                 },
 
+                isLikelyIndividual(name) {
+                    if (!name) return false;
+                    const groupKeywords = ['Ensemble', 'Quartet', 'Quintet', 'Sextet', 'Trio', '&', ' and ', 'With', ' featuring ', 'Orchestra', 'Arkestra', 'Band'];
+                    if (name.includes(',')) return false;
+                    if (groupKeywords.some(keyword => name.includes(keyword))) {
+                        // This name is a group, but it might be a moniker for a real artist.
+                        // Check if getCanonicalName normalizes it to something different.
+                        // If the canonical name is the same as the original, it's a true group.
+                        // e.g. "Art Blakey's Jazz Messengers" -> "Art Blakey" (Individual)
+                        // e.g. "Art Ensemble of Chicago" -> "Art Ensemble of Chicago" (Group)
+                        return this.methods.getCanonicalName(name) !== name;
+                    }
+                    return true;
+                },
+
                 processAndSortData(legacyData) {
                     const artistsMap = new Map();
                     const slugify = this.methods.slugify;
                     const getCanonicalName = this.methods.getCanonicalName;
+                    const isLikelyIndividual = this.methods.isLikelyIndividual;
                     const profiles = this.state.artistProfiles;
 
                     const getOrCreateArtist = (name) => {
@@ -654,10 +669,7 @@
                                 profile: profiles[canonicalName] || { name: canonicalName, profile: 'No profile available.' },
                                 isDatabaseBandleader: false,
                                 isLegacyBandleader: false,
-                                originalNames: new Set([name]) // Store original name for filtering
                             });
-                        } else {
-                           artistsMap.get(canonicalName).originalNames.add(name);
                         }
                         return artistsMap.get(canonicalName);
                     };
@@ -667,23 +679,30 @@
                         lineup.split(/,(?![^()]*\))/).forEach(part => {
                             const match = part.trim().match(/(.+?)\s\((.+)\)/);
                             if (match) {
-                                const artist = getOrCreateArtist(match[1].trim());
-                                const instrumentsString = match[2];
-                                instrumentsString.split(/, | \/ /).forEach(inst => {
-                                    const trimmedInst = inst.trim();
-                                    if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
-                                        artist.instruments.add(trimmedInst);
-                                    }
-                                });
-                                if(albumTitle) artist.albums.add(albumTitle);
+                                const artistName = match[1].trim();
+                                // Only create entries for individual artists from the lineup
+                                if (isLikelyIndividual(artistName)) {
+                                    const artist = getOrCreateArtist(artistName);
+                                    const instrumentsString = match[2];
+                                    instrumentsString.split(/, | \/ /).forEach(inst => {
+                                        const trimmedInst = inst.trim();
+                                        if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
+                                            artist.instruments.add(trimmedInst);
+                                        }
+                                    });
+                                    if(albumTitle) artist.albums.add(albumTitle);
+                                }
                             }
                         });
                     };
 
                     // Step 1: Process database.json
                     this.state.albums.forEach(album => {
-                        const bandleader = getOrCreateArtist(album.artist);
-                        bandleader.isDatabaseBandleader = true;
+                        // Check if the main artist is an individual before assigning bandleader status
+                        if (isLikelyIndividual(album.artist)) {
+                            const bandleader = getOrCreateArtist(album.artist);
+                            bandleader.isDatabaseBandleader = true;
+                        }
                         (album.pivotalTracks || []).forEach(track => {
                             processLineup(track.lineup, album.albumTitle);
                         });
@@ -693,7 +712,7 @@
                     if (legacyData && legacyData.paths) {
                         Object.values(legacyData.paths).forEach(path => {
                             (path.albums || []).forEach(album => {
-                                if (album.artist) {
+                                if (album.artist && isLikelyIndividual(album.artist)) {
                                     const bandleader = getOrCreateArtist(album.artist);
                                     bandleader.isLegacyBandleader = true;
                                 }
@@ -709,19 +728,10 @@
                         });
                     }
                     
-                    // Step 3: Filter out groups that were not mapped to a canonical artist
-                    const groupKeywords = ['Ensemble', 'Quartet', 'Quintet', 'Sextet', 'Trio', '&', ' and ', 'With', ' featuring ', 'Orchestra', 'Arkestra', 'Band'];
                     const artistsArray = Array.from(artistsMap.values());
-                    const filteredArtistsArray = artistsArray.filter(artist => {
-                        // If the canonical name itself is a group, filter it.
-                        // Example: "Art Ensemble of Chicago" does not get normalized, so its name is checked here.
-                        const isGroup = groupKeywords.some(keyword => artist.name.includes(keyword));
-                        return !isGroup;
-                    });
 
-
-                    // Step 4: Finalize artist data and assign tiers
-                    filteredArtistsArray.forEach(artist => {
+                    // Step 3: Finalize artist data and assign tiers
+                    artistsArray.forEach(artist => {
                         artist.instruments = Array.from(artist.instruments);
                         artist.albums = Array.from(artist.albums);
 
@@ -729,14 +739,14 @@
                             artist.tier = 1; // Orange
                         } else if (artist.isLegacyBandleader) {
                             artist.tier = 2; // Blue
-                        } else if (artist.albums.size >= 4) {
+                        } else if (artist.albums.length >= 4) {
                             artist.tier = 3; // Yellow
                         } else {
                             artist.tier = 4; // Default
                         }
                     });
 
-                    this.state.artistsData = filteredArtistsArray;
+                    this.state.artistsData = artistsArray;
                 },
                 
                 setupModals() {
