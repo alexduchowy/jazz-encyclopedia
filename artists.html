@@ -666,7 +666,7 @@
                     if (name.includes(',') || name.includes('/')) return false;
 
                     if (groupKeywords.some(keyword => name.includes(keyword))) {
-                        return this.getCanonicalName(name) !== name;
+                        return this.methods.getCanonicalName(name) !== name;
                     }
                     return true;
                 },
@@ -723,8 +723,9 @@
                              // Handle multi-bandleader credits (e.g., "Artist A, Artist B")
                             const bandleaderNames = album.artist.split(/[,/&]/).map(name => name.trim());
                             bandleaderNames.forEach(name => {
-                                if (isLikelyIndividual(name)) {
-                                    const bandleader = getOrCreateArtist(name);
+                                const cleanName = name.replace(/ and /g, '').trim();
+                                if (isLikelyIndividual(cleanName)) {
+                                    const bandleader = getOrCreateArtist(cleanName);
                                     if (isLegacy) {
                                         bandleader.isLegacyBandleader = true;
                                     } else {
