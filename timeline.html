@@ -102,90 +102,14 @@
         @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
 
        .section-header {
-      transform: rotate(-1deg);
-      display: inline-block;
-      background-color: var(--accent);
-      color: #FFFFFF;
-      padding: 0.25rem 1rem;
-      margin-bottom: 1rem;
-}
+            transform: rotate(-1deg);
+            display: inline-block;
+            background-color: var(--accent);
+            color: #FFFFFF;
+            padding: 0.25rem 1rem;
+            margin-bottom: 1rem;
+        }
         
-        #genre-matrix-container {
-            border: 2px solid var(--border-color);
-            border-radius: 0.25rem;
-            overflow: auto;
-            max-height: 70vh;
-            background-color: var(--bg-main);
-        }
-        .matrix-table {
-            border-collapse: collapse;
-            width: 100%;
-            min-width: 800px;
-        }
-        .matrix-table th, .matrix-table td {
-            padding: 1rem;
-            border-bottom: 2px solid var(--bg-secondary);
-            text-align: left;
-            vertical-align: top;
-            transition: background-color: 0.1s ease-in-out;
-        }
-        .dark .matrix-table td {
-            color: var(--text-main);
-        }
-        .matrix-table thead th {
-            background-color: var(--text-main);
-            color: var(--bg-main);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .dark .matrix-table thead th {
-            background-color: #1a1a1a;
-            color: var(--accent);
-            border-bottom: 2px solid var(--border-color);
-        }
-        .matrix-table tbody th {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.25rem;
-            width: 150px;
-            position: sticky;
-            left: 0;
-            z-index: 5;
-            border-right: 2px solid var(--bg-secondary);
-            background-color: var(--bg-main); /* Ensure sticky header has background */
-        }
-        .dark .matrix-table tbody th {
-            border-right-color: var(--border-color);
-            color: var(--text-main);
-        }
-        .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        .matrix-table td.col-hover, .matrix-table .row-hover > td {
-            background-color: var(--highlight-color, rgba(0,0,0,0.05)) !important;
-        }
-        .genre-header-button {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            text-align: left;
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            font-size: inherit;
-            font-weight: inherit;
-            color: inherit;
-        }
-        .genre-header-button .info-icon {
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-        .genre-header-button:hover .info-icon {
-            opacity: 1;
-        }
-
         .modal { transition: opacity 0.3s ease; }
         .modal-content {
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
@@ -430,6 +354,7 @@
             background-color: var(--bg-main);
             transition: all 0.2s ease; cursor: pointer;
             display: flex; align-items: center; gap: 0.5rem;
+            color: var(--text-muted);
         }
         .dark .dropdown-btn { border-color: var(--border-color); }
         .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
@@ -550,13 +475,14 @@
                             <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
                             <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
                             <div class="dropdown-container">
-                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] dropdown-btn">
+                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium dropdown-btn">
                                     Legacy
                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                                 </a>
                                 <div class="dropdown-list">
-                                    <a href="/legacy">Overview</a>
-                                    <a href="/artists.html">Artists</a>
+                                    <a href="/legacy">Legacy Paths</a>
+                                    <a href="/genres.html">Genres</a>
+                                    <a href="https://controlledfreedom.com/artists">Artists</a>
                                 </div>
                             </div>
                             <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
@@ -697,19 +623,6 @@
 
                 </div>
             </section>
-
-            <!-- Genre Matrix Section -->
-            <section id="matrix" class="py-16 sm:py-20 bg-[var(--bg-main)]">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 class="section-header text-5xl">The Genres</h2>
-                    <p class="text-center text-lg text-[var(--text-muted)] mb-12 max-w-3xl mx-auto italic">Compare the main aspects of each style.</p>
-                    <div id="genre-matrix-container" class="matrix-container max-w-6xl mx-auto">
-                        <table id="style-matrix-table" class="matrix-table">
-                            <!-- Table content will be generated here -->
-                        </table>
-                    </div>
-                </div>
-            </section>
         </main>
 
         <!-- Footer -->
@@ -784,9 +697,10 @@
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
                 <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
                 <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-orange-500 p-2 rounded-md">Timeline</a>
                 <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                 <a href="/artists.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
+                <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Genres</a>
+                <a href="https://controlledfreedom.com/artists" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
                  <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
@@ -855,7 +769,6 @@
                     artistModal: document.getElementById('artist-modal'),
                     genreModal: document.getElementById('genre-modal'),
                     pathModal: document.getElementById('path-modal'),
-                    matrixContainer: document.getElementById('style-matrix-table'),
                     customScrollbar: document.getElementById('custom-scrollbar'),
                     customScrollbarThumb: document.getElementById('custom-scrollbar-thumb'),
                     customScrollbarMarkers: document.getElementById('custom-scrollbar-markers'),
@@ -927,7 +840,6 @@
                     this.methods.renderTimeline();
                     this.methods.setupTimelineInteraction();
                     this.methods.setupModals();
-                    this.methods.buildGenreMatrix();
                     this.methods.setupMobileMenu();
                     this.methods.setupGeneralEventListeners();
                     this.methods.renderScrollbarMarkers();
@@ -1212,74 +1124,6 @@
                     this.methods.filterTimeline();
                 },
                 
-                buildGenreMatrix() {
-                    const { matrixContainer } = this.elements;
-                    const { styleMatrix } = this.state;
-                    const excludedGenres = ["Jazz Rap", "Big Band", "Latin Jazz"];
-
-                    if (styleMatrix.features && styleMatrix.genres) {
-                        const thead = document.createElement('thead');
-                        const headerRow = document.createElement('tr');
-                        headerRow.innerHTML = `<th class="p-4 font-bold text-2xl w-48 text-left">Genre</th>`;
-                        styleMatrix.features.forEach(feature => {
-                            headerRow.innerHTML += `<th class="p-4 font-bold text-2xl text-center">${feature}</th>`;
-                        });
-                        thead.appendChild(headerRow);
-                        matrixContainer.innerHTML = ''; // Clear previous content
-                        matrixContainer.appendChild(thead);
-
-                        const tbody = document.createElement('tbody');
-                        Object.keys(styleMatrix.genres)
-                            .filter(genreName => !excludedGenres.includes(genreName))
-                            .forEach(genreName => {
-                                const genreData = styleMatrix.genres[genreName];
-                                const row = document.createElement('tr');
-                                row.innerHTML = `<th style="background-color:${genreData.color};">
-                                    <button class="genre-header-button" data-genre-name="${genreName}">
-                                        <span>${genreName}</span>
-                                        <svg class="info-icon w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
-                                    </button>
-                                </th>` + genreData.data.map(dp => `<td>${dp}</td>`).join('');
-                                tbody.appendChild(row);
-                        });
-                        matrixContainer.appendChild(tbody);
-
-                        matrixContainer.addEventListener('mouseover', e => {
-                            if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
-                                const cell = e.target;
-                                const row = cell.parentElement;
-                                const colIndex = Array.from(row.children).indexOf(cell);
-                                
-                                row.classList.add('row-hover');
-                                const rowGenreName = row.querySelector('th button')?.dataset.genreName;
-                                if (rowGenreName) {
-                                    const genreData = this.state.styleMatrix.genres[rowGenreName];
-                                    if (genreData) {
-                                        const color = genreData.color.startsWith('var') ? getComputedStyle(document.documentElement).getPropertyValue(genreData.color.match(/--[a-zA-Z-]+/)[0]).trim() : genreData.color;
-                                        row.style.setProperty('--highlight-color', `${color}33`);
-                                    }
-                                }
-                                Array.from(matrixContainer.querySelectorAll('tr')).forEach(r => {
-                                    r.children[colIndex].classList.add('col-hover');
-                                });
-                            }
-                        });
-
-                        matrixContainer.addEventListener('mouseout', e => {
-                             if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
-                                Array.from(matrixContainer.querySelectorAll('.row-hover, .col-hover')).forEach(el => {
-                                    el.classList.remove('row-hover', 'col-hover');
-                                    el.style.removeProperty('--highlight-color');
-                                });
-                            }
-                        });
-
-
-                    } else {
-                        matrixContainer.parentElement.innerHTML = '<p class="text-center p-4 text-stone-500">No genre data available.</p>';
-                    }
-                },
-                
                 setupTimelineInteraction() {
                     const { timelineContainer, timelineWrapper, scrollLeftBtn, scrollRightBtn, stickyYearDisplay, stickyEraTitle } = this.elements;
                     const scrollAmount = 400;
@@ -1345,7 +1189,7 @@
                 },
                 
                 setupModals() {
-                    const { artistModal, genreModal, pathModal, matrixContainer, albumModal, closeAlbumModalBtn } = this.elements;
+                    const { artistModal, genreModal, pathModal, albumModal, closeAlbumModalBtn } = this.elements;
                     
                     artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
                     artistModal.addEventListener('click', e => { 
@@ -1379,14 +1223,6 @@
                             this.methods.closePathModal(); 
                             this.methods.closeAlbumModal();
                         } 
-                    });
-
-                    matrixContainer.addEventListener('click', (e) => {
-                        const button = e.target.closest('.genre-header-button');
-                        if(button) {
-                            const genreName = button.dataset.genreName;
-                            this.methods.openGenreModal(genreName);
-                        }
                     });
                 },
                 
