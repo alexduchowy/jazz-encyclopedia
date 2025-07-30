@@ -624,8 +624,16 @@
                 getCanonicalName(name) {
                     if (!name) return '';
                     const trimmedName = name.trim();
+                    // Existing normalizations
                     if (trimmedName === 'Roland Kirk') return 'Rahsaan Roland Kirk';
                     if (trimmedName === 'Anthony Williams') return 'Tony Williams';
+                    
+                    // New normalizations for Albert Heath
+                    if (trimmedName === 'Albert Heath' || trimmedName === 'Albert Tootie Heath') return "Albert 'Tootie' Heath";
+
+                    // New normalizations for Lonnie Liston Smith
+                    if (trimmedName === 'Lonnie Liston Smith Jr.') return 'Lonnie Liston Smith';
+                    
                     return trimmedName;
                 },
 
@@ -1046,6 +1054,3 @@
     </script>
 </body>
 </html>
-```
-
-I've left the rest of your HTML and styling intact. Let me know if you have any other questio
