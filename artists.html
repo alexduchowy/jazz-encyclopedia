@@ -650,14 +650,15 @@
                     if (name.includes(',') || name.includes('/')) return false;
 
                     if (groupKeywords.some(keyword => name.includes(keyword))) {
-                        return this.getCanonicalName(name) !== name;
+                        // `this` is bound to ArtistApp, so we must access methods via `this.methods`
+                        return this.methods.getCanonicalName(name) !== name;
                     }
                     return true;
                 },
 
                 processAndSortData(legacyData) {
                     const artistsMap = new Map();
-                    const { slugify, getCanonicalName, isLikelyIndividual } = this;
+                    const { slugify, getCanonicalName, isLikelyIndividual } = this.methods;
                     const profiles = this.state.artistProfiles;
 
                     const getOrCreateArtist = (name) => {
@@ -701,10 +702,8 @@
                         const albumTitle = album.albumTitle || album.title;
                         const lineup = (album.pivotalTracks && album.pivotalTracks[0]?.lineup) || album.lineup;
 
-                        // First, process the entire lineup to ensure all artists exist in the map
                         processLineup(lineup, albumTitle);
 
-                        // Now, determine the bandleader based on the user's rule
                         if (album.artist && lineup) {
                             const firstInLineupMatch = lineup.match(/(.+?)\s\((.+)\)/);
                             if (firstInLineupMatch) {
