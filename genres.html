@@ -886,7 +886,17 @@
 
                     const bodyEl = genreModal.querySelector('#genre-modal-body');
                     const keyArtistsHtml = genreInfo.artists ? `<p class="text-base text-[var(--text-muted)] leading-relaxed">${genreInfo.artists}</p>` : '';
-                    const landmarkAlbumsHtml = genreInfo.landmarkAlbums ? `<ul class="list-disc list-inside space-y-1">${genreInfo.landmarkAlbums.map(title => `<li>${title}</li>`).join('')}</ul>` : '';
+                    
+                    const allAlbums = [...this.state.fullAlbumDatabase, ...this.state.allLegacyAlbums];
+                    const landmarkAlbumsHtml = genreInfo.landmarkAlbums ? `<ul class="list-disc list-inside space-y-1">${genreInfo.landmarkAlbums.map(title => {
+                        const album = allAlbums.find(a => a.albumTitle.toLowerCase() === title.toLowerCase());
+                        if (album) {
+                            const albumSlug = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
+                            return `<li><a href="/album/${albumSlug}" target="_blank" rel="noopener noreferrer" class="clickable-link">${title}</a></li>`;
+                        }
+                        return `<li>${title}</li>`;
+                    }).join('')}</ul>` : '';
+
                     const characteristicsHtml = genreInfo.data ? `<ul class="list-disc list-inside space-y-1 text-[var(--text-muted)]">${this.state.genreData.features.map((feature, i) => `<li><strong>${feature}:</strong> ${genreInfo.data[i]}</li>`).join('')}</ul>` : '';
 
                     bodyEl.innerHTML = `<div class="space-y-6">
