@@ -49,7 +49,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXVvoJGasKTRtrnBxsjN0NLGysy8u73X29/j5+vGys2Cg4F/f39dbXN8fX1dfX3DxsjT1dTra2t7enpdZWp/f39ubW10dHTFxsfIZ3A3AAAAQUlEQVR42uzBSAJAQAADsV3V3f4bOghFQvE8UvI8Qf4un+Nh/AUIEAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQICKTR3QIBj3fUAAAAAElFTkSuQmCC');
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXVvoJGasKTRtrnBxsjN0NLGysy8u73X29/j5+vGys2Cg4F/f39dbXN8fX1dfX3DxsjT1dTra2t7enpdZWp/f39ubW10dHTFxsfIZ3A3AAAAQUlEQVR42uzBSAJAQAADsV3V3f4bOghFQvE8UvI8Qf4un+Nh/AUIEAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQICKTR3QIBj3fUAAAAAElFTSuQmCC');
             opacity: 0.03;
             z-index: -1;
             animation: noise 0.2s infinite;
@@ -107,6 +107,7 @@
             font-family: 'Bebas Neue', sans-serif;
             padding: 0.75rem 1.25rem;
             border-bottom: 2px solid var(--border-color);
+            color: var(--text-main);
         }
         
         .live-indicator {
@@ -142,6 +143,15 @@
             color: var(--text-main);
         }
         
+        .playlist-item {
+            border-bottom: 2px solid var(--bg-secondary);
+        }
+        .dark .playlist-item {
+            border-bottom-color: var(--border-color);
+        }
+        .playlist-item:last-child {
+            border-bottom: none;
+        }
         .playlist-item:hover {
             background-color: var(--bg-secondary);
         }
@@ -168,6 +178,45 @@
             border: 2px solid var(--border-color);
             flex-shrink: 0;
         }
+        
+        .dropdown-container { position: relative; }
+        .dropdown-btn {
+            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
+            padding: 0.5rem 1.5rem;
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            background-color: var(--bg-main);
+            transition: all 0.2s ease; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .dark .dropdown-btn { border-color: var(--border-color); }
+        .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
+        .dropdown-list {
+            position: absolute;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            z-index: 20; width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+        }
+        .dropdown-container:hover .dropdown-list {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dark .dropdown-list {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a:hover {
+            background-color: var(--accent); color: var(--bg-main);
+            transform: translateX(4px);
+        }
 
     </style>
 </head>
@@ -183,7 +232,17 @@
                         <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
                         <a href="/tv.html" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
                         <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
-                        <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Legacy</a>
+                        <div class="dropdown-container">
+                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] dropdown-btn">
+                                Legacy
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </a>
+                            <div class="dropdown-list">
+                                <a href="/legacy">Legacy Paths</a>
+                                <a href="/genres.html">Genres</a>
+                                <a href="https://controlledfreedom.com/artists">Artists</a>
+                            </div>
+                        </div>
                         <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
                         <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
@@ -191,8 +250,8 @@
                         </a>
                     </div>
                     <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
-                        <svg id="theme-icon-light" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        <svg id="theme-icon-dark" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
                     <div class="lg:hidden ml-2">
                         <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
@@ -247,7 +306,7 @@
                 <div class="lg:col-span-4">
                     <div class="info-card">
                         <h2 class="info-card-header text-xl lg:text-2xl font-bold">Up Next</h2>
-                        <div id="playlist-container" class="p-2 space-y-1 overflow-y-auto" style="max-height: 500px;">
+                        <div id="playlist-container" class="overflow-y-auto" style="max-height: 500px;">
                             <!-- Playlist items will be generated here -->
                         </div>
                     </div>
@@ -276,6 +335,8 @@
                 <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-orange-500 p-2 rounded-md">TV</a>
                 <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
                 <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Genres</a>
+                <a href="https://controlledfreedom.com/artists" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
                  <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
@@ -450,13 +511,13 @@
             upcomingVideos.forEach((videoItem, i) => {
                 const originalIndex = playlist.findIndex(p => p.id === videoItem.id);
                 const playlistItem = document.createElement('div');
-                playlistItem.className = 'playlist-item flex items-center gap-3 p-2 rounded-md transition-colors cursor-pointer';
+                playlistItem.className = 'playlist-item flex items-center gap-3 p-4 transition-colors cursor-pointer';
                 playlistItem.dataset.index = originalIndex;
                 playlistItem.innerHTML = `
-                    <img src="https://i.ytimg.com/vi/${videoItem.videoId}/default.jpg" alt="${videoItem.title}" class="w-16 h-12 object-cover rounded-sm border-2 border-[var(--border-color)] flex-shrink-0">
+                    <img src="https://i.ytimg.com/vi/${videoItem.videoId}/default.jpg" alt="${videoItem.title}" class="w-24 h-16 object-cover rounded-sm border-2 border-[var(--border-color)] flex-shrink-0">
                     <div>
+                        <p class="text-xs text-[var(--text-muted)] font-bold uppercase tracking-wider">Up Next</p>
                         <h4 class="font-bold text-[var(--text-main)] text-sm leading-tight">${videoItem.title}</h4>
-                        <p class="text-xs text-[var(--text-muted)]">Up Next</p>
                     </div>`;
                 playlistItem.addEventListener('click', () => {
                     currentVideoIndex = parseInt(playlistItem.dataset.index);
