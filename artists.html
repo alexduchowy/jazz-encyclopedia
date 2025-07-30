@@ -24,6 +24,7 @@
             --border-color: #e7e5e4;
             --accent: #f97316;
             --yellow-accent: #facc15;
+            --legacy-blue: #3b82f6;
         }
 
         /* Dark Theme */
@@ -93,8 +94,8 @@
             backface-visibility: hidden;
         }
         .dark .artist-card {
-            border-color: var(--border-color);
-            box-shadow: 4px 4px 0px var(--border-color);
+            border-color: #1c1917;
+            box-shadow: 4px 4px 0px #1c1917;
         }
         .artist-card:hover {
             transform: translateY(-5px) rotate(2deg);
@@ -102,6 +103,7 @@
         }
         .dark .artist-card:hover {
             border-color: var(--accent) !important;
+            box-shadow: 8px 8px 0px var(--accent) !important;
         }
         .artist-card.bandleader { 
             box-shadow: 4px 4px 0px var(--accent); 
@@ -118,6 +120,14 @@
         .dark .artist-card.influential-sideman { 
             box-shadow: 4px 4px 0px var(--yellow-accent); 
             border-color: var(--yellow-accent);
+        }
+        .artist-card.legacy-artist {
+            box-shadow: 4px 4px 0px var(--legacy-blue);
+            border-color: var(--legacy-blue);
+        }
+        .dark .artist-card.legacy-artist {
+            box-shadow: 4px 4px 0px var(--legacy-blue);
+            border-color: var(--legacy-blue);
         }
         
         .artist-card .artist-photo-container { height: 192px; width: 100%; }
@@ -222,6 +232,7 @@
             display: flex; align-items: center; gap: 0.5rem;
             color: var(--text-muted);
         }
+        .dark .dropdown-btn { color: var(--text-muted); }
         .dropdown-btn:hover { color: var(--accent); }
         .dropdown-list {
             position: absolute;
@@ -382,7 +393,7 @@
                             <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
                             <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
                             <div class="dropdown-container">
-                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] dropdown-btn">
+                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium dropdown-btn">
                                     Legacy
                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                                 </a>
@@ -511,6 +522,7 @@
                 albums: [],
                 artistProfiles: {},
                 artistsData: [],
+                legacyArtistNames: new Set(),
                 styleMatrix: {},
                 currentPage: 1,
                 artistsPerPage: 24,
@@ -556,13 +568,15 @@
                     Promise.all([
                         fetch('/database.json').then(res => res.json()),
                         fetch('/artists.json').then(res => res.json()),
-                        fetch('/genres.json').then(res => res.json())
+                        fetch('/genres.json').then(res => res.json()),
+                        fetch('/legacy.json').then(res => res.json())
                     ])
-                    .then(([dbData, artistProfileData, genreData]) => {
+                    .then(([dbData, artistProfileData, genreData, legacyData]) => {
                         this.state.albums = dbData.albums;
                         this.state.artistProfiles = artistProfileData;
                         this.state.styleMatrix = genreData;
                         
+                        this.methods.processLegacyArtists(legacyData);
                         this.methods.initializeAppUI();
                     })
                     .catch(error => {
@@ -695,6 +709,35 @@
                     });
                     return artistsArray;
                 },
+
+                processLegacyArtists(legacyData) {
+                    const legacyArtists = new Set();
+                    const getCanonicalName = this.methods.getCanonicalName;
+
+                    if (legacyData && legacyData.paths) {
+                        Object.values(legacyData.paths).forEach(path => {
+                            (path.albums || []).forEach(album => {
+                                const processLineup = (lineup) => {
+                                    if (!lineup) return;
+                                    lineup.split(/,(?![^()]*\))/).forEach(part => {
+                                        const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                                        if (match) {
+                                            const name = getCanonicalName(match[1].trim());
+                                            legacyArtists.add(name);
+                                        }
+                                    });
+                                };
+
+                                if (album.pivotalTracks && album.pivotalTracks.length > 0) {
+                                    album.pivotalTracks.forEach(track => processLineup(track.lineup));
+                                } else if (album.lineup) {
+                                    processLineup(album.lineup);
+                                }
+                            });
+                        });
+                    }
+                    this.state.legacyArtistNames = legacyArtists;
+                },
                 
                 setupModals() {
                     const { artistModal } = this.elements;
@@ -747,8 +790,13 @@
                         paginatedArtists.forEach(artist => {
                             const card = document.createElement('div');
                             card.className = 'artist-card';
-                            if (artist.tier === 1) card.classList.add('bandleader');
-                            if (artist.tier === 2) card.classList.add('influential-sideman');
+                            if (this.state.legacyArtistNames.has(artist.name)) {
+                                card.classList.add('legacy-artist');
+                            } else if (artist.tier === 1) {
+                                card.classList.add('bandleader');
+                            } else if (artist.tier === 2) {
+                                card.classList.add('influential-sideman');
+                            }
                             card.dataset.artistName = artist.name;
                             card.innerHTML = `
                                 <div class="artist-photo-container">
@@ -891,7 +939,6 @@
                         const collaboratorCards = topCollaborators.map(name => {
                             const collaborator = this.state.artistsData.find(a => a.name === name);
                             if (!collaborator) return '';
-                            // UPDATED: Wrapped image in a div to fix onerror bug
                             return `
                                 <div class="collaborator-card text-center" data-artist-name="${collaborator.name}">
                                     <div class="w-24 h-24 mx-auto">
@@ -993,4 +1040,4 @@
         document.addEventListener('DOMContentLoaded', () => ArtistApp.init());
     </script>
 </body>
-</html
+</html>
