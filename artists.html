@@ -273,7 +273,6 @@
             opacity: 0.5;
         }
 
-        /* ADDED: Banner Styles */
         .banner-section {
             position: relative;
             width: 100%;
@@ -345,6 +344,14 @@
             .banner-subtitle {
                 font-size: 1.125rem;
             }
+        }
+        /* ADDED: Collaborator card styles */
+        .collaborator-card {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .collaborator-card:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -676,12 +683,26 @@
                     return artistsArray;
                 },
                 
+                // UPDATED: Added collaborator click handling
                 setupModals() {
                     const { artistModal } = this.elements;
                     
                     artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
                     artistModal.addEventListener('click', e => { 
-                        if (e.target.id === 'artist-modal') this.methods.closeArtistModal(); 
+                        if (e.target.id === 'artist-modal') {
+                            this.methods.closeArtistModal(); 
+                            return;
+                        }
+                        
+                        const collaboratorCard = e.target.closest('.collaborator-card');
+                        if (collaboratorCard && collaboratorCard.dataset.artistName) {
+                            const collaboratorName = collaboratorCard.dataset.artistName;
+                            const collaborator = this.state.artistsData.find(a => a.name === collaboratorName);
+                            if (collaborator) {
+                                // Close the current modal and open the new one after the close animation
+                                this.methods.closeArtistModal(() => this.methods.openArtistModal(collaborator));
+                            }
+                        }
                     });
                     
                     document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeArtistModal(); } });
@@ -818,6 +839,7 @@
                         .replace(/-+$/, '');
                 },
                 
+                // UPDATED: Added collaborator rendering logic
                 openArtistModal(artist) {
                     const { artistModal } = this.elements;
                     const artistProfile = artist.profile || {};
@@ -853,6 +875,31 @@
                     
                     const bornInModalInfo = artist.profile && artist.profile.bornIn ? `<p class="mt-2 text-[var(--text-main)] text-sm"><strong class="font-bold">Born:</strong> ${artist.profile.bornIn}</p>` : '';
 
+                    // ADDED: Logic to get and render top collaborators
+                    const topCollaborators = this.methods.getTopCollaborators(artist.name);
+                    let collaboratorsHtml = '';
+                    if (topCollaborators.length > 0) {
+                        const collaboratorCards = topCollaborators.map(name => {
+                            const collaborator = this.state.artistsData.find(a => a.name === name);
+                            if (!collaborator) return '';
+                            return `
+                                <div class="collaborator-card text-center" data-artist-name="${collaborator.name}">
+                                    <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-24 h-24 mx-auto rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md flex items-center justify-center bg-stone-300 dark:bg-stone-600\\'><svg class=\\'w-12 h-12 text-stone-500\\' xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                    <p class="mt-2 text-sm font-bold text-[var(--text-muted)]">${collaborator.name}</p>
+                                </div>
+                            `;
+                        }).join('');
+
+                        collaboratorsHtml = `
+                            <div class="mt-6 pt-4 border-t-2 border-[var(--border-color)]">
+                                <h4 class="text-2xl text-[var(--text-main)] mb-4 text-center">Top Collaborators</h4>
+                                <div class="grid grid-cols-3 gap-4">
+                                    ${collaboratorCards}
+                                </div>
+                            </div>
+                        `;
+                    }
+
                     body.innerHTML = `
                         <div class="flex flex-col sm:flex-row gap-6">
                             <div class="w-full sm:w-1/3 flex-shrink-0">
@@ -869,10 +916,44 @@
                                 <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml || '<li class="text-[var(--text-muted)]">No key appearances found in timeline.</li>'}</ul>
                             </div>
                         </div>
+                        ${collaboratorsHtml}
                     `;
                     
                     artistModal.classList.remove('opacity-0', 'pointer-events-none');
                     artistModal.querySelector('.modal-content').classList.remove('scale-95');
+                },
+
+                // ADDED: Function to calculate top collaborators
+                getTopCollaborators(artistName) {
+                    const collaborations = new Map();
+                    const getCanonicalName = this.methods.getCanonicalName;
+                    const canonicalArtistName = getCanonicalName(artistName);
+
+                    this.state.albums.forEach(album => {
+                        if (!album.pivotalTracks) return;
+                        album.pivotalTracks.forEach(track => {
+                            if (!track.lineup) return;
+                            
+                            const lineupParts = track.lineup.split(/,(?![^()]*\))/);
+                            const trackArtists = lineupParts.map(part => {
+                                const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                                return match ? getCanonicalName(match[1].trim()) : null;
+                            }).filter(Boolean);
+
+                            if (trackArtists.includes(canonicalArtistName)) {
+                                trackArtists.forEach(collaboratorName => {
+                                    if (collaboratorName !== canonicalArtistName) {
+                                        collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
+                                    }
+                                });
+                            }
+                        });
+                    });
+
+                    return Array.from(collaborations.entries())
+                        .sort((a, b) => b[1] - a[1]) // Sort by count descending
+                        .slice(0, 3) // Take top 3
+                        .map(entry => entry[0]); // Return just the names
                 },
 
                 closeArtistModal(callback) {
