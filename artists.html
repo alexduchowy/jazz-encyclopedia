@@ -629,12 +629,16 @@
                     if (trimmedName.startsWith('Sun Ra')) return 'Sun Ra';
                     if (trimmedName.startsWith('Thelonious Monk')) return 'Thelonious Monk';
                     if (trimmedName.startsWith('Tony Williams') || trimmedName.startsWith('The Tony Williams')) return 'Tony Williams';
+                    if (trimmedName.startsWith('Dave Brubeck') || trimmedName.startsWith('The Dave Brubeck')) return 'Dave Brubeck';
+                    if (trimmedName.startsWith('Bill Dixon') || trimmedName.startsWith('The Bill Dixon')) return 'Bill Dixon';
+                    if (trimmedName.startsWith('Oscar Peterson') || trimmedName.startsWith('The Oscar Peterson')) return 'Oscar Peterson';
                     
                     // --- Individual Name Normalization ---
                     if (trimmedName === 'Roland Kirk') return 'Rahsaan Roland Kirk';
                     if (trimmedName === 'Anthony Williams') return 'Tony Williams';
                     if (trimmedName === 'Albert Heath' || trimmedName === 'Albert Tootie Heath') return "Albert 'Tootie' Heath";
                     if (trimmedName === 'Lonnie Liston Smith Jr.') return 'Lonnie Liston Smith';
+                    if (trimmedName === 'Phineas Newborn') return 'Phineas Newborn Jr.';
                     
                     return trimmedName;
                 },
@@ -646,14 +650,14 @@
                     if (name.includes(',') || name.includes('/')) return false;
 
                     if (groupKeywords.some(keyword => name.includes(keyword))) {
-                        return this.methods.getCanonicalName(name) !== name;
+                        return this.getCanonicalName(name) !== name;
                     }
                     return true;
                 },
 
                 processAndSortData(legacyData) {
                     const artistsMap = new Map();
-                    const { slugify, getCanonicalName, isLikelyIndividual } = this.methods;
+                    const { slugify, getCanonicalName, isLikelyIndividual } = this;
                     const profiles = this.state.artistProfiles;
 
                     const getOrCreateArtist = (name) => {
@@ -692,44 +696,38 @@
                             }
                         });
                     };
+                    
+                    const processAlbum = (album, isLegacy) => {
+                        const albumTitle = album.albumTitle || album.title;
+                        const lineup = (album.pivotalTracks && album.pivotalTracks[0]?.lineup) || album.lineup;
 
-                    const assignBandleaderStatus = (artistString, isLegacy) => {
-                        if (!artistString) return;
-                        const bandleaderNames = artistString.split(/[,/]/).map(name => name.trim());
-                        bandleaderNames.forEach(name => {
-                            if (isLikelyIndividual(name)) {
-                                const bandleader = getOrCreateArtist(name);
-                                if (isLegacy) {
-                                    bandleader.isLegacyBandleader = true;
-                                } else {
-                                    bandleader.isDatabaseBandleader = true;
+                        // First, process the entire lineup to ensure all artists exist in the map
+                        processLineup(lineup, albumTitle);
+
+                        // Now, determine the bandleader based on the user's rule
+                        if (album.artist && lineup) {
+                            const firstInLineupMatch = lineup.match(/(.+?)\s\((.+)\)/);
+                            if (firstInLineupMatch) {
+                                const firstArtistName = firstInLineupMatch[1].trim();
+                                if (album.artist.includes(firstArtistName)) {
+                                    const bandleader = getOrCreateArtist(firstArtistName);
+                                    if (isLegacy) {
+                                        bandleader.isLegacyBandleader = true;
+                                    } else {
+                                        bandleader.isDatabaseBandleader = true;
+                                    }
                                 }
                             }
-                        });
+                        }
                     };
 
                     // Step 1: Process database.json
-                    this.state.albums.forEach(album => {
-                        assignBandleaderStatus(album.artist, false);
-                        (album.pivotalTracks || []).forEach(track => {
-                            processLineup(track.lineup, album.albumTitle);
-                        });
-                    });
+                    this.state.albums.forEach(album => processAlbum(album, false));
 
                     // Step 2: Process legacy.json
                     if (legacyData && legacyData.paths) {
                         Object.values(legacyData.paths).forEach(path => {
-                            (path.albums || []).forEach(album => {
-                                assignBandleaderStatus(album.artist, true);
-                                const processLegacyLineup = (lineup) => {
-                                    if (lineup) processLineup(lineup, album.title);
-                                };
-                                if (album.pivotalTracks && album.pivotalTracks.length > 0) {
-                                    album.pivotalTracks.forEach(track => processLegacyLineup(track.lineup));
-                                } else if (album.lineup) {
-                                    processLegacyLineup(album.lineup);
-                                }
-                            });
+                            (path.albums || []).forEach(album => processAlbum(album, true));
                         });
                     }
                     
@@ -744,7 +742,7 @@
                             artist.tier = 1; // Orange
                         } else if (artist.isLegacyBandleader) {
                             artist.tier = 2; // Blue
-                        } else if (artist.albums.length >= 4) {
+                        } else if (artist.albums.size >= 4) {
                             artist.tier = 3; // Yellow
                         } else {
                             artist.tier = 4; // Default
