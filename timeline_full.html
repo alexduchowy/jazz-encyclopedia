@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jazz Artists - Controlled Freedom</title>
-    <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
+    <title>Full Interactive Jazz Timeline</title>
     
     <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,38 +13,65 @@
     
     <!-- Custom CSS Styling -->
     <style>
-        /* Light Theme (Default) */
         :root {
-            --bg-main: #f5f5f4;
-            --bg-secondary: #e7e5e4;
-            --bg-header: rgba(255,255,255,0.8);
-            --text-main: #1c1917;
-            --text-muted: #44403c;
-            --border-color: #e7e5e4;
+            --bg-main: #e4e4e7; /* zinc-200 */
+            --bg-secondary: #d4d4d8; /* zinc-300 */
+            --bg-header: rgba(228, 228, 231, 0.8);
+            --text-main: #18181b; /* zinc-900 */
+            --text-muted: #52525b; /* zinc-600 */
+            --border-color: #d4d4d8; /* zinc-300 */
             --accent: #f97316;
-            --yellow-accent: #facc15;
+            --sticky-top-offset: 112px;
+
+            /* Genre Colors */
+            --genre-bebop: #a0522d;
+            --genre-hard-bop: #8b5cf6;
+            --genre-cool-jazz: #3b82f6;
+            --genre-modal-jazz: #10b981;
+            --genre-post-bop: #f59e0b;
+            --genre-free-jazz: #ef4444;
+            --genre-avant-garde: #ec4899;
+            --genre-jazz-fusion: #06b6d4;
+            --genre-default: #d4d4d8;
         }
 
-        /* Dark Theme */
-        .dark {
+        html.dark {
             --bg-main: #1c1917;
             --bg-secondary: #292524;
             --bg-header: rgba(28, 25, 23, 0.8);
             --text-main: #f5f5f4;
             --text-muted: #a8a29e;
             --border-color: #44403c;
+            --genre-bebop: #b97245; 
+            --genre-hard-bop: #6d28d9;
+            --genre-cool-jazz: #2563eb;
+            --genre-modal-jazz: #059669;
+            --genre-post-bop: #d97706;
+            --genre-free-jazz: #dc2626;
+            --genre-avant-garde: #db2777;
+            --genre-jazz-fusion: #0891b2;
         }
 
-        /* Base body styling */
-        body {
+        html, body {
+            height: 100%;
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
+            overflow: hidden;
         }
         
         h1, h2, h3, h4, h5 {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
+        }
+        
+        .header-title-styled {
+            transform: rotate(-2deg);
+            display: inline-block;
+            background-color: var(--accent);
+            color: #FFFFFF;
+            padding: 0.4rem 1.25rem;
+            font-size: 1.25rem;
         }
 
         .nav-link {
@@ -53,933 +79,1241 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.1em;
             font-size: 1.1rem;
+            color: var(--text-muted);
         }
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
         }
-        .nav-bar-behaviour { display: none; }
-        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
 
-       .section-header {
-            transform: rotate(-1deg);
-            display: inline-block;
-            background-color: var(--accent);
-            color: #FFFFFF;
-            padding: 0.25rem 1rem;
-            margin-bottom: 1rem;
+        #main-container {
+            width: 100vw;
+            height: 100%;
+            position: relative;
+        }
+
+        #timeline-container {
+            position: absolute;
+            inset: 0;
+            overflow: auto;
+            cursor: grab;
+            background-color: var(--bg-main);
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #timeline-container::-webkit-scrollbar { display: none; }
+        #timeline-container:active { cursor: grabbing; }
+
+        #timeline-wrapper {
+            display: inline-flex;
+            padding: 0 1rem 6rem 1rem;
+            min-height: 100%;
+            align-items: flex-start;
         }
         
+        .year-container {
+            display: flex;
+            flex-direction: column;
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-left: 2px solid var(--border-color);
+            flex-shrink: 0;
+            width: 460px;
+            margin: 0 1rem;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .year-container.filtered { display: none; }
+        .year-container:first-child { border-left: none; }
+
+        .year-header-wrapper {
+            width: 100%;
+            text-align: center;
+            position: sticky;
+            top: var(--sticky-top-offset);
+            z-index: 30;
+            margin-bottom: 2rem;
+        }
+
+        .year-header {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--accent);
+            font-weight: 900;
+            background-color: var(--bg-secondary);
+            padding: 0.25rem 1rem;
+            border-radius: 9999px;
+            display: inline-block;
+            border: 1px solid var(--border-color);
+        }
+        
+        .genre-block {
+            width: 100%;
+            margin-bottom: 2rem;
+            transition: opacity 0.3s, max-height 0.5s, margin 0.5s;
+            max-height: 2000px; 
+            overflow: hidden;
+        }
+        .genre-block.filtered { opacity: 0; max-height: 0; margin-bottom: 0; }
+
+        .genre-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            padding: 0.25rem 0.75rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #FFFFFF;
+            border: 2px solid rgba(0,0,0,0.1);
+            text-align: center;
+            border-radius: 9999px;
+            transition: all 0.2s;
+        }
+        html.dark .genre-label { border-color: rgba(255,255,255,0.2); }
+        
+        .album-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: flex-start;
+        }
+
+        .album-card {
+            width: 120px;
+            background-color: var(--bg-main);
+            border-radius: 0.25rem;
+            border: 2px solid var(--text-main);
+            border-top-width: 6px;
+            border-top-color: var(--album-genre-color, var(--text-main));
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+        }
+        .album-card.filtered-out {
+            opacity: 0.2;
+            transform: scale(0.95);
+        }
+        html.dark .album-card {
+            border-color: var(--border-color);
+            border-top-color: var(--album-genre-color, var(--border-color));
+        }
+        .album-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        }
+        .album-card .cover-art {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .album-card-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.75);
+            color: white;
+            padding: 0.5rem;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+        .album-card:hover .album-card-info { opacity: 1; transform: translateY(0); }
+        .album-card-info h5 { font-size: 0.8rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .album-card-info p { font-size: 0.7rem; color: #ccc; }
+
+        #controls-header {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            background-color: var(--bg-header);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        
+        #era-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
+        #current-era-display {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: opacity 0.3s, color 0.3s;
+            max-width: 280px;
+        }
+        
+        #genre-legend {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 0.25rem;
+            flex-grow: 1;
+            min-width: 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #genre-legend::-webkit-scrollbar {
+            display: none;
+        }
+
+        .legend-item {
+            display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;
+            font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+            padding: 0.25rem 0.75rem; border-radius: 9999px;
+            border: 1px solid var(--text-muted); background-color: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+        .legend-item:hover { border-color: var(--accent); }
+        .legend-item.active { background-color: var(--accent); color: white; border-color: var(--accent); }
+        .legend-item.inactive { opacity: 0.5; }
+        .legend-color-swatch { width: 0.75rem; height: 0.75rem; border-radius: 0.125rem; border: 1px solid var(--text-main); flex-shrink: 0; }
+        
+        #loader {
+            position: fixed; inset: 0; background-color: var(--bg-main);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.5s ease;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent);
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        #loader p { margin-top: 1rem; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; color: var(--text-muted); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* MODAL STYLES */
         .modal { transition: opacity 0.3s ease; }
         .modal-content {
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
             background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-        }
-        .dark .modal-content { border-color: var(--border-color); }
-        .modal.opacity-0 .modal-content {
-              opacity: 0;
-              transform: scale(0.95) translateY(10px);
-        }
-        
-        .artist-card {
-            background-color: var(--bg-main);
-            border-radius: 0.25rem;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 4px 4px 0px var(--text-main);
-            border: 2px solid var(--text-main);
-            transform: translateZ(0);
-            backface-visibility: hidden;
-        }
-        .dark .artist-card {
-            border-color: var(--border-color);
-            box-shadow: none;
-        }
-        .artist-card:hover {
-            transform: translateY(-5px) rotate(2deg);
-            box-shadow: 8px 8px 0px var(--accent) !important;
-        }
-        .dark .artist-card:hover {
-            box-shadow: none !important;
-            border-color: var(--accent) !important;
-        }
-        .artist-card.bandleader { box-shadow: 4px 4px 0px var(--accent); }
-        .dark .artist-card.bandleader { box-shadow: none; border-color: var(--accent); }
-        .artist-card.influential-sideman { box-shadow: 4px 4px 0px var(--yellow-accent); }
-        .dark .artist-card.influential-sideman { box-shadow: none; border-color: var(--yellow-accent); }
-        
-        .artist-card .artist-photo-container { height: 192px; width: 100%; }
-        .artist-card img {
-              width: 100%; height: 100%;
-              object-fit: cover; object-position: center;
-              filter: grayscale(100%); transition: filter 0.3s ease;
-        }
-         .artist-card:hover img { filter: grayscale(0%); }
-        .artist-placeholder {
-            display: flex; align-items: center; justify-content: center;
-            width: 100%; height: 100%;
-            background-color: var(--text-main);
-        }
-        .artist-placeholder svg { width: 50%; height: 50%; color: var(--text-muted); }
-        
-        #artist-grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            align-items: start; /* Prevents cards from stretching vertically */
-        }
-        @media (min-width: 640px) { #artist-grid-container { grid-template-columns: repeat(3, 1fr); } }
-        @media (min-width: 768px) { #artist-grid-container { grid-template-columns: repeat(4, 1fr); } }
-        @media (min-width: 1280px) { #artist-grid-container { grid-template-columns: repeat(6, 1fr); } }
-        
-        .styled-select select {
-            -webkit-appearance: none; -moz-appearance: none; appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 1.2em;
-            background-color: var(--bg-main);
             border-color: var(--text-main);
-            color: var(--text-main);
         }
-        .dark .styled-select select { border-color: var(--border-color); }
-
-        #loader {
-            position: fixed; inset: 0;
-            background-color: var(--bg-main);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 100;
-        }
-        .loader-spinner {
-            border: 4px solid var(--bg-secondary);
-            border-top: 4px solid var(--accent);
-            border-radius: 50%; width: 50px; height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .content-hidden { display: none; }
+        html.dark .modal-content { border-color: var(--border-color); }
+        .modal.opacity-0 .modal-content { opacity: 0; transform: scale(0.95) translateY(10px); }
         
+        #modal-analysis-section {
+            background-color: #1a1a1a; padding: 1.5rem; margin-top: 2rem;
+            border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main);
+        }
+        html.dark #modal-analysis-section { border-color: var(--border-color); box-shadow: none; }
+        #modal-analysis-section h5 { color: #f5f5f4; }
+        
+        .liner-notes-text { font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; color: #d4d4d2; }
+
+        .genre-tag {
+            padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem;
+            font-weight: 600; color: white; border: 2px solid rgba(0,0,0,0.1);
+            text-decoration: none; display: inline-block;
+        }
+        html.dark .genre-tag { border-color: rgba(255,255,255,0.2); }
+
         .clickable-link {
-            cursor: pointer; text-decoration: underline;
-            text-decoration-color: var(--accent);
+            cursor: pointer; text-decoration: underline; text-decoration-color: var(--accent);
             transition: color 0.2s;
         }
         .clickable-link:hover { color: var(--accent); }
-        .dark .clickable-link { color: var(--accent); }
-        .dark .clickable-link:hover { color: #fb923c; }
 
-        #mobile-menu-panel { transition: transform 0.3s ease-in-out; background-color: var(--bg-main); }
-        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
-        
-        .artist-modal-timeline {
-            list-style: none; padding-left: 1rem;
-            border-left: 2px solid var(--bg-secondary);
+        /* View Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 200px; /* Desktop width */
+            height: 34px;
         }
-        .dark .artist-modal-timeline { border-left-color: var(--border-color); }
-        .artist-modal-timeline-item { position: relative; padding-bottom: 1rem; padding-left: 1.5rem; }
-        .artist-modal-timeline-item::before {
-            content: ''; position: absolute;
-            left: -0.4rem; top: 0.25rem;
-            width: 0.65rem; height: 0.65rem;
-            border-radius: 9999px;
+        .toggle-switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-color: var(--bg-secondary);
-            border: 2px solid var(--text-main);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid var(--text-muted);
         }
-        .dark .artist-modal-timeline-item::before {
-            background-color: var(--bg-secondary);
-            border-color: var(--border-color);
+        .toggle-switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 96px; /* Desktop slider width */
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--accent);
+            transition: .4s;
+            border-radius: 34px;
         }
-        
-        .known-for-box {
-            background-color: var(--accent); color: var(--bg-main);
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--text-main);
-            box-shadow: 2px 2px 0px var(--text-main);
-            transform: rotate(-2deg); display: inline-block;
-            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem;
+        #view-toggle:checked + .toggle-switch-slider:before,
+        #view-toggle-mobile:checked + .toggle-switch-slider:before {
+            transform: translateX(96px); /* Desktop slide distance */
         }
-        .dark .known-for-box {
-            border-color: var(--border-color);
-            box-shadow: none;
-            color: #FFFFFF;
+        .toggle-label {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--text-main);
+            z-index: 10;
+            pointer-events: none;
         }
-        
-        .dropdown-container { position: relative; }
+        .toggle-label-genre { left: 22px; }
+        .toggle-label-chrono { right: 12px; }
+
+        /* Dropdown */
+        .dropdown-container { position: relative; flex-shrink: 0; flex-grow: 1; }
         .dropdown-btn {
-            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
-            transition: all 0.2s ease; cursor: pointer;
-            display: flex; align-items: center; gap: 0.5rem;
+            background: var(--bg-secondary); border: 1px solid var(--text-muted); color: var(--text-muted);
+            font-size: 0.8rem; font-weight: bold; border-radius: 99px; padding: 0.5rem 1rem;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: space-between; gap: 0.25rem;
+            width: 100%;
         }
-        .dropdown-btn:hover { color: var(--accent); }
+        .dropdown-btn:hover { background-color: var(--accent); color: white; border-color: var(--accent); }
         .dropdown-list {
             position: absolute;
+            top: calc(100% + 0.5rem);
+            left: 0;
+            right: 0;
             background-color: var(--bg-main);
             border: 2px solid var(--text-main);
             border-radius: 0.25rem;
-            box-shadow: 4px 4px 0px var(--text-main);
-            z-index: 20; width: 200px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 50;
+            max-height: 250px;
+            overflow-y: auto;
             opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.2s ease;
+            transform: translateY(-10px);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
-        .dropdown-container:hover .dropdown-list {
+        html.dark .dropdown-list { border-color: var(--border-color); }
+        .dropdown-container.open .dropdown-list {
             opacity: 1;
-            visibility: visible;
             transform: translateY(0);
+            pointer-events: auto;
         }
-        .dark .dropdown-list {
-            border-color: var(--border-color);
-            box-shadow: none;
-        }
-        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
-        .dropdown-list a:hover {
-            background-color: var(--accent); color: var(--bg-main);
-            transform: translateX(4px);
-        }
-
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-        .pagination-btn {
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--text-main);
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 0.05em;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border-radius: 0.25rem;
-        }
-        .dark .pagination-btn { border-color: var(--border-color); }
-        .pagination-btn:hover:not(:disabled) {
-            background-color: var(--accent);
-            color: #FFFFFF;
-            border-color: var(--accent);
-        }
-        .pagination-btn.active {
-            background-color: var(--accent);
-            color: #FFFFFF;
-            border-color: var(--accent);
-        }
-        .pagination-btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .banner-section {
-            position: relative;
-            width: 100%;
-            height: 35vh;
-            max-height: 200px;
-            overflow: hidden;
-            background-color: #1a1a1a;
-            border-bottom: 4px solid var(--text-main);
-        }
-        .dark .banner-section { border-bottom-color: var(--border-color); }
-        .banner-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.3;
-            animation: banner-fade-in 2s ease-out forwards;
-        }
-        @keyframes banner-fade-in {
-            from { opacity: 0; transform: scale(1.05); }
-            to { opacity: 0.3; transform: scale(1); }
-        }
-        .banner-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1rem;
-            color: #f5f5f4;
-        }
-        .typewriter h2 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.75rem;
-            max-width: 90vw;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            overflow: hidden;
-            border-right: .15em solid var(--accent);
-            white-space: nowrap;
-            margin: 0 auto;
-            letter-spacing: .1em;
-            animation:
-                typing 3.5s steps(40, end),
-                blink-caret .75s step-end infinite;
-        }
-        .banner-subtitle {
+        .dropdown-list a, .dropdown-list button {
+            display: block;
+            padding: 0.75rem 1rem;
             font-size: 0.9rem;
+            transition: background-color 0.2s;
+            width: 100%;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
+        .dropdown-list a:last-child, .dropdown-list button:last-child {
+            border-bottom: none;
         }
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: var(--accent); }
+        .dropdown-list a:hover, .dropdown-list button:hover {
+            background-color: var(--accent);
+            color: white;
         }
-        @media (min-width: 768px) {
-            .banner-section {
-                height: 30vh;
-                max-height: 250px;
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            #era-controls { display: none; }
+            #genre-legend { display: none; }
+        }
+        @media (min-width: 1201px) {
+            #mobile-controls { display: none; }
+        }
+        @media (max-width: 767px) {
+            .year-container { width: 300px; margin: 0 0.5rem; }
+            #timeline-wrapper { padding-left: 0.5rem; padding-right: 0.5rem; }
+            .album-grid { display: grid; grid-template-columns: repeat(2, 1fr); justify-items: left; gap: 0.75rem; }
+            #controls-header { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+            
+            #mobile-era-display {
+                font-family: 'Bebas Neue', sans-serif;
+                font-size: 1.25rem;
+                text-align: left; /* MODIFIED: Align left */
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                transition: opacity 0.3s, color 0.3s;
+                flex-grow: 1;
             }
-            .typewriter h2 {
-                font-size: 3rem;
-                max-width: none;
+
+            /* MODIFIED: Smaller toggle switch for mobile */
+            #mobile-controls .toggle-switch {
+                width: 140px;
+                flex-shrink: 0;
             }
-            .banner-subtitle {
-                font-size: 1.125rem;
+            #mobile-controls .toggle-switch-slider:before {
+                width: 66px;
             }
-        }
-        /* ADDED: Collaborator card styles */
-        .collaborator-card {
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        .collaborator-card:hover {
-            transform: scale(1.05);
+            #mobile-controls #view-toggle-mobile:checked + .toggle-switch-slider:before {
+                transform: translateX(66px);
+            }
+            #mobile-controls .toggle-label-genre { left: 14px; }
+            #mobile-controls .toggle-label-chrono { right: 10px; }
         }
     </style>
 </head>
-<body class="text-stone-900">
+<body>
 
-    <div id="loader" class="loader"><div class="loader-spinner"></div></div>
+    <div id="loader">
+        <div class="loader-spinner"></div>
+        <p>Loading Musical History...</p>
+    </div>
 
-    <div id="page-content" class="content-hidden">
-        <!-- Standardized Sticky Header -->
-        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
-            <header class="container mx-auto h-full">
-                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
-                    <div class="flex items-center">
-                        <div class="nav-bar-behaviour items-center space-x-8">
-                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
-                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
-                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
-                            <div class="dropdown-container">
-                                <a href="/legacy" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)] dropdown-btn">
-                                    Legacy
-                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                                </a>
-                                <div class="dropdown-list">
-                                    <a href="/legacy">Overview</a>
-                                    <a href="/artists.html">Artists</a>
-                                </div>
-                            </div>
-                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
-                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                                <span>@controlledjazz</span>
-                            </a>
-                        </div>
-                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
-                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                        </button>
-                        <!-- Hamburger Menu Button -->
-                        <div class="lg:hidden ml-2">
-                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
-                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-        </div>
-
-
-        <main>
-            <!-- Banner Section -->
-            <section class="banner-section">
-                <img src="images/artists-banner.jpg" alt="Jazz musicians on stage" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop';">
-                <div class="banner-overlay">
-                    <div class="typewriter">
-                        <h2>The Architects</h2>
-                    </div>
-                    <p class="banner-subtitle text-stone-300 max-w-3xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Explore the musicians who defined an era.</p>
+    <!-- Main Navigation Header -->
+    <div class="sticky top-0 z-50 h-16 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+        <header class="container mx-auto h-full">
+            <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-4 flex-shrink-0">
+                    <a href="timeline.html"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-12 sm:h-14" onerror="this.onerror=null;this.src='https://placehold.co/160x56/1c1917/f5f5f4?text=Logo';"></a>
+                    <h1 class="hidden md:block header-title-styled">Interactive Jazz Timeline</h1>
                 </div>
-            </section>
-            
-            <!-- Key Artists Grid Section -->
-            <section id="artists" class="py-16 sm:py-20 bg-[var(--bg-secondary)]">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    
-                    <!-- Filters Section -->
-                    <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-8 w-full max-w-3xl mx-auto">
-                        <!-- Search Input -->
-                        <div class="w-full sm:w-1/2">
-                            <label for="search-input" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">SEARCH BY NAME:</label>
-                            <input type="text" id="search-input" placeholder="e.g., Miles Davis" class="block w-full rounded-sm border-2 py-2 px-3 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold bg-[var(--bg-main)] border-[var(--text-main)] dark:border-[var(--border-color)] text-[var(--text-main)]">
-                        </div>
-                        <!-- Instrument Filter Dropdown -->
-                        <div class="w-full sm:w-1/2 styled-select">
-                            <label for="instrument-filter" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">FILTER BY INSTRUMENT:</label>
-                            <select id="instrument-filter" class="block w-full rounded-sm border-2 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
-                            </select>
-                        </div>
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="timeline.html" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                            Back to Main Timeline
+                        </a>
                     </div>
-
-                    <!-- Artist Grid Container -->
-                    <div id="artist-grid-container" class="min-h-[600px]">
-                        <!-- Artist cards will be injected here -->
+                    <label for="view-toggle" class="toggle-switch hidden lg:inline-block">
+                        <input type="checkbox" id="view-toggle" class="hidden">
+                        <span class="toggle-switch-slider"></span>
+                        <span class="toggle-label toggle-label-genre">By Genre</span>
+                        <span class="toggle-label toggle-label-chrono">Chronological</span>
+                    </label>
+                    <button id="theme-toggle" class="p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                        <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <div class="md:hidden ml-2">
+                         <a href="timeline.html" class="nav-link p-2 rounded-md font-medium text-sm flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        </a>
                     </div>
-
-                    <!-- Pagination Container -->
-                    <div id="pagination-container" class="pagination-container"></div>
                 </div>
-            </section>
-        </main>
+            </nav>
+        </header>
+    </div>
 
-        <!-- Footer -->
-        <footer class="bg-stone-900 text-stone-200 py-8">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
-                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
-                <div class="mt-6 border-t border-stone-700 pt-6">
-                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
-                    <p class="text-xs text-stone-500 mt-2">Disclaimer: All music and images are the property of their respective copyright holders. This is a non-profit project for educational purposes only.</p>
+
+    <div id="main-container">
+        <!-- Controls Header -->
+        <header id="controls-header">
+            <!-- Desktop Controls -->
+            <div id="era-controls" class="hidden lg:flex">
+                <div id="current-era-display"></div>
+                <div id="era-jump-container-desktop" class="dropdown-container">
+                    <button class="dropdown-btn">
+                        Jump to Era
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <div id="era-jump-list-desktop" class="dropdown-list"></div>
                 </div>
             </div>
-        </footer>
-    </div>
-    
-    <!-- Modals -->
-    <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
-                 <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
-                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
-             </div>
-             <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
+            <div id="genre-legend" class="hidden lg:flex"></div>
+
+            <!-- Mobile Controls -->
+            <div id="mobile-controls" class="w-full lg:hidden flex flex-col gap-2">
+                <div class="flex gap-2 w-full">
+                    <div id="genre-filter-container" class="dropdown-container">
+                        <button id="genre-filter-btn" class="dropdown-btn">
+                            <span>All Genres</span>
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div id="genre-filter-list" class="dropdown-list"></div>
+                    </div>
+                    <div id="era-jump-container-mobile" class="dropdown-container">
+                        <button class="dropdown-btn">
+                            <span>Jump to Era</span>
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div id="era-jump-list-mobile" class="dropdown-list"></div>
+                    </div>
+                </div>
+                <!-- MODIFIED: Swapped order and changed text -->
+                <div class="flex items-center justify-between w-full gap-4">
+                    <div id="mobile-era-display"></div>
+                    <label for="view-toggle-mobile" class="toggle-switch">
+                        <input type="checkbox" id="view-toggle-mobile" class="hidden">
+                        <span class="toggle-switch-slider"></span>
+                        <span class="toggle-label toggle-label-genre">Genre</span>
+                        <span class="toggle-label toggle-label-chrono">Chrono</span>
+                    </label>
+                </div>
+            </div>
+        </header>
+
+        <div id="timeline-container">
+            <div id="timeline-wrapper"></div>
         </div>
     </div>
 
-    <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
-        <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
-        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
-            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
-            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
-                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
-                <a href="/artists.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
-                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
-                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
-                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                    <span>@controlledjazz</span>
-                </a>
-            </nav>
+    <!-- Universal Album Modal -->
+    <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-content-album" class="modal-content rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
+                <div>
+                    <h3 id="album-modal-title" class="text-4xl text-orange-500"></h3>
+                    <p id="album-modal-artist" class="text-xl text-[var(--text-muted)]"></p>
+                </div>
+                <button id="close-album-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+            </div>
+            <div id="album-modal-body" class="p-6 overflow-y-auto">
+                <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/3 flex-shrink-0">
+                        <img id="album-modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)]" alt="Album Art" loading="lazy">
+                    </div>
+                    <div id="album-modal-album-details" class="w-full md:w-2/3"></div>
+                </div>
+                <div id="analysis-wrapper" class="relative mt-4"></div>
+            </div>
         </div>
     </div>
 
-    <!-- Main Application Script -->
     <script>
-        const ArtistApp = {
-            // Application State
+        const JazzTimeline = {
+            // --- STATE & CONFIG ---
             state: {
                 albums: [],
-                artistProfiles: {},
+                genres: {},
                 artistsData: [],
-                styleMatrix: {},
-                currentPage: 1,
-                artistsPerPage: 24,
+                fullArtistsData: {},
+                eras: [
+                    { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: '#3b82f6', colorDark: '#60a5fa' },
+                    { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: '#8b5cf6', colorDark: '#a78bfa' },
+                    { title: "Hard Bop At Its Peak", startYear: 1957, endYear: 1958, color: '#a0522d', colorDark: '#b97245' },
+                    { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: '#10b981', colorDark: '#34d399' },
+                    { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: '#f59e0b', colorDark: '#fbbf24' },
+                    { title: "Spiritual Awakening", startYear: 1964, endYear: 1966, color: '#ef4444', colorDark: '#f87171' },
+                    { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: '#ec4899', colorDark: '#f472b6' },
+                    { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: '#06b6d4', colorDark: '#22d3ee' }
+                ],
+                groupedDataByGenre: new Map(),
+                groupedDataChronological: new Map(),
+                albumMap: new Map(),
+                activeGenres: new Set(),
+                isDragging: false,
+                startX: 0,
+                scrollLeft: 0,
+                isAllGenresActive: true,
+                timelineView: 'genre',
+                intersectionObserver: null,
+                currentStickyEra: null,
             },
 
-            // DOM Elements
-            elements: {},
+            // --- DOM ELEMENTS ---
+            elements: {
+                loader: document.getElementById('loader'),
+                mainContainer: document.getElementById('main-container'),
+                timelineContainer: document.getElementById('timeline-container'),
+                timelineWrapper: document.getElementById('timeline-wrapper'),
+                controlsHeader: document.getElementById('controls-header'),
+                genreLegend: document.getElementById('genre-legend'),
+                themeToggle: document.getElementById('theme-toggle'),
+                themeIconLight: document.getElementById('theme-icon-light'),
+                themeIconDark: document.getElementById('theme-icon-dark'),
+                albumModal: document.getElementById('album-modal'),
+                albumModalTitle: document.getElementById('album-modal-title'),
+                albumModalArtist: document.getElementById('album-modal-artist'),
+                albumModalBody: document.getElementById('album-modal-body'),
+                albumModalAlbumArt: document.getElementById('album-modal-album-art'),
+                albumModalAlbumDetails: document.getElementById('album-modal-album-details'),
+                analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
+                closeAlbumModalBtn: document.getElementById('close-album-modal'),
+                viewToggle: document.getElementById('view-toggle'),
+                viewToggleMobile: document.getElementById('view-toggle-mobile'),
+                // Desktop
+                eraJumpContainerDesktop: document.getElementById('era-jump-container-desktop'),
+                eraJumpListDesktop: document.getElementById('era-jump-list-desktop'),
+                currentEraDisplay: document.getElementById('current-era-display'),
+                // Mobile
+                genreFilterContainer: document.getElementById('genre-filter-container'),
+                genreFilterBtn: document.getElementById('genre-filter-btn'),
+                genreFilterList: document.getElementById('genre-filter-list'),
+                eraJumpContainerMobile: document.getElementById('era-jump-container-mobile'),
+                eraJumpListMobile: document.getElementById('era-jump-list-mobile'),
+                mobileEraDisplay: document.getElementById('mobile-era-display'),
+            },
 
-            // Initialization
-            init() {
-                this.cacheDOMElements();
-                for (const key in this.methods) {
-                    if (typeof this.methods[key] === 'function') {
-                        this.methods[key] = this.methods[key].bind(this);
+            // --- INITIALIZATION ---
+            async init() {
+                this.setupTheme();
+                this.bindEvents();
+                this.setupModals();
+                try {
+                    this.calculateHeaderHeight(); 
+                    await this.fetchData();
+                    this.processData();
+                    this.renderGenreLegend();
+                    this.renderGenreDropdown(); // New for mobile
+                    this.renderEraJumpList();
+                    this.renderTimeline();
+                } catch (error) {
+                    console.error("Initialization failed:", error);
+                    this.elements.loader.innerHTML = "<p>Failed to load timeline data.</p>";
+                } finally {
+                    this.elements.loader.style.opacity = '0';
+                    setTimeout(() => {
+                        this.elements.loader.style.display = 'none';
+                    }, 500);
+                }
+            },
+            
+            // --- DYNAMIC CALCULATIONS ---
+            calculateHeaderHeight() {
+                const mainNav = document.querySelector('.sticky.top-0.z-50');
+                const controlsHeader = this.elements.controlsHeader;
+                if (mainNav && controlsHeader) {
+                    requestAnimationFrame(() => {
+                        const totalHeight = mainNav.offsetHeight + controlsHeader.offsetHeight;
+                        this.elements.timelineContainer.style.paddingTop = `${totalHeight}px`;
+                        document.documentElement.style.setProperty('--sticky-top-offset', `0px`);
+                    });
+                }
+            },
+
+            // --- DATA FETCHING ---
+            async fetchData() {
+                const [albumRes, genreRes, artistRes] = await Promise.all([
+                    fetch('/database.json'),
+                    fetch('/genres.json'),
+                    fetch('/artists.json')
+                ]);
+                if (!albumRes.ok || !genreRes.ok || !artistRes.ok) {
+                    throw new Error('Network response was not ok.');
+                }
+                const [albumData, genreData, artistData] = await Promise.all([
+                    albumRes.json(),
+                    genreRes.json(),
+                    artistRes.json()
+                ]);
+                
+                this.state.albums = albumData.albums;
+                this.state.fullArtistsData = artistData;
+                this.state.genres = this.buildGenreColorMap(genreData);
+                this.state.activeGenres = new Set(Object.keys(this.state.genres));
+            },
+            
+            buildGenreColorMap(genreData) {
+                const colorMap = {};
+                if (genreData && genreData.genres) {
+                     Object.entries(genreData.genres).forEach(([name, data]) => {
+                        colorMap[name] = data.color;
+                        if(name === "Avant-Garde") {
+                           colorMap["Avant-Garde Jazz"] = data.color;
+                        }
+                    });
+                }
+                colorMap['Bebop'] = 'var(--genre-bebop)';
+                colorMap['Hard Bop'] = 'var(--genre-hard-bop)';
+                colorMap['Cool Jazz'] = 'var(--genre-cool-jazz)';
+                colorMap['Modal Jazz'] = 'var(--genre-modal-jazz)';
+                colorMap['Post-Bop'] = 'var(--genre-post-bop)';
+                colorMap['Free Jazz'] = 'var(--genre-free-jazz)';
+                colorMap['Avant-Garde Jazz'] = 'var(--genre-avant-garde)';
+                colorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
+                return colorMap;
+            },
+
+            // --- DATA PROCESSING ---
+            slugify(text = '') {
+                return text.toString().toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w-]+/g, '')
+                    .replace(/--+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '');
+            },
+
+            processData() {
+                this.state.albums.forEach(album => {
+                     if (typeof album.genres === 'string') {
+                        album.genres = album.genres.split(',').map(g => g.trim());
+                    }
+                     const albumSlug = this.slugify(album.artist) + '-' + this.slugify(album.albumTitle);
+                     album.uniqueId = albumSlug;
+                });
+
+                const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
+                const parseDate = (dateString) => {
+                    if (!dateString || typeof dateString !== 'string') return new Date(0);
+                    const parts = dateString.replace(/,/g, '').split(' ');
+                    if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
+                    if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 1);
+                    if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 0, 1);
+                    return new Date(0);
+                };
+                
+                this.state.albums.forEach(album => {
+                     if (album.pivotalTracks && album.pivotalTracks.length > 0) {
+                        album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
+                        album.sortingDate = album.pivotalTracks[0].recordingDate;
+                    } else {
+                        album.sortingDate = `${album.year}-01-01`;
+                    }
+                });
+                
+                this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
+
+                const processedAlbumIds = new Set();
+                this.state.groupedDataByGenre.clear();
+                this.state.groupedDataChronological.clear();
+
+                this.state.albums.forEach(album => {
+                    if (!album.year || !album.genres || processedAlbumIds.has(album.uniqueId)) return;
+                    
+                    const primaryGenre = album.genres[0];
+                    if (!this.state.groupedDataByGenre.has(album.year)) {
+                        this.state.groupedDataByGenre.set(album.year, new Map());
+                    }
+                    const yearMapGenre = this.state.groupedDataByGenre.get(album.year);
+                    if (!yearMapGenre.has(primaryGenre)) {
+                        yearMapGenre.set(primaryGenre, []);
+                    }
+                    yearMapGenre.get(primaryGenre).push(album);
+
+                    if (!this.state.groupedDataChronological.has(album.year)) {
+                        this.state.groupedDataChronological.set(album.year, []);
+                    }
+                    this.state.groupedDataChronological.get(album.year).push(album);
+
+                    processedAlbumIds.add(album.uniqueId);
+                });
+                
+                this.state.albumMap = new Map(this.state.albums.map(a => [a.uniqueId, a]));
+            },
+
+            // --- RENDERING ---
+            renderGenreLegend() {
+                const legendFragment = document.createDocumentFragment();
+                const excludedGenres = ['Afro-Jazz', 'Latin Jazz', 'Soul Jazz'];
+                
+                const showAllBtn = document.createElement('button');
+                showAllBtn.id = 'show-all-btn';
+                showAllBtn.className = 'legend-item active';
+                showAllBtn.textContent = 'ALL GENRES';
+                legendFragment.appendChild(showAllBtn);
+
+                const sortedGenres = Object.keys(this.state.genres).sort();
+                for (const genre of sortedGenres) {
+                     if (this.state.albums.some(a => a.genres.includes(genre)) && !excludedGenres.includes(genre)) {
+                        const item = document.createElement('button');
+                        item.className = 'legend-item';
+                        item.dataset.genre = genre;
+                        
+                        const colorSwatch = document.createElement('div');
+                        colorSwatch.className = 'legend-color-swatch';
+                        colorSwatch.style.backgroundColor = this.state.genres[genre];
+                        item.appendChild(colorSwatch);
+
+                        const textSpan = document.createElement('span');
+                        textSpan.textContent = genre;
+                        item.appendChild(textSpan);
+                        
+                        legendFragment.appendChild(item);
                     }
                 }
-                this.methods.setupTheme();
-                this.methods.fetchData();
-            },
-            
-            cacheDOMElements() {
-                this.elements = {
-                    loader: document.getElementById('loader'),
-                    pageContent: document.getElementById('page-content'),
-                    artistModal: document.getElementById('artist-modal'),
-                    instrumentFilter: document.getElementById('instrument-filter'),
-                    searchInput: document.getElementById('search-input'),
-                    artistGridContainer: document.getElementById('artist-grid-container'),
-                    paginationContainer: document.getElementById('pagination-container'),
-                    mobileMenuButton: document.getElementById('mobile-menu-button'),
-                    mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
-                    mobileMenuPanel: document.getElementById('mobile-menu-panel'),
-                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
-                    footerCopyright: document.getElementById('footer-copyright'),
-                    themeToggle: document.getElementById('theme-toggle'),
-                    themeIconLight: document.getElementById('theme-icon-light'),
-                    themeIconDark: document.getElementById('theme-icon-dark'),
-                };
+                this.elements.genreLegend.innerHTML = '';
+                this.elements.genreLegend.appendChild(legendFragment);
             },
 
-            methods: {
-                fetchData() {
-                    Promise.all([
-                        fetch('/database.json').then(res => res.json()),
-                        fetch('/artists.json').then(res => res.json()),
-                        fetch('/genres.json').then(res => res.json())
-                    ])
-                    .then(([dbData, artistProfileData, genreData]) => {
-                        this.state.albums = dbData.albums;
-                        this.state.artistProfiles = artistProfileData;
-                        this.state.styleMatrix = genreData;
-                        
-                        this.methods.initializeAppUI();
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                        this.elements.pageContent.innerHTML = `<div class="text-center p-8">
-                            <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
-                            <p class="text-[var(--text-muted)] mt-2">Could not fetch all required database files. Please ensure all .json files are available.</p>
-                            <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
-                        </div>`;
-                        this.methods.showPage();
-                    });
-                },
+            renderGenreDropdown() {
+                const dropdownFragment = document.createDocumentFragment();
+                const excludedGenres = ['Afro-Jazz', 'Latin Jazz', 'Soul Jazz'];
+
+                const allButton = document.createElement('button');
+                allButton.textContent = 'All Genres';
+                allButton.dataset.genre = 'all';
+                dropdownFragment.appendChild(allButton);
+
+                const sortedGenres = Object.keys(this.state.genres).sort();
+                for (const genre of sortedGenres) {
+                    if (this.state.albums.some(a => a.genres.includes(genre)) && !excludedGenres.includes(genre)) {
+                        const item = document.createElement('button');
+                        item.textContent = genre;
+                        item.dataset.genre = genre;
+                        dropdownFragment.appendChild(item);
+                    }
+                }
+                this.elements.genreFilterList.innerHTML = '';
+                this.elements.genreFilterList.appendChild(dropdownFragment);
+            },
+
+            renderEraJumpList() {
+                const eraHtml = this.state.eras.map(era => 
+                    `<a href="#" data-year="${era.startYear}">${era.title} (${era.startYear}-${era.endYear})</a>`
+                ).join('');
+                this.elements.eraJumpListDesktop.innerHTML = eraHtml;
+                this.elements.eraJumpListMobile.innerHTML = eraHtml;
+            },
             
-                showPage() {
-                    this.elements.loader.style.display = 'none';
-                    this.elements.pageContent.classList.remove('content-hidden');
-                },
+            renderTimeline() {
+                if (this.state.intersectionObserver) {
+                    this.state.intersectionObserver.disconnect();
+                }
 
-                initializeAppUI() {
-                    this.methods.processAndSortData();
-                    this.methods.setupModals();
-                    this.methods.populateInstrumentFilter(this.state.artistsData);
-                    this.methods.renderArtistGrid();
-                    this.methods.setupMobileMenu();
-                    this.methods.setupGeneralEventListeners();
-                    this.methods.showPage();
-                },
-                
-                setupTheme() {
-                    const themeToggle = this.elements.themeToggle;
-                    const lightIcon = this.elements.themeIconLight;
-                    const darkIcon = this.elements.themeIconDark;
+                const fragment = document.createDocumentFragment();
+                const sortedYears = [...this.state.groupedDataByGenre.keys()].sort((a, b) => a - b);
 
-                    const applyTheme = (theme) => {
-                        if (theme === 'dark') {
-                            document.documentElement.classList.add('dark');
-                            lightIcon.classList.add('hidden');
-                            darkIcon.classList.remove('hidden');
-                        } else {
-                            document.documentElement.classList.remove('dark');
-                            lightIcon.classList.remove('hidden');
-                            darkIcon.classList.add('hidden');
-                        }
-                    };
-
-                    const savedTheme = localStorage.getItem('theme');
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                for (const year of sortedYears) {
+                    const yearContainer = document.createElement('div');
+                    yearContainer.className = 'year-container';
+                    yearContainer.dataset.year = year;
+                    yearContainer.id = `year-${year}`;
                     
-                    applyTheme(currentTheme);
+                    const yearHeaderWrapper = document.createElement('div');
+                    yearHeaderWrapper.className = 'year-header-wrapper';
 
-                    themeToggle.addEventListener('click', () => {
-                        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-                        localStorage.setItem('theme', newTheme);
-                        applyTheme(newTheme);
-                    });
-                },
+                    const yearHeader = document.createElement('div');
+                    yearHeader.className = 'year-header';
+                    yearHeader.textContent = year;
+                    
+                    yearHeaderWrapper.appendChild(yearHeader);
+                    yearContainer.appendChild(yearHeaderWrapper);
 
-                getCanonicalName(name) {
-                    if (!name) return '';
-                    const trimmedName = name.trim();
-                    if (trimmedName === 'Roland Kirk') return 'Rahsaan Roland Kirk';
-                    if (trimmedName === 'Anthony Williams') return 'Tony Williams';
-                    return trimmedName;
-                },
-
-                processAndSortData() {
-                    const allTracks = this.state.albums.flatMap(album =>
-                        (album.pivotalTracks || []).map(track => ({ ...track, year: album.year, artist: album.artist, album: album.albumTitle }))
-                    );
-                    this.state.artistsData = this.methods.processArtists(allTracks, this.state.artistProfiles);
-                },
-
-                processArtists(tracks, profiles) {
-                    const artistsMap = new Map();
-                    const slugify = this.methods.slugify;
-                    const getCanonicalName = this.methods.getCanonicalName;
-
-                    tracks.forEach(track => {
-                        if (!track.lineup) return;
+                    if (this.state.timelineView === 'genre') {
+                        const yearData = this.state.groupedDataByGenre.get(year);
+                        const genresInYear = [...yearData.keys()].sort();
+                        for (const genre of genresInYear) {
+                            const genreBlock = this.createGenreBlock(genre, yearData.get(genre));
+                            yearContainer.appendChild(genreBlock);
+                        }
+                    } else { 
+                        const albums = this.state.groupedDataChronological.get(year);
+                        const genreBlock = document.createElement('div');
+                        genreBlock.className = 'genre-block';
                         
-                        const trackArtist = getCanonicalName(track.artist);
-
-                        const lineupParts = track.lineup.split(/,(?![^()]*\))/);
-                        lineupParts.forEach(part => {
-                            const match = part.trim().match(/(.+?)\s\((.+)\)/);
-                            if (match) {
-                                let name = getCanonicalName(match[1].trim());
-                                const instrumentsString = match[2];
-
-                                if (!artistsMap.has(name)) {
-                                    artistsMap.set(name, { 
-                                        name: name, 
-                                        instruments: new Set(), 
-                                        albums: new Set(), 
-                                        photo: `/images/${slugify(name)}.jpg`, 
-                                        isTimelineBandleader: false, 
-                                        profile: profiles[name] || { name: name, profile: 'No profile available.'} 
-                                    });
-                                }
-                                const artistEntry = artistsMap.get(name);
-                                
-                                if (trackArtist.includes(name)) {
-                                    artistEntry.isTimelineBandleader = true;
-                                }
-                                
-                                instrumentsString.split(/, | \/ /).forEach(inst => {
-                                    const trimmedInst = inst.trim();
-                                    if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
-                                        artistEntry.instruments.add(trimmedInst);
-                                    }
-                                });
-                                artistEntry.albums.add(track.album);
-                            }
+                        const albumGrid = document.createElement('div');
+                        albumGrid.className = 'album-grid';
+                        albums.forEach(album => {
+                            const card = this.createAlbumCard(album);
+                            albumGrid.appendChild(card);
                         });
-                    });
-                    
-                    const artistsArray = Array.from(artistsMap.values());
-                    artistsArray.forEach(artist => {
-                        artist.instruments = Array.from(artist.instruments);
-                        artist.albums = Array.from(artist.albums);
-                        
-                        if (artist.isTimelineBandleader) {
-                            artist.tier = 1;
-                        } else if (artist.albums.length >= 4) {
-                            artist.tier = 2;
-                        } else {
-                            artist.tier = 3;
-                        }
-                    });
-                    return artistsArray;
-                },
+                        genreBlock.appendChild(albumGrid);
+                        yearContainer.appendChild(genreBlock);
+                    }
+                    fragment.appendChild(yearContainer);
+                }
+                this.elements.timelineWrapper.innerHTML = '';
+                this.elements.timelineWrapper.appendChild(fragment);
+                this.filterTimeline();
+                this.setupStickyEraObserver();
+            },
+
+            createGenreBlock(genre, albums) {
+                const genreBlock = document.createElement('div');
+                genreBlock.className = 'genre-block';
+                genreBlock.dataset.genre = genre;
                 
-                // UPDATED: Added collaborator click handling
-                setupModals() {
-                    const { artistModal } = this.elements;
-                    
-                    artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
-                    artistModal.addEventListener('click', e => { 
-                        if (e.target.id === 'artist-modal') {
-                            this.methods.closeArtistModal(); 
-                            return;
-                        }
-                        
-                        const collaboratorCard = e.target.closest('.collaborator-card');
-                        if (collaboratorCard && collaboratorCard.dataset.artistName) {
-                            const collaboratorName = collaboratorCard.dataset.artistName;
-                            const collaborator = this.state.artistsData.find(a => a.name === collaboratorName);
-                            if (collaborator) {
-                                // Close the current modal and open the new one after the close animation
-                                this.methods.closeArtistModal(() => this.methods.openArtistModal(collaborator));
-                            }
-                        }
-                    });
-                    
-                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeArtistModal(); } });
-                },
+                const genreLabel = document.createElement('div');
+                genreLabel.className = 'genre-label';
+                genreLabel.textContent = genre;
+                genreLabel.style.backgroundColor = this.state.genres[genre] || 'var(--genre-default)';
+                genreBlock.appendChild(genreLabel);
 
-                renderArtistGrid() {
-                    const { instrumentFilter, searchInput, artistGridContainer } = this.elements;
-                    
-                    const selectedInstrument = instrumentFilter.value;
-                    const searchTerm = searchInput.value.toLowerCase().trim();
+                const albumGrid = document.createElement('div');
+                albumGrid.className = 'album-grid';
+                albums.forEach(album => {
+                   const card = this.createAlbumCard(album);
+                   albumGrid.appendChild(card);
+                });
+                genreBlock.appendChild(albumGrid);
+                return genreBlock;
+            },
 
-                    let filteredArtists = this.state.artistsData.filter(artist => {
-                        const nameMatch = artist.name.toLowerCase().includes(searchTerm);
-                        const instrumentMatch = (selectedInstrument === 'all' || artist.instruments.includes(selectedInstrument));
-                        return nameMatch && instrumentMatch;
-                    });
+            createAlbumCard(album) {
+                const card = document.createElement('button');
+                card.className = 'album-card';
+                card.dataset.uniqueId = album.uniqueId;
 
-                    filteredArtists.sort((a, b) => {
-                        if (a.tier !== b.tier) return a.tier - b.tier;
-                        return a.name.localeCompare(b.name);
-                    });
+                const primaryGenre = album.genres[0];
+                const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
+                card.style.setProperty('--album-genre-color', genreColor);
 
-                    const startIndex = (this.state.currentPage - 1) * this.state.artistsPerPage;
-                    const endIndex = startIndex + this.state.artistsPerPage;
-                    const paginatedArtists = filteredArtists.slice(startIndex, endIndex);
+                card.innerHTML = `
+                    <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="this.onerror=null;this.src='https://placehold.co/120x120/1c1917/f5f5f4?text=No+Img';">
+                    <div class="album-card-info">
+                        <h5>${album.albumTitle || 'Unknown Title'}</h5>
+                        <p>${album.artist || 'Unknown Artist'}</p>
+                    </div>
+                `;
+                return card;
+            },
 
-                    artistGridContainer.innerHTML = '';
-                    if (paginatedArtists.length === 0) {
-                        artistGridContainer.innerHTML = `<p class="text-[var(--text-muted)] col-span-full text-center py-10">No artists found matching your criteria.</p>`;
+            // --- EVENT HANDLING & THEME ---
+            setupTheme() {
+                const applyTheme = (theme) => {
+                    if (theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                        this.elements.themeIconLight.classList.add('hidden');
+                        this.elements.themeIconDark.classList.remove('hidden');
                     } else {
-                        paginatedArtists.forEach(artist => {
-                            const card = document.createElement('div');
-                            card.className = 'artist-card';
-                            if (artist.tier === 1) card.classList.add('bandleader');
-                            if (artist.tier === 2) card.classList.add('influential-sideman');
-                            card.dataset.artistName = artist.name;
-                            card.innerHTML = `
-                                <div class="artist-photo-container">
-                                    <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
-                                </div>
-                                <div class="p-3">
-                                    <h4 class="font-bold text-sm text-[var(--text-main)] truncate">${artist.name}</h4>
-                                </div>`;
-                            artistGridContainer.appendChild(card);
-                        });
+                        document.documentElement.classList.remove('dark');
+                        this.elements.themeIconLight.classList.remove('hidden');
+                        this.elements.themeIconDark.classList.add('hidden');
                     }
-                    
-                    this.methods.renderPagination(filteredArtists.length);
-                },
-
-                renderPagination(totalArtists) {
-                    const { paginationContainer } = this.elements;
-                    const { currentPage, artistsPerPage } = this.state;
-                    paginationContainer.innerHTML = '';
-
-                    const totalPages = Math.ceil(totalArtists / artistsPerPage);
-                    if (totalPages <= 1) return;
-
-                    const prevButton = document.createElement('button');
-                    prevButton.textContent = '« Prev';
-                    prevButton.className = 'pagination-btn';
-                    prevButton.disabled = currentPage === 1;
-                    prevButton.addEventListener('click', () => {
-                        this.state.currentPage--;
-                        this.methods.renderArtistGrid();
-                        window.scrollTo(0, this.elements.artistGridContainer.offsetTop - 100);
-                    });
-                    paginationContainer.appendChild(prevButton);
-
-                    const pageInfo = document.createElement('span');
-                    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-                    pageInfo.className = 'p-2 text-sm font-semibold text-[var(--text-muted)]';
-                    paginationContainer.appendChild(pageInfo);
-
-                    const nextButton = document.createElement('button');
-                    nextButton.textContent = 'Next »';
-                    nextButton.className = 'pagination-btn';
-                    nextButton.disabled = currentPage === totalPages;
-                    nextButton.addEventListener('click', () => {
-                        this.state.currentPage++;
-                        this.methods.renderArtistGrid();
-                        window.scrollTo(0, this.elements.artistGridContainer.offsetTop - 100);
-                    });
-                    paginationContainer.appendChild(nextButton);
-                },
+                    this.updateStickyEraDisplay(this.state.currentStickyEra);
+                };
                 
-                setupMobileMenu() {
-                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
-                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
-                    const openMenu = () => {
-                        mobileMenuOverlay.classList.remove('hidden');
-                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
-                    };
-                    const closeMenu = () => {
-                        mobileMenuPanel.style.transform = 'translateX(100%)';
-                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
-                    };
-                    mobileMenuButton.addEventListener('click', openMenu);
-                    mobileMenuCloseButton.addEventListener('click', closeMenu);
-                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
-                    
-                    document.querySelectorAll('#mobile-nav-links a').forEach(link => {
-                        link.addEventListener('click', closeMenu);
+                const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                applyTheme(savedTheme);
+
+                this.elements.themeToggle.addEventListener('click', () => {
+                    const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                    applyTheme(newTheme);
+                    localStorage.setItem('theme', newTheme);
+                });
+            },
+
+            bindEvents() {
+                this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
+                this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
+                
+                // Desktop Filters
+                this.elements.genreLegend.addEventListener('click', this.onFilterClick.bind(this));
+                this.elements.eraJumpContainerDesktop.querySelector('.dropdown-btn').addEventListener('click', (e) => this.onEraDropdownToggle(e, 'desktop'));
+                this.elements.eraJumpListDesktop.addEventListener('click', this.onEraJump.bind(this));
+
+                // Mobile Filters
+                this.elements.genreFilterBtn.addEventListener('click', this.onGenreDropdownToggle.bind(this));
+                this.elements.genreFilterList.addEventListener('click', this.onFilterClick.bind(this));
+                this.elements.eraJumpContainerMobile.querySelector('.dropdown-btn').addEventListener('click', (e) => this.onEraDropdownToggle(e, 'mobile'));
+                this.elements.eraJumpListMobile.addEventListener('click', this.onEraJump.bind(this));
+
+                // View Toggles
+                this.elements.viewToggle.addEventListener('change', this.onViewToggle.bind(this));
+                this.elements.viewToggleMobile.addEventListener('change', this.onViewToggle.bind(this));
+                
+                window.addEventListener('click', this.closeAllDropdowns.bind(this));
+                window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
+            },
+            
+            onViewToggle(e) {
+                const isChecked = e.target.checked;
+                this.state.timelineView = isChecked ? 'chronological' : 'genre';
+                
+                if (e.target === this.elements.viewToggle) {
+                    this.elements.viewToggleMobile.checked = isChecked;
+                } else {
+                    this.elements.viewToggle.checked = isChecked;
+                }
+
+                this.renderTimeline();
+            },
+
+            onGenreDropdownToggle(e) {
+                e.stopPropagation();
+                this.elements.genreFilterContainer.classList.toggle('open');
+            },
+
+            onEraDropdownToggle(e, type) {
+                e.stopPropagation();
+                if (type === 'desktop') {
+                    this.elements.eraJumpContainerDesktop.classList.toggle('open');
+                } else {
+                    this.elements.eraJumpContainerMobile.classList.toggle('open');
+                }
+            },
+
+            closeAllDropdowns(e) {
+                if (!this.elements.eraJumpContainerDesktop.contains(e.target)) {
+                    this.elements.eraJumpContainerDesktop.classList.remove('open');
+                }
+                if (!this.elements.eraJumpContainerMobile.contains(e.target)) {
+                    this.elements.eraJumpContainerMobile.classList.remove('open');
+                }
+                if (!this.elements.genreFilterContainer.contains(e.target)) {
+                    this.elements.genreFilterContainer.classList.remove('open');
+                }
+            },
+
+            onEraJump(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const target = e.target.closest('a[data-year]');
+                if (!target) return;
+
+                const year = target.dataset.year;
+                const yearContainer = document.getElementById(`year-${year}`);
+                
+                if (yearContainer) {
+                    const offsetPosition = yearContainer.offsetLeft;
+                    this.elements.timelineContainer.scrollTo({
+                        left: offsetPosition,
+                        behavior: 'smooth'
                     });
-                },
+                }
+                this.elements.eraJumpContainerDesktop.classList.remove('open');
+                this.elements.eraJumpContainerMobile.classList.remove('open');
+            },
 
-                setupGeneralEventListeners() {
-                    const handleFilterChange = () => {
-                        this.state.currentPage = 1;
-                        this.methods.renderArtistGrid();
-                    };
+            onDragStart(e) {
+                if (e.target.closest('.album-card, .legend-item, .dropdown-container')) return;
+                this.state.isDragging = true;
+                this.elements.timelineContainer.style.cursor = 'grabbing';
+                document.body.style.cursor = 'grabbing';
+                this.state.startX = e.pageX - this.elements.timelineContainer.offsetLeft;
+                this.state.scrollLeft = this.elements.timelineContainer.scrollLeft;
+                document.addEventListener('mousemove', this.onDragMove);
+                document.addEventListener('mouseup', this.onDragEnd);
+            },
 
-                    this.elements.instrumentFilter.addEventListener('change', handleFilterChange);
-                    this.elements.searchInput.addEventListener('input', handleFilterChange);
-                    
-                    this.elements.artistGridContainer.addEventListener('click', (e) => {
-                        const card = e.target.closest('.artist-card');
-                        if (card && card.dataset.artistName) {
-                            const artist = this.state.artistsData.find(a => a.name === card.dataset.artistName);
-                            if (artist) this.methods.openArtistModal(artist);
+            onDragEnd() {
+                if (!this.state.isDragging) return;
+                this.state.isDragging = false;
+                this.elements.timelineContainer.style.cursor = 'grab';
+                document.body.style.cursor = 'default';
+                document.removeEventListener('mousemove', this.onDragMove);
+                document.removeEventListener('mouseup', this.onDragEnd);
+            },
+
+            onDragMove(e) {
+                if (!this.state.isDragging) return;
+                e.preventDefault();
+                const x = e.pageX - this.elements.timelineContainer.offsetLeft;
+                const walk = (x - this.state.startX) * 2;
+                this.elements.timelineContainer.scrollLeft = this.state.scrollLeft - walk;
+            },
+
+            onCardClick(e) {
+                const card = e.target.closest('.album-card');
+                if (!card) return;
+                
+                const albumId = card.dataset.uniqueId;
+                const album = this.state.albumMap.get(albumId);
+                if (album) {
+                    this.openAlbumModal(album);
+                }
+            },
+            
+            onFilterClick(e) {
+                const target = e.target.closest('button');
+                if (!target) return;
+
+                const genre = target.dataset.genre;
+                if (!genre) return;
+
+                const allFilterableGenres = Array.from(this.elements.genreLegend.querySelectorAll('.legend-item[data-genre]')).map(item => item.dataset.genre);
+
+                if (genre === 'all' || target.id === 'show-all-btn') {
+                    this.state.isAllGenresActive = true;
+                    this.state.activeGenres = new Set(allFilterableGenres);
+                } else {
+                    if (this.state.isAllGenresActive || !e.shiftKey) {
+                        this.state.activeGenres.clear();
+                        this.state.activeGenres.add(genre);
+                        this.state.isAllGenresActive = false;
+                    } else { 
+                        if (this.state.activeGenres.has(genre)) {
+                            this.state.activeGenres.delete(genre);
+                        } else {
+                            this.state.activeGenres.add(genre);
+                        }
+                    }
+                }
+                if (this.state.activeGenres.size === 0 || this.state.activeGenres.size === allFilterableGenres.length) {
+                    this.state.isAllGenresActive = true;
+                    this.state.activeGenres = new Set(allFilterableGenres);
+                }
+                
+                this.filterTimeline();
+                
+                // Close mobile dropdown after selection
+                if (this.elements.genreFilterContainer.classList.contains('open')) {
+                    this.elements.genreFilterContainer.classList.remove('open');
+                }
+            },
+
+            filterTimeline() {
+                // Update Desktop Legend
+                const showAllBtn = this.elements.genreLegend.querySelector('#show-all-btn');
+                if (showAllBtn) {
+                    showAllBtn.classList.toggle('active', this.state.isAllGenresActive);
+                }
+                this.elements.genreLegend.querySelectorAll('.legend-item[data-genre]').forEach(item => {
+                    const genre = item.dataset.genre;
+                    if (this.state.isAllGenresActive) {
+                        item.classList.remove('active', 'inactive');
+                    } else {
+                        item.classList.toggle('active', this.state.activeGenres.has(genre));
+                        item.classList.toggle('inactive', !this.state.activeGenres.has(genre));
+                    }
+                });
+
+                // Update Mobile Dropdown Button Text
+                const btnText = this.elements.genreFilterBtn.querySelector('span');
+                if (this.state.isAllGenresActive) {
+                    btnText.textContent = 'All Genres';
+                } else if (this.state.activeGenres.size === 1) {
+                    btnText.textContent = [...this.state.activeGenres][0];
+                } else {
+                    btnText.textContent = `${this.state.activeGenres.size} Genres`;
+                }
+
+
+                // Filter content
+                if (this.state.timelineView === 'genre') {
+                    this.elements.timelineWrapper.querySelectorAll('.album-card').forEach(card => card.classList.remove('filtered-out'));
+                    this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => {
+                        const genre = block.dataset.genre;
+                        block.classList.toggle('filtered', !this.state.activeGenres.has(genre));
+                    });
+                } else { 
+                    this.elements.timelineWrapper.querySelectorAll('.genre-block').forEach(block => block.classList.remove('filtered'));
+                    this.elements.timelineWrapper.querySelectorAll('.album-card').forEach(card => {
+                        const albumId = card.dataset.uniqueId;
+                        const album = this.state.albumMap.get(albumId);
+                        if (album && album.genres) {
+                            const hasActiveGenre = this.state.isAllGenresActive || album.genres.some(g => this.state.activeGenres.has(g));
+                            card.classList.toggle('filtered-out', !hasActiveGenre);
                         }
                     });
-                    
-                    this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
-                },
+                }
                 
-                slugify(text) {
-                    if (!text) return '';
-                    return text.toString().toLowerCase()
-                        .replace(/\s+/g, '-')
-                        .replace(/[^\w\-]+/g, '')
-                        .replace(/\-\-+/g, '-')
-                        .replace(/^-+/, '')
-                        .replace(/-+$/, '');
-                },
-                
-                // UPDATED: Added collaborator rendering logic
-                openArtistModal(artist) {
-                    const { artistModal } = this.elements;
-                    const artistProfile = artist.profile || {};
-                    artistModal.querySelector('#artist-modal-title').textContent = artist.name;
-                    const body = artistModal.querySelector('#artist-modal-body');
+                this.elements.timelineWrapper.querySelectorAll('.year-container').forEach(year => {
+                    const visibleCards = year.querySelectorAll('.album-card:not(.filtered-out)');
+                    const visibleBlocks = year.querySelectorAll('.genre-block:not(.filtered)');
+                    const isEmpty = (this.state.timelineView === 'genre') ? visibleBlocks.length === 0 : visibleCards.length === 0;
+                    year.classList.toggle('filtered', isEmpty);
+                });
+            },
 
-                    const artistAlbumsWithYear = artist.albums
-                        .map(albumTitle => this.state.albums.find(a => a.albumTitle === albumTitle))
-                        .filter(Boolean)
-                        .sort((a, b) => a.year - b.year);
+            // --- STICKY ERA OBSERVER ---
+            setupStickyEraObserver() {
+                const observerOptions = {
+                    root: this.elements.timelineContainer,
+                    rootMargin: '0px', 
+                    threshold: 0.01 
+                };
+
+                this.state.intersectionObserver = new IntersectionObserver(this.handleEraIntersection.bind(this), observerOptions);
+                const yearContainers = this.elements.timelineWrapper.querySelectorAll('.year-container');
+                yearContainers.forEach(container => this.state.intersectionObserver.observe(container));
+            },
+
+            handleEraIntersection(entries) {
+                const visibleEntries = entries.filter(entry => entry.isIntersecting);
+
+                if (visibleEntries.length > 0) {
+                    const rightmostEntry = visibleEntries.reduce((latest, current) => {
+                        return current.boundingClientRect.right > latest.boundingClientRect.right ? current : latest;
+                    });
+
+                    const year = rightmostEntry.target.dataset.year;
+                    const currentEra = this.state.eras.find(e => year >= e.startYear && year <= e.endYear);
                     
-                    const isLandmark = (albumTitle) => {
-                        for (const genreName in this.state.styleMatrix.genres) {
-                            const genreData = this.state.styleMatrix.genres[genreName];
-                            if (genreData.landmarkAlbums && genreData.landmarkAlbums.some(title => title.toLowerCase() === albumTitle.toLowerCase())) {
-                                return true;
-                            }
+                    this.updateStickyEraDisplay(currentEra);
+                }
+            },
+            
+            updateStickyEraDisplay(era) {
+                this.state.currentStickyEra = era;
+                const displayElements = [this.elements.currentEraDisplay, this.elements.mobileEraDisplay];
+
+                if (era) {
+                    const isDark = document.documentElement.classList.contains('dark');
+                    displayElements.forEach(el => {
+                        if (el) {
+                            el.textContent = era.title;
+                            el.style.color = isDark ? era.colorDark : era.color;
+                            el.style.opacity = '1';
                         }
-                        return false;
-                    };
-
-                    const albumTimelineHtml = artistAlbumsWithYear.map(album => {
-                        const landmarkIcon = isLandmark(album.albumTitle) ? '<span class="landmark-star text-yellow-400 ml-2">★</span>' : '';
-                        const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
-                        return `<li class="artist-modal-timeline-item">
-                                    <strong class="text-[var(--text-muted)]">${album.year}:</strong> 
-                                    <a href="/album/${albumId}" target="_blank" rel="noopener noreferrer" class="clickable-link">
-                                        ${album.albumTitle}
-                                    </a>
-                                    ${landmarkIcon}
-                                </li>`;
-                    }).join('');
-                    
-                    const bornInModalInfo = artist.profile && artist.profile.bornIn ? `<p class="mt-2 text-[var(--text-main)] text-sm"><strong class="font-bold">Born:</strong> ${artist.profile.bornIn}</p>` : '';
-
-                    // ADDED: Logic to get and render top collaborators
-                    const topCollaborators = this.methods.getTopCollaborators(artist.name);
-                    let collaboratorsHtml = '';
-                    if (topCollaborators.length > 0) {
-                        const collaboratorCards = topCollaborators.map(name => {
-                            const collaborator = this.state.artistsData.find(a => a.name === name);
-                            if (!collaborator) return '';
-                            return `
-                                <div class="collaborator-card text-center" data-artist-name="${collaborator.name}">
-                                    <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-24 h-24 mx-auto rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md flex items-center justify-center bg-stone-300 dark:bg-stone-600\\'><svg class=\\'w-12 h-12 text-stone-500\\' xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
-                                    <p class="mt-2 text-sm font-bold text-[var(--text-muted)]">${collaborator.name}</p>
-                                </div>
-                            `;
-                        }).join('');
-
-                        collaboratorsHtml = `
-                            <div class="mt-6 pt-4 border-t-2 border-[var(--border-color)]">
-                                <h4 class="text-2xl text-[var(--text-main)] mb-4 text-center">Top Collaborators</h4>
-                                <div class="grid grid-cols-3 gap-4">
-                                    ${collaboratorCards}
-                                </div>
-                            </div>
-                        `;
-                    }
-
-                    body.innerHTML = `
-                        <div class="flex flex-col sm:flex-row gap-6">
-                            <div class="w-full sm:w-1/3 flex-shrink-0">
-                                <div class="artist-photo-container">
-                                    <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
-                                </div>
-                                <p class="mt-4 text-[var(--text-main)] text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
-                                ${bornInModalInfo}
-                                ${artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-[var(--text-main)] mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
-                            </div>
-                            <div class="w-full sm:w-2/3">
-                                ${artistProfile.profile && artistProfile.profile !== 'No profile available.' ? `<h4 class="text-2xl text-[var(--text-main)] mb-2">Profile</h4><p class="text-base text-[var(--text-muted)] leading-relaxed mb-4">${artistProfile.profile}</p>` : ''}
-                                <h4 class="text-2xl text-[var(--text-main)] mb-3">Key Album Appearances</h4>
-                                <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml || '<li class="text-[var(--text-muted)]">No key appearances found in timeline.</li>'}</ul>
-                            </div>
-                        </div>
-                        ${collaboratorsHtml}
-                    `;
-                    
-                    artistModal.classList.remove('opacity-0', 'pointer-events-none');
-                    artistModal.querySelector('.modal-content').classList.remove('scale-95');
-                },
-
-                // ADDED: Function to calculate top collaborators
-                getTopCollaborators(artistName) {
-                    const collaborations = new Map();
-                    const getCanonicalName = this.methods.getCanonicalName;
-                    const canonicalArtistName = getCanonicalName(artistName);
-
-                    this.state.albums.forEach(album => {
-                        if (!album.pivotalTracks) return;
-                        album.pivotalTracks.forEach(track => {
-                            if (!track.lineup) return;
-                            
-                            const lineupParts = track.lineup.split(/,(?![^()]*\))/);
-                            const trackArtists = lineupParts.map(part => {
-                                const match = part.trim().match(/(.+?)\s\((.+)\)/);
-                                return match ? getCanonicalName(match[1].trim()) : null;
-                            }).filter(Boolean);
-
-                            if (trackArtists.includes(canonicalArtistName)) {
-                                trackArtists.forEach(collaboratorName => {
-                                    if (collaboratorName !== canonicalArtistName) {
-                                        collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
-                                    }
-                                });
-                            }
+                    });
+                } else {
+                    if (!this.state.currentStickyEra) {
+                         displayElements.forEach(el => {
+                            if (el) el.style.opacity = '0';
                         });
-                    });
+                    }
+                }
+            },
+            
+            // --- MODAL LOGIC ---
+            setupModals() {
+                this.elements.closeAlbumModalBtn.addEventListener('click', this.closeAlbumModal.bind(this));
+                this.elements.albumModal.addEventListener('click', (e) => {
+                    if (e.target.id === 'album-modal') this.closeAlbumModal();
+                });
+            },
 
-                    return Array.from(collaborations.entries())
-                        .sort((a, b) => b[1] - a[1]) // Sort by count descending
-                        .slice(0, 3) // Take top 3
-                        .map(entry => entry[0]); // Return just the names
-                },
+            openAlbumModal(album) {
+                if (!album) return;
 
-                closeArtistModal(callback) {
-                    const { artistModal } = this.elements;
-                    artistModal.classList.add('opacity-0', 'pointer-events-none');
-                    artistModal.querySelector('.modal-content').classList.add('scale-95');
-                    if (typeof callback === 'function') setTimeout(callback, 300);
-                },
+                const { 
+                    albumModal, albumModalTitle, albumModalArtist, 
+                    albumModalAlbumArt, albumModalAlbumDetails, analysisWrapper 
+                } = this.elements;
+
+                albumModalTitle.textContent = album.albumTitle;
+                albumModalArtist.textContent = album.artist;
                 
-                populateInstrumentFilter(artists) {
-                    const { instrumentFilter } = this.elements;
-                    const relevantInstruments = new Set(['alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'tuba', 'vibraphone', 'congas']);
-                    const instrumentsInDataset = new Set();
-                    artists.forEach(artist => artist.instruments.forEach(inst => { if (relevantInstruments.has(inst)) instrumentsInDataset.add(inst); }));
-                    instrumentFilter.innerHTML = '<option value="all">All Instruments</option>';
-                    Array.from(instrumentsInDataset).sort().forEach(instrument => {
-                        const option = document.createElement('option');
-                        option.value = instrument;
-                        option.textContent = instrument.charAt(0).toUpperCase() + instrument.slice(1);
-                        instrumentFilter.appendChild(option);
-                    });
-                },
+                albumModalAlbumArt.src = album.cover || '';
+                albumModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
+                albumModalAlbumArt.onerror = function() { this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
+
+                const pivotalTrack = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks[0] : {};
+                
+                const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A');
+
+                const genres = album.genres || [];
+                const genreTags = genres.map(g => 
+                    `<span class="genre-tag" style="background-color: ${this.state.genres[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`
+                ).join(' ');
+
+                albumModalAlbumDetails.innerHTML = `
+                    <h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4>
+                    <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]">
+                        <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                        <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span>
+                        <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
+                        <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <a href="/album/${album.uniqueId}" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-md transition-colors duration-300 no-underline">
+                            Read More &rarr;
+                        </a>
+                    </div>`;
+
+                const analysisHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) 
+                    ? album.pivotalTracks.map(track => `
+                        <div class="mb-8 last:mb-0">
+                            <h5 class="text-2xl font-bold text-white">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                            <p class="liner-notes-text">${track.analysis}</p>
+                        </div>`).join('<hr class="border-stone-700 my-8">')
+                    : `<p class="liner-notes-text">${album.analysis || 'Analysis not available.'}</p>`;
+                
+                analysisWrapper.innerHTML = `<div id="modal-analysis-section">${analysisHtml}</div>`;
+
+                albumModal.classList.remove('opacity-0', 'pointer-events-none');
+                albumModal.querySelector('.modal-content').classList.remove('scale-95');
+                this.elements.albumModalBody.scrollTop = 0;
+            },
+
+            closeAlbumModal() {
+                this.elements.albumModal.classList.add('opacity-0', 'pointer-events-none');
+                this.elements.albumModal.querySelector('.modal-content').classList.add('scale-95');
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => ArtistApp.init());
+        JazzTimeline.onDragMove = JazzTimeline.onDragMove.bind(JazzTimeline);
+        JazzTimeline.onDragEnd = JazzTimeline.onDragEnd.bind(JazzTimeline);
+
+        document.addEventListener('DOMContentLoaded', () => JazzTimeline.init());
     </script>
+
 </body>
 </html>
