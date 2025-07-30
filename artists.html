@@ -650,7 +650,6 @@
                     if (name.includes(',') || name.includes('/')) return false;
 
                     if (groupKeywords.some(keyword => name.includes(keyword))) {
-                        // `this` is bound to ArtistApp, so we must access methods via `this.methods`
                         return this.methods.getCanonicalName(name) !== name;
                     }
                     return true;
@@ -741,7 +740,7 @@
                             artist.tier = 1; // Orange
                         } else if (artist.isLegacyBandleader) {
                             artist.tier = 2; // Blue
-                        } else if (artist.albums.size >= 4) {
+                        } else if (artist.albums.length >= 4) {
                             artist.tier = 3; // Yellow
                         } else {
                             artist.tier = 4; // Default
