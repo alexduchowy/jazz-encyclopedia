@@ -154,7 +154,7 @@
     <script>
         const AlbumPage = {
             state: {
-                albums: [],
+                allAlbums: [],
                 artistsData: [], // Needed for clickable artist links
                 fullGenreColorMap: {},
             },
@@ -205,8 +205,6 @@
             },
 
             getAlbumIdFromUrl() {
-                // Because of the rewrite rule, the browser URL is e.g. /album/the-album-name
-                // but the file served is /album.html. We need to read the original path.
                 const path = window.location.pathname;
                 const parts = path.split('/');
                 if (parts.length > 2 && parts[1] === 'album') {
@@ -225,14 +223,23 @@
                 Promise.all([
                     fetch('/database.json').then(res => res.json()),
                     fetch('/artists.json').then(res => res.json()),
-                    fetch('/genres.json').then(res => res.json())
+                    fetch('/genres.json').then(res => res.json()),
+                    fetch('/legacy.json').then(res => res.json()) // Fetch legacy data
                 ])
-                .then(([dbData, artistProfiles, genreData]) => {
-                    this.state.albums = dbData.albums;
-                    // Create a map for easy artist lookup
+                .then(([dbData, artistProfiles, genreData, legacyData]) => {
+                    // Combine albums from both database.json and legacy.json
+                    const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []);
+                    // Normalize legacy album structure to match database album structure
+                    const normalizedLegacyAlbums = legacyAlbums.map(album => ({
+                        ...album,
+                        albumTitle: album.title, // Use 'title' as 'albumTitle'
+                        cover: album.cover || `images/covers/${this.slugify(album.title)}.jpg` // Provide fallback cover path
+                    }));
+                    
+                    this.state.allAlbums = [...dbData.albums, ...normalizedLegacyAlbums];
+
                     this.state.artistsData = new Map(Object.values(artistProfiles).map(p => [p.name, p]));
                     
-                    // Build genre color map
                     this.state.fullGenreColorMap = genreData.genres ? Object.keys(genreData.genres).reduce((acc, genre) => {
                         acc[genre] = genreData.genres[genre].color;
                         return acc;
@@ -241,9 +248,9 @@
                     this.state.fullGenreColorMap['Avant-Garde Jazz'] = 'var(--genre-avant-garde)'; 
                     this.state.fullGenreColorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
 
-
-                    const album = this.state.albums.find(a => {
-                        const currentAlbumId = `${this.slugify(a.artist)}-${this.slugify(a.albumTitle)}`;
+                    // Find the album in the combined list
+                    const album = this.state.allAlbums.find(a => {
+                        const currentAlbumId = `${this.slugify(a.artist)}-${this.slugify(a.albumTitle || a.title)}`;
                         return currentAlbumId === albumId;
                     });
 
@@ -271,7 +278,8 @@
             },
 
             renderAlbum(album) {
-                document.title = `${album.albumTitle} by ${album.artist} - Controlled Freedom`;
+                const albumTitle = album.albumTitle || album.title;
+                document.title = `${albumTitle} by ${album.artist} - Controlled Freedom`;
                 const wrapper = document.getElementById('album-content-wrapper');
 
                 const pivotalTrack = album.pivotalTracks ? album.pivotalTracks[0] : {};
@@ -294,7 +302,7 @@
                     return personnel;
                 }).join(', ');
                 
-                const pivotalTracksHtml = album.pivotalTracks.map(track => {
+                const pivotalTracksHtml = (album.pivotalTracks || []).map(track => {
                     const songFileName = this.slugify(track.title);
                     return `<div class="mb-8 last:mb-0">
                                 <div class="flex justify-between items-center gap-4 flex-wrap">
@@ -303,24 +311,27 @@
                                         <audio controls class="styled-player w-full" src="/songs/${songFileName}.mp3" preload="none"></audio>
                                     </div>
                                 </div>
-                                <p class="liner-notes-text">${track.analysis}</p>
+                                <p class="liner-notes-text">${track.analysis || 'No analysis available.'}</p>
                             </div>`;
                 }).join('<hr class="border-stone-700 my-8">');
 
-                const sortedAlbums = this.state.albums.sort((a,b) => new Date(a.pivotalTracks[0].recordingDate) - new Date(b.pivotalTracks[0].recordingDate));
-                const albumIndex = sortedAlbums.findIndex(a => a.albumTitle === album.albumTitle && a.artist === album.artist);
+                const sortedAlbums = this.state.allAlbums
+                    .filter(a => a.pivotalTracks && a.pivotalTracks[0] && a.pivotalTracks[0].recordingDate)
+                    .sort((a,b) => new Date(a.pivotalTracks[0].recordingDate) - new Date(b.pivotalTracks[0].recordingDate));
+                
+                const albumIndex = sortedAlbums.findIndex(a => (a.albumTitle || a.title) === albumTitle && a.artist === album.artist);
                 const prevAlbum = albumIndex > 0 ? sortedAlbums[albumIndex - 1] : null;
                 const nextAlbum = albumIndex < sortedAlbums.length - 1 ? sortedAlbums[albumIndex + 1] : null;
 
-                const prevButtonHtml = prevAlbum ? `<a href="/album/${this.slugify(prevAlbum.artist)}-${this.slugify(prevAlbum.albumTitle)}" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors">Previous Album</a>` : `<button class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold opacity-50 cursor-not-allowed" disabled>Previous Album</button>`;
-                const nextButtonHtml = nextAlbum ? `<a href="/album/${this.slugify(nextAlbum.artist)}-${this.slugify(nextAlbum.albumTitle)}" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors">Next Album</a>` : `<button class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold opacity-50 cursor-not-allowed" disabled>Next Album</button>`;
+                const prevButtonHtml = prevAlbum ? `<a href="/album/${this.slugify(prevAlbum.artist)}-${this.slugify(prevAlbum.albumTitle || prevAlbum.title)}" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors">Previous Album</a>` : `<button class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold opacity-50 cursor-not-allowed" disabled>Previous Album</button>`;
+                const nextButtonHtml = nextAlbum ? `<a href="/album/${this.slugify(nextAlbum.artist)}-${this.slugify(nextAlbum.albumTitle || nextAlbum.title)}" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors">Next Album</a>` : `<button class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold opacity-50 cursor-not-allowed" disabled>Next Album</button>`;
 
 
                 wrapper.innerHTML = `
                     <div class="album-page-container rounded-sm shadow-2xl w-full max-w-4xl mx-auto flex flex-col">
                         <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
                             <div>
-                                <h3 class="text-4xl text-orange-500">${album.albumTitle}</h3>
+                                <h3 class="text-4xl text-orange-500">${albumTitle}</h3>
                                 <p class="text-xl text-[var(--text-muted)]">${album.artist}</p>
                             </div>
                             <a href="/timeline#year-${album.year}" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500" title="Back to Timeline">×</a>
@@ -328,20 +339,20 @@
                         <div class="p-6">
                             <div class="flex flex-col md:flex-row gap-6">
                                 <div class="w-full md:w-1/3 flex-shrink-0">
-                                    <img src="/${album.cover || ''}" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';">
+                                    <img src="${album.cover || ''}" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" alt="Cover for ${albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';">
                                 </div>
                                 <div class="w-full md:w-2/3">
                                     <h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4>
                                     <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]">
-                                        <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                                        <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags || 'N/A'}</div>
                                         <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span>
                                         <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
-                                        <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
+                                        <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml || 'N/A'}</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="relative mt-4">
-                                <div id="modal-analysis-section">${pivotalTracksHtml}</div>
+                                <div id="modal-analysis-section">${pivotalTracksHtml || '<p class="liner-notes-text">No key tracks defined for this album.</p>'}</div>
                             </div>
                         </div>
                         <div class="flex justify-between items-center p-4 border-t-2 flex-shrink-0 bg-[var(--bg-secondary)]">
@@ -352,7 +363,7 @@
                 `;
                 
                 // Add error handlers for audio players
-                album.pivotalTracks.forEach(track => {
+                (album.pivotalTracks || []).forEach(track => {
                     const songFileName = this.slugify(track.title);
                     const player = wrapper.querySelector(`audio[src="/songs/${songFileName}.mp3"]`);
                     if (player) {
