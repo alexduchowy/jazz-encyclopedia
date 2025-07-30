@@ -506,7 +506,6 @@
                 albums: [],
                 artistProfiles: {},
                 artistsData: [],
-                legacyArtistNames: new Set(),
                 styleMatrix: {},
                 currentPage: 1,
                 artistsPerPage: 24,
@@ -560,8 +559,8 @@
                         this.state.artistProfiles = artistProfileData;
                         this.state.styleMatrix = genreData;
                         
-                        this.methods.processLegacyArtists(legacyData);
-                        this.methods.initializeAppUI();
+                        // Pass legacyData to the UI initializer for processing
+                        this.methods.initializeAppUI(legacyData);
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
@@ -579,8 +578,11 @@
                     this.elements.pageContent.classList.remove('content-hidden');
                 },
 
-                initializeAppUI() {
-                    this.methods.processAndSortData();
+                initializeAppUI(legacyData) {
+                    // Process and merge all data sources
+                    this.methods.processAndSortData(legacyData);
+                    
+                    // Setup the rest of the UI
                     this.methods.setupModals();
                     this.methods.populateInstrumentFilter(this.state.artistsData);
                     this.methods.renderArtistGrid();
@@ -627,100 +629,115 @@
                     return trimmedName;
                 },
 
-                processAndSortData() {
-                    const allTracks = this.state.albums.flatMap(album =>
-                        (album.pivotalTracks || []).map(track => ({ ...track, year: album.year, artist: album.artist, album: album.albumTitle }))
-                    );
-                    this.state.artistsData = this.methods.processArtists(allTracks, this.state.artistProfiles);
-                },
-
-                processArtists(tracks, profiles) {
+                // This function now replaces the old processAndSortData, processArtists, and processLegacyArtists
+                processAndSortData(legacyData) {
                     const artistsMap = new Map();
                     const slugify = this.methods.slugify;
                     const getCanonicalName = this.methods.getCanonicalName;
+                    const profiles = this.state.artistProfiles;
 
-                    tracks.forEach(track => {
-                        if (!track.lineup) return;
-                        
-                        const trackArtist = getCanonicalName(track.artist);
-
-                        const lineupParts = track.lineup.split(/,(?![^()]*\))/);
+                    // Helper function to process a lineup string from any source
+                    const processLineup = (lineup, albumTitle, isFromLegacySource) => {
+                        if (!lineup) return;
+                        const lineupParts = lineup.split(/,(?![^()]*\))/);
                         lineupParts.forEach(part => {
                             const match = part.trim().match(/(.+?)\s\((.+)\)/);
                             if (match) {
                                 let name = getCanonicalName(match[1].trim());
                                 const instrumentsString = match[2];
 
-                                if (!artistsMap.has(name)) {
-                                    artistsMap.set(name, { 
-                                        name: name, 
-                                        instruments: new Set(), 
-                                        albums: new Set(), 
-                                        photo: `/images/${slugify(name)}.jpg`, 
-                                        isTimelineBandleader: false, 
-                                        profile: profiles[name] || { name: name, profile: 'No profile available.'} 
+                                const isNewArtist = !artistsMap.has(name);
+
+                                if (isNewArtist) {
+                                    // If a new artist is found, create their base profile
+                                    artistsMap.set(name, {
+                                        name: name,
+                                        instruments: new Set(),
+                                        albums: new Set(),
+                                        photo: `/images/${slugify(name)}.jpg`,
+                                        profile: profiles[name] || { name: name, profile: 'No profile available.' },
+                                        isTimelineBandleader: false,
+                                        // Flag as a "new legacy artist" ONLY if they are truly new AND from the legacy.json source
+                                        isNewLegacyArtist: isFromLegacySource 
                                     });
                                 }
+                                
                                 const artistEntry = artistsMap.get(name);
-                                
-                                if (trackArtist.includes(name)) {
-                                    artistEntry.isTimelineBandleader = true;
-                                }
-                                
+
+                                // Add instruments to the artist's set
                                 instrumentsString.split(/, | \/ /).forEach(inst => {
                                     const trimmedInst = inst.trim();
                                     if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
                                         artistEntry.instruments.add(trimmedInst);
                                     }
                                 });
-                                artistEntry.albums.add(track.album);
+                                
+                                // Add the album title to the artist's set
+                                if(albumTitle) {
+                                    artistEntry.albums.add(albumTitle);
+                                }
+                            }
+                        });
+                    };
+
+                    // Step 1: Process artists from database.json (the main timeline)
+                    this.state.albums.forEach(album => {
+                        (album.pivotalTracks || []).forEach(track => {
+                            if (track.lineup) {
+                                // Process the lineup, marking them as NOT from the legacy source
+                                processLineup(track.lineup, album.albumTitle, false);
+                                
+                                // Mark bandleaders from the main timeline
+                                const trackArtist = getCanonicalName(album.artist);
+                                const lineupArtists = track.lineup.split(/,(?![^()]*\))/).map(p => getCanonicalName(p.trim().split(' (')[0]));
+                                if (lineupArtists.includes(trackArtist)) {
+                                    if (artistsMap.has(trackArtist)) {
+                                        artistsMap.get(trackArtist).isTimelineBandleader = true;
+                                    }
+                                }
                             }
                         });
                     });
-                    
-                    const artistsArray = Array.from(artistsMap.values());
-                    artistsArray.forEach(artist => {
-                        artist.instruments = Array.from(artist.instruments);
-                        artist.albums = Array.from(artist.albums);
-                        
-                        if (artist.isTimelineBandleader) {
-                            artist.tier = 1;
-                        } else if (artist.albums.length >= 4) {
-                            artist.tier = 2;
-                        } else {
-                            artist.tier = 3;
-                        }
-                    });
-                    return artistsArray;
-                },
 
-                processLegacyArtists(legacyData) {
-                    const legacyArtists = new Set();
-                    const getCanonicalName = this.methods.getCanonicalName;
-
+                    // Step 2: Process and merge artists from legacy.json
                     if (legacyData && legacyData.paths) {
                         Object.values(legacyData.paths).forEach(path => {
                             (path.albums || []).forEach(album => {
-                                const processLineup = (lineup) => {
-                                    if (!lineup) return;
-                                    lineup.split(/,(?![^()]*\))/).forEach(part => {
-                                        const match = part.trim().match(/(.+?)\s\((.+)\)/);
-                                        if (match) {
-                                            const name = getCanonicalName(match[1].trim());
-                                            legacyArtists.add(name);
-                                        }
-                                    });
+                                const processAlbumLineup = (lineup) => {
+                                    if (lineup) {
+                                        // Process the lineup, marking it as from the legacy source.
+                                        // The helper function handles merging for existing artists or creating new ones.
+                                        processLineup(lineup, album.title, true);
+                                    }
                                 };
 
                                 if (album.pivotalTracks && album.pivotalTracks.length > 0) {
-                                    album.pivotalTracks.forEach(track => processLineup(track.lineup));
+                                    album.pivotalTracks.forEach(track => processAlbumLineup(track.lineup));
                                 } else if (album.lineup) {
-                                    processLineup(album.lineup);
+                                    processAlbumLineup(album.lineup);
                                 }
                             });
                         });
                     }
-                    this.state.legacyArtistNames = legacyArtists;
+
+                    // Step 3: Finalize artist data and assign tiers for sorting and styling
+                    const artistsArray = Array.from(artistsMap.values());
+                    artistsArray.forEach(artist => {
+                        artist.instruments = Array.from(artist.instruments);
+                        artist.albums = Array.from(artist.albums);
+
+                        if (artist.isNewLegacyArtist) {
+                            artist.tier = 4; // New legacy artists
+                        } else if (artist.isTimelineBandleader) {
+                            artist.tier = 1; // Bandleaders (orange shadow)
+                        } else if (artist.albums.length >= 4) {
+                            artist.tier = 2; // Influential sidemen (yellow shadow)
+                        } else {
+                            artist.tier = 3; // Others
+                        }
+                    });
+
+                    this.state.artistsData = artistsArray;
                 },
                 
                 setupModals() {
@@ -758,6 +775,7 @@
                         return nameMatch && instrumentMatch;
                     });
 
+                    // Sort by tier first, then alphabetically by name
                     filteredArtists.sort((a, b) => {
                         if (a.tier !== b.tier) return a.tier - b.tier;
                         return a.name.localeCompare(b.name);
@@ -775,12 +793,13 @@
                             const card = document.createElement('div');
                             card.className = 'artist-card';
                             
-                            if (artist.tier === 1) {
-                                card.classList.add('bandleader');
+                            // *** UPDATED STYLING LOGIC ***
+                            if (artist.isNewLegacyArtist) {
+                                card.classList.add('legacy-artist'); // Blue shadow for new legacy artists
+                            } else if (artist.tier === 1) {
+                                card.classList.add('bandleader'); // Orange shadow
                             } else if (artist.tier === 2) {
-                                card.classList.add('influential-sideman');
-                            } else if (this.state.legacyArtistNames.has(artist.name)) {
-                                card.classList.add('legacy-artist');
+                                card.classList.add('influential-sideman'); // Yellow shadow
                             }
 
                             card.dataset.artistName = artist.name;
@@ -1027,3 +1046,6 @@
     </script>
 </body>
 </html>
+```
+
+I've left the rest of your HTML and styling intact. Let me know if you have any other questio
