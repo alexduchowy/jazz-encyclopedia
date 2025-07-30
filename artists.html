@@ -94,7 +94,7 @@
             backface-visibility: hidden;
         }
         .dark .artist-card {
-            border-color: #000;
+            border: 2px solid #000;
             box-shadow: 4px 4px 0px #000;
         }
         .artist-card:hover {
@@ -102,31 +102,16 @@
             box-shadow: 8px 8px 0px var(--accent) !important;
         }
         .dark .artist-card:hover {
-            border-color: var(--accent) !important;
+            border-color: #000 !important;
         }
         .artist-card.bandleader { 
             box-shadow: 4px 4px 0px var(--accent); 
-            border-color: var(--accent);
-        }
-        .dark .artist-card.bandleader { 
-            box-shadow: 4px 4px 0px var(--accent); 
-            border-color: var(--accent); 
         }
         .artist-card.influential-sideman { 
             box-shadow: 4px 4px 0px var(--yellow-accent);
-            border-color: var(--yellow-accent);
-        }
-        .dark .artist-card.influential-sideman { 
-            box-shadow: 4px 4px 0px var(--yellow-accent); 
-            border-color: var(--yellow-accent);
         }
         .artist-card.legacy-artist {
             box-shadow: 4px 4px 0px var(--legacy-blue);
-            border-color: var(--legacy-blue);
-        }
-        .dark .artist-card.legacy-artist {
-            box-shadow: 4px 4px 0px var(--legacy-blue);
-            border-color: var(--legacy-blue);
         }
         
         .artist-card .artist-photo-container { height: 192px; width: 100%; }
@@ -231,7 +216,7 @@
             display: flex; align-items: center; gap: 0.5rem;
             color: var(--text-muted);
         }
-        .dark .dropdown-btn { color: var(--text-muted); }
+        .dark .dropdown-btn { color: var(--text-main); }
         .dropdown-btn:hover { color: var(--accent); }
         .dropdown-list {
             position: absolute;
