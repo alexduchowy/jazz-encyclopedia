@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jazz Genres - Controlled Freedom</title>
+    <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Light Theme (Default) */
+        :root {
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-header: rgba(245, 245, 244, 0.8);
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --border-color: #1c1917;
+            --accent: #f97316;
+            --yellow-accent: #facc15;
+
+            /* Genre Colors */
+            --genre-bebop: #C19A6B;
+            --genre-hard-bop: #d8b4fe;
+            --genre-cool-jazz: #93c5fd;
+            --genre-modal-jazz: #a7f3d0;
+            --genre-post-bop: #fed7aa;
+            --genre-free-jazz: #fca5a5;
+            --genre-avant-garde: #fecdd3;
+            --genre-jazz-fusion: #a5f3fc;
+            --genre-latin-jazz: #fde047;
+            --genre-big-band: #fecaca;
+            --genre-jazz-rap: #fed7aa;
+            --genre-nu-jazz: #a7f3d0;
+            --genre-smooth-jazz: #93c5fd;
+            --genre-modern-creative: #fecdd3;
+            --genre-third-stream: #bae6fd;
+            --genre-experimental-big-band: #e9d5ff;
+            --genre-spiritual-jazz: #dcfce7;
+            --genre-afro-jazz: #fef08a;
+            --genre-soul-jazz: #fed7aa;
+            --genre-progressive-big-band: #fecaca;
+            --genre-jazz-rock: #a5f3fc;
+            --genre-jazz-funk: #c4b5fd;
+            --genre-indo-jazz: #fde047;
+            --genre-ambient-jazz: #a7f3d0;
+            --genre-ecm-style-jazz: #93c5fd;
+            --genre-cape-jazz: #fef08a;
+            --genre-chamber-jazz: #bae6fd;
+            --genre-post-minimalism: #e9d5ff;
+            --genre-neo-bop: #d8b4fe;
+            --genre-default: #e7e5e4;
+        }
+
+        /* Dark Theme Overrides */
+        .dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
+            
+            /* Darker Genre Colors */
+            --genre-bebop: #A17A4B;
+            --genre-hard-bop: #8b5cf6;
+            --genre-cool-jazz: #3b82f6;
+            --genre-modal-jazz: #10b981;
+            --genre-post-bop: #f59e0b;
+            --genre-free-jazz: #ef4444;
+            --genre-avant-garde: #ec4899;
+            --genre-jazz-fusion: #06b6d4;
+            --genre-latin-jazz: #eab308;
+            --genre-big-band: #ef4444;
+            --genre-jazz-rap: #f59e0b;
+            --genre-nu-jazz: #10b981;
+            --genre-smooth-jazz: #3b82f6;
+            --genre-modern-creative: #ec4899;
+            --genre-third-stream: #0284c7;
+            --genre-experimental-big-band: #a855f7;
+            --genre-spiritual-jazz: #22c55e;
+            --genre-afro-jazz: #ca8a04;
+            --genre-soul-jazz: #f59e0b;
+            --genre-progressive-big-band: #dc2626;
+            --genre-jazz-rock: #0891b2;
+            --genre-jazz-funk: #7c3aed;
+            --genre-indo-jazz: #eab308;
+            --genre-ambient-jazz: #10b981;
+            --genre-ecm-style-jazz: #3b82f6;
+            --genre-cape-jazz: #ca8a04;
+            --genre-chamber-jazz: #0284c7;
+            --genre-post-minimalism: #a855f7;
+            --genre-neo-bop: #8b5cf6;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+        .nav-bar-behaviour { display: none; }
+        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
+        
+        #mobile-menu-panel { background-color: var(--bg-main); transition: transform 0.3s ease-in-out; }
+        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
+
+        .section-header {
+              transform: rotate(-1deg);
+              display: inline-block;
+              background-color: var(--accent);
+              color: #FFFFFF;
+              padding: 0.25rem 1rem;
+              margin-bottom: 1rem;
+        }
+        .dark .section-header { color: var(--text-main); }
+        
+        .modal { transition: opacity 0.3s ease; }
+        .modal-content {
+            background-color: var(--bg-main);
+            border: 2px solid var(--border-color);
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .modal.opacity-0 .modal-content {
+              opacity: 0;
+              transform: scale(0.95) translateY(10px);
+        }
+        
+        .clickable-link {
+            cursor: pointer; text-decoration: underline;
+            text-decoration-color: var(--accent);
+            transition: color 0.2s;
+        }
+        .clickable-link:hover { color: var(--accent); }
+        
+        #loader {
+            position: fixed; inset: 0;
+            background-color: var(--bg-main);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .content-hidden { display: none; }
+
+        .banner-section {
+            position: relative; width: 100%;
+            height: 35vh; max-height: 200px;
+            overflow: hidden; background-color: #1a1a1a;
+        }
+        .banner-img {
+            width: 100%; height: 100%;
+            object-fit: cover; opacity: 0.3;
+            animation: banner-fade-in 2s ease-out forwards;
+        }
+        @keyframes banner-fade-in { from { opacity: 0; transform: scale(1.05); } to { opacity: 0.3; transform: scale(1); } }
+        .banner-overlay {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 1rem; color: #f5f5f4;
+        }
+        .typewriter h2 {
+            font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem;
+            max-width: 90vw; font-weight: bold; color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            overflow: hidden; border-right: .15em solid var(--accent);
+            white-space: nowrap; margin: 0 auto; letter-spacing: .1em;
+            animation: typing 3.5s steps(35, end), blink-caret .75s step-end infinite;
+        }
+        .banner-subtitle { font-size: 0.9rem; }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent); } }
+        @media (min-width: 768px) {
+            .banner-section { height: 30vh; max-height: 250px; }
+            .typewriter h2 { font-size: 3rem; }
+            .banner-subtitle { font-size: 1.125rem; }
+        }
+        
+        /* Genre Matrix Styles */
+        #genre-matrix-container {
+            border: 2px solid var(--border-color);
+            border-radius: 0.25rem;
+            overflow: auto;
+            background-color: var(--bg-main);
+        }
+        .matrix-table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 800px;
+        }
+        .matrix-table th, .matrix-table td {
+            padding: 1rem;
+            border-bottom: 2px solid var(--bg-secondary);
+            text-align: left;
+            vertical-align: top;
+            transition: background-color: 0.1s ease-in-out;
+        }
+        .dark .matrix-table td { color: var(--text-main); }
+        .matrix-table thead th {
+            background-color: var(--text-main);
+            color: var(--bg-main);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .dark .matrix-table thead th {
+            background-color: #1a1a1a;
+            color: var(--accent);
+            border-bottom: 2px solid var(--border-color);
+        }
+        .matrix-table tbody th {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.25rem;
+            width: 150px;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+            border-right: 2px solid var(--bg-secondary);
+            background-color: var(--bg-main);
+        }
+        .dark .matrix-table tbody th {
+            border-right-color: var(--border-color);
+            color: var(--text-main);
+        }
+        .matrix-table tbody tr:last-child th, .matrix-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .matrix-table td.col-hover, .matrix-table .row-hover > td {
+            background-color: var(--highlight-color, rgba(0,0,0,0.05)) !important;
+        }
+        .genre-header-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-size: inherit;
+            font-weight: inherit;
+            color: inherit;
+        }
+        .genre-header-button .info-icon {
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .genre-header-button:hover .info-icon { opacity: 1; }
+
+        /* Genre Evolution Styles */
+        #genre-evolution-wrapper { position: relative; padding-bottom: 2rem; }
+        #genre-evolution-container {
+            display: flex; overflow-x: auto; padding: 2rem 1rem;
+            -ms-overflow-style: none; scrollbar-width: none; cursor: grab;
+        }
+        #genre-evolution-container:active { cursor: grabbing; }
+        #genre-evolution-container::-webkit-scrollbar { display: none; }
+        #genre-evolution-chart { display: inline-flex; gap: 0; position: relative; min-height: 700px; }
+        .evolution-decade-column {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 1rem; padding: 4rem 3rem;
+            border-left: 2px dashed var(--text-muted);
+            position: relative;
+        }
+        #genre-evolution-chart > .evolution-decade-column:first-child { border-left: none; }
+        .evolution-decade-header {
+            position: absolute; top: 0; left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+            color: var(--text-muted); white-space: nowrap;
+        }
+        .evolution-nodes-container {
+            display: flex; flex-direction: column;
+            justify-content: space-around; gap: 2rem;
+            width: 100%; height: 100%;
+        }
+        .evolution-genre-group {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 1.5rem;
+        }
+        .genre-node {
+            padding: 0.75rem 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--border-color);
+            cursor: pointer; transition: all 0.2s ease;
+            position: relative; text-align: center;
+            flex-shrink: 0; z-index: 1;
+            background-color: var(--bg-main);
+            min-width: 160px;
+        }
+        .dark .genre-node { box-shadow: none; }
+        .genre-node:hover {
+            transform: translateY(-4px) rotate(1deg);
+            box-shadow: 6px 6px 0px var(--accent);
+        }
+        .dark .genre-node:hover { box-shadow: none; border-color: var(--accent); }
+        .genre-node h4 { font-size: 1.25rem; line-height: 1.2; }
+        #evolution-connections {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+            overflow: visible;
+        }
+
+        .dropdown-container { position: relative; }
+        .dropdown-btn {
+            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
+            padding: 0.5rem 1.5rem;
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            background-color: var(--bg-main);
+            transition: all 0.2s ease; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .dark .dropdown-btn { border-color: var(--border-color); }
+        .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
+        .dropdown-list {
+            position: absolute;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            z-index: 20; width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+        }
+        .dropdown-container:hover .dropdown-list {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dark .dropdown-list {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a:hover {
+            background-color: var(--accent); color: var(--bg-main);
+            transform: translateX(4px);
+        }
+    </style>
+</head>
+<body class="bg-[var(--bg-main)] text-[var(--text-main)]">
+
+    <div id="loader"><div class="loader-spinner"></div></div>
+
+    <div id="page-content" class="content-hidden">
+        <!-- Standardized Sticky Header -->
+        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+            <header class="container mx-auto h-full">
+                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
+                    <div class="flex items-center">
+                        <div class="nav-bar-behaviour items-center space-x-8">
+                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                            <div class="dropdown-container">
+                                <a href="/legacy" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)] dropdown-btn">
+                                    Legacy
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </a>
+                                <div class="dropdown-list">
+                                    <a href="/legacy">Overview</a>
+                                    <a href="/genres.html">Genres</a>
+                                    <a href="/artists.html">Artists</a>
+                                </div>
+                            </div>
+                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                                <span>@controlledjazz</span>
+                            </a>
+                        </div>
+                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </button>
+                         <!-- Hamburger Menu Button -->
+                        <div class="lg:hidden ml-2">
+                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        </div>
+
+        <main>
+            <!-- Banner Section -->
+            <section class="banner-section">
+                <img src="images/bannergenres.jpg" alt="A collage of jazz album covers" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1599488838703-44b1c34a0491?q=80&w=1974&auto=format&fit=crop';">
+                <div class="banner-overlay">
+                    <div class="typewriter">
+                        <h2>The Anatomy of Jazz</h2>
+                    </div>
+                    <p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Comparing the core styles and tracing their evolution through time.</p>
+                </div>
+            </section>
+            
+            <!-- Genre Matrix Section -->
+            <section id="matrix" class="py-16 sm:py-20 bg-[var(--bg-main)]">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 class="section-header text-5xl">The Core Styles</h2>
+                    <p class="text-center text-lg text-[var(--text-muted)] mb-12 max-w-3xl mx-auto italic">Compare the main characteristics of each foundational genre from the 1950s and 60s.</p>
+                    <div id="genre-matrix-container" class="matrix-container max-w-6xl mx-auto">
+                        <table id="style-matrix-table" class="matrix-table">
+                            <!-- Table content will be generated here by JavaScript -->
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Genre Evolution Section -->
+            <section id="legacy-genres" class="py-16 sm:py-20 bg-[var(--bg-secondary)] border-y-4 border-[var(--border-color)]">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 class="section-header text-5xl">Genre Evolution</h2>
+                    <p class="text-center text-lg text-[var(--text-muted)] mb-12 max-w-3xl mx-auto italic">Explore the evolution of jazz styles from the 50s to today. Click on a genre to learn more.</p>
+                    <div id="genre-evolution-wrapper">
+                        <div id="genre-evolution-container">
+                            <div id="genre-evolution-chart">
+                                <svg id="evolution-connections"></svg>
+                            </div>
+                        </div>
+                        <button id="evolution-prev-btn" class="absolute top-1/2 -translate-y-1/2 left-2 z-10 p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                        <button id="evolution-next-btn" class="absolute top-1/2 -translate-y-1/2 right-2 z-10 p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all disabled:opacity-25 disabled:cursor-not-allowed hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-stone-900 text-stone-200 py-8">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
+                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
+                <div class="mt-6 border-t border-stone-700 pt-6">
+                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Modals -->
+    <div id="genre-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 border-[var(--border-color)] flex-shrink-0">
+                 <h3 id="genre-modal-title" class="text-4xl"></h3>
+                 <button id="close-genre-modal" class="text-4xl font-bold p-2 leading-none text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">×</button>
+             </div>
+             <div id="genre-modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
+        <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Home</a>
+                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">TV</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Legacy</a>
+                <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md ml-4">- Genres</a>
+                <a href="/artists.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md ml-4">- Artists</a>
+                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Blog</a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        const GenresApp = {
+            state: {
+                genreData: {},
+                fullAlbumDatabase: [],
+                allLegacyAlbums: [],
+            },
+            elements: {},
+            init() {
+                this.cacheDOMElements();
+                // Bind all methods to the app context
+                for (const key in this.methods) {
+                    if(typeof this.methods[key] === 'function') {
+                        this.methods[key] = this.methods[key].bind(this);
+                    }
+                }
+                this.methods.setupTheme();
+                this.fetchData();
+            },
+            cacheDOMElements() {
+                this.elements = {
+                    loader: document.getElementById('loader'),
+                    pageContent: document.getElementById('page-content'),
+                    matrixContainer: document.getElementById('style-matrix-table'),
+                    genreModal: document.getElementById('genre-modal'),
+                    genreEvolutionChart: document.getElementById('genre-evolution-chart'),
+                    evolutionContainer: document.getElementById('genre-evolution-container'),
+                    evolutionPrevBtn: document.getElementById('evolution-prev-btn'),
+                    evolutionNextBtn: document.getElementById('evolution-next-btn'),
+                    evolutionConnections: document.getElementById('evolution-connections'),
+                    mobileMenuButton: document.getElementById('mobile-menu-button'),
+                    mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
+                    mobileMenuPanel: document.getElementById('mobile-menu-panel'),
+                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                    footerCopyright: document.getElementById('footer-copyright'),
+                    themeToggle: document.getElementById('theme-toggle'),
+                    themeIconLight: document.getElementById('theme-icon-light'),
+                    themeIconDark: document.getElementById('theme-icon-dark'),
+                };
+            },
+            fetchData() {
+                Promise.all([
+                    fetch('genres.json').then(res => res.json()),
+                    fetch('database.json').then(res => res.json()),
+                    fetch('legacy.json').then(res => res.json())
+                ]).then(([genreData, dbData, legacyData]) => {
+                    this.state.genreData = genreData;
+                    
+                    const normalizeGenres = (album) => {
+                        if (typeof album.genres === 'string') {
+                            album.genres = album.genres.split(',').map(g => g.trim());
+                        } else if (!Array.isArray(album.genres)) {
+                            album.genres = [];
+                        }
+                        return album;
+                    };
+
+                    this.state.fullAlbumDatabase = (dbData.albums || []).map(normalizeGenres);
+                    this.state.allLegacyAlbums = Object.values(legacyData.paths || {}).flatMap(path => path.albums || []).map(normalizeGenres);
+
+                    this.initializeAppUI();
+                }).catch(error => {
+                    console.error('Error fetching data:', error);
+                    this.elements.pageContent.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2><p class="text-[var(--text-muted)] mt-2">${error.message}</p></div>`;
+                    this.showPage();
+                });
+            },
+            showPage() {
+                this.elements.loader.style.display = 'none';
+                this.elements.pageContent.classList.remove('content-hidden');
+            },
+            initializeAppUI() {
+                this.methods.buildGenreMatrix();
+                this.methods.renderGenreEvolutionChart();
+                this.methods.setupModals();
+                this.methods.setupMobileMenu();
+                this.methods.setupGeneralEventListeners();
+                this.showPage();
+            },
+            methods: {
+                setupTheme() {
+                    const themeToggle = this.elements.themeToggle;
+                    const lightIcon = this.elements.themeIconLight;
+                    const darkIcon = this.elements.themeIconDark;
+
+                    const applyTheme = (theme) => {
+                        if (theme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                            lightIcon.classList.add('hidden');
+                            darkIcon.classList.remove('hidden');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                            lightIcon.classList.remove('hidden');
+                            darkIcon.classList.add('hidden');
+                        }
+                        // Redraw connections on theme change
+                        if (this.methods.drawEvolutionConnections) {
+                           setTimeout(() => this.methods.drawEvolutionConnections(), 50);
+                        }
+                    };
+
+                    const savedTheme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                    
+                    applyTheme(currentTheme);
+
+                    themeToggle.addEventListener('click', () => {
+                        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                        localStorage.setItem('theme', newTheme);
+                        applyTheme(newTheme);
+                    });
+                },
+                slugify(name) {
+                    if (!name) return '';
+                    return name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+                },
+                buildGenreMatrix() {
+                    const { matrixContainer } = this.elements;
+                    const { genreData } = this.state;
+                    const excludedGenres = ["Jazz Rap", "Big Band", "Latin Jazz"];
+
+                    if (genreData.features && genreData.genres) {
+                        const thead = document.createElement('thead');
+                        const headerRow = document.createElement('tr');
+                        headerRow.innerHTML = `<th class="p-4 font-bold text-2xl w-48 text-left">Genre</th>`;
+                        genreData.features.forEach(feature => {
+                            headerRow.innerHTML += `<th class="p-4 font-bold text-2xl text-center">${feature}</th>`;
+                        });
+                        thead.appendChild(headerRow);
+                        matrixContainer.innerHTML = ''; // Clear previous content
+                        matrixContainer.appendChild(thead);
+
+                        const tbody = document.createElement('tbody');
+                        Object.keys(genreData.genres)
+                            .filter(genreName => !excludedGenres.includes(genreName))
+                            .forEach(genreName => {
+                                const data = genreData.genres[genreName];
+                                const row = document.createElement('tr');
+                                const slug = this.methods.slugify(genreName);
+                                const colorVar = `--genre-${slug}`;
+                                row.innerHTML = `<th style="background-color:var(${colorVar}, var(--genre-default));">
+                                    <button class="genre-header-button" data-genre-name="${genreName}">
+                                        <span>${genreName}</span>
+                                        <svg class="info-icon w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                </th>` + data.data.map(dp => `<td>${dp}</td>`).join('');
+                                tbody.appendChild(row);
+                        });
+                        matrixContainer.appendChild(tbody);
+
+                        matrixContainer.addEventListener('mouseover', e => {
+                            if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
+                                const cell = e.target;
+                                const row = cell.parentElement;
+                                const colIndex = Array.from(row.children).indexOf(cell);
+                                
+                                row.classList.add('row-hover');
+                                const rowGenreName = row.querySelector('th button')?.dataset.genreName;
+                                if (rowGenreName) {
+                                    const slug = this.methods.slugify(rowGenreName);
+                                    const colorVar = `--genre-${slug}`;
+                                    const color = getComputedStyle(document.documentElement).getPropertyValue(colorVar.match(/--[a-zA-Z-]+/)[0]).trim();
+                                    row.style.setProperty('--highlight-color', `${color}33`);
+                                }
+                                Array.from(matrixContainer.querySelectorAll('tr')).forEach(r => {
+                                    r.children[colIndex].classList.add('col-hover');
+                                });
+                            }
+                        });
+
+                        matrixContainer.addEventListener('mouseout', e => {
+                             if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
+                                Array.from(matrixContainer.querySelectorAll('.row-hover, .col-hover')).forEach(el => {
+                                    el.classList.remove('row-hover', 'col-hover');
+                                    el.style.removeProperty('--highlight-color');
+                                });
+                            }
+                        });
+                    } else {
+                        matrixContainer.parentElement.innerHTML = '<p class="text-center p-4 text-stone-500">No genre data available.</p>';
+                    }
+                },
+                renderGenreEvolutionChart() {
+                    const { genreEvolutionChart } = this.elements;
+                    if (!genreEvolutionChart) return;
+
+                     const evolutionStructure = {
+                        '1950s': [
+                            [['Bebop'], ['Hard Bop']],
+                            [['Cool Jazz'], ['Modal Jazz']],
+                            [['Latin Jazz']],
+                            [['Big Band']]
+                        ],
+                        '1960s': [
+                            [['Post-Bop'], ['Free Jazz']],
+                            [['Avant-Garde'], ['Third Stream', 'Experimental Big Band']],
+                            [['Spiritual Jazz'], ['Afro-Jazz']],
+                            [['Soul Jazz']],
+                            [['Progressive Big Band']]
+                        ],
+                        '1970s': [
+                             [['Jazz Fusion'], ['Jazz-Rock', 'Jazz-Funk', 'Indo Jazz']],
+                             [['Ambient Jazz', 'ECM Style Jazz']],
+                             [['Modern Creative']],
+                             [['Cape Jazz']],
+                             [['Chamber Jazz', 'Post-Minimalism']]
+                        ],
+                        '1980s & Beyond': [
+                            [['Smooth Jazz']],
+                            [['Neo-Bop']]
+                        ],
+                        '1990s & Beyond': [
+                            [['Nu Jazz']],
+                            [['Jazz Rap']]
+                        ]
+                    };
+                    
+                    let chartHtml = `<svg id="evolution-connections"></svg>`;
+                    Object.entries(evolutionStructure).forEach(([decade, columns]) => {
+                        chartHtml += `
+                            <div class="evolution-decade-column">
+                                <div class="evolution-decade-header">${decade}</div>
+                                <div class="evolution-nodes-container">
+                                    ${columns.map(groups => `
+                                        <div class="evolution-genre-group">
+                                            ${groups.map(group => group.map(genreName => {
+                                                const slug = this.methods.slugify(genreName);
+                                                const colorVar = `--genre-${slug}`;
+                                                return `
+                                                    <div class="genre-node" data-genre-name="${genreName}" style="background-color: var(${colorVar}, var(--genre-default));">
+                                                        <h4>${genreName}</h4>
+                                                    </div>
+                                                `;
+                                            }).join('')).join('')}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    genreEvolutionChart.innerHTML = chartHtml;
+                    
+                    setTimeout(() => {
+                        this.methods.drawEvolutionConnections();
+                        this.methods.setupEvolutionScrolling();
+                    }, 150);
+                },
+                drawEvolutionConnections() {
+                    const { genreEvolutionChart, evolutionConnections } = this.elements;
+                    if (!evolutionConnections) return;
+
+                    const connections = [
+                        { from: 'Bebop', to: 'Hard Bop' }, { from: 'Cool Jazz', to: 'Modal Jazz' },
+                        { from: 'Post-Bop', to: 'Free Jazz' }, { from: 'Avant-Garde', to: 'Third Stream' },
+                        { from: 'Avant-Garde', to: 'Experimental Big Band' }, { from: ['Avant-Garde', 'Free Jazz'], to: 'Spiritual Jazz' },
+                        { from: 'Jazz Fusion', to: 'Jazz-Rock' }, { from: 'Jazz Fusion', to: 'Jazz-Funk' },
+                        { from: 'Jazz Fusion', to: 'Indo Jazz' }, { from: 'Spiritual Jazz', to: 'Afro-Jazz' },
+                        { from: 'Afro-Jazz', to: 'Cape Jazz' }, { from: 'Modal Jazz', to: 'Ambient Jazz' },
+                        { from: 'Modal Jazz', to: 'ECM Style Jazz' }, { from: ['Third Stream', 'Free Jazz'], to: 'Modern Creative' },
+                        { from: 'ECM Style Jazz', to: 'Smooth Jazz' }, { from: 'Hard Bop', to: 'Neo-Bop' },
+                        { from: 'Third Stream', to: 'Chamber Jazz' }, { from: 'Third Stream', to: 'Post-Minimalism' },
+                        { from: 'Jazz-Funk', to: 'Nu Jazz' }, { from: 'Big Band', to: 'Progressive Big Band' }
+                    ];
+
+                    const svgNS = "http://www.w3.org/2000/svg";
+                    const mutedColor = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
+                    evolutionConnections.innerHTML = `<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="${mutedColor}" /></marker></defs>`;
+                    
+                    evolutionConnections.setAttribute('width', genreEvolutionChart.scrollWidth);
+                    evolutionConnections.setAttribute('height', genreEvolutionChart.scrollHeight);
+                    
+                    const nodePositions = new Map();
+                    genreEvolutionChart.querySelectorAll('.genre-node').forEach(node => {
+                        const rect = node.getBoundingClientRect();
+                        const chartRect = genreEvolutionChart.getBoundingClientRect();
+                        nodePositions.set(node.dataset.genreName, {
+                            left: node.offsetLeft,
+                            right: node.offsetLeft + rect.width,
+                            y: node.offsetTop + rect.height / 2,
+                        });
+                    });
+
+                    connections.forEach(conn => {
+                        const toNode = nodePositions.get(conn.to);
+                        if (!toNode) return;
+
+                        const fromNodes = Array.isArray(conn.from) ? conn.from.map(f => nodePositions.get(f)) : [nodePositions.get(conn.from)];
+                        
+                        const fromPoints = fromNodes.filter(Boolean).map(node => ({ x: node.right, y: node.y }));
+                        if (fromPoints.length === 0) return;
+
+                        const avgY = fromPoints.reduce((sum, p) => sum + p.y, 0) / fromPoints.length;
+                        const mergePointX = fromPoints.length > 1 ? toNode.left - 60 : fromPoints[0].x + 30;
+
+                        fromPoints.forEach(fromPoint => {
+                            const path = document.createElementNS(svgNS, 'path');
+                            const d = `M ${fromPoint.x} ${fromPoint.y} C ${fromPoint.x + 40} ${fromPoint.y}, ${mergePointX - 40} ${avgY}, ${mergePointX} ${avgY}`;
+                            path.setAttribute('d', d);
+                            path.setAttribute('stroke', mutedColor);
+                            path.setAttribute('stroke-width', '2');
+                            path.setAttribute('fill', 'none');
+                            if (fromPoints.length === 1) {
+                                path.setAttribute('marker-end', 'url(#arrowhead)');
+                            }
+                            evolutionConnections.appendChild(path);
+                        });
+
+                        if (fromPoints.length > 1) {
+                            const finalPath = document.createElementNS(svgNS, 'path');
+                            finalPath.setAttribute('d', `M ${mergePointX} ${avgY} L ${toNode.left} ${toNode.y}`);
+                            finalPath.setAttribute('stroke', mutedColor);
+                            finalPath.setAttribute('stroke-width', '2');
+                            finalPath.setAttribute('fill', 'none');
+                            finalPath.setAttribute('marker-end', 'url(#arrowhead)');
+                            evolutionConnections.appendChild(finalPath);
+                        }
+                    });
+                },
+                setupEvolutionScrolling() {
+                    const { evolutionContainer, evolutionPrevBtn, evolutionNextBtn } = this.elements;
+                    const checkScroll = () => {
+                        if (!evolutionContainer) return;
+                        const hasOverflow = evolutionContainer.scrollWidth > evolutionContainer.clientWidth;
+                        evolutionPrevBtn.classList.toggle('hidden', !hasOverflow);
+                        evolutionNextBtn.classList.toggle('hidden', !hasOverflow);
+                        if (hasOverflow) {
+                            evolutionPrevBtn.disabled = evolutionContainer.scrollLeft <= 0;
+                            evolutionNextBtn.disabled = evolutionContainer.scrollLeft >= evolutionContainer.scrollWidth - evolutionContainer.clientWidth - 1;
+                        }
+                    };
+                    evolutionContainer.addEventListener('scroll', checkScroll);
+                    window.addEventListener('resize', checkScroll);
+                    evolutionPrevBtn.addEventListener('click', () => evolutionContainer.scrollBy({ left: -300, behavior: 'smooth' }));
+                    evolutionNextBtn.addEventListener('click', () => evolutionContainer.scrollBy({ left: 300, behavior: 'smooth' }));
+                    this.methods.setupDraggable(evolutionContainer);
+                    setTimeout(checkScroll, 100);
+                },
+                setupModals() {
+                    const { genreModal } = this.elements;
+                    
+                    genreModal.querySelector('#close-genre-modal').addEventListener('click', this.methods.closeGenreModal);
+                    genreModal.addEventListener('click', e => { if (e.target === genreModal) this.methods.closeGenreModal(); });
+                    
+                    document.addEventListener('keydown', e => { 
+                        if (e.key === "Escape") { 
+                            this.methods.closeGenreModal();
+                        } 
+                    });
+                    
+                    document.body.addEventListener('click', (e) => {
+                        const target = e.target.closest('.genre-header-button, .genre-node');
+                        if (target) {
+                            this.methods.openGenreModal(target.dataset.genreName);
+                        }
+                    });
+                },
+                openGenreModal(genreName) {
+                    const { genreModal } = this.elements;
+                    
+                    const findGenreRecursive = (name, genres, parent = null) => {
+                        for (const [key, value] of Object.entries(genres)) {
+                            if (key === name) {
+                                return { info: { name: key, ...value }, parent: parent };
+                            }
+                            if (value.subgenres) {
+                                const found = findGenreRecursive(name, value.subgenres, key);
+                                if (found) return found;
+                            }
+                        }
+                        return null;
+                    };
+
+                    const result = findGenreRecursive(genreName, this.state.genreData.genres);
+                    if (!result) return;
+
+                    const { info: genreInfo, parent: parentGenreName } = result;
+
+                    const titleEl = genreModal.querySelector('#genre-modal-title');
+                    titleEl.textContent = genreName;
+                    const slug = this.methods.slugify(genreName);
+                    const colorVar = `--genre-${slug}`;
+                    titleEl.style.color = `var(${colorVar}, var(--accent))`;
+
+                    const bodyEl = genreModal.querySelector('#genre-modal-body');
+                    const keyArtistsHtml = genreInfo.artists ? `<p class="text-base text-[var(--text-muted)] leading-relaxed">${genreInfo.artists}</p>` : '';
+                    const landmarkAlbumsHtml = genreInfo.landmarkAlbums ? `<ul class="list-disc list-inside space-y-1">${genreInfo.landmarkAlbums.map(title => `<li>${title}</li>`).join('')}</ul>` : '';
+                    const characteristicsHtml = genreInfo.data ? `<ul class="list-disc list-inside space-y-1 text-[var(--text-muted)]">${this.state.genreData.features.map((feature, i) => `<li><strong>${feature}:</strong> ${genreInfo.data[i]}</li>`).join('')}</ul>` : '';
+
+                    bodyEl.innerHTML = `<div class="space-y-6">
+                        ${parentGenreName ? `<p class="text-sm text-stone-500 -mt-2 mb-4">A subgenre of <strong>${parentGenreName}</strong></p>` : ''}
+                        <div><h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Overview</h4><p class="text-base text-[var(--text-muted)] leading-relaxed">${genreInfo.profile || 'No profile available.'}</p></div>
+                        ${characteristicsHtml ? `<div><h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Key Characteristics</h4>${characteristicsHtml}</div>` : ''}
+                        ${keyArtistsHtml ? `<div><h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Key Artists</h4>${keyArtistsHtml}</div>` : ''}
+                        ${landmarkAlbumsHtml ? `<div><h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Landmark Albums</h4>${landmarkAlbumsHtml}</div>` : ''}
+                    </div>`;
+
+                    genreModal.classList.remove('opacity-0', 'pointer-events-none');
+                    genreModal.querySelector('.modal-content').classList.remove('scale-95');
+                    genreModal.querySelector('#genre-modal-body').scrollTop = 0;
+                },
+                closeGenreModal(callback) {
+                    const { genreModal } = this.elements;
+                    genreModal.classList.add('opacity-0', 'pointer-events-none');
+                    genreModal.querySelector('.modal-content').classList.add('scale-95');
+                    if (typeof callback === 'function') setTimeout(callback, 300);
+                },
+                setupMobileMenu() {
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
+                    const openMenu = () => {
+                        mobileMenuOverlay.classList.remove('hidden');
+                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                    };
+                    const closeMenu = () => {
+                        mobileMenuPanel.style.transform = 'translateX(100%)';
+                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                    };
+                    mobileMenuButton.addEventListener('click', openMenu);
+                    mobileMenuCloseButton.addEventListener('click', closeMenu);
+                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+                    
+                    document.querySelectorAll('#mobile-nav-links a').forEach(link => {
+                        link.addEventListener('click', closeMenu);
+                    });
+                },
+                setupGeneralEventListeners() {
+                    let resizeTimeout;
+                    window.addEventListener('resize', () => {
+                        clearTimeout(resizeTimeout);
+                        resizeTimeout = setTimeout(() => {
+                            this.methods.drawEvolutionConnections();
+                            this.methods.setupEvolutionScrolling();
+                        }, 200);
+                    });
+                    this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+                },
+                setupDraggable(container) {
+                    if (!container) return;
+                    let isDown = false, startX, scrollLeft;
+                    container.addEventListener('mousedown', (e) => { isDown = true; container.style.cursor = 'grabbing'; startX = e.pageX - container.offsetLeft; scrollLeft = container.scrollLeft; });
+                    container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
+                    container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
+                    container.addEventListener('mousemove', (e) => {
+                        if(!isDown) return;
+                        e.preventDefault();
+                        const x = e.pageX - container.offsetLeft;
+                        const walk = (x - startX) * 2;
+                        container.scrollLeft = scrollLeft - walk;
+                    });
+                },
+            }
+        };
+        document.addEventListener('DOMContentLoaded', () => GenresApp.init());
+    </script>
+</body>
+</html>
