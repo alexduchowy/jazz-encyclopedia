@@ -509,6 +509,7 @@
                 styleMatrix: {},
                 currentPage: 1,
                 artistsPerPage: 24,
+                legacyData: {} // Store legacy data for modal
             },
 
             // DOM Elements
@@ -558,6 +559,7 @@
                         this.state.albums = dbData.albums;
                         this.state.artistProfiles = artistProfileData;
                         this.state.styleMatrix = genreData;
+                        this.state.legacyData = legacyData; // Store for later use
                         
                         this.methods.initializeAppUI(legacyData);
                     })
@@ -620,10 +622,18 @@
                 getCanonicalName(name) {
                     if (!name) return '';
                     const trimmedName = name.trim();
+
+                    // --- Moniker Normalization ---
+                    // Maps group names/variations to a single artist.
+                    if (trimmedName.startsWith('Art Blakey')) return 'Art Blakey';
+                    if (trimmedName.startsWith('Sun Ra')) return 'Sun Ra';
+                    
+                    // --- Individual Name Normalization ---
                     if (trimmedName === 'Roland Kirk') return 'Rahsaan Roland Kirk';
                     if (trimmedName === 'Anthony Williams') return 'Tony Williams';
                     if (trimmedName === 'Albert Heath' || trimmedName === 'Albert Tootie Heath') return "Albert 'Tootie' Heath";
                     if (trimmedName === 'Lonnie Liston Smith Jr.') return 'Lonnie Liston Smith';
+                    
                     return trimmedName;
                 },
 
@@ -633,7 +643,6 @@
                     const getCanonicalName = this.methods.getCanonicalName;
                     const profiles = this.state.artistProfiles;
 
-                    // Helper to create or get an artist entry
                     const getOrCreateArtist = (name) => {
                         const canonicalName = getCanonicalName(name);
                         if (!artistsMap.has(canonicalName)) {
@@ -645,12 +654,14 @@
                                 profile: profiles[canonicalName] || { name: canonicalName, profile: 'No profile available.' },
                                 isDatabaseBandleader: false,
                                 isLegacyBandleader: false,
+                                originalNames: new Set([name]) // Store original name for filtering
                             });
+                        } else {
+                           artistsMap.get(canonicalName).originalNames.add(name);
                         }
                         return artistsMap.get(canonicalName);
                     };
 
-                    // Helper to process a lineup string
                     const processLineup = (lineup, albumTitle) => {
                         if (!lineup) return;
                         lineup.split(/,(?![^()]*\))/).forEach(part => {
@@ -658,7 +669,6 @@
                             if (match) {
                                 const artist = getOrCreateArtist(match[1].trim());
                                 const instrumentsString = match[2];
-                                
                                 instrumentsString.split(/, | \/ /).forEach(inst => {
                                     const trimmedInst = inst.trim();
                                     if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
@@ -683,16 +693,13 @@
                     if (legacyData && legacyData.paths) {
                         Object.values(legacyData.paths).forEach(path => {
                             (path.albums || []).forEach(album => {
-                                // In legacy data, the 'artist' field denotes the bandleader for that album.
                                 if (album.artist) {
                                     const bandleader = getOrCreateArtist(album.artist);
                                     bandleader.isLegacyBandleader = true;
                                 }
-                                
                                 const processLegacyLineup = (lineup) => {
                                     if (lineup) processLineup(lineup, album.title);
                                 };
-
                                 if (album.pivotalTracks && album.pivotalTracks.length > 0) {
                                     album.pivotalTracks.forEach(track => processLegacyLineup(track.lineup));
                                 } else if (album.lineup) {
@@ -701,25 +708,35 @@
                             });
                         });
                     }
-
-                    // Step 3: Finalize artist data and assign tiers based on the new hierarchy
+                    
+                    // Step 3: Filter out groups that were not mapped to a canonical artist
+                    const groupKeywords = ['Ensemble', 'Quartet', 'Quintet', 'Sextet', 'Trio', '&', ' and ', 'With', ' featuring ', 'Orchestra', 'Arkestra', 'Band'];
                     const artistsArray = Array.from(artistsMap.values());
-                    artistsArray.forEach(artist => {
+                    const filteredArtistsArray = artistsArray.filter(artist => {
+                        // If the canonical name itself is a group, filter it.
+                        // Example: "Art Ensemble of Chicago" does not get normalized, so its name is checked here.
+                        const isGroup = groupKeywords.some(keyword => artist.name.includes(keyword));
+                        return !isGroup;
+                    });
+
+
+                    // Step 4: Finalize artist data and assign tiers
+                    filteredArtistsArray.forEach(artist => {
                         artist.instruments = Array.from(artist.instruments);
                         artist.albums = Array.from(artist.albums);
 
                         if (artist.isDatabaseBandleader) {
-                            artist.tier = 1; // Orange Shadow
+                            artist.tier = 1; // Orange
                         } else if (artist.isLegacyBandleader) {
-                            artist.tier = 2; // Blue Shadow
+                            artist.tier = 2; // Blue
                         } else if (artist.albums.size >= 4) {
-                            artist.tier = 3; // Yellow Shadow
+                            artist.tier = 3; // Yellow
                         } else {
-                            artist.tier = 4; // Default (no special shadow)
+                            artist.tier = 4; // Default
                         }
                     });
 
-                    this.state.artistsData = artistsArray;
+                    this.state.artistsData = filteredArtistsArray;
                 },
                 
                 setupModals() {
@@ -786,7 +803,6 @@
                                 case 3:
                                     card.classList.add('influential-sideman'); // Yellow
                                     break;
-                                // No special class for tier 4
                             }
 
                             card.dataset.artistName = artist.name;
@@ -898,12 +914,10 @@
 
                     const allKnownAlbums = [...this.state.albums, ...Object.values(this.state.legacyData?.paths || {}).flatMap(p => p.albums || [])];
 
-                    const artistAlbumsWithYear = artist.albums
+                    const artistAlbumsWithYear = Array.from(artist.albums)
                         .map(albumTitle => {
-                            // Find album in the combined list
                             const foundAlbum = allKnownAlbums.find(a => (a.albumTitle || a.title) === albumTitle);
                             if (!foundAlbum) return null;
-                            // Normalize album structure
                             return {
                                 year: foundAlbum.year,
                                 albumTitle: foundAlbum.albumTitle || foundAlbum.title,
@@ -969,7 +983,7 @@
                                 <div class="artist-photo-container">
                                     <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
                                 </div>
-                                <p class="mt-4 text-[var(--text-main)] text-sm"><strong class="font-bold">Instruments:</strong> ${artist.instruments.join(', ')}</p>
+                                <p class="mt-4 text-[var(--text-main)] text-sm"><strong class="font-bold">Instruments:</strong> ${[...artist.instruments].join(', ')}</p>
                                 ${bornInModalInfo}
                                 ${artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-[var(--text-main)] mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
                             </div>
@@ -991,9 +1005,9 @@
                     const getCanonicalName = this.methods.getCanonicalName;
                     const canonicalArtistName = getCanonicalName(artistName);
                     
-                    const allAlbums = [...this.state.albums, ...Object.values(this.state.legacyData?.paths || {}).flatMap(p => p.albums || [])];
+                    const allKnownAlbums = [...this.state.albums, ...Object.values(this.state.legacyData?.paths || {}).flatMap(p => p.albums || [])];
 
-                    allAlbums.forEach(album => {
+                    allKnownAlbums.forEach(album => {
                         const lineups = (album.pivotalTracks || []).map(t => t.lineup).filter(Boolean);
                         if(album.lineup) lineups.push(album.lineup);
 
