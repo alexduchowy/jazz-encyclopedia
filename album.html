@@ -166,9 +166,9 @@
         /* Redesigned Styles */
         .cover-art-container {
             background-color: var(--bg-secondary);
-            padding: 0.75rem;
             border: 2px solid var(--text-main);
             box-shadow: 6px 6px 0px var(--text-main);
+            /* Removed padding to make image fill the box */
         }
         .dark .cover-art-container {
             border-color: var(--border-color);
@@ -492,10 +492,16 @@
                             <h2 class="text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)]">${albumTitle}</h2>
                             <a href="/artist/${this.slugify(album.artist)}" class="text-2xl sm:text-3xl text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">${album.artist}</a>
                             <div class="mt-4 flex flex-wrap gap-2">${genreTags || 'N/A'}</div>
-                            <div class="mt-4 space-y-2 text-base text-[var(--text-main)]">
-                                <div class="flex gap-x-4"><strong>Released:</strong> <span>${album.releaseDate || 'N/A'}</span></div>
-                                <div class="flex gap-x-4"><strong>Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span></div>
-                                <div class="flex gap-x-4"><strong>Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span></div>
+                            <div class="mt-4 space-y-4 text-base text-[var(--text-main)]">
+                                <div class="space-y-2">
+                                    <div class="flex gap-x-4"><strong>Released:</strong> <span>${album.releaseDate || 'N/A'}</span></div>
+                                    <div class="flex gap-x-4"><strong>Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span></div>
+                                    <div class="flex gap-x-4"><strong>Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span></div>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl text-[var(--text-main)] mb-3">Line-Up</h4>
+                                    <div class="artist-lineup-grid">${lineupHtml || 'N/A'}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -511,10 +517,6 @@
                             </div>
                         </div>
                         <div class="lg:col-span-2 space-y-6">
-                             <div>
-                                <h4 class="text-xl text-[var(--text-main)] mb-3">Line-Up</h4>
-                                <div class="artist-lineup-grid">${lineupHtml || 'N/A'}</div>
-                            </div>
                             <div class="relative">
                                 <div class="analysis-section">${pivotalTracksHtml || '<p class="liner-notes-text">No key tracks defined for this album.</p>'}</div>
                             </div>
