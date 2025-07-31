@@ -359,6 +359,23 @@
         .collaborator-card:hover {
             transform: scale(1.05);
         }
+        /* Style for the new "Read More" button in the modal */
+        .profile-button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            background-color: var(--accent);
+            color: #FFFFFF !important;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s ease;
+            text-align: center;
+        }
+        .profile-button:hover {
+            background-color: #dd6b20; /* A darker orange */
+        }
     </style>
 </head>
 <body class="text-stone-900">
@@ -1040,6 +1057,15 @@
                             </div>
                         `;
                     }
+                    
+                    let profileButtonHtml = '';
+                    if (artistProfile.profile && artistProfile.profile !== 'No profile available.') {
+                        profileButtonHtml = `<div class="mt-6 text-center">
+                            <a href="/artist/${this.methods.slugify(artist.name)}" target="_blank" class="profile-button">
+                                View Full Profile
+                            </a>
+                        </div>`;
+                    }
 
                     body.innerHTML = `
                         <div class="flex flex-col sm:flex-row gap-6">
@@ -1058,6 +1084,7 @@
                             </div>
                         </div>
                         ${collaboratorsHtml}
+                        ${profileButtonHtml} 
                     `;
                     
                     artistModal.classList.remove('opacity-0', 'pointer-events-none');
