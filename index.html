@@ -1322,6 +1322,1026 @@
         
         .dropdown-container { position: relative; }
         .dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .dropdown-list {
+            position: absolute;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            z-index: 20; width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+        }
+        .dropdown-container:hover .dropdown-list {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dark .dropdown-list {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a:hover {
+            background-color: var(--accent); color: var(--bg-main);
+            transform: translateX(4px);
+        }
+
+        @media (max-width: 1023px) {
+            #mobile-card-container {
+                display: flex;
+                flex-direction: column;
+            }
+            #recommendation-card { order: 1; }
+            #latest-review-card { order: 2; }
+            #timeline-nav-card { order: 3; }
+            #legacy-nav-card { order: 4; }
+            #genres-nav-card { order: 5; }
+            #artists-nav-card { order: 6; }
+            #on-this-day-card { order: 7; }
+            #news-card { order: 8; }
+            #playlist-card { order: 9; }
+        }
+    </style>
+</head>
+<body class="text-stone-900">
+
+    <div id="loader" class="loader"><div class="loader-spinner"></div></div>
+
+    <div id="page-content" class="content-hidden">
+        <!-- Standardized Sticky Header -->
+        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+            <header class="container mx-auto h-full">
+                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                    <div class="flex items-center">
+                        <div class="nav-bar-behaviour items-center space-x-8">
+                            <a href="/" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                            <div class="dropdown-container">
+                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] dropdown-btn">
+                                    Legacy
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </a>
+                                <div class="dropdown-list">
+                                    <a href="/legacy">Legacy Paths</a>
+                                    <a href="/genres.html">Genres</a>
+                                    <a href="https://controlledfreedom.com/artists">Artists</a>
+                                </div>
+                            </div>
+                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                                <span>@controlledjazz</span>
+                            </a>
+                        </div>
+                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </button>
+                        <!-- Hamburger Menu Button -->
+                        <div class="md:hidden lg:hidden ml-2">
+                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        </div>
+
+        <main>
+            <!-- MERGED BANNER AND SLIDER -->
+            <section class="relative">
+                <div id="frontpage-slider">
+                    <!-- Slides will be injected here -->
+                </div>
+                <div id="frontpage-dots" class="slide-dots">
+                    <!-- Dots will be injected here -->
+                </div>
+            </section>
+
+            <div class="main-content-wrapper">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div id="mobile-card-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        
+                        <!-- Main Column -->
+                        <div class="lg:col-span-2 space-y-8">
+                            <!-- Album of the Day -->
+                            <div id="recommendation-card" class="dashboard-card">
+                                <h2 class="dashboard-card-header">Album of the Day</h2>
+                                <div id="recommendation-content" class="dashboard-card-content"></div>
+                            </div>
+
+                            <!-- Latest Review Card -->
+                            <div id="latest-review-card" class="dashboard-card">
+                                <h2 class="dashboard-card-header">Latest From The Archive</h2>
+                                <div id="latest-review" class="dashboard-card-content"></div>
+                            </div>
+
+                            <!-- Navigation Cards -->
+                            <div class="grid sm:grid-cols-2 gap-8">
+                                <a href="/timeline" id="timeline-nav-card" class="dashboard-card group block text-decoration-none">
+                                    <h2 class="dashboard-card-header">Jazz Evolution Timeline</h2>
+                                    <div class="dashboard-card-content">
+                                        <p>Explore the explosive growth of modern jazz from 1950-1969 through an interactive, chronological timeline of landmark albums.</p>
+                                        <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore Timeline &rarr;</span>
+                                    </div>
+                                </a>
+                                <a href="/legacy" id="legacy-nav-card" class="dashboard-card group block text-decoration-none">
+                                    <h2 class="dashboard-card-header">The Legacy of Jazz</h2>
+                                    <div class="dashboard-card-content">
+                                        <p>Discover how the sounds of the post-bop era evolved and splintered into new forms, from Jazz Fusion to the Avant-Garde and beyond.</p>
+                                         <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore The Legacy &rarr;</span>
+                                    </div>
+                                </a>
+                                <a href="/genres.html" id="genres-nav-card" class="dashboard-card group block text-decoration-none">
+                                    <h2 class="dashboard-card-header">Explore by Genre</h2>
+                                    <div class="dashboard-card-content">
+                                        <p>Dive into the different styles of jazz, from Bebop to Free Jazz, and understand their unique characteristics.</p>
+                                        <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Browse Genres &rarr;</span>
+                                    </div>
+                                </a>
+                                <a href="https://controlledfreedom.com/artists" id="artists-nav-card" class="dashboard-card group block text-decoration-none">
+                                    <h2 class="dashboard-card-header">Artist A-Z</h2>
+                                    <div class="dashboard-card-content">
+                                        <p>An alphabetical directory of the influential artists who defined the sound of modern jazz.</p>
+                                        <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Browse Artists &rarr;</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Column -->
+                        <div class="space-y-8">
+                            <!-- On This Day -->
+                            <div id="on-this-day-card" class="dashboard-card">
+                                 <h2 class="dashboard-card-header">On This Day In Jazz...</h2>
+                                 <div id="on-this-day" class="dashboard-card-content"></div>
+                            </div>
+                            <!-- Latest News -->
+                            <div id="news-card" class="dashboard-card">
+                                <h2 class="dashboard-card-header">News</h2>
+                                <div id="latest-news" class="dashboard-card-content"></div>
+                            </div>
+                            <!-- Spotify Playlist -->
+                            <div id="playlist-card" class="dashboard-card">
+                                <h2 class="dashboard-card-header">Curated Playlist</h2>
+                                <div class="dashboard-card-content">
+                                    <iframe style="border-radius:8px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-stone-900 text-stone-200 py-8">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
+                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
+                <div class="mt-6 border-t border-stone-700 pt-6">
+                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+     <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
+        <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Genres</a>
+                <a href="https://controlledfreedom.com/artists" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
+                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
+                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    <span>@controlledjazz</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- MODALS REMOVED -->
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const LandingApp = {
+            state: {
+                allAlbums: [],
+                artistsData: [],
+                fullArtistsData: {},
+                genreData: {},
+                fullGenreColorMap: {},
+                frontpageSlides: [], 
+                currentSlide: 0, 
+                slideInterval: null,
+            },
+            elements: {},
+            init() {
+                this.cacheDOMElements();
+                // Bind all methods to 'this' context
+                for (const key in this.methods) {
+                    if (typeof this.methods[key] === 'function') {
+                        this.methods[key] = this.methods[key].bind(this);
+                    }
+                }
+                this.methods.setupTheme();
+                this.fetchData();
+                this.methods.setupMobileMenu();
+                this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+            },
+            cacheDOMElements() {
+                this.elements = {
+                    loader: document.getElementById('loader'),
+                    pageContent: document.getElementById('page-content'),
+                    recommendationContent: document.getElementById('recommendation-content'),
+                    onThisDayContainer: document.getElementById('on-this-day'),
+                    latestNews: document.getElementById('latest-news'),
+                    latestReview: document.getElementById('latest-review'),
+                    footerCopyright: document.getElementById('footer-copyright'),
+                    mobileMenuButton: document.getElementById('mobile-menu-button'),
+                    mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
+                    mobileMenuPanel: document.getElementById('mobile-menu-panel'),
+                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                    themeToggle: document.getElementById('theme-toggle'),
+                    themeIconLight: document.getElementById('theme-icon-light'),
+                    themeIconDark: document.getElementById('theme-icon-dark'),
+                    frontpageSlider: document.getElementById('frontpage-slider'),
+                    frontpageDots: document.getElementById('frontpage-dots'),
+                };
+            },
+            async fetchData() {
+                try {
+                    const [dbData, legacyData, artistProfileData, genreData] = await Promise.all([
+                        fetch('database.json').then(res => res.json()),
+                        fetch('legacy.json').then(res => res.json()),
+                        fetch('artists.json').then(res => res.json()),
+                        fetch('genres.json').then(res => res.json())
+                    ]);
+                    
+                    const timelineAlbums = (dbData.albums || []).map(a => ({...a, isLegacy: false}));
+                    const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []).map(a => ({...a, isLegacy: true}));
+                    this.state.allAlbums = timelineAlbums.concat(legacyAlbums);
+                    this.state.genreData = genreData;
+                    this.state.fullArtistsData = artistProfileData;
+
+                    this.methods.processArtists();
+                    this.methods.buildGenreColorMap();
+                    this.methods.renderRecommendation();
+                    this.methods.setupOnThisDayFeature();
+                    this.methods.fetchNewsAndReview();
+                    this.methods.fetchFrontpageArticles();
+
+                    this.showPage();
+                } catch (error) {
+                    console.error("Error fetching page data:", error);
+                    this.elements.pageContent.innerHTML = `<div class="text-center p-8">Error loading page content.</div>`;
+                    this.showPage();
+                }
+            },
+            showPage() {
+                this.elements.loader.style.display = 'none';
+                this.elements.pageContent.classList.remove('content-hidden');
+            },
+            methods: {
+                async fetchFrontpageArticles() {
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
+                        authDomain: "controlled-freedom.firebaseapp.com",
+                        projectId: "controlled-freedom",
+                        storageBucket: "controlled-freedom.appspot.com",
+                        messagingSenderId: "992659637634",
+                        appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
+                    };
+                    const app = window._firebaseApp || initializeApp(firebaseConfig);
+                    if (!window._firebaseApp) window._firebaseApp = app;
+                    const db = getFirestore(app);
+                    const auth = getAuth(app);
+
+                    try {
+                        if (!auth.currentUser) await signInAnonymously(auth);
+                        
+                        const articlesRef = collection(db, "articles");
+                        const getLatest = async (type) => {
+                            const q = query(articlesRef, where("type", "==", type), orderBy("publishDate", "desc"), limit(1));
+                            const snapshot = await getDocs(q);
+                            if (snapshot.empty) {
+                                return null;
+                            }
+                            return snapshot.docs[0].data();
+                        };
+
+                        const welcomeSlide = {
+                            type: 'Welcome',
+                            title: 'New ways to discover Jazz History',
+                            imageUrl: 'images/bannerindex.jpg',
+                            isWelcome: true,
+                            link: 'https://controlledfreedom.com/timeline_full'
+                        };
+                        
+                        const articleTypesToFetch = ['column', 'news', 'review'];
+                        const pathMap = { 'column': 'column', 'news': 'news', 'review': 'reviews' };
+                        const fetchedArticles = [];
+
+                        for (const type of articleTypesToFetch) {
+                            const article = await getLatest(type);
+                            if (article) {
+                                const pathSegment = pathMap[type] || type;
+                                if (article.slug) {
+                                    article.link = `/${pathSegment}/${article.slug}`;
+                                } else {
+                                    article.link = '#';
+                                }
+                                fetchedArticles.push(article);
+                            }
+                        }
+                        
+                        this.state.frontpageSlides = [welcomeSlide, ...fetchedArticles];
+                        this.methods.renderFrontpageSlider();
+
+                    } catch (error) {
+                        console.error("Error fetching frontpage articles:", error);
+                    }
+                },
+                renderFrontpageSlider() {
+                    const { frontpageSlider, frontpageDots } = this.elements;
+                    frontpageSlider.innerHTML = '';
+                    frontpageDots.innerHTML = '';
+
+                    this.state.frontpageSlides.forEach((slideData, index) => {
+                        const slide = document.createElement('div');
+                        slide.className = `slide ${index === 0 ? 'active' : ''}`;
+                        slide.style.backgroundImage = `url(${slideData.imageUrl || 'https://placehold.co/1200x600/1c1917/f5f5f4?text=Controlled+Freedom'})`;
+
+                        const link = slideData.link || '#';
+                        const target = slideData.isWelcome ? '' : 'target="_blank" rel="noopener noreferrer"';
+                        
+                        const linkText = slideData.isWelcome ? 'Explore the Timeline &rarr;' : 'Read More &rarr;';
+                        const titleHtml = slideData.isWelcome 
+                            ? `<div class="typewriter"><h2>${slideData.title}</h2></div>`
+                            : `<h2 class="text-3xl md:text-5xl font-bold my-2 text-shadow-lg">${slideData.title}</h2>`;
+                        const subtitle = slideData.isWelcome ? `<p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">An interactive dashboard to explore the artists, albums, and stories that shaped the music.</p>` : '';
+
+                        slide.innerHTML = `
+                            <div class="slide-content">
+                                <p class="text-lg font-bold text-orange-500 uppercase tracking-widest">${slideData.type}</p>
+                                ${titleHtml}
+                                ${subtitle}
+                                <a href="${link}" ${target} class="inline-block mt-4 font-bold text-white hover:text-orange-500 transition-colors">${linkText}</a>
+                            </div>
+                        `;
+                        frontpageSlider.appendChild(slide);
+
+                        const dot = document.createElement('div');
+                        dot.className = `dot ${index === 0 ? 'active' : ''}`;
+                        dot.dataset.index = index;
+                        frontpageDots.appendChild(dot);
+                    });
+                    
+                    this.methods.startSlider();
+                    frontpageDots.addEventListener('click', this.methods.handleDotClick);
+                },
+                startSlider() {
+                    clearInterval(this.state.slideInterval);
+                    this.state.slideInterval = setInterval(() => {
+                        let nextSlide = (this.state.currentSlide + 1) % this.state.frontpageSlides.length;
+                        this.methods.showSlide(nextSlide);
+                    }, 5000);
+                },
+                showSlide(index) {
+                    const slides = this.elements.frontpageSlider.querySelectorAll('.slide');
+                    const dots = this.elements.frontpageDots.querySelectorAll('.dot');
+
+                    slides[this.state.currentSlide].classList.remove('active');
+                    dots[this.state.currentSlide].classList.remove('active');
+
+                    this.state.currentSlide = index;
+
+                    slides[this.state.currentSlide].classList.add('active');
+                    dots[this.state.currentSlide].classList.add('active');
+                },
+                handleDotClick(e) {
+                    if (e.target.classList.contains('dot')) {
+                        const index = parseInt(e.target.dataset.index);
+                        this.methods.showSlide(index);
+                        this.methods.startSlider(); // Reset interval on manual navigation
+                    }
+                },
+                setupTheme() {
+                    const themeToggle = this.elements.themeToggle;
+                    const lightIcon = this.elements.themeIconLight;
+                    const darkIcon = this.elements.themeIconDark;
+
+                    const applyTheme = (theme) => {
+                        if (theme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                            lightIcon.classList.add('hidden');
+                            darkIcon.classList.remove('hidden');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                            lightIcon.classList.remove('hidden');
+                            darkIcon.classList.add('hidden');
+                        }
+                    };
+
+                    const savedTheme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                    
+                    applyTheme(currentTheme);
+
+                    themeToggle.addEventListener('click', () => {
+                        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                        localStorage.setItem('theme', newTheme);
+                        applyTheme(newTheme);
+                    });
+                },
+                slugify(name) {
+                    if (!name) return '';
+                    return name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+                },
+                setupMobileMenu() {
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
+                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
+                    const openMenu = () => {
+                        mobileMenuOverlay.classList.remove('hidden');
+                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                    };
+                    const closeMenu = () => {
+                        mobileMenuPanel.style.transform = 'translateX(100%)';
+                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                    };
+                    mobileMenuButton.addEventListener('click', openMenu);
+                    mobileMenuCloseButton.addEventListener('click', closeMenu);
+                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+                    document.querySelectorAll('#mobile-nav-links a').forEach(link => link.addEventListener('click', closeMenu));
+                },
+                renderRecommendation() {
+                    if (this.state.allAlbums.length === 0) {
+                        this.elements.recommendationContent.innerHTML = `<p>No albums available for recommendation.</p>`;
+                        return;
+                    }
+                    
+                    const epoch = new Date('2024-01-01');
+                    const today = new Date();
+                    const diffTime = Math.abs(today - epoch);
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+                    const randomIndex = diffDays % this.state.allAlbums.length;
+                    const album = this.state.allAlbums[randomIndex];
+                    
+                    const albumSlug = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
+                    const albumUrl = `/album/${albumSlug}`;
+
+                    const analysisText = album.pivotalTracks && album.pivotalTracks.length > 0 ? (album.pivotalTracks[0].analysis || '') : (album.analysis || '');
+
+                    this.elements.recommendationContent.innerHTML = `
+                        <a href="${albumUrl}" class="flex flex-row gap-4 items-center group no-underline">
+                            <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-24 h-24 sm:w-40 sm:h-40 object-cover rounded-md border-2 border-stone-900 dark:border-stone-700 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
+                            <div class="flex-grow text-left">
+                                <p class="text-[var(--text-muted)]">${album.artist}</p>
+                                <h3 class="text-2xl sm:text-4xl font-bold text-[var(--text-main)] leading-tight">${album.albumTitle}</h3>
+                                <p class="text-[var(--text-muted)] font-bold">(${album.year})</p>
+                                <p class="hidden sm:block mt-2 text-sm text-[var(--text-muted)]">${analysisText.substring(0, 120)}...</p>
+                                <span class="inline-block mt-2 font-bold text-orange-600 group-hover:underline">View Album &rarr;</span>
+                            </div>
+                        </a>
+                    `;
+                },
+                setupOnThisDayFeature() {
+                    const today = new Date();
+                    const currentMonth = today.toLocaleString('en-US', { month: 'long' });
+                    const currentDay = today.getDate();
+                    
+                    // Find all tracks recorded on this day
+                    const matchingTracks = [];
+                    this.state.allAlbums.forEach(album => {
+                        const tracks = album.pivotalTracks || (album.recordingDate ? [album] : []);
+                        (tracks || []).forEach(track => {
+                            const dateStr = track.recordingDate || '';
+                            const dateParts = dateStr.replace(/,/g, '').split(' ');
+                            if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
+                                matchingTracks.push({ ...track, parentAlbum: album });
+                            }
+                        });
+                    });
+
+                    // Find all artists born on this day
+                    const bornToday = [];
+                    for (const artistName in this.state.fullArtistsData) {
+                        const artist = this.state.fullArtistsData[artistName];
+                        if (artist.bornIn) {
+                            const dateStr = artist.bornIn;
+                            const dateParts = dateStr.replace(/,/g, '').split(' ');
+                            if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
+                                bornToday.push(artist);
+                            }
+                        }
+                    }
+
+                    // Generate HTML for all recorded tracks
+                    let recordedHtml = matchingTracks.map(featured => {
+                        const album = featured.parentAlbum;
+                        const albumSlug = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
+                        const albumUrl = `/album/${albumSlug}`;
+                        return `
+                            <a href="${albumUrl}" class="on-this-day-item">
+                                <img src="${album.cover}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=No+Img';">
+                                <div>
+                                    <p class="text-xs text-[var(--text-muted)] font-bold uppercase tracking-wider">On ${currentMonth} ${currentDay}, ${album.year}, the track...</p>
+                                    <p class="text-lg font-bold text-[var(--text-main)] leading-tight">"${featured.title}"</p>
+                                    <p class="text-sm text-[var(--text-muted)]">from <strong>${album.albumTitle}</strong> by <strong>${album.artist}</strong> was recorded.</p>
+                                </div>
+                            </a>
+                        `;
+                    }).join('');
+
+                    // Generate HTML for all artists born today
+                    let bornHtml = bornToday.map(featuredArtist => {
+                        const artistSlug = this.methods.slugify(featuredArtist.name);
+                        const artistUrl = `/artist/${artistSlug}`;
+                        const year = featuredArtist.bornIn.split(',')[1].trim();
+                        return `
+                            <a href="${artistUrl}" class="on-this-day-item">
+                                <img src="images/${artistSlug}.jpg" class="artist-photo" alt="Photo of ${featuredArtist.name}" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                                <div>
+                                     <p class="text-xs text-[var(--text-muted)] font-bold uppercase tracking-wider">Born on ${currentMonth} ${currentDay}, ${year}</p>
+                                    <p class="text-lg font-bold text-[var(--text-main)] leading-tight">${featuredArtist.name}</p>
+                                    <p class="text-sm text-[var(--text-muted)]">${featuredArtist.instruments.slice(0, 2).join(', ')}</p>
+                                </div>
+                            </a>
+                        `;
+                    }).join('');
+                    
+                    if (recordedHtml || bornHtml) {
+                        this.elements.onThisDayContainer.innerHTML = `
+                            <div class="space-y-4">
+                                ${bornHtml}
+                                ${recordedHtml}
+                            </div>
+                        `;
+                    } else {
+                        this.elements.onThisDayContainer.innerHTML = `<p class="text-center text-[var(--text-muted)]">No notable jazz events on this day in our database. Check back tomorrow!</p>`;
+                    }
+                },
+                async fetchNewsAndReview() {
+                    const cachedArticles = sessionStorage.getItem('cachedArticles');
+                    if (cachedArticles) {
+                        try {
+                            const articles = JSON.parse(cachedArticles);
+                            this.methods.renderNewsAndReviews(articles);
+                            return;
+                        } catch (e) {
+                            console.error("Failed to parse cached articles, fetching fresh.", e);
+                            sessionStorage.removeItem('cachedArticles');
+                        }
+                    }
+
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
+                        authDomain: "controlled-freedom.firebaseapp.com",
+                        projectId: "controlled-freedom",
+                        storageBucket: "controlled-freedom.appspot.com",
+                        messagingSenderId: "992659637634",
+                        appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
+                        measurementId: "G-ETT07JGVSB"
+                    };
+                    const app = window._firebaseApp || initializeApp(firebaseConfig);
+                    if (!window._firebaseApp) window._firebaseApp = app;
+
+                    const db = getFirestore(app);
+                    const auth = getAuth(app);
+
+                    try {
+                        if (!auth.currentUser) {
+                            await signInAnonymously(auth);
+                        }
+                        const articlesRef = collection(db, "articles");
+                        const q = query(articlesRef, orderBy("updatedAt", "desc"), limit(10));
+                        const articlesSnapshot = await getDocs(q);
+                        
+                        const articles = [];
+                        articlesSnapshot.forEach(doc => {
+                            articles.push({ id: doc.id, ...doc.data() });
+                        });
+
+                        sessionStorage.setItem('cachedArticles', JSON.stringify(articles));
+                        this.methods.renderNewsAndReviews(articles);
+
+                    } catch (error) {
+                        console.error("Error fetching articles:", error);
+                        this.elements.latestNews.innerHTML = `<p>Could not load news.</p>`;
+                        this.elements.latestReview.innerHTML = `<p>Could not load review.</p>`;
+                    }
+                },
+                renderNewsAndReviews(articles) {
+                    const newsArticles = [];
+                    const reviewArticles = [];
+
+                    if (!articles || articles.length === 0) {
+                        this.elements.latestNews.innerHTML = '<p class="text-[var(--text-muted)] italic">No news yet.</p>';
+                        this.elements.latestReview.innerHTML = '<p class="text-[var(--text-muted)] italic">No reviews yet.</p>';
+                        return;
+                    }
+
+                    articles.forEach(article => {
+                        const articleType = article.type ? article.type.toLowerCase() : '';
+                        if (articleType === 'news') {
+                            newsArticles.push(article);
+                        } else if (articleType === 'review') {
+                            reviewArticles.push(article);
+                        }
+                    });
+
+                    // Render News Section
+                    if (newsArticles.length > 0) {
+                        const [featuredNews, ...otherNews] = newsArticles;
+                        let newsHtml = '';
+
+                        const featuredSnippet = (featuredNews.body || '').replace(/<[^>]+>/g, '').substring(0, 80);
+                        newsHtml += `
+                            <a href="/news/${featuredNews.slug}" target="_blank" class="block mb-6 group no-underline">
+                                <img src="${featuredNews.imageUrl || 'https://placehold.co/400x200/e7e5e4/1c1917?text=News'}" alt="${featuredNews.title}" class="w-full h-40 object-cover rounded-md mb-3 border-2 border-stone-300 dark:border-stone-700" onerror="this.onerror=null;this.src='https://placehold.co/400x200/e7e5e4/1c1917?text=News';">
+                                <h3 class="text-lg font-bold text-[var(--text-main)] group-hover:text-orange-600 transition-colors leading-tight">${featuredNews.title}</h3>
+                                <p class="text-sm text-[var(--text-muted)] mt-1">${featuredSnippet}...</p>
+                                <p class="text-xs text-[var(--text-muted)] mt-2">${featuredNews.publishDate}</p>
+                            </a>
+                        `;
+
+                        if (otherNews.length > 0) {
+                            newsHtml += '<hr class="border-stone-300 dark:border-stone-700 my-4">';
+                            const otherNewsListHtml = otherNews.slice(0, 3).map(article => `
+                                <a href="/news/${article.slug}" target="_blank" class="flex items-center gap-3 group no-underline">
+                                    <img src="${article.imageUrl || 'https://placehold.co/80x80/e7e5e4/1c1917?text=News'}" alt="${article.title}" class="w-12 h-12 object-cover rounded-md border-2 border-stone-300 dark:border-stone-700 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/e7e5e4/1c1917?text=News';">
+                                    <div class="flex-grow">
+                                        <h4 class="font-semibold text-sm leading-tight text-[var(--text-main)] group-hover:text-orange-600 transition-colors">${article.title}</h4>
+                                        <p class="text-xs text-[var(--text-muted)]">${article.publishDate}</p>
+                                    </div>
+                                </a>
+                            `).join('');
+                            newsHtml += `<div class="space-y-4 mt-4">${otherNewsListHtml}</div>`;
+                        }
+
+                        this.elements.latestNews.innerHTML = newsHtml;
+                    } else {
+                        this.elements.latestNews.innerHTML = '<p class="text-[var(--text-muted)] italic">No news articles found.</p>';
+                    }
+
+                    // Render Review Section
+                    if (reviewArticles.length > 0) {
+                        const latestReview = reviewArticles[0];
+                        const snippet = (latestReview.body || '').replace(/<[^>]+>/g, '').substring(0, 150);
+                        const reviewHtml = `
+                            <div class="flex flex-col sm:flex-row gap-6 items-start">
+                                <img src="${latestReview.imageUrl || 'https://placehold.co/128x128/1c1917/f5f5f4?text=Review'}" alt="Cover for ${latestReview.albumTitle}" class="w-32 h-32 object-cover rounded-md border-2 border-stone-900 dark:border-stone-700 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x128/1c1917/f5f5f4?text=No+Img';">
+                                <div class="flex-grow">
+                                    <p class="text-orange-600 font-bold">Album Review</p>
+                                    <h3 class="text-2xl sm:text-3xl font-bold text-[var(--text-main)] my-1">${latestReview.albumTitle}</h3>
+                                    <p class="text-[var(--text-muted)] font-semibold">By ${latestReview.artist}</p>
+                                    <p class="mt-2 text-[var(--text-muted)] text-sm sm:text-base">${snippet}...</p>
+                                    <a href="/reviews/${latestReview.slug}" target="_blank" class="inline-block mt-4 font-bold text-orange-600 hover:underline">Read Full Review &rarr;</a>
+                                </div>
+                            </div>
+                        `;
+                        this.elements.latestReview.innerHTML = reviewHtml;
+                    } else {
+                        this.elements.latestReview.innerHTML = '<p class="text-[var(--text-muted)] italic">No recent reviews found.</p>';
+                    }
+                },
+                processArtists() {
+                    const artistsMap = new Map();
+                    this.state.allAlbums.forEach(album => {
+                        const lineup = (album.pivotalTracks && album.pivotalTracks.length > 0 ? album.pivotalTracks[0].lineup : album.lineup) || '';
+                        lineup.split(/,(?![^()]*\))/).forEach(part => {
+                            const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                            if (match) {
+                                const name = match[1].trim();
+                                if (!artistsMap.has(name)) {
+                                    const artistProfile = this.state.fullArtistsData[name] || {};
+                                    artistsMap.set(name, { 
+                                        name: name,
+                                        albums: new Set(),
+                                        profile: artistProfile
+                                    });
+                                }
+                                artistsMap.get(name).albums.add(album.albumTitle);
+                            }
+                        });
+                    });
+                    this.state.artistsData = Array.from(artistsMap.values()).map(a => ({...a, albums: Array.from(a.albums)}));
+                },
+                buildGenreColorMap() {
+                    const baseGenreColors = this.state.genreData.genres ? Object.keys(this.state.genreData.genres).reduce((acc, genre) => {
+                        acc[genre] = this.state.genreData.genres[genre].color;
+                        return acc;
+                    }, {}) : {};
+                    this.state.fullGenreColorMap = { ...baseGenreColors };
+                     this.state.allAlbums.forEach(album => {
+                        if(album.genres) {
+                             (Array.isArray(album.genres) ? album.genres : String(album.genres).split(',')).forEach(genre => {
+                                const trimmedGenre = genre.trim();
+                                if (!this.state.fullGenreColorMap[trimmedGenre]) {
+                                    this.state.fullGenreColorMap[trimmedGenre] = 'var(--bg-secondary)'; // default color
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        };
+        document.addEventListener('DOMContentLoaded', () => LandingApp.init());
+    </script>
+</body>
+</html>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+        .nav-bar-behaviour { display: none; }
+        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
+        
+        #mobile-menu-panel { transition: transform 0.3s ease-in-out; background-color: var(--bg-main); }
+        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
+        
+        .dashboard-card {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+            border-radius: 0.5rem;
+            box-shadow: 6px 6px 0px var(--text-main);
+            transition: all 0.2s ease-in-out;
+            overflow: hidden;
+        }
+        .dark .dashboard-card {
+             border-color: var(--border-color);
+             box-shadow: none;
+        }
+        .dashboard-card:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 4px 4px 0px var(--accent);
+        }
+        .dark .dashboard-card:hover {
+            border-color: var(--accent);
+            box-shadow: none;
+        }
+        .dashboard-card-header {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            padding: 0.75rem 1.25rem;
+            background-color: var(--text-main);
+            color: var(--bg-main);
+            border-bottom: 2px solid var(--text-main);
+        }
+        .dark .dashboard-card-header {
+             background-color: #1a1a1a;
+             color: var(--accent);
+             border-bottom: 2px solid var(--border-color);
+        }
+        .dashboard-card-content {
+            padding: 1.25rem;
+        }
+        .dashboard-card-content p {
+            color: var(--text-muted);
+        }
+        .dark .dashboard-card-content p {
+            color: var(--text-main);
+        }
+        .dashboard-card-content h3, .dashboard-card-content h4 {
+            color: var(--text-main);
+        }
+        .loader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .content-hidden {
+            display: none;
+        }
+
+        /* UPDATED SLIDER STYLES */
+        #frontpage-slider {
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            max-height: 600px;
+            overflow: hidden;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+        .slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+        .slide-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            text-align: center;
+        }
+        .slide-dots {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .dot.active {
+            background-color: white;
+        }
+        .typewriter h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            overflow: hidden;
+            border-right: .15em solid var(--accent);
+            white-space: nowrap;
+            letter-spacing: .1em;
+            animation:
+                typing 3.5s steps(40, end),
+                blink-caret .75s step-end infinite;
+            max-width: 90vw;
+            display: inline-block;
+        }
+        .banner-subtitle {
+            font-size: 1.125rem;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent); }
+        }
+
+        .main-content-wrapper {
+            position: relative;
+            background-color: var(--bg-secondary);
+            padding: 2rem 0;
+            border-top: 2px solid var(--text-main);
+            border-bottom: 2px solid var(--text-main);
+        }
+        .dark .main-content-wrapper {
+             border-top-color: var(--border-color);
+             border-bottom-color: var(--border-color);
+        }
+
+        .main-content-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/images/cfminilogo.png');
+            background-size: 75px 75px;
+            background-repeat: repeat;
+            opacity: 0.03;
+            z-index: 0;
+        }
+
+        .main-content-wrapper > .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .genre-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            border: 2px solid var(--text-main);
+            text-decoration: none;
+            display: inline-block;
+        }
+        .dark .genre-tag {
+             border-color: var(--border-color);
+        }
+        .genre-tag:hover {
+            filter: brightness(95%);
+        }
+
+        /* On This Day new styles */
+        .on-this-day-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none; /* For <a> tags */
+        }
+        .dark .on-this-day-item {
+             border-color: var(--border-color);
+        }
+        .on-this-day-item:hover {
+            transform: translateY(-2px) translateX(2px);
+            box-shadow: 2px 2px 0px var(--accent);
+        }
+        .dark .on-this-day-item:hover {
+             border-color: var(--accent);
+             box-shadow: none;
+        }
+        .on-this-day-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 0.25rem;
+            border: 2px solid var(--text-main);
+            flex-shrink: 0;
+        }
+        .dark .on-this-day-item img {
+             border-color: var(--border-color);
+        }
+        .on-this-day-item .artist-photo {
+            filter: grayscale(100%);
+        }
+        .on-this-day-item:hover .artist-photo {
+            filter: grayscale(0%);
+        }
+        
+        .dropdown-container { position: relative; }
+        .dropdown-btn {
             font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
             padding: 0.5rem 1.5rem;
             border: 2px solid var(--text-main);
