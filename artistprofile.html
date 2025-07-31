@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jazz Artist Profile - Controlled Freedom</title>
+    <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
+    
+    <!-- External Libraries & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS Styling (copied from artists.html for consistency) -->
+    <style>
+        :root {
+            --bg-main: #f5f5f4; --bg-secondary: #e7e5e4; --bg-header: rgba(255,255,255,0.8);
+            --text-main: #1c1917; --text-muted: #44403c; --border-color: #e7e5e4;
+            --accent: #f97316; --yellow-accent: #facc15; --legacy-blue: #3b82f6;
+        }
+        .dark {
+            --bg-main: #1c1917; --bg-secondary: #292524; --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4; --text-muted: #a8a29e; --border-color: #44403c;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); }
+        h1, h2, h3, h4, h5 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+        .nav-link { transition: color 0.2s; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 1.1rem; }
+        .nav-link:hover, .nav-link.active { color: var(--accent); }
+        .nav-bar-behaviour { display: none; }
+        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
+        #loader { position: fixed; inset: 0; background-color: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .loader-spinner { border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .content-hidden { display: none; }
+        .clickable-link { cursor: pointer; text-decoration: underline; text-decoration-color: var(--accent); transition: color 0.2s; }
+        .clickable-link:hover { color: var(--accent); }
+        .dark .clickable-link { color: var(--accent); }
+        .dark .clickable-link:hover { color: #fb923c; }
+        #mobile-menu-panel { transition: transform 0.3s ease-in-out; background-color: var(--bg-main); }
+        #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
+        .timeline { list-style: none; padding-left: 1rem; border-left: 2px solid var(--bg-secondary); }
+        .dark .timeline { border-left-color: var(--border-color); }
+        .timeline-item { position: relative; padding-bottom: 1.5rem; padding-left: 1.5rem; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -0.45rem; top: 0.25rem; width: 0.8rem; height: 0.8rem;
+            border-radius: 9999px; background-color: var(--bg-secondary); border: 2px solid var(--text-main);
+        }
+        .dark .timeline-item::before { background-color: var(--bg-secondary); border-color: var(--border-color); }
+        .known-for-box {
+            background-color: var(--accent); color: var(--bg-main); padding: 0.75rem 1.25rem;
+            border: 2px solid var(--text-main); box-shadow: 3px 3px 0px var(--text-main);
+            transform: rotate(-2deg); display: inline-block; font-family: 'Inter', sans-serif;
+            font-weight: 600; font-size: 1rem;
+        }
+        .dark .known-for-box { border-color: var(--border-color); box-shadow: none; color: #FFFFFF; }
+        .dropdown-container { position: relative; }
+        .dropdown-btn {
+            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
+            transition: all 0.2s ease; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
+            color: var(--text-muted);
+        }
+        .dark .dropdown-btn { color: var(--text-main); }
+        .dropdown-btn:hover { color: var(--accent); }
+        .dropdown-list {
+            position: absolute; background-color: var(--bg-main); border: 2px solid var(--text-main);
+            border-radius: 0.25rem; box-shadow: 4px 4px 0px var(--text-main); z-index: 20; width: 200px;
+            opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.2s ease;
+        }
+        .dropdown-container:hover .dropdown-list { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dark .dropdown-list { border-color: var(--border-color); box-shadow: none; }
+        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a:hover { background-color: var(--accent); color: var(--bg-main); transform: translateX(4px); }
+        .artist-placeholder {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100%;
+            background-color: var(--text-main);
+        }
+        .artist-placeholder svg { width: 50%; height: 50%; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <div id="loader" class="loader"><div class="loader-spinner"></div></div>
+
+    <div id="page-content" class="content-hidden">
+        <!-- Standardized Sticky Header -->
+        <header class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+            <nav class="container mx-auto flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
+                <div class="flex items-center">
+                    <div class="nav-bar-behaviour items-center space-x-8">
+                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                        <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                        <div class="dropdown-container">
+                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium dropdown-btn">
+                                Legacy
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </a>
+                            <div class="dropdown-list">
+                                <a href="/legacy">Legacy Paths</a>
+                                <a href="/genres.html">Genres</a>
+                                <a href="/artists.html" class="active">Artists</a>
+                            </div>
+                        </div>
+                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                            <span>@controlledjazz</span>
+                        </a>
+                    </div>
+                    <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                        <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <div class="lg:hidden ml-2">
+                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <section id="artist-profile-container" class="py-16 sm:py-20 bg-[var(--bg-secondary)] min-h-screen">
+                <div id="artist-profile-content" class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Artist profile will be dynamically injected here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-stone-900 text-stone-200 py-8">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
+                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
+                <div class="mt-6 border-t border-stone-700 pt-6">
+                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
+        <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
+        <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
+            <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+            <nav id="mobile-nav-links" class="flex flex-col space-y-2">
+                 <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
+                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
+                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Genres</a>
+                <a href="/artists.html" class="mobile-nav-link block text-lg font-bold text-orange-500 p-2 rounded-md ml-4">- Artists</a>
+                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
+                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    <span>@controlledjazz</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        const ProfileApp = {
+            state: {
+                albums: [],
+                artistProfiles: {},
+                artistsData: [],
+                styleMatrix: {},
+                legacyData: {}
+            },
+            elements: {},
+
+            init() {
+                this.cacheDOMElements();
+                for (const key in this.methods) {
+                    if (typeof this.methods[key] === 'function') {
+                        this.methods[key] = this.methods[key].bind(this);
+                    }
+                }
+                this.methods.setupTheme();
+                this.methods.fetchDataAndRender();
+            },
+
+            cacheDOMElements() {
+                this.elements = {
+                    loader: document.getElementById('loader'),
+                    pageContent: document.getElementById('page-content'),
+                    profileContainer: document.getElementById('artist-profile-content'),
+                    footerCopyright: document.getElementById('footer-copyright'),
+                    themeToggle: document.getElementById('theme-toggle'),
+                    themeIconLight: document.getElementById('theme-icon-light'),
+                    themeIconDark: document.getElementById('theme-icon-dark'),
+                    mobileMenuButton: document.getElementById('mobile-menu-button'),
+                    mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
+                    mobileMenuPanel: document.getElementById('mobile-menu-panel'),
+                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                };
+            },
+
+            methods: {
+                fetchDataAndRender() {
+                    Promise.all([
+                        fetch('/database.json').then(res => res.json()),
+                        fetch('/artists.json').then(res => res.json()),
+                        fetch('/genres.json').then(res => res.json()),
+                        fetch('/legacy.json').then(res => res.json())
+                    ])
+                    .then(([dbData, artistProfileData, genreData, legacyData]) => {
+                        this.state.albums = dbData.albums;
+                        this.state.artistProfiles = artistProfileData;
+                        this.state.styleMatrix = genreData;
+                        this.state.legacyData = legacyData;
+                        
+                        this.methods.processAndSortData(legacyData);
+                        this.methods.renderProfile();
+                        this.methods.setupMobileMenu();
+                        this.methods.setupGeneralEventListeners();
+                        this.methods.showPage();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        this.elements.profileContainer.innerHTML = `<div class="text-center p-8">
+                            <h2 class="text-2xl font-bold text-red-600">Failed to Load Artist Data</h2>
+                            <p class="text-[var(--text-muted)] mt-2">Could not fetch required data files. Please try again later.</p>
+                            <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
+                        </div>`;
+                        this.methods.showPage();
+                    });
+                },
+
+                renderProfile() {
+                    const params = new URLSearchParams(window.location.search);
+                    const artistName = params.get('name');
+                    
+                    if (!artistName) {
+                        this.elements.profileContainer.innerHTML = `<h1 class="text-4xl text-center text-orange-500">No artist specified.</h1>`;
+                        return;
+                    }
+
+                    const artist = this.state.artistsData.find(a => a.name === artistName);
+
+                    if (!artist || !artist.profile || artist.profile.profile === 'No profile available.') {
+                        this.elements.profileContainer.innerHTML = `<h1 class="text-4xl text-center text-orange-500">Artist profile not found for "${artistName}".</h1>`;
+                        if(artist) document.title = `${artist.name} - Controlled Freedom`;
+                        return;
+                    }
+                    
+                    document.title = `${artist.name} - Controlled Freedom`;
+
+                    const artistProfile = artist.profile;
+                    
+                    const allKnownAlbums = [...this.state.albums, ...Object.values(this.state.legacyData?.paths || {}).flatMap(p => p.albums || [])];
+
+                    const artistAlbumsWithYear = Array.from(artist.albums)
+                        .map(albumTitle => {
+                            const foundAlbum = allKnownAlbums.find(a => (a.albumTitle || a.title) === albumTitle);
+                            return foundAlbum ? { year: foundAlbum.year, albumTitle: foundAlbum.albumTitle || foundAlbum.title, artist: foundAlbum.artist } : null;
+                        })
+                        .filter(Boolean)
+                        .sort((a, b) => a.year - b.year);
+                    
+                    const isLandmark = (albumTitle) => Object.values(this.state.styleMatrix.genres).some(genre => genre.landmarkAlbums?.some(title => title.toLowerCase() === albumTitle.toLowerCase()));
+
+                    const albumTimelineHtml = artistAlbumsWithYear.map(album => {
+                        const landmarkIcon = isLandmark(album.albumTitle) ? '<span class="text-yellow-400 ml-2" title="Landmark Album">★</span>' : '';
+                        const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
+                        return `<li class="timeline-item">
+                                    <strong class="text-[var(--text-muted)]">${album.year}:</strong> 
+                                    <a href="/album/${albumId}" target="_blank" rel="noopener noreferrer" class="clickable-link">${album.albumTitle}</a>
+                                    ${landmarkIcon}
+                                </li>`;
+                    }).join('');
+
+                    const bornInfo = artistProfile.bornIn ? `<p class="mt-2 text-[var(--text-main)] text-sm"><strong class="font-bold">Born:</strong> ${artistProfile.bornIn}</p>` : '';
+                    const lifespanInfo = artistProfile.lifespan ? `<p class="mt-1 text-[var(--text-muted)] text-xs">${artistProfile.lifespan}</p>` : '';
+                    
+                    const topCollaborators = this.methods.getTopCollaborators(artist.name);
+                    let collaboratorsHtml = '';
+                    if (topCollaborators.length > 0) {
+                        const collaboratorCards = topCollaborators.map(name => {
+                            const collaborator = this.state.artistsData.find(a => a.name === name);
+                            if (!collaborator) return '';
+                            const collaboratorSlug = this.methods.slugify(collaborator.name);
+                            return `
+                                <a href="artistprofile.html?name=${encodeURIComponent(collaborator.name)}" class="block text-center transition-transform duration-200 hover:scale-105">
+                                    <div class="w-24 h-24 mx-auto">
+                                        <img src="/images/${collaboratorSlug}.jpg" alt="${collaborator.name}" class="w-full h-full object-cover rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-full rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md flex items-center justify-center bg-stone-300 dark:bg-stone-600\\'><svg class=\\'w-12 h-12 text-stone-500\\' xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                    </div>
+                                    <p class="mt-2 text-sm font-bold text-[var(--text-muted)]">${collaborator.name}</p>
+                                </a>`;
+                        }).join('');
+
+                        collaboratorsHtml = `
+                            <div class="mt-12 pt-8 border-t-2 border-[var(--border-color)]">
+                                <h3 class="text-3xl text-[var(--text-main)] mb-6 text-center">Top Collaborators</h3>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-6 max-w-lg mx-auto">
+                                    ${collaboratorCards}
+                                </div>
+                            </div>`;
+                    }
+
+                    this.elements.profileContainer.innerHTML = `
+                        <h1 class="text-6xl md:text-7xl text-orange-500 text-center mb-2">${artist.name}</h1>
+                        ${lifespanInfo ? `<p class="text-center text-lg text-[var(--text-muted)] mb-12">${lifespanInfo}</p>` : ''}
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                            <div class="lg:col-span-1">
+                                <img src="/images/${this.methods.slugify(artist.name)}.jpg" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)] shadow-lg mb-6" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-96 artist-placeholder rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)] shadow-lg\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                <p class="text-[var(--text-main)] text-base mb-2"><strong class="font-bold">Instruments:</strong> ${[...artist.instruments].join(', ')}</p>
+                                ${bornInfo}
+                                ${artistProfile.knownFor ? `<div class="mt-8"><h4 class="text-2xl text-[var(--text-main)] mb-3 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
+                            </div>
+                            <div class="lg:col-span-2">
+                                <h3 class="text-4xl text-[var(--text-main)] mb-4 border-b-2 border-[var(--border-color)] pb-2">Profile</h3>
+                                <p class="text-base md:text-lg text-[var(--text-muted)] leading-relaxed mb-8">${artistProfile.profile}</p>
+                                
+                                <h3 class="text-4xl text-[var(--text-main)] mb-6">Key Album Appearances</h3>
+                                <ul class="timeline max-h-96 overflow-y-auto pr-4">${albumTimelineHtml || '<li class="text-[var(--text-muted)]">No key appearances found in timeline.</li>'}</ul>
+                            </div>
+                        </div>
+                        ${collaboratorsHtml}
+                    `;
+                },
+
+                // --- Helper methods copied from artists.html script ---
+                showPage() { this.elements.loader.style.display = 'none'; this.elements.pageContent.classList.remove('content-hidden'); },
+                setupTheme() {
+                    const applyTheme = (theme) => {
+                        if (theme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                            this.elements.themeIconLight.classList.add('hidden');
+                            this.elements.themeIconDark.classList.remove('hidden');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                            this.elements.themeIconLight.classList.remove('hidden');
+                            this.elements.themeIconDark.classList.add('hidden');
+                        }
+                    };
+                    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                    applyTheme(savedTheme);
+                    this.elements.themeToggle.addEventListener('click', () => {
+                        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                        localStorage.setItem('theme', newTheme);
+                        applyTheme(newTheme);
+                    });
+                },
+                setupMobileMenu() {
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
+                    if (!mobileMenuButton) return;
+                    const openMenu = () => mobileMenuOverlay.classList.remove('hidden');
+                    const closeMenu = () => mobileMenuOverlay.classList.add('hidden');
+                    mobileMenuButton.addEventListener('click', openMenu);
+                    mobileMenuCloseButton.addEventListener('click', closeMenu);
+                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+                },
+                setupGeneralEventListeners() {
+                    this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
+                },
+                getCanonicalName(name) {
+                     if (!name) return '';
+                    const trimmedName = name.trim();
+                    if (trimmedName.startsWith('Art Blakey')) return 'Art Blakey';
+                    if (trimmedName.startsWith('Sun Ra')) return 'Sun Ra';
+                    if (trimmedName.startsWith('Thelonious Monk')) return 'Thelonious Monk';
+                    if (trimmedName.startsWith('Tony Williams') || trimmedName.startsWith('The Tony Williams')) return 'Tony Williams';
+                    if (trimmedName.startsWith('Dave Brubeck') || trimmedName.startsWith('The Dave Brubeck')) return 'Dave Brubeck';
+                    if (trimmedName.startsWith('Bill Dixon') || trimmedName.startsWith('The Bill Dixon')) return 'Bill Dixon';
+                    if (trimmedName.startsWith('Oscar Peterson') || trimmedName.startsWith('The Oscar Peterson')) return 'Oscar Peterson';
+                    if (trimmedName === 'Roland Kirk') return 'Rahsaan Roland Kirk';
+                    if (trimmedName === 'Anthony Williams') return 'Tony Williams';
+                    if (trimmedName === 'Albert Heath' || trimmedName === 'Albert Tootie Heath') return "Albert 'Tootie' Heath";
+                    if (trimmedName === 'Lonnie Liston Smith Jr.') return 'Lonnie Liston Smith';
+                    if (trimmedName === 'Phineas Newborn') return 'Phineas Newborn Jr.';
+                    return trimmedName;
+                },
+                isLikelyIndividual(name) {
+                    if (!name) return false;
+                    const groupKeywords = ['Ensemble', 'Quartet', 'Quintet', 'Sextet', 'Septet', 'Trio', '&', ' and ', 'With', ' featuring ', 'Orchestra', 'Arkestra', 'Band', 'Lifetime', 'Messengers'];
+                    if (name.includes(',') || name.includes('/')) return false;
+                    if (groupKeywords.some(keyword => name.includes(keyword))) return this.methods.getCanonicalName(name) !== name;
+                    return true;
+                },
+                processAndSortData(legacyData) {
+                    const artistsMap = new Map();
+                    const { slugify, getCanonicalName, isLikelyIndividual } = this.methods;
+                    const profiles = this.state.artistProfiles;
+                    const getOrCreateArtist = (name) => {
+                        const canonicalName = getCanonicalName(name);
+                        if (!artistsMap.has(canonicalName)) {
+                            artistsMap.set(canonicalName, {
+                                name: canonicalName,
+                                instruments: new Set(),
+                                albums: new Set(),
+                                photo: `/images/${slugify(canonicalName)}.jpg`,
+                                profile: profiles[canonicalName] || { name: canonicalName, profile: 'No profile available.' }
+                            });
+                        }
+                        return artistsMap.get(canonicalName);
+                    };
+                    const processLineup = (lineup, albumTitle) => {
+                        if (!lineup) return;
+                        lineup.split(/,(?![^()]*\))/).forEach(part => {
+                            const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                            if (match && isLikelyIndividual(match[1].trim())) {
+                                const artist = getOrCreateArtist(match[1].trim());
+                                match[2].split(/, | \/ /).forEach(inst => {
+                                    const trimmedInst = inst.trim();
+                                    if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) artist.instruments.add(trimmedInst);
+                                });
+                                if(albumTitle) artist.albums.add(albumTitle);
+                            }
+                        });
+                    };
+                    const processAlbum = (album) => {
+                        const albumTitle = album.albumTitle || album.title;
+                        const lineup = (album.pivotalTracks && album.pivotalTracks[0]?.lineup) || album.lineup;
+                        processLineup(lineup, albumTitle);
+                    };
+                    this.state.albums.forEach(album => processAlbum(album));
+                    if (legacyData && legacyData.paths) {
+                        Object.values(legacyData.paths).forEach(path => (path.albums || []).forEach(album => processAlbum(album)));
+                    }
+                    this.state.artistsData = Array.from(artistsMap.values()).map(artist => ({...artist, instruments: Array.from(artist.instruments), albums: Array.from(artist.albums)}));
+                },
+                getTopCollaborators(artistName) {
+                    const collaborations = new Map();
+                    const canonicalArtistName = this.methods.getCanonicalName(artistName);
+                    const allKnownAlbums = [...this.state.albums, ...Object.values(this.state.legacyData?.paths || {}).flatMap(p => p.albums || [])];
+                    allKnownAlbums.forEach(album => {
+                        const lineups = (album.pivotalTracks || []).map(t => t.lineup).filter(Boolean);
+                        if(album.lineup) lineups.push(album.lineup);
+                        lineups.forEach(lineup => {
+                            const trackArtists = lineup.split(/,(?![^()]*\))/).map(part => {
+                                const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                                return match ? this.methods.getCanonicalName(match[1].trim()) : null;
+                            }).filter(Boolean);
+                            if (trackArtists.includes(canonicalArtistName)) {
+                                trackArtists.forEach(cName => { if (cName !== canonicalArtistName) collaborations.set(cName, (collaborations.get(cName) || 0) + 1); });
+                            }
+                        });
+                    });
+                    return Array.from(collaborations.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3).map(e => e[0]);
+                },
+                slugify(text) {
+                    if (!text) return '';
+                    return text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => ProfileApp.init());
+    </script>
+</body>
+</html>
