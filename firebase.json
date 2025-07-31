@@ -28,6 +28,10 @@
       {
         "source": "/album/**",
         "destination": "/album.html"
+      },
+      {
+        "source": "/artist/**",
+        "destination": "/artistprofile.html"
       }
     ]
   }
