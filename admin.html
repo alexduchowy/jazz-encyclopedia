@@ -1,805 +1,551 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Controlled Freedom</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Album Details - Controlled Freedom</title>
     <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
+    
+    <!-- External Libraries & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS Styling -->
     <style>
         :root {
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-header: rgba(255,255,255,0.8);
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --border-color: #e7e5e4;
             --accent: #f97316;
-            --bg-dark: #1c1917; /* stone-900 */
-            --bg-medium: #292524; /* stone-800 */
-            --bg-light: #44403c; /* stone-700 */
-            --text-light: #e7e5e4; /* stone-200 */
-            --text-muted: #a8a29e; /* stone-400 */
+            
+            /* Genre Colors */
+            --genre-bebop: #a0522d;
+            --genre-hard-bop: #8b5cf6;
+            --genre-cool-jazz: #3b82f6;
+            --genre-modal-jazz: #10b981;
+            --genre-post-bop: #f59e0b;
+            --genre-free-jazz: #ef4444;
+            --genre-avant-garde: #ec4899;
+            --genre-jazz-fusion: #06b6d4;
+            --genre-default: #d4d4d8;
         }
-        .loader {
-            border-top-color: var(--accent);
+        .dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
+
+            --genre-bebop: #b97245; 
+            --genre-hard-bop: #6d28d9;
+            --genre-cool-jazz: #2563eb;
+            --genre-modal-jazz: #059669;
+            --genre-post-bop: #d97706;
+            --genre-free-jazz: #dc2626;
+            --genre-avant-garde: #db2777;
+            --genre-jazz-fusion: #0891b2;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+        }
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+        .nav-bar-behaviour { display: none; }
+        @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
+        #loader {
+            position: fixed; inset: 0;
+            background-color: var(--bg-main);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%; width: 50px; height: 50px;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .content-hidden { display: none; }
+        
+        .analysis-section {
+            background-color: #1a1a1a;
+            padding: 1.5rem;
+            border: 2px solid var(--text-main);
+            box-shadow: 4px 4px 0px var(--text-main);
         }
-        .confirm-modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.7);
-            justify-content: center;
+        .dark .analysis-section {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .analysis-section h5 { color: #f5f5f4; }
+        .liner-notes-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem; line-height: 1.6;
+            color: #d4d4d2; 
+        }
+        audio.styled-player { height: 35px; accent-color: var(--accent); }
+        
+        .genre-tag {
+            padding: 0.25rem 0.75rem; border-radius: 9999px;
+            font-size: 0.875rem; font-weight: 600;
+            color: white; border: 2px solid rgba(0,0,0,0.1);
+            text-decoration: none; display: inline-block;
+            transition: transform 0.2s;
+        }
+        .dark .genre-tag { border-color: rgba(255,255,255,0.2); }
+        .genre-tag:hover { transform: translateY(-2px); }
+
+        .genre-bebop { background-color: var(--genre-bebop); }
+        .genre-hard-bop { background-color: var(--genre-hard-bop); }
+        .genre-cool-jazz { background-color: var(--genre-cool-jazz); }
+        .genre-modal-jazz { background-color: var(--genre-modal-jazz); }
+        .genre-post-bop { background-color: var(--genre-post-bop); }
+        .genre-free-jazz { background-color: var(--genre-free-jazz); }
+        .genre-avant-garde-jazz { background-color: var(--genre-avant-garde); }
+        .genre-jazz-fusion { background-color: var(--genre-jazz-fusion); }
+        .genre-default { background-color: var(--genre-default); color: var(--text-main); }
+
+        .dropdown-container { position: relative; }
+        .dropdown-btn {
+            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
+            padding: 0.5rem 1.5rem;
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            background-color: var(--bg-main);
+            transition: all 0.2s ease; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .dark .dropdown-btn { border-color: var(--border-color); }
+        .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
+        .dropdown-list {
+            position: absolute;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            z-index: 20; width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+        }
+        .dropdown-container:hover .dropdown-list {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dark .dropdown-list {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a:hover {
+            background-color: var(--accent); color: var(--bg-main);
+            transform: translateX(4px);
+        }
+
+        /* Redesigned Styles */
+        .cover-art-container {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+            box-shadow: 6px 6px 0px var(--text-main);
+            /* Removed padding to make image fill the box */
+        }
+        .dark .cover-art-container {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+
+        .artist-lineup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .artist-lineup-item {
+            display: flex;
             align-items: center;
+            gap: 0.75rem;
+            background-color: var(--bg-secondary);
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            transition: background-color 0.2s;
         }
-        .confirm-modal-content {
-            background-color: var(--bg-medium);
-            color: var(--text-light);
-            margin: auto;
-            padding: 20px;
-            border: 1px solid var(--bg-light);
-            width: 80%;
-            max-width: 400px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        .artist-lineup-item:hover {
+            background-color: var(--accent);
         }
-        .playlist-item { display: flex; align-items: center; padding: 0.5rem; border-bottom: 1px solid var(--bg-light); }
-        .playlist-item:last-child { border-bottom: none; }
-        .btn-action { padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold; cursor: pointer; flex-shrink: 0; transition: background-color 0.2s; }
-        .remove-btn { background-color: #ef4444; color: white; }
-        .remove-btn:hover { background-color: #dc2626; }
-        .edit-btn-tv { background-color: #3b82f6; color: white; }
-        .edit-btn-tv:hover { background-color: #2563eb; }
-        .move-btn { background-color: var(--bg-light); color: var(--text-light); padding: 0.25rem; border-radius: 50%; }
-        .move-btn:hover:not(:disabled) { background-color: var(--accent); }
-        .move-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .form-input, .form-textarea, .form-select { background-color: var(--bg-light); border-color: #57534e; color: var(--text-light); }
-        .form-input:focus, .form-textarea:focus, .form-select:focus { --tw-ring-color: var(--accent); border-color: var(--accent); background-color: var(--bg-medium); }
-        .html-shortcut-btn { background-color: var(--bg-light); padding: 0.25rem 0.75rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; }
-        .html-shortcut-btn:hover { background-color: var(--accent); }
-        #review-fields-container.hidden { display: none; }
+        .artist-lineup-item:hover .artist-name,
+        .artist-lineup-item:hover .artist-instrument {
+            color: var(--bg-main);
+        }
+        .artist-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--text-main);
+            flex-shrink: 0;
+        }
+        .artist-name {
+            font-weight: bold;
+            color: var(--text-main);
+            font-size: 0.875rem;
+            line-height: 1.2;
+        }
+        .artist-instrument {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .streaming-links-small a {
+            display: inline-block;
+            transition: transform 0.2s;
+            color: var(--text-muted);
+        }
+        .streaming-links-small a:hover {
+            transform: scale(1.1);
+            color: var(--accent);
+        }
+        .tracklist ol {
+            list-style-type: decimal;
+            padding-left: 1.25rem;
+            color: var(--text-muted);
+        }
+        .tracklist li {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tracklist li:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
-<body class="bg-stone-900 text-stone-200">
+<body class="text-stone-900">
 
-    <!-- Confirmation Modal -->
-    <div id="confirm-modal" class="confirm-modal">
-        <div class="confirm-modal-content">
-            <p id="confirm-modal-text" class="mb-4 text-stone-200">Are you sure?</p>
-            <button id="confirm-yes" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 mr-2">Yes, delete</button>
-            <button id="confirm-no" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Cancel</button>
-        </div>
-    </div>
+    <div id="loader" class="loader"><div class="loader-spinner"></div></div>
 
-    <!-- Auth Screen -->
-    <div id="auth-container" class="min-h-screen flex items-center justify-center bg-stone-900 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8">
-            <img class="mx-auto h-24 w-auto" src="/images/logo.svg" alt="Controlled Freedom">
-            <h2 class="mt-6 text-center text-3xl font-extrabold text-stone-100">Sign in to your account</h2>
-            <form id="login-form" class="mt-8 space-y-6">
-                <div class="rounded-md shadow-sm -space-y-px">
-                    <div>
-                        <label for="email" class="sr-only">Email address</label>
-                        <input id="email" name="email" type="email" autocomplete="email" required class="form-input appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-stone-400 rounded-t-md sm:text-sm" placeholder="Email address">
-                    </div>
-                    <div>
-                        <label for="password" class="sr-only">Password</label>
-                        <input id="password" name="password" type="password" autocomplete="current-password" required class="form-input appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-stone-400 rounded-b-md sm:text-sm" placeholder="Password">
-                    </div>
-                </div>
-                <div>
-                    <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">Sign in</button>
-                </div>
-                <p id="auth-error" class="text-red-500 text-sm mt-2"></p>
-            </form>
-        </div>
-    </div>
-
-    <!-- Main Admin Panel -->
-    <div id="admin-panel" class="hidden">
-        <header class="bg-stone-800 shadow-md">
-            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-                <h1 class="text-2xl font-bold text-stone-100">Admin Dashboard</h1>
-                <button id="logout-btn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Logout</button>
-            </div>
-        </header>
-
-        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-
-            <!-- TV Playlist Section -->
-            <div class="bg-stone-800 p-6 rounded-lg shadow-lg mb-8 border border-stone-700">
-                <h2 class="text-2xl font-bold mb-6 text-stone-100 border-b border-stone-700 pb-4">Controlled Freedom TV - Admin Panel</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h3 id="tv-form-title" class="text-xl font-bold mb-4 text-stone-200">Add New Video</h3>
-                        <form id="tv-playlist-form" class="space-y-4">
-                            <input type="hidden" id="video-doc-id">
-                            <div>
-                                <label for="youtube-url-input" class="block text-sm font-medium text-stone-300">YouTube URL</label>
-                                <input type="text" id="youtube-url-input" placeholder="Paste YouTube URL here" required class="form-input mt-1 block w-full rounded-md shadow-sm">
+    <div id="page-content" class="content-hidden">
+        <!-- Standardized Sticky Header -->
+        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+            <header class="container mx-auto h-full">
+                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                    <div class="flex items-center">
+                        <div class="nav-bar-behaviour items-center space-x-8">
+                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                            <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                            <div class="dropdown-container">
+                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] dropdown-btn">
+                                    Legacy
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </a>
+                                <div class="dropdown-list">
+                                    <a href="/legacy">Legacy Paths</a>
+                                    <a href="/genres.html">Genres</a>
+                                    <a href="https://controlledfreedom.com/artists">Artists</a>
+                                </div>
                             </div>
-                            <div>
-                                <label for="video-title-input" class="block text-sm font-medium text-stone-300">Title</label>
-                                <input type="text" id="video-title-input" placeholder="Enter video title" required class="form-input mt-1 block w-full rounded-md shadow-sm">
-                            </div>
-                            <div>
-                                <label for="video-lineup-input" class="block text-sm font-medium text-stone-300">Line-up</label>
-                                <textarea id="video-lineup-input" rows="3" placeholder="e.g., John Coltrane (tenor saxophone), McCoy Tyner (piano)..." class="form-textarea mt-1 block w-full rounded-md shadow-sm"></textarea>
-                            </div>
-                            <div>
-                                <label for="video-desc-input" class="block text-sm font-medium text-stone-300">Description</label>
-                                <textarea id="video-desc-input" rows="3" placeholder="Enter video description" required class="form-textarea mt-1 block w-full rounded-md shadow-sm"></textarea>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <button id="tv-form-submit-btn" type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md">Add Video</button>
-                                <button id="tv-form-cancel-btn" type="button" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md hidden">Cancel</button>
-                            </div>
-                            <p id="add-video-error" class="text-red-500 text-sm mt-2 h-4"></p>
-                        </form>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-4 text-stone-200">Current Playlist</h3>
-                        <div id="playlist-actions" class="hidden mb-4 flex items-center gap-4">
-                            <button id="save-order-btn" class="flex-grow bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition-all">Save New Order</button>
-                            <button id="cancel-order-btn" class="flex-grow bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Cancel</button>
-                            <p id="playlist-status" class="text-sm text-stone-400 whitespace-nowrap"></p>
+                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                                <span>@controlledjazz</span>
+                            </a>
                         </div>
-                        <div id="playlist-container" class="bg-stone-900 rounded-md h-96 overflow-y-auto text-stone-200 border border-stone-700"></div>
+                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </button>
                     </div>
-                </div>
-            </div>
+                </nav>
+            </header>
+        </div>
 
-            <!-- Articles Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2">
-                    <div class="bg-stone-800 p-6 rounded-lg shadow-lg border border-stone-700">
-                        <h2 id="form-title" class="text-2xl font-bold mb-6 text-stone-100">Create New Article</h2>
-                        <form id="article-form" class="space-y-6">
-                            <input type="hidden" id="article-id">
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="article-type" class="block text-sm font-medium text-stone-300">Article Type</label>
-                                    <select id="article-type" name="article-type" class="form-select mt-1 block w-full pl-3 pr-10 py-2 text-base rounded-md">
-                                        <option value="news">News</option>
-                                        <option value="review">Review</option>
-                                        <option value="column">Column</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="title" class="block text-sm font-medium text-stone-300">Title</label>
-                                    <input type="text" id="title" name="title" required class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                </div>
-                            </div>
-
-                            <!-- Review Specific Fields -->
-                            <div id="review-fields-container" class="hidden space-y-6 pt-6 border-t border-stone-700">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="review-artist" class="block text-sm font-medium text-stone-300">Artist</label>
-                                        <input type="text" id="review-artist" class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                    </div>
-                                    <div>
-                                        <label for="review-album" class="block text-sm font-medium text-stone-300">Album Title</label>
-                                        <input type="text" id="review-album" class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    <div>
-                                        <label for="review-rating" class="block text-sm font-medium text-stone-300">Rating (1-5)</label>
-                                        <input type="number" id="review-rating" min="1" max="5" step="0.5" class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                    </div>
-                                    <div>
-                                        <label for="review-year" class="block text-sm font-medium text-stone-300">Release Year</label>
-                                        <input type="number" id="review-year" placeholder="YYYY" class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                    </div>
-                                    <div>
-                                        <label for="review-label" class="block text-sm font-medium text-stone-300">Label</label>
-                                        <input type="text" id="review-label" class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="review-genres" class="block text-sm font-medium text-stone-300">Genres (comma-separated)</label>
-                                    <input type="text" id="review-genres" class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                </div>
-                            </div>
-
-                             <!-- Common Article Fields -->
-                            <div class="space-y-6 pt-6 border-t border-stone-700">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="article-author" class="block text-sm font-medium text-stone-300">Author</label>
-                                        <input type="text" id="article-author" class="form-input mt-1 block w-full rounded-md shadow-sm" value="Staff">
-                                    </div>
-                                    <div>
-                                        <label for="article-publish-date" class="block text-sm font-medium text-stone-300">Publish Date</label>
-                                        <input type="date" id="article-publish-date" class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="article-slug" class="block text-sm font-medium text-stone-300">URL Slug (auto-generated)</label>
-                                    <input type="text" id="article-slug" class="form-input mt-1 block w-full rounded-md shadow-sm bg-stone-700" readonly>
-                                </div>
-                            </div>
-                            
-                            <!-- Image URL & YouTube ID Input Section -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="article-image-url" class="block text-sm font-medium text-stone-300">Header Image URL</label>
-                                    <input type="text" id="article-image-url" placeholder="Paste Firebase Storage URL here" class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                    <img id="image-preview" src="" alt="Image Preview" class="hidden mt-4 rounded-md max-h-60 w-auto border border-stone-600"/>
-                                </div>
-                                <!-- NEW: YouTube ID Field -->
-                                <div>
-                                    <label for="youtube-id" class="block text-sm font-medium text-stone-300">YouTube Video ID (Optional)</label>
-                                    <input type="text" id="youtube-id" placeholder="e.g., F9axzrxcoWg" class="form-input mt-1 block w-full rounded-md shadow-sm">
-                                    <p class="text-xs text-stone-500 mt-1">Just the ID, not the full URL.</p>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="body" class="block text-sm font-medium text-stone-300">Body (HTML allowed)</label>
-                                <!-- HTML Shortcut Buttons -->
-                                <div id="html-shortcuts" class="flex flex-wrap gap-2 my-2">
-                                    <button type="button" class="html-shortcut-btn" data-tag="p">&lt;p&gt;</button>
-                                    <button type="button" class="html-shortcut-btn" data-tag="h3">&lt;h3&gt;</button>
-                                    <button type="button" class="html-shortcut-btn" data-tag="b">&lt;b&gt;</button>
-                                    <button type="button" class="html-shortcut-btn" data-tag="i">&lt;i&gt;</button>
-                                    <button type="button" class="html-shortcut-btn" data-tag="a">&lt;a&gt;</button>
-                                    <button type="button" class="html-shortcut-btn" data-tag="ul">&lt;ul&gt;</button>
-                                    <button type="button" class="html-shortcut-btn" data-tag="ol">&lt;ol&gt;</button>
-                                    <button type="button" class="html-shortcut-btn" data-tag="li">&lt;li&gt;</button>
-                                </div>
-                                <textarea id="body" name="body" rows="15" required class="form-textarea mt-1 block w-full rounded-md shadow-sm font-mono"></textarea>
-                            </div>
-                            
-                            <p id="form-error" class="text-red-500 text-sm h-4"></p>
-                            <div class="flex items-center justify-end gap-4 pt-6 border-t border-stone-700">
-                                <button type="button" id="clear-form-btn" class="text-sm font-medium text-stone-300 hover:text-stone-100">Clear Form</button>
-                                <button type="submit" id="save-article-btn" class="w-1/2 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                                    Save Article
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-1">
-                    <div class="bg-stone-800 p-6 rounded-lg shadow-lg border border-stone-700">
-                        <h2 class="text-2xl font-bold mb-4 text-stone-100">Existing Articles</h2>
-                        <div id="articles-list" class="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
-                            <div id="list-loader" class="flex justify-center items-center"><div class="loader h-8 w-8 border-4 rounded-full"></div></div>
-                        </div>
-                    </div>
+        <main class="py-8 md:py-12">
+            <div id="album-content-wrapper" class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Album content will be injected here -->
+                <div id="album-placeholder" class="text-center py-20">
+                    <h2 class="text-3xl text-[var(--text-muted)]">Loading album...</h2>
                 </div>
             </div>
         </main>
+
+        <!-- Footer -->
+        <footer class="bg-stone-900 text-stone-200 py-8 mt-12">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p id="footer-copyright" class="text-xs text-stone-400"></p>
+            </div>
+        </footer>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getStorage, ref, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+    <script>
+        const AlbumPage = {
+            state: {
+                allAlbums: [],
+                artistsData: [],
+            },
 
-        // --- CONFIG ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyA1ZujlHARbBmqjr8Hi_GETCk4UzD_J4hM",
-            authDomain: "controlled-freedom.firebaseapp.com",
-            projectId: "controlled-freedom",
-            storageBucket: "controlled-freedom.appspot.com",
-            messagingSenderId: "992659637634",
-            appId: "1:992659637634:web:88de99efae5cb7cf53bb9b",
-        };
-        const ADMIN_UID = "njzhckiysaaI3701pogS5k9hang1";
+            init() {
+                this.setupTheme();
+                this.fetchDataAndRender();
+            },
 
-        // --- INITIALIZATION ---
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
+            setupTheme() {
+                const themeToggle = document.getElementById('theme-toggle');
+                const lightIcon = document.getElementById('theme-icon-light');
+                const darkIcon = document.getElementById('theme-icon-dark');
 
-        // --- GLOBAL STATE ---
-        let tvPlaylist = [];
-        let originalTvPlaylist = [];
-        let isPlaylistOrderDirty = false;
-        let editingVideoId = null;
-
-        // --- DOM ELEMENTS ---
-        const elements = {
-            authContainer: document.getElementById('auth-container'),
-            adminPanel: document.getElementById('admin-panel'),
-            loginForm: document.getElementById('login-form'),
-            authError: document.getElementById('auth-error'),
-            logoutBtn: document.getElementById('logout-btn'),
-            // TV Playlist
-            tvPlaylistForm: document.getElementById('tv-playlist-form'),
-            tvFormTitle: document.getElementById('tv-form-title'),
-            tvFormSubmitBtn: document.getElementById('tv-form-submit-btn'),
-            tvFormCancelBtn: document.getElementById('tv-form-cancel-btn'),
-            videoDocIdInput: document.getElementById('video-doc-id'),
-            urlInput: document.getElementById('youtube-url-input'),
-            titleInput: document.getElementById('video-title-input'),
-            lineupInput: document.getElementById('video-lineup-input'),
-            descInput: document.getElementById('video-desc-input'),
-            playlistContainer: document.getElementById('playlist-container'),
-            addVideoError: document.getElementById('add-video-error'),
-            playlistActions: document.getElementById('playlist-actions'),
-            saveOrderBtn: document.getElementById('save-order-btn'),
-            cancelOrderBtn: document.getElementById('cancel-order-btn'),
-            playlistStatus: document.getElementById('playlist-status'),
-            // Articles
-            articleForm: document.getElementById('article-form'),
-            articlesList: document.getElementById('articles-list'),
-            formTitle: document.getElementById('form-title'),
-            clearFormBtn: document.getElementById('clear-form-btn'),
-            formError: document.getElementById('form-error'),
-            articleIdInput: document.getElementById('article-id'),
-            articleTypeInput: document.getElementById('article-type'),
-            titleArticleInput: document.getElementById('title'),
-            bodyArticleInput: document.getElementById('body'),
-            saveArticleBtn: document.getElementById('save-article-btn'),
-            articleAuthorInput: document.getElementById('article-author'),
-            articlePublishDateInput: document.getElementById('article-publish-date'),
-            articleSlugInput: document.getElementById('article-slug'),
-            // Review Fields
-            reviewFieldsContainer: document.getElementById('review-fields-container'),
-            reviewArtistInput: document.getElementById('review-artist'),
-            reviewAlbumInput: document.getElementById('review-album'),
-            reviewRatingInput: document.getElementById('review-rating'),
-            reviewYearInput: document.getElementById('review-year'),
-            reviewLabelInput: document.getElementById('review-label'),
-            reviewGenresInput: document.getElementById('review-genres'),
-            // Image URL & YouTube
-            imageUrlInput: document.getElementById('article-image-url'),
-            imagePreview: document.getElementById('image-preview'),
-            youtubeIdInput: document.getElementById('youtube-id'),
-            // HTML Shortcuts
-            htmlShortcuts: document.getElementById('html-shortcuts'),
-            // Confirmation Modal
-            confirmModal: document.getElementById('confirm-modal'),
-            confirmModalText: document.getElementById('confirm-modal-text'),
-            confirmYesBtn: document.getElementById('confirm-yes'),
-            confirmNoBtn: document.getElementById('confirm-no'),
-        };
-
-        // --- AUTHENTICATION ---
-        onAuthStateChanged(auth, user => {
-            if (user && user.uid === ADMIN_UID) {
-                elements.authContainer.classList.add('hidden');
-                elements.adminPanel.classList.remove('hidden');
-                setupArticleListener(); 
-                setupTvPlaylistListener();
-            } else {
-                elements.authContainer.classList.remove('hidden');
-                elements.adminPanel.classList.add('hidden');
-                if (user) { signOut(auth); }
-            }
-        });
-
-        elements.loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            elements.authError.textContent = '';
-            signInWithEmailAndPassword(auth, elements.loginForm.email.value, elements.loginForm.password.value)
-                .catch(error => { elements.authError.textContent = "Invalid email or password."; });
-        });
-
-        elements.logoutBtn.addEventListener('click', () => signOut(auth));
-
-        // --- TV PLAYLIST LOGIC ---
-        const setupTvPlaylistListener = () => {
-            const q = query(collection(db, 'tv_playlist'));
-            onSnapshot(q, (snapshot) => {
-                tvPlaylist = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                tvPlaylist.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity));
-                
-                originalTvPlaylist = JSON.parse(JSON.stringify(tvPlaylist));
-                isPlaylistOrderDirty = false;
-                elements.playlistActions.classList.add('hidden');
-                
-                renderPlaylistUI(tvPlaylist);
-            }, (error) => console.error("Playlist listener error:", error));
-        };
-
-        const renderPlaylistUI = (playlist) => {
-            elements.playlistContainer.innerHTML = '';
-            if (!playlist || playlist.length === 0) {
-                elements.playlistContainer.innerHTML = '<p class="p-4 text-center text-stone-500">Playlist is empty.</p>';
-                return;
-            }
-            playlist.forEach((video, index) => {
-                const item = document.createElement('div');
-                item.className = 'playlist-item';
-                item.innerHTML = `
-                    <div class="flex items-center gap-2 overflow-hidden flex-grow">
-                        <div class="flex flex-col gap-1">
-                            <button class="move-btn move-up-btn" data-id="${video.id}" ${index === 0 ? 'disabled' : ''}><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
-                            <button class="move-btn move-down-btn" data-id="${video.id}" ${index === playlist.length - 1 ? 'disabled' : ''}><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
-                        </div>
-                        <img src="https://i.ytimg.com/vi/${video.videoId}/default.jpg" class="w-16 h-12 object-cover rounded-sm border border-stone-600 flex-shrink-0" alt="Video thumbnail">
-                        <div class="truncate">
-                           <p class="font-bold truncate text-stone-200">${video.title || 'No Title'}</p>
-                           <p class="text-xs text-stone-400 truncate">${video.videoId}</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 ml-auto pl-2 flex-shrink-0">
-                        <button class="btn-action edit-btn-tv" data-id="${video.id}">Edit</button>
-                        <button class="btn-action remove-btn" data-id="${video.id}">Remove</button>
-                    </div>
-                `;
-                elements.playlistContainer.appendChild(item);
-            });
-        };
-        
-        const resetTvForm = () => {
-            elements.tvPlaylistForm.reset();
-            editingVideoId = null;
-            elements.tvFormTitle.textContent = 'Add New Video';
-            elements.tvFormSubmitBtn.textContent = 'Add Video';
-            elements.tvFormCancelBtn.classList.add('hidden');
-            elements.urlInput.disabled = false;
-        };
-        
-        const handleTvFormSubmit = async (e) => {
-            e.preventDefault();
-            const url = elements.urlInput.value.trim();
-            const title = elements.titleInput.value.trim();
-            const lineup = elements.lineupInput.value.trim();
-            const description = elements.descInput.value.trim();
-            if (!url || !title || !description) {
-                elements.addVideoError.textContent = "URL, Title, and Description are required."; return;
-            }
-            const videoId = extractYouTubeID(url);
-            if (!videoId && !editingVideoId) {
-                elements.addVideoError.textContent = "Invalid YouTube URL."; return;
-            }
-            elements.addVideoError.textContent = "";
-            try {
-                if (editingVideoId) {
-                    await updateDoc(doc(db, 'tv_playlist', editingVideoId), { title, description, lineup });
-                } else {
-                    const newOrder = tvPlaylist.length > 0 ? Math.max(...tvPlaylist.map(v => v.order || 0)) + 1 : 0;
-                    await addDoc(collection(db, 'tv_playlist'), { videoId, title, description, lineup, createdAt: serverTimestamp(), order: newOrder });
-                }
-                resetTvForm();
-            } catch (error) {
-                console.error("Error saving video: ", error);
-                elements.addVideoError.textContent = "Could not save video.";
-            }
-        };
-
-        const movePlaylistItem = (docId, direction) => {
-            const currentIndex = tvPlaylist.findIndex(v => v.id === docId);
-            if (currentIndex === -1) return;
-
-            const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-            if (targetIndex < 0 || targetIndex >= tvPlaylist.length) return;
-
-            [tvPlaylist[currentIndex], tvPlaylist[targetIndex]] = [tvPlaylist[targetIndex], tvPlaylist[currentIndex]];
-            
-            isPlaylistOrderDirty = true;
-            elements.playlistActions.classList.remove('hidden');
-            elements.playlistStatus.textContent = '';
-            
-            renderPlaylistUI(tvPlaylist);
-        };
-
-        const savePlaylistOrder = async () => {
-            elements.saveOrderBtn.disabled = true;
-            elements.cancelOrderBtn.disabled = true;
-            elements.playlistStatus.textContent = 'Saving...';
-
-            try {
-                const batch = writeBatch(db);
-                tvPlaylist.forEach((video, index) => {
-                    const docRef = doc(db, 'tv_playlist', video.id);
-                    batch.update(docRef, { order: index });
-                });
-                await batch.commit();
-
-                elements.playlistStatus.textContent = 'Order saved!';
-                setTimeout(() => {
-                    elements.playlistActions.classList.add('hidden');
-                    elements.playlistStatus.textContent = '';
-                }, 2000);
-                isPlaylistOrderDirty = false;
-            } catch (error) {
-                console.error("Error saving playlist order:", error);
-                elements.playlistStatus.textContent = 'Error saving order.';
-            } finally {
-                elements.saveOrderBtn.disabled = false;
-                elements.cancelOrderBtn.disabled = false;
-            }
-        };
-
-        const cancelOrderChanges = () => {
-            tvPlaylist = JSON.parse(JSON.stringify(originalTvPlaylist));
-            renderPlaylistUI(tvPlaylist);
-            isPlaylistOrderDirty = false;
-            elements.playlistActions.classList.add('hidden');
-            elements.playlistStatus.textContent = '';
-        };
-        
-        const handlePlaylistClick = (e) => {
-            const button = e.target.closest('button');
-            if (!button) return;
-            const docId = button.dataset.id;
-            if (button.classList.contains('remove-btn')) {
-                showConfirmModal('Are you sure you want to delete this video?', () => {
-                    deleteDoc(doc(db, 'tv_playlist', docId)).catch(err => console.error("Error removing video: ", err));
-                });
-            } else if (button.classList.contains('edit-btn-tv')) {
-                const videoToEdit = tvPlaylist.find(video => video.id === docId);
-                if (videoToEdit) {
-                    editingVideoId = docId;
-                    elements.urlInput.value = `https://www.youtube.com/watch?v=${videoToEdit.videoId}`;
-                    elements.urlInput.disabled = true;
-                    elements.titleInput.value = videoToEdit.title;
-                    elements.lineupInput.value = videoToEdit.lineup || '';
-                    elements.descInput.value = videoToEdit.description;
-                    elements.tvFormTitle.textContent = 'Edit Video';
-                    elements.tvFormSubmitBtn.textContent = 'Update Video';
-                    elements.tvFormCancelBtn.classList.remove('hidden');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            } else if (button.classList.contains('move-up-btn')) {
-                movePlaylistItem(docId, 'up');
-            } else if (button.classList.contains('move-down-btn')) {
-                movePlaylistItem(docId, 'down');
-            }
-        };
-        const extractYouTubeID = (url) => {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
-        };
-        
-        elements.tvPlaylistForm.addEventListener('submit', handleTvFormSubmit);
-        elements.playlistContainer.addEventListener('click', handlePlaylistClick);
-        elements.tvFormCancelBtn.addEventListener('click', resetTvForm);
-        elements.saveOrderBtn.addEventListener('click', savePlaylistOrder);
-        elements.cancelOrderBtn.addEventListener('click', cancelOrderChanges);
-
-
-        // --- ARTICLE MANAGEMENT LOGIC ---
-        const generateSlug = (title) => {
-            if (!title) return '';
-            return title.toLowerCase()
-                .trim()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/[\s_-]+/g, '-')
-                .replace(/^-+|-+$/g, '');
-        };
-
-        const toggleReviewFields = () => {
-            if (elements.articleTypeInput.value === 'review') {
-                elements.reviewFieldsContainer.classList.remove('hidden');
-            } else {
-                elements.reviewFieldsContainer.classList.add('hidden');
-            }
-        };
-        
-        const resetArticleForm = () => {
-            elements.articleForm.reset();
-            elements.articleIdInput.value = '';
-            elements.imageUrlInput.value = '';
-            elements.youtubeIdInput.value = ''; // NEW
-            elements.formTitle.textContent = 'Create New Article';
-            elements.saveArticleBtn.textContent = 'Save Article';
-            elements.saveArticleBtn.disabled = false;
-            elements.imagePreview.classList.add('hidden');
-            elements.imagePreview.src = '';
-            elements.formError.textContent = '';
-            elements.articleAuthorInput.value = 'Staff';
-            elements.articlePublishDateInput.value = new Date().toISOString().slice(0, 10);
-            toggleReviewFields();
-        };
-
-        const setupArticleListener = () => {
-            const q = query(collection(db, "articles"), orderBy("updatedAt", "desc"));
-            onSnapshot(q, (querySnapshot) => {
-                let html = '';
-                if (querySnapshot.empty) {
-                    elements.articlesList.innerHTML = '<p class="text-stone-400">No articles found.</p>';
-                    return;
-                }
-                querySnapshot.forEach((doc) => {
-                    const article = { id: doc.id, ...doc.data() };
-                    const date = article.updatedAt?.seconds ? new Date(article.updatedAt.seconds * 1000).toLocaleDateString() : 'No date';
-                    html += `
-                        <div class="p-4 border border-stone-700 rounded-md bg-stone-800/50 flex justify-between items-start">
-                            <div>
-                                <p class="font-bold text-lg text-stone-200">${article.title}</p>
-                                <p class="text-xs text-stone-400 uppercase font-semibold">${article.type} - ${date}</p>
-                           </div>
-                            <div class="flex space-x-2 flex-shrink-0 mt-1">
-                                <button data-id="${article.id}" class="edit-btn text-blue-400 hover:text-blue-300 text-sm font-semibold">Edit</button>
-                                <button data-id="${article.id}" class="delete-btn text-red-500 hover:text-red-400 text-sm font-semibold">Delete</button>
-                            </div>
-                        </div>`;
-                });
-                elements.articlesList.innerHTML = html;
-            }, (error) => {
-                console.error("Error with article listener:", error);
-                elements.articlesList.innerHTML = '<p class="text-red-500">Could not load articles.</p>';
-            });
-        };
-        
-        const handleArticleFormSubmit = async (e) => {
-            e.preventDefault();
-            elements.saveArticleBtn.disabled = true;
-            elements.saveArticleBtn.textContent = 'Saving...';
-            elements.formError.textContent = '';
-
-            const articleId = elements.articleIdInput.value;
-            const imageUrl = elements.imageUrlInput.value.trim();
-
-            try {
-                const articleData = {
-                    type: elements.articleTypeInput.value,
-                    title: elements.titleArticleInput.value.trim(),
-                    body: elements.bodyArticleInput.value.trim(),
-                    imageUrl: imageUrl || '',
-                    slug: elements.articleSlugInput.value.trim(),
-                    author: elements.articleAuthorInput.value.trim(),
-                    publishDate: elements.articlePublishDateInput.value,
-                    youtubeID: elements.youtubeIdInput.value.trim() || '', // NEW
-                    updatedAt: serverTimestamp(),
+                const applyTheme = (theme) => {
+                    if (theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                        lightIcon.classList.add('hidden');
+                        darkIcon.classList.remove('hidden');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        lightIcon.classList.remove('hidden');
+                        darkIcon.classList.add('hidden');
+                    }
                 };
 
-                if (articleData.type === 'review') {
-                    Object.assign(articleData, {
-                        artist: elements.reviewArtistInput.value.trim(),
-                        albumTitle: elements.reviewAlbumInput.value.trim(),
-                        rating: parseFloat(elements.reviewRatingInput.value) || 0,
-                        year: parseInt(elements.reviewYearInput.value) || null,
-                        label: elements.reviewLabelInput.value.trim(),
-                        genres: elements.reviewGenresInput.value.split(',').map(g => g.trim()).filter(g => g),
-                    });
-                }
-
-                if (articleId) {
-                    await updateDoc(doc(db, 'articles', articleId), articleData);
-                } else {
-                    articleData.createdAt = serverTimestamp();
-                    await addDoc(collection(db, 'articles'), articleData);
-                }
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
                 
-                resetArticleForm();
+                applyTheme(currentTheme);
 
-            } catch (error) {
-                console.error("Error saving article:", error);
-                elements.formError.textContent = 'Failed to save article. Check console for details.';
-                elements.saveArticleBtn.disabled = false;
-                elements.saveArticleBtn.textContent = 'Save Article';
-            }
-        };
+                themeToggle.addEventListener('click', () => {
+                    const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                    localStorage.setItem('theme', newTheme);
+                    applyTheme(newTheme);
+                });
+            },
 
-        const handleArticlesListClick = async (e) => {
-            const target = e.target;
-            const articleId = target.dataset.id;
+            slugify(text) {
+                if (!text) return '';
+                return text.toString().toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w\-]+/g, '')
+                    .replace(/\-\-+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '');
+            },
 
-            if (target.classList.contains('edit-btn') && articleId) {
-                const docRef = doc(db, "articles", articleId);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const article = docSnap.data();
-                    resetArticleForm(); 
-                    elements.articleIdInput.value = articleId;
-                    elements.articleTypeInput.value = article.type || 'news';
-                    elements.titleArticleInput.value = article.title || '';
-                    elements.bodyArticleInput.value = article.body || '';
-                    elements.formTitle.textContent = 'Edit Article';
-                    elements.saveArticleBtn.textContent = 'Update Article';
-                    
-                    toggleReviewFields();
-
-                    elements.articleAuthorInput.value = article.author || 'Staff';
-                    elements.articlePublishDateInput.value = article.publishDate || new Date().toISOString().slice(0, 10);
-                    elements.articleSlugInput.value = article.slug || '';
-                    elements.youtubeIdInput.value = article.youtubeID || ''; // NEW
-
-                    if (article.type === 'review') {
-                        elements.reviewArtistInput.value = article.artist || '';
-                        elements.reviewAlbumInput.value = article.albumTitle || '';
-                        elements.reviewRatingInput.value = article.rating || '';
-                        elements.reviewYearInput.value = article.year || '';
-                        elements.reviewLabelInput.value = article.label || '';
-                        elements.reviewGenresInput.value = (article.genres || []).join(', ');
-                    }
-
-                    if (article.imageUrl) {
-                        elements.imageUrlInput.value = article.imageUrl;
-                        elements.imagePreview.src = article.imageUrl;
-                        elements.imagePreview.classList.remove('hidden');
-                    }
-                    window.scrollTo({ top: elements.articleForm.offsetTop, behavior: 'smooth' });
+            getAlbumIdFromUrl() {
+                const path = window.location.pathname;
+                const parts = path.split('/');
+                if (parts.length > 2 && parts[1] === 'album') {
+                    return parts[2];
                 }
-            }
+                return null;
+            },
+            
+            fetchDataAndRender() {
+                const albumId = this.getAlbumIdFromUrl();
+                if (!albumId) {
+                    this.renderError("No album specified in URL.");
+                    return;
+                }
 
-            if (target.classList.contains('delete-btn') && articleId) {
-                showConfirmModal(`Are you sure you want to delete this article? This cannot be undone.`, async () => {
-                    try {
-                        const docRef = doc(db, "articles", articleId);
-                        const docSnap = await getDoc(docRef);
-                        if (docSnap.exists() && docSnap.data().imageUrl) {
-                            try {
-                                const imageRef = ref(storage, docSnap.data().imageUrl);
-                                await deleteObject(imageRef);
-                            } catch (storageError) {
-                                console.error("Could not delete image from storage:", storageError);
+                Promise.all([
+                    fetch('/database.json').then(res => res.json()),
+                    fetch('/artists.json').then(res => res.json()),
+                    fetch('/legacy.json').then(res => res.json())
+                ])
+                .then(([dbData, artistProfiles, legacyData]) => {
+                    const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []);
+                    const normalizedLegacyAlbums = legacyAlbums.map(album => ({
+                        ...album,
+                        albumTitle: album.title,
+                        cover: album.cover || `${this.slugify(album.title)}.jpg`
+                    }));
+                    
+                    this.state.allAlbums = [...dbData.albums, ...normalizedLegacyAlbums];
+                    this.state.artistsData = new Map(Object.values(artistProfiles).map(p => [p.name, p]));
+                    
+                    const album = this.state.allAlbums.find(a => {
+                        const currentAlbumId = `${this.slugify(a.artist)}-${this.slugify(a.albumTitle || a.title)}`;
+                        return currentAlbumId === albumId;
+                    });
+
+                    if (album) {
+                        this.renderAlbum(album);
+                    } else {
+                        this.renderError(`Album with ID "${albumId}" not found.`);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    this.renderError("Could not load album data.");
+                });
+            },
+            
+            renderError(message) {
+                const wrapper = document.getElementById('album-content-wrapper');
+                wrapper.innerHTML = `<div class="text-center py-20">
+                    <h2 class="text-4xl text-orange-500">Error</h2>
+                    <p class="text-xl text-[var(--text-muted)] mt-4">${message}</p>
+                    <a href="/timeline" class="mt-8 inline-block px-6 py-3 bg-[var(--accent)] text-white font-bold rounded-sm hover:opacity-90">Back to Timeline</a>
+                </div>`;
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('page-content').classList.remove('content-hidden');
+            },
+
+            renderAlbum(album) {
+                const albumTitle = album.albumTitle || album.title;
+                document.title = `${albumTitle} by ${album.artist} - Controlled Freedom`;
+                const wrapper = document.getElementById('album-content-wrapper');
+
+                const pivotalTrack = album.pivotalTracks ? album.pivotalTracks[0] : {};
+                
+                let genreArray = [];
+                const rawGenres = album.genres;
+                 if (Array.isArray(rawGenres)) {
+                    genreArray = rawGenres;
+                } else if (typeof rawGenres === 'string') {
+                    genreArray = rawGenres.split(',').map(g => g.trim());
+                }
+
+                const genreTags = genreArray.map(genre => {
+                    const genreSlug = this.slugify(genre);
+                    return `<a href="/genres.html#${genreSlug}" class="genre-tag genre-${genreSlug}">${genre.trim()}</a>`
+                }).join(' ');
+                
+                const lineupHtml = (pivotalTrack.lineup || 'N/A').split(/, (?![^()]*\))/).map(personnel => {
+                    const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
+                    if (match) {
+                        const name = match[1].trim();
+                        const instrument = match[2].trim();
+                        const artistSlug = this.slugify(name);
+                        return `
+                            <a href="/artist/${artistSlug}" class="artist-lineup-item">
+                                <img src="/images/artists/${artistSlug}.jpg" alt="${name}" class="artist-photo" onerror="this.onerror=null;this.src='https://placehold.co/80x80/292524/a8a29e?text=${name.charAt(0)}';">
+                                <div>
+                                    <p class="artist-name">${name}</p>
+                                    <p class="artist-instrument">${instrument}</p>
+                                </div>
+                            </a>
+                        `;
+                    }
+                    return `<div>${personnel}</div>`;
+                }).join('');
+                
+                const pivotalTracksHtml = (album.pivotalTracks || []).map(track => {
+                    const songFileName = this.slugify(track.title);
+                    return `<div class="mb-8 last:mb-0">
+                                <div class="flex justify-between items-center gap-4 flex-wrap">
+                                    <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                                    <div id="player-container-${songFileName}" class="w-full sm:w-52 h-[35px]">
+                                        <audio controls class="styled-player w-full" src="/songs/${songFileName}.mp3" preload="none"></audio>
+                                    </div>
+                                </div>
+                                <p class="liner-notes-text mt-3">${track.analysis || 'No analysis available.'}</p>
+                            </div>`;
+                }).join('<hr class="border-stone-700 my-8">');
+
+                const tracklistHtml = (album.tracklist || []).map((track, index) => `
+                    <li>
+                        <span class="font-bold text-[var(--text-main)]">${track.title}</span>
+                        <span class="float-right">${track.duration || ''}</span>
+                    </li>
+                `).join('');
+
+                const coverPath = `/images/${this.slugify(albumTitle)}.jpg`;
+
+                wrapper.innerHTML = `
+                    <!-- Album Header -->
+                    <div class="flex flex-col md:flex-row items-start gap-6 md:gap-8 mb-8 md:mb-12">
+                        <div class="w-full md:w-1/3 max-w-sm flex-shrink-0">
+                            <div class="cover-art-container">
+                                <img src="${coverPath}" class="w-full h-auto" alt="Cover for ${albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';">
+                            </div>
+                            <div class="mt-4 flex items-center justify-center gap-6 streaming-links-small">
+                                <a href="#" target="_blank" rel="noopener noreferrer" title="Listen on Spotify">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.621 14.442a.75.75 0 01-1.06.216c-2.135-1.31-4.84-1.62-8.08-.888a.75.75 0 01-.84-.828c.12-2.332 1.7-4.338 4.91-5.832a.75.75 0 01.88.832c-2.353 1.116-4.044 2.52-4.32 4.032.276-.504 2.95-1.08 6.236.252a.75.75 0 01.216 1.06z"/></svg>
+                                </a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" title="Listen on Apple Music">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 14.168a.75.75 0 01-.75-.75V8.582a.75.75 0 011.5 0v6.836a.75.75 0 01-.75.75zm-3.5-2.668a.75.75 0 01-.75-.75V10.25a.75.75 0 011.5 0v2.5a.75.75 0 01-.75.75zm7 0a.75.75 0 01-.75-.75V10.25a.75.75 0 011.5 0v2.5a.75.75 0 01-.75.75z"/></svg>
+                                </a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" title="Listen on YouTube Music">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M21.582 7.243a2.78 2.78 0 00-1.943-1.943C17.92 4.5 12 4.5 12 4.5s-5.92 0-7.639.8c-.803.34-1.456.992-1.8 1.795C2.5 9.077 2.5 12 2.5 12s0 2.923.061 3.962c.344.803.997 1.455 1.8 1.795C6.08 18.5 12 18.5 12 18.5s5.92 0 7.639-.8c.803-.34 1.456-.992 1.799-1.795C21.5 14.923 21.5 12 21.5 12s0-2.923-.061-3.962c-.09-.23-.19-.45-.357-.695zM9.75 14.85V9.15l5.5 2.85-5.5 2.85z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)]">${albumTitle}</h2>
+                            <a href="/artist/${this.slugify(album.artist)}" class="text-2xl sm:text-3xl text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">${album.artist}</a>
+                            <div class="mt-4 flex flex-wrap gap-2">${genreTags || 'N/A'}</div>
+                            <div class="mt-4 space-y-4 text-base text-[var(--text-main)]">
+                                <div class="space-y-2">
+                                    <div class="flex gap-x-4"><strong>Released:</strong> <span>${album.releaseDate || 'N/A'}</span></div>
+                                    <div class="flex gap-x-4"><strong>Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span></div>
+                                    <div class="flex gap-x-4"><strong>Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span></div>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl text-[var(--text-main)] mb-3">Line-Up</h4>
+                                    <div class="artist-lineup-grid">${lineupHtml || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                        <div class="lg:col-span-1 space-y-6">
+                            <div class="p-4 bg-[var(--bg-secondary)] rounded-md">
+                                <h4 class="text-xl text-[var(--text-main)] mb-3">Tracklist</h4>
+                                <div class="tracklist">
+                                    <ol>${tracklistHtml || '<li>Tracklist not available.</li>'}</ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="relative">
+                                <div class="analysis-section">${pivotalTracksHtml || '<p class="liner-notes-text">No key tracks defined for this album.</p>'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add error handlers for audio players
+                (album.pivotalTracks || []).forEach(track => {
+                    const songFileName = this.slugify(track.title);
+                    const player = wrapper.querySelector(`audio[src="/songs/${songFileName}.mp3"]`);
+                    if (player) {
+                        player.onerror = () => {
+                            const playerContainer = document.getElementById(`player-container-${songFileName}`);
+                            if (playerContainer) {
+                                playerContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-stone-700 text-stone-400 text-xs rounded">Preview N/A</div>`;
                             }
-                        }
-                        await deleteDoc(docRef);
-                        if(elements.articleIdInput.value === articleId) {
-                           resetArticleForm();
-                        }
-                    } catch (error) {
-                        console.error("Error deleting article:", error);
-                        elements.formError.textContent = "Error deleting article.";
+                        };
                     }
                 });
+
+
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('page-content').classList.remove('content-hidden');
+                document.getElementById('footer-copyright').textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             }
         };
 
-        // --- HELPER FUNCTIONS ---
-        const showConfirmModal = (text, onConfirm) => {
-            elements.confirmModalText.textContent = text;
-            elements.confirmModal.style.display = 'flex';
-            const newConfirmBtn = elements.confirmYesBtn.cloneNode(true);
-            elements.confirmYesBtn.parentNode.replaceChild(newConfirmBtn, elements.confirmYesBtn);
-            elements.confirmYesBtn = newConfirmBtn;
-            elements.confirmYesBtn.onclick = () => { onConfirm(); elements.confirmModal.style.display = 'none'; };
-        };
-        const insertHtmlTag = (tag) => {
-            const textarea = elements.bodyArticleInput;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            const selection = text.substring(start, end);
-            let replacement;
-            switch(tag) {
-                case 'a': replacement = `<a href="">${selection}</a>`; break;
-                case 'ul': case 'ol': replacement = `<${tag}>\n\t<li>${selection}</li>\n</${tag}>`; break;
-                default: replacement = `<${tag}>${selection}</${tag}>`;
-            }
-            textarea.value = text.substring(0, start) + replacement + text.substring(end);
-            textarea.focus();
-            if (start === end) {
-                if(tag === 'a') { textarea.selectionStart = textarea.selectionEnd = start + 9; } 
-                else { textarea.selectionStart = textarea.selectionEnd = start + tag.length + 2; }
-            }
-        };
-
-        // --- EVENT LISTENERS ---
-        elements.articleForm.addEventListener('submit', handleArticleFormSubmit);
-        elements.articlesList.addEventListener('click', handleArticlesListClick);
-        elements.clearFormBtn.addEventListener('click', resetArticleForm);
-        elements.confirmNoBtn.addEventListener('click', () => elements.confirmModal.style.display = 'none');
-        elements.imageUrlInput.addEventListener('input', (e) => {
-            const url = e.target.value.trim();
-            if (url) {
-                elements.imagePreview.src = url;
-                elements.imagePreview.classList.remove('hidden');
-            } else {
-                elements.imagePreview.classList.add('hidden');
-            }
-        });
-        elements.htmlShortcuts.addEventListener('click', (e) => {
-            if (e.target.matches('button[data-tag]')) { insertHtmlTag(e.target.dataset.tag); }
-        });
-        elements.articleTypeInput.addEventListener('change', toggleReviewFields);
-        elements.titleArticleInput.addEventListener('keyup', (e) => {
-            elements.articleSlugInput.value = generateSlug(e.target.value);
-        });
-        
-        // --- INITIAL SETUP ---
-        resetArticleForm();
-
+        document.addEventListener('DOMContentLoaded', () => AlbumPage.init());
     </script>
 </body>
 </html>
