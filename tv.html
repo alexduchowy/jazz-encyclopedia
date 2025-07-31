@@ -67,6 +67,7 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.1em;
             font-size: 1.1rem;
+            color: var(--text-muted);
         }
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
@@ -159,7 +160,6 @@
             background-color: rgba(255,255,255,0.05);
         }
         
-        /* NEW: Line-up Styles */
         .artist-lineup-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -169,6 +169,11 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .artist-lineup-item:hover {
+            opacity: 0.8;
         }
         .artist-photo {
             width: 40px;
@@ -181,17 +186,10 @@
         
         .dropdown-container { position: relative; }
         .dropdown-btn {
-            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
-            padding: 0.5rem 1.5rem;
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            background-color: var(--bg-main);
-            transition: all 0.2s ease; cursor: pointer;
-            display: flex; align-items: center; gap: 0.5rem;
-            color: var(--text-muted); /* FIX: Explicitly set text color */
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
-        .dark .dropdown-btn { border-color: var(--border-color); }
-        .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
         .dropdown-list {
             position: absolute;
             background-color: var(--bg-main);
@@ -213,9 +211,15 @@
             border-color: var(--border-color);
             box-shadow: none;
         }
-        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a { 
+            display: block; 
+            padding: 0.75rem 1.5rem; 
+            transition: all 0.2s ease;
+            color: var(--text-main);
+        }
         .dropdown-list a:hover {
-            background-color: var(--accent); color: var(--bg-main);
+            background-color: var(--accent); 
+            color: var(--bg-main);
             transform: translateX(4px);
         }
 
@@ -230,9 +234,9 @@
                 <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
                 <div class="flex items-center">
                     <div class="nav-bar-behaviour items-center space-x-8">
-                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
-                        <a href="/tv.html" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
-                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium">Home</a>
+                        <a href="/tv.html" class="nav-link active px-3 py-2 rounded-md font-medium">TV</a>
+                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium">Timeline</a>
                         <div class="dropdown-container">
                             <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium dropdown-btn">
                                 Legacy
@@ -244,8 +248,8 @@
                                 <a href="https://controlledfreedom.com/artists">Artists</a>
                             </div>
                         </div>
-                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
-                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium">Blog</a>
+                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                             <span>@controlledjazz</span>
                         </a>
@@ -286,6 +290,17 @@
                         </div>
                         <h2 id="video-main-title" class="font-bold mt-1">Loading Broadcast...</h2>
                     </div>
+                    <!-- Right Column: Up Next Playlist -->
+                    <div class="info-card">
+                        <h2 class="info-card-header text-xl lg:text-2xl font-bold">Up Next</h2>
+                        <div id="playlist-container" class="overflow-y-auto" style="max-height: 500px;">
+                            <!-- Playlist items will be generated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Performance Details -->
+                <div class="lg:col-span-4">
                     <div id="info-wrapper" class="info-card flex flex-col">
                         <h3 class="info-card-header text-xl font-bold">Performance Details</h3>
                         <div class="p-4 md:p-6 space-y-4">
@@ -299,16 +314,6 @@
                                 <h4 class="font-bold text-sm uppercase tracking-wider text-[var(--text-muted)] mb-2">About this Performance</h4>
                                 <p id="video-description" class="text-[var(--text-muted)] text-sm leading-relaxed"></p>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column: Up Next Playlist -->
-                <div class="lg:col-span-4">
-                    <div class="info-card">
-                        <h2 class="info-card-header text-xl lg:text-2xl font-bold">Up Next</h2>
-                        <div id="playlist-container" class="overflow-y-auto" style="max-height: 500px;">
-                            <!-- Playlist items will be generated here -->
                         </div>
                     </div>
                 </div>
@@ -482,15 +487,16 @@
                     if (match) {
                         const name = match[1].trim();
                         const instrument = match[2].trim();
-                        const photoSlug = slugify(name);
+                        const artistSlug = slugify(name);
+                        const artistUrl = `/artist/${artistSlug}`;
                         return `
-                            <div class="artist-lineup-item">
-                                <img src="images/${photoSlug}.jpg" alt="${name}" class="artist-photo" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                            <a href="${artistUrl}" target="_blank" rel="noopener noreferrer" class="artist-lineup-item">
+                                <img src="images/${artistSlug}.jpg" alt="${name}" class="artist-photo" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 <div>
                                     <p class="font-bold text-[var(--text-main)] text-sm leading-tight">${name}</p>
                                     <p class="text-xs text-[var(--text-muted)]">${instrument}</p>
                                 </div>
-                            </div>
+                            </a>
                         `;
                     }
                     return '';
