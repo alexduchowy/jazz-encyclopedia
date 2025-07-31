@@ -310,7 +310,7 @@
             transition: all 0.2s ease; cursor: pointer;
             display: flex; align-items: center; gap: 0.5rem;
         }
-        .dark .dropdown-btn { border-color: var(--border-color); }
+        .dark .dropdown-btn { border-color: var(--border-color); color: var(--text-main); }
         .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
         .dropdown-list {
             position: absolute;
@@ -348,9 +348,11 @@
             #latest-review-card { order: 2; }
             #timeline-nav-card { order: 3; }
             #legacy-nav-card { order: 4; }
-            #on-this-day-card { order: 5; }
-            #news-card { order: 6; }
-            #playlist-card { order: 7; }
+            #genres-nav-card { order: 5; }
+            #artists-nav-card { order: 6; }
+            #on-this-day-card { order: 7; }
+            #news-card { order: 8; }
+            #playlist-card { order: 9; }
         }
     </style>
 </head>
@@ -446,6 +448,20 @@
                                     <div class="dashboard-card-content">
                                         <p>Discover how the sounds of the post-bop era evolved and splintered into new forms, from Jazz Fusion to the Avant-Garde and beyond.</p>
                                          <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore The Legacy &rarr;</span>
+                                    </div>
+                                </a>
+                                <a href="/genres.html" id="genres-nav-card" class="dashboard-card group block text-decoration-none">
+                                    <h2 class="dashboard-card-header">Explore by Genre</h2>
+                                    <div class="dashboard-card-content">
+                                        <p>Dive into the different styles of jazz, from Bebop to Free Jazz, and understand their unique characteristics.</p>
+                                        <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Browse Genres &rarr;</span>
+                                    </div>
+                                </a>
+                                <a href="https://controlledfreedom.com/artists" id="artists-nav-card" class="dashboard-card group block text-decoration-none">
+                                    <h2 class="dashboard-card-header">Artist A-Z</h2>
+                                    <div class="dashboard-card-content">
+                                        <p>An alphabetical directory of the influential artists who defined the sound of modern jazz.</p>
+                                        <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Browse Artists &rarr;</span>
                                     </div>
                                 </a>
                             </div>
@@ -627,7 +643,7 @@
                             title: 'New ways to discover Jazz History',
                             imageUrl: 'images/bannerindex.jpg',
                             isWelcome: true,
-                            link: '/timeline'
+                            link: 'https://controlledfreedom.com/timeline_full'
                         };
                         
                         const articleTypesToFetch = ['column', 'news', 'review'];
@@ -667,7 +683,7 @@
                         const link = slideData.link || '#';
                         const target = slideData.isWelcome ? '' : 'target="_blank" rel="noopener noreferrer"';
                         
-                        const linkText = slideData.isWelcome ? 'Explore The Site &rarr;' : 'Read More &rarr;';
+                        const linkText = slideData.isWelcome ? 'Explore the Timeline &rarr;' : 'Read More &rarr;';
                         const titleHtml = slideData.isWelcome 
                             ? `<div class="typewriter"><h2>${slideData.title}</h2></div>`
                             : `<h2 class="text-3xl md:text-5xl font-bold my-2 text-shadow-lg">${slideData.title}</h2>`;
