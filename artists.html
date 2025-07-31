@@ -722,7 +722,7 @@
                         if (album.artist) {
                             const bandleaderNames = album.artist.split(/[,/&]/).map(name => name.trim().replace(/ and /g, '').trim());
                             
-                            if(bandleaderNames.length > 1) {
+                            if(bandleaderNames.length > 1 && !album.artist.includes('Quintet') && !album.artist.includes('Quartet') && !album.artist.includes('Trio') && !album.artist.includes('Sextet') && !album.artist.includes('Septet')) {
                                 bandleaderNames.forEach(name => {
                                     if (isLikelyIndividual(name)) {
                                         const bandleader = getOrCreateArtist(name);
@@ -765,7 +765,7 @@
                             artist.tier = 1; // Orange
                         } else if (artist.isLegacyBandleader) {
                             artist.tier = 2; // Blue
-                        } else if (artist.albums.length >= 4) {
+                        } else if (artist.albums.size >= 4) {
                             artist.tier = 3; // Yellow
                         } else {
                             artist.tier = 4; // Default
