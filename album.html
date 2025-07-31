@@ -101,6 +101,44 @@
             transition: color 0.2s;
         }
         .clickable-link:hover { color: var(--accent); }
+        .dropdown-container { position: relative; }
+        .dropdown-btn {
+            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
+            padding: 0.5rem 1.5rem;
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            background-color: var(--bg-main);
+            transition: all 0.2s ease; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .dark .dropdown-btn { border-color: var(--border-color); }
+        .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
+        .dropdown-list {
+            position: absolute;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            z-index: 20; width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+        }
+        .dropdown-container:hover .dropdown-list {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dark .dropdown-list {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a:hover {
+            background-color: var(--accent); color: var(--bg-main);
+            transform: translateX(4px);
+        }
     </style>
 </head>
 <body class="text-stone-900">
@@ -112,13 +150,23 @@
         <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
             <header class="container mx-auto h-full">
                 <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
+                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
                     <div class="flex items-center">
                         <div class="nav-bar-behaviour items-center space-x-8">
                             <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
                             <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
                             <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
-                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Legacy</a>
+                            <div class="dropdown-container">
+                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] dropdown-btn">
+                                    Legacy
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </a>
+                                <div class="dropdown-list">
+                                    <a href="/legacy">Legacy Paths</a>
+                                    <a href="/genres.html">Genres</a>
+                                    <a href="https://controlledfreedom.com/artists">Artists</a>
+                                </div>
+                            </div>
                             <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
                             <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
                                 <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
@@ -233,7 +281,7 @@
                     const normalizedLegacyAlbums = legacyAlbums.map(album => ({
                         ...album,
                         albumTitle: album.title, // Use 'title' as 'albumTitle'
-                        cover: album.cover || `images/covers/${this.slugify(album.title)}.jpg` // Provide fallback cover path
+                        cover: album.cover || `${this.slugify(album.title)}.jpg` // Provide fallback cover path
                     }));
                     
                     this.state.allAlbums = [...dbData.albums, ...normalizedLegacyAlbums];
@@ -326,6 +374,8 @@
                 const prevButtonHtml = prevAlbum ? `<a href="/album/${this.slugify(prevAlbum.artist)}-${this.slugify(prevAlbum.albumTitle || prevAlbum.title)}" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors">Previous Album</a>` : `<button class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold opacity-50 cursor-not-allowed" disabled>Previous Album</button>`;
                 const nextButtonHtml = nextAlbum ? `<a href="/album/${this.slugify(nextAlbum.artist)}-${this.slugify(nextAlbum.albumTitle || nextAlbum.title)}" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors">Next Album</a>` : `<button class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold opacity-50 cursor-not-allowed" disabled>Next Album</button>`;
 
+                // FIX: Construct the correct image path
+                const coverPath = `/images/${this.slugify(albumTitle)}.jpg`;
 
                 wrapper.innerHTML = `
                     <div class="album-page-container rounded-sm shadow-2xl w-full max-w-4xl mx-auto flex flex-col">
@@ -339,7 +389,7 @@
                         <div class="p-6">
                             <div class="flex flex-col md:flex-row gap-6">
                                 <div class="w-full md:w-1/3 flex-shrink-0">
-                                    <img src="${album.cover || ''}" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" alt="Cover for ${albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';">
+                                    <img src="${coverPath}" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" alt="Cover for ${albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';">
                                 </div>
                                 <div class="w-full md:w-2/3">
                                     <h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4>
