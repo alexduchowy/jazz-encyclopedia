@@ -234,19 +234,19 @@
                 },
 
                 renderProfile() {
-                    const params = new URLSearchParams(window.location.search);
-                    const artistName = params.get('name');
+                    const path = window.location.pathname;
+                    const slug = path.substring(path.lastIndexOf('/') + 1);
                     
-                    if (!artistName) {
+                    if (!slug) {
                         this.elements.profileContainer.innerHTML = `<h1 class="text-4xl text-center text-orange-500">No artist specified.</h1>`;
                         return;
                     }
 
-                    const artist = this.state.artistsData.find(a => a.name === artistName);
+                    const artist = this.state.artistsData.find(a => this.methods.slugify(a.name) === slug);
 
                     if (!artist || !artist.profile || artist.profile.profile === 'No profile available.') {
-                        this.elements.profileContainer.innerHTML = `<h1 class="text-4xl text-center text-orange-500">Artist profile not found for "${artistName}".</h1>`;
-                        if(artist) document.title = `${artist.name} - Controlled Freedom`;
+                        this.elements.profileContainer.innerHTML = `<h1 class="text-4xl text-center text-orange-500">Artist profile not found for "${slug.replace(/-/g, ' ')}".</h1>`;
+                        document.title = `Profile not found - Controlled Freedom`;
                         return;
                     }
                     
@@ -287,7 +287,7 @@
                             if (!collaborator) return '';
                             const collaboratorSlug = this.methods.slugify(collaborator.name);
                             return `
-                                <a href="artistprofile.html?name=${encodeURIComponent(collaborator.name)}" class="block text-center transition-transform duration-200 hover:scale-105">
+                                <a href="/artist/${collaboratorSlug}" class="block text-center transition-transform duration-200 hover:scale-105">
                                     <div class="w-24 h-24 mx-auto">
                                         <img src="/images/${collaboratorSlug}.jpg" alt="${collaborator.name}" class="w-full h-full object-cover rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-full rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md flex items-center justify-center bg-stone-300 dark:bg-stone-600\\'><svg class=\\'w-12 h-12 text-stone-500\\' xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
                                     </div>
