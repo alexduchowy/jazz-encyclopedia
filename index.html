@@ -147,12 +147,10 @@
             transition: opacity 1.5s ease-in-out;
             background-size: cover;
             background-position: center;
-            /* BUG FIX: Add z-index to manage stacking */
             z-index: 1;
         }
         .slide.active {
             opacity: 1;
-            /* BUG FIX: Ensure the active slide is always on top */
             z-index: 2;
         }
         .slide-content {
@@ -243,44 +241,6 @@
             z-index: 1;
         }
 
-        .modal {
-            transition: opacity 0.3s ease;
-        }
-        .modal-content {
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-            background-color: var(--bg-main);
-            border-color: var(--text-main);
-        }
-        .dark .modal-content {
-             border-color: var(--border-color);
-        }
-        .modal.opacity-0 .modal-content {
-              opacity: 0;
-              transform: scale(0.95) translateY(10px);
-        }
-        
-        #modal-analysis-section {
-            background-color: #1a1a1a;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            border: 2px solid var(--text-main);
-            box-shadow: 4px 4px 0px var(--text-main);
-        }
-        .dark #modal-analysis-section {
-            border-color: var(--border-color);
-            box-shadow: none;
-        }
-        #modal-analysis-section h5 {
-            color: #f5f5f4;
-        }
-        
-        .liner-notes-text {
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #d4d4d2; 
-        }
-
         .genre-tag {
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
@@ -298,16 +258,6 @@
             filter: brightness(95%);
         }
 
-        .clickable-link {
-            cursor: pointer;
-            text-decoration: underline;
-            text-decoration-color: var(--accent);
-            transition: color 0.2s;
-        }
-        .clickable-link:hover {
-            color: var(--accent);
-        }
-
         /* On This Day new styles */
         .on-this-day-item {
             display: flex;
@@ -319,6 +269,7 @@
             border-radius: 0.25rem;
             cursor: pointer;
             transition: all 0.2s ease;
+            text-decoration: none; /* For <a> tags */
         }
         .dark .on-this-day-item {
              border-color: var(--border-color);
@@ -347,49 +298,6 @@
         }
         .on-this-day-item:hover .artist-photo {
             filter: grayscale(0%);
-        }
-
-        /* Artist Modal Specific Styles */
-        .known-for-box {
-            background-color: var(--accent);
-            color: #f5f5f4;
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--text-main);
-            box-shadow: 2px 2px 0px var(--text-main);
-            transform: rotate(-2deg);
-            display: inline-block;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .dark .known-for-box {
-             border-color: var(--border-color);
-             box-shadow: none;
-        }
-
-        .artist-modal-timeline {
-            list-style: none;
-            padding-left: 1rem;
-            border-left: 2px solid var(--bg-secondary);
-        }
-        .artist-modal-timeline-item {
-            position: relative;
-            padding-bottom: 1rem;
-            padding-left: 1.5rem;
-        }
-        .artist-modal-timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -0.4rem;
-            top: 0.25rem;
-            width: 0.65rem;
-            height: 0.65rem;
-            border-radius: 9999px;
-            background-color: var(--bg-secondary);
-            border: 2px solid var(--text-main);
-        }
-        .dark .artist-modal-timeline-item::before {
-             border-color: var(--border-color);
         }
         
         .dropdown-container { position: relative; }
@@ -437,11 +345,11 @@
                 flex-direction: column;
             }
             #recommendation-card { order: 1; }
-            #on-this-day-card { order: 2; }
-            #news-card { order: 3; }
-            #latest-review-card { order: 4; }
-            #timeline-nav-card { order: 5; }
-            #legacy-nav-card { order: 6; }
+            #latest-review-card { order: 2; }
+            #timeline-nav-card { order: 3; }
+            #legacy-nav-card { order: 4; }
+            #on-this-day-card { order: 5; }
+            #news-card { order: 6; }
             #playlist-card { order: 7; }
         }
     </style>
@@ -518,6 +426,12 @@
                                 <div id="recommendation-content" class="dashboard-card-content"></div>
                             </div>
 
+                            <!-- Latest Review Card -->
+                            <div id="latest-review-card" class="dashboard-card">
+                                <h2 class="dashboard-card-header">Latest From The Archive</h2>
+                                <div id="latest-review" class="dashboard-card-content"></div>
+                            </div>
+
                             <!-- Navigation Cards -->
                             <div class="grid sm:grid-cols-2 gap-8">
                                 <a href="/timeline" id="timeline-nav-card" class="dashboard-card group block text-decoration-none">
@@ -534,12 +448,6 @@
                                          <span class="inline-block mt-4 font-bold text-orange-600 group-hover:underline">Explore The Legacy &rarr;</span>
                                     </div>
                                 </a>
-                            </div>
-
-                            <!-- Latest Review Card -->
-                            <div id="latest-review-card" class="dashboard-card">
-                                <h2 class="dashboard-card-header">Latest From The Archive</h2>
-                                <div id="latest-review" class="dashboard-card-content"></div>
                             </div>
                         </div>
 
@@ -601,39 +509,7 @@
         </div>
     </div>
 
-    <!-- Universal Album Modal -->
-    <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div id="modal-content-album" class="modal-content rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
-            <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
-                <div>
-                    <h3 id="album-modal-title" class="text-4xl text-orange-500"></h3>
-                    <a id="album-modal-artist" class="text-xl text-[var(--text-muted)] clickable-link"></a>
-                </div>
-                <button id="close-album-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
-            </div>
-            <div id="album-modal-body" class="p-6 overflow-y-auto">
-                <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
-                    <div class="w-full md:w-1/3 flex-shrink-0">
-                        <img id="album-modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)]" alt="Album Art" loading="lazy">
-                    </div>
-                    <div id="album-modal-album-details" class="w-full md:w-2/3"></div>
-                </div>
-                <div id="analysis-wrapper" class="relative mt-4"></div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Artist Modal -->
-    <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
-                 <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
-                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
-             </div>
-             <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
-        </div>
-    </div>
-
+    <!-- MODALS REMOVED -->
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -643,9 +519,6 @@
         const LandingApp = {
             state: {
                 allAlbums: [],
-                recommendedAlbum: null,
-                onThisDayAlbum: null,
-                onThisDayArtist: null,
                 artistsData: [],
                 fullArtistsData: {},
                 genreData: {},
@@ -657,6 +530,7 @@
             elements: {},
             init() {
                 this.cacheDOMElements();
+                // Bind all methods to 'this' context
                 for (const key in this.methods) {
                     if (typeof this.methods[key] === 'function') {
                         this.methods[key] = this.methods[key].bind(this);
@@ -665,7 +539,6 @@
                 this.methods.setupTheme();
                 this.fetchData();
                 this.methods.setupMobileMenu();
-                this.methods.setupModals();
                 this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
             cacheDOMElements() {
@@ -684,21 +557,6 @@
                     themeToggle: document.getElementById('theme-toggle'),
                     themeIconLight: document.getElementById('theme-icon-light'),
                     themeIconDark: document.getElementById('theme-icon-dark'),
-                    
-                    albumModal: document.getElementById('album-modal'),
-                    albumModalTitle: document.getElementById('album-modal-title'),
-                    albumModalArtist: document.getElementById('album-modal-artist'),
-                    albumModalBody: document.getElementById('album-modal-body'),
-                    albumModalAlbumArt: document.getElementById('album-modal-album-art'),
-                    albumModalAlbumDetails: document.getElementById('album-modal-album-details'),
-                    analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
-                    closeAlbumModalBtn: document.getElementById('close-album-modal'),
-
-                    artistModal: document.getElementById('artist-modal'),
-                    artistModalTitle: document.getElementById('artist-modal-title'),
-                    artistModalBody: document.getElementById('artist-modal-body'),
-                    closeArtistModalBtn: document.getElementById('close-artist-modal'),
-                    
                     frontpageSlider: document.getElementById('frontpage-slider'),
                     frontpageDots: document.getElementById('frontpage-dots'),
                 };
@@ -922,184 +780,31 @@
 
                     const randomIndex = diffDays % this.state.allAlbums.length;
                     const album = this.state.allAlbums[randomIndex];
-                    this.state.recommendedAlbum = album;
+                    
+                    const albumSlug = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
+                    const albumUrl = `/album/${albumSlug}`;
 
                     const analysisText = album.pivotalTracks && album.pivotalTracks.length > 0 ? (album.pivotalTracks[0].analysis || '') : (album.analysis || '');
 
                     this.elements.recommendationContent.innerHTML = `
-                        <div class="flex flex-row gap-4 items-center cursor-pointer" data-action="open-recommendation-modal">
+                        <a href="${albumUrl}" class="flex flex-row gap-4 items-center group no-underline">
                             <img src="${album.cover}" alt="Cover for ${album.albumTitle}" class="w-24 h-24 sm:w-40 sm:h-40 object-cover rounded-md border-2 border-stone-900 dark:border-stone-700 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1c1917/f5f5f4?text=No+Img';">
                             <div class="flex-grow text-left">
                                 <p class="text-[var(--text-muted)]">${album.artist}</p>
                                 <h3 class="text-2xl sm:text-4xl font-bold text-[var(--text-main)] leading-tight">${album.albumTitle}</h3>
                                 <p class="text-[var(--text-muted)] font-bold">(${album.year})</p>
-                                <p class="hidden sm:block mt-2 text-sm">${analysisText.substring(0, 120)}...</p>
+                                <p class="hidden sm:block mt-2 text-sm text-[var(--text-muted)]">${analysisText.substring(0, 120)}...</p>
                                 <span class="inline-block mt-2 font-bold text-orange-600 group-hover:underline">View Album &rarr;</span>
                             </div>
-                        </div>
+                        </a>
                     `;
-                },
-                setupModals() {
-                    const { pageContent, albumModal, artistModal, closeAlbumModalBtn, closeArtistModalBtn } = this.elements;
-
-                    pageContent.addEventListener('click', (e) => {
-                        const target = e.target.closest('[data-action]');
-                        if (!target) return;
-
-                        const action = target.dataset.action;
-                        
-                        if (action === 'open-recommendation-modal') {
-                            this.methods.openAlbumModal(this.state.recommendedAlbum);
-                        } else if (action === 'open-otd-album-modal') {
-                            this.methods.openAlbumModal(this.state.onThisDayAlbum);
-                        } else if (action === 'open-otd-artist-modal') {
-                            this.methods.openArtistModal(this.state.onThisDayArtist);
-                        }
-                    });
-                    
-                    artistModal.addEventListener('click', (e) => {
-                        const target = e.target.closest('.clickable-link[data-album-title]');
-                        if (target) {
-                            const { albumTitle, artist } = target.dataset;
-                            const album = this.state.allAlbums.find(a => a.albumTitle === albumTitle && a.artist === artist);
-                            if (album) {
-                                this.methods.closeArtistModal(() => this.methods.openAlbumModal(album));
-                            }
-                        }
-                    });
-
-                    closeAlbumModalBtn.addEventListener('click', this.methods.closeAlbumModal);
-                    albumModal.addEventListener('click', (e) => {
-                        if (e.target.id === 'album-modal') this.methods.closeAlbumModal();
-                    });
-                    
-                    closeArtistModalBtn.addEventListener('click', this.methods.closeArtistModal);
-                    artistModal.addEventListener('click', (e) => {
-                        if (e.target.id === 'artist-modal') this.methods.closeArtistModal();
-                    });
-                },
-                openAlbumModal(album) {
-                    const { 
-                        albumModal, albumModalTitle, albumModalArtist, 
-                        albumModalAlbumArt, albumModalAlbumDetails, analysisWrapper 
-                    } = this.elements;
-                    
-                    if (!album) return;
-
-                    const albumSlug = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
-
-                    albumModalTitle.textContent = album.albumTitle;
-                    albumModalArtist.textContent = album.artist;
-                    albumModalArtist.href = `https://controlledfreedom.com/artists#${this.methods.slugify(album.artist)}`;
-                    
-                    albumModalAlbumArt.src = album.cover || '';
-                    albumModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
-                    albumModalAlbumArt.onerror = function() { this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
-
-                    const pivotalTrack = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks[0] : {};
-                    
-                    const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A').split(/, (?![^()]*\))/).map(personnel => {
-                        const match = personnel.trim().match(/(.+?)\s\((.+)\)/);
-                        if (match && this.state.artistsData.some(a => a.name === match[1].trim())) {
-                            return `<a href="https://controlledfreedom.com/artists#${this.methods.slugify(match[1].trim())}" class="clickable-link">${match[1].trim()}</a> (${match[2]})`;
-                        }
-                        return personnel;
-                    }).join(', ');
-
-                    const genres = album.genres ? (Array.isArray(album.genres) ? album.genres : String(album.genres).split(',')) : [];
-                    const genreTags = genres.map(g => {
-                        return `<a href="/genres.html" class="genre-tag" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</a>`
-                    }).join(' ');
-
-                    albumModalAlbumDetails.innerHTML = `
-                        <h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4>
-                        <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]">
-                            <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
-                            <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span>
-                            <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
-                            <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
-                        </div>
-                        <div class="mt-6 flex justify-end">
-                           <a href="/album/${albumSlug}" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-md transition-colors duration-300 no-underline">
-                                Read More &rarr;
-                           </a>
-                        </div>`;
-
-                    const analysisHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) 
-                        ? album.pivotalTracks.map(track => `
-                            <div class="mb-8 last:mb-0">
-                                <h5 class="text-2xl font-bold text-white">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
-                                <p class="liner-notes-text">${track.analysis}</p>
-                            </div>`).join('<hr class="border-stone-700 my-8">')
-                        : `<p class="liner-notes-text">${album.analysis || 'Analysis not available.'}</p>`;
-                    
-                    analysisWrapper.innerHTML = `<div id="modal-analysis-section">${analysisHtml}</div>`;
-
-                    albumModal.classList.remove('opacity-0', 'pointer-events-none');
-                    albumModal.querySelector('.modal-content').classList.remove('scale-95');
-                    this.elements.albumModalBody.scrollTop = 0;
-                },
-                closeAlbumModal(callback) {
-                    this.elements.albumModal.classList.add('opacity-0', 'pointer-events-none');
-                    this.elements.albumModal.querySelector('.modal-content').classList.add('scale-95');
-                    if (typeof callback === 'function') setTimeout(callback, 300);
-                },
-                openArtistModal(artist) {
-                    const { artistModal, artistModalTitle, artistModalBody } = this.elements;
-                    if (!artist) return;
-                    
-                    const artistProfile = this.state.fullArtistsData[artist.name] || artist;
-                    const artistData = this.state.artistsData.find(a => a.name === artist.name) || {};
-
-                    artistModalTitle.textContent = artist.name;
-
-                    const knownForHtml = artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-[var(--text-main)] mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : '';
-                    const bornInHtml = artistProfile.bornIn ? `<p class="mt-2 text-[var(--text-main)] text-sm"><strong class="font-bold">Born:</strong> ${artistProfile.bornIn}</p>` : '';
-
-                    const artistAlbums = (artistData.albums || [])
-                        .map(albumTitle => this.state.allAlbums.find(a => a.albumTitle === albumTitle))
-                        .filter(Boolean)
-                        .sort((a, b) => (a.year || 9999) - (b.year || 9999));
-
-                    const albumTimelineHtml = artistAlbums.map(album => `
-                        <li class="artist-modal-timeline-item">
-                            <strong class="text-[var(--text-muted)]">${album.year}:</strong> 
-                            <span class="clickable-link" data-action="open-album-from-artist-modal" data-album-title="${album.albumTitle}" data-artist="${album.artist}">
-                                ${album.albumTitle}
-                            </span>
-                        </li>
-                    `).join('');
-
-                    artistModalBody.innerHTML = `
-                        <div class="flex flex-col sm:flex-row gap-6">
-                            <div class="w-full sm:w-1/3 flex-shrink-0">
-                                <img src="images/${this.methods.slugify(artist.name)}.jpg" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)]" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
-                                ${bornInHtml}
-                                ${knownForHtml}
-                            </div>
-                            <div class="w-full sm:w-2/3">
-                                <h4 class="text-2xl text-[var(--text-main)] mb-2">Profile</h4>
-                                <p class="text-base text-[var(--text-muted)] leading-relaxed mb-4">${artistProfile.profile || 'No profile available.'}</p>
-                                <h4 class="text-2xl text-[var(--text-main)] mb-3">Key Album Appearances</h4>
-                                <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml || '<li>No appearances found in database.</li>'}</ul>
-                            </div>
-                        </div>
-                    `;
-
-                    artistModal.classList.remove('opacity-0', 'pointer-events-none');
-                    artistModal.querySelector('.modal-content').classList.remove('scale-95');
-                    artistModalBody.scrollTop = 0;
-                },
-                closeArtistModal(callback) {
-                    this.elements.artistModal.classList.add('opacity-0', 'pointer-events-none');
-                    this.elements.artistModal.querySelector('.modal-content').classList.add('scale-95');
-                    if (typeof callback === 'function') setTimeout(callback, 300);
                 },
                 setupOnThisDayFeature() {
                     const today = new Date();
                     const currentMonth = today.toLocaleString('en-US', { month: 'long' });
                     const currentDay = today.getDate();
                     
+                    // Find all tracks recorded on this day
                     const matchingTracks = [];
                     this.state.allAlbums.forEach(album => {
                         const tracks = album.pivotalTracks || (album.recordingDate ? [album] : []);
@@ -1112,6 +817,7 @@
                         });
                     });
 
+                    // Find all artists born on this day
                     const bornToday = [];
                     for (const artistName in this.state.fullArtistsData) {
                         const artist = this.state.fullArtistsData[artistName];
@@ -1124,44 +830,45 @@
                         }
                     }
 
-                    let recordedHtml = '';
-                    if (matchingTracks.length > 0) {
-                        const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
-                        this.state.onThisDayAlbum = featured.parentAlbum;
-                        recordedHtml = `
-                            <div class="on-this-day-item" data-action="open-otd-album-modal">
-                                <img src="${this.state.onThisDayAlbum.cover}" alt="Cover for ${this.state.onThisDayAlbum.albumTitle}">
+                    // Generate HTML for all recorded tracks
+                    let recordedHtml = matchingTracks.map(featured => {
+                        const album = featured.parentAlbum;
+                        const albumSlug = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
+                        const albumUrl = `/album/${albumSlug}`;
+                        return `
+                            <a href="${albumUrl}" class="on-this-day-item">
+                                <img src="${album.cover}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1c1917/f5f5f4?text=No+Img';">
                                 <div>
-                                    <p class="text-xs text-[var(--text-muted)] font-bold uppercase tracking-wider">On ${currentMonth} ${currentDay}, ${this.state.onThisDayAlbum.year}, the track...</p>
+                                    <p class="text-xs text-[var(--text-muted)] font-bold uppercase tracking-wider">On ${currentMonth} ${currentDay}, ${album.year}, the track...</p>
                                     <p class="text-lg font-bold text-[var(--text-main)] leading-tight">"${featured.title}"</p>
-                                    <p class="text-sm text-[var(--text-muted)]">from <strong>${this.state.onThisDayAlbum.albumTitle}</strong> by <strong>${this.state.onThisDayAlbum.artist}</strong> was recorded.</p>
+                                    <p class="text-sm text-[var(--text-muted)]">from <strong>${album.albumTitle}</strong> by <strong>${album.artist}</strong> was recorded.</p>
                                 </div>
-                            </div>
+                            </a>
                         `;
-                    }
+                    }).join('');
 
-                    let bornHtml = '';
-                    if (bornToday.length > 0) {
-                        const featuredArtist = bornToday[Math.floor(Math.random() * bornToday.length)];
-                        this.state.onThisDayArtist = featuredArtist;
+                    // Generate HTML for all artists born today
+                    let bornHtml = bornToday.map(featuredArtist => {
+                        const artistSlug = this.methods.slugify(featuredArtist.name);
+                        const artistUrl = `/artist/${artistSlug}`;
                         const year = featuredArtist.bornIn.split(',')[1].trim();
-                        bornHtml = `
-                            <div class="on-this-day-item" data-action="open-otd-artist-modal">
-                                <img src="images/${this.methods.slugify(featuredArtist.name)}.jpg" class="artist-photo" alt="Photo of ${featuredArtist.name}" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
+                        return `
+                            <a href="${artistUrl}" class="on-this-day-item">
+                                <img src="images/${artistSlug}.jpg" class="artist-photo" alt="Photo of ${featuredArtist.name}" onerror="this.onerror=null;this.src='images/artistplaceholder.jpg';">
                                 <div>
                                      <p class="text-xs text-[var(--text-muted)] font-bold uppercase tracking-wider">Born on ${currentMonth} ${currentDay}, ${year}</p>
                                     <p class="text-lg font-bold text-[var(--text-main)] leading-tight">${featuredArtist.name}</p>
                                     <p class="text-sm text-[var(--text-muted)]">${featuredArtist.instruments.slice(0, 2).join(', ')}</p>
                                 </div>
-                            </div>
+                            </a>
                         `;
-                    }
-
+                    }).join('');
+                    
                     if (recordedHtml || bornHtml) {
                         this.elements.onThisDayContainer.innerHTML = `
                             <div class="space-y-4">
-                                ${recordedHtml}
                                 ${bornHtml}
+                                ${recordedHtml}
                             </div>
                         `;
                     } else {
