@@ -23,7 +23,7 @@
             --border-color: #e7e5e4;
             --accent: #f97316;
             
-            /* Genre Colors from timeline_full.html */
+            /* Genre Colors */
             --genre-bebop: #a0522d;
             --genre-hard-bop: #8b5cf6;
             --genre-cool-jazz: #3b82f6;
@@ -42,7 +42,6 @@
             --text-muted: #a8a29e;
             --border-color: #44403c;
 
-            /* Dark Genre Colors */
             --genre-bebop: #b97245; 
             --genre-hard-bop: #6d28d9;
             --genre-cool-jazz: #2563eb;
@@ -87,15 +86,9 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .content-hidden { display: none; }
         
-        .album-page-container {
-            background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-        }
-        .dark .album-page-container { border-color: var(--border-color); }
-
         .analysis-section {
             background-color: #1a1a1a;
-            padding: 1.5rem; margin-top: 1.5rem;
+            padding: 1.5rem;
             border: 2px solid var(--text-main);
             box-shadow: 4px 4px 0px var(--text-main);
         }
@@ -121,7 +114,6 @@
         .dark .genre-tag { border-color: rgba(255,255,255,0.2); }
         .genre-tag:hover { transform: translateY(-2px); }
 
-        /* Genre Background Colors */
         .genre-bebop { background-color: var(--genre-bebop); }
         .genre-hard-bop { background-color: var(--genre-hard-bop); }
         .genre-cool-jazz { background-color: var(--genre-cool-jazz); }
@@ -132,13 +124,6 @@
         .genre-jazz-fusion { background-color: var(--genre-jazz-fusion); }
         .genre-default { background-color: var(--genre-default); color: var(--text-main); }
 
-        .clickable-link {
-            cursor: pointer; text-decoration: underline;
-            text-decoration-color: var(--accent);
-            transition: color 0.2s;
-        }
-        .clickable-link:hover { color: var(--accent); }
-        
         .dropdown-container { position: relative; }
         .dropdown-btn {
             font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
@@ -178,7 +163,7 @@
             transform: translateX(4px);
         }
 
-        /* New Styles for Redesign */
+        /* Redesigned Styles */
         .artist-lineup-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -219,18 +204,26 @@
             font-size: 0.75rem;
             color: var(--text-muted);
         }
-        .streaming-links a {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            font-weight: bold;
-            text-decoration: none;
+        .streaming-links-small a {
+            display: inline-block;
             transition: transform 0.2s;
+            color: var(--text-muted);
         }
-        .streaming-links a:hover {
-            transform: scale(1.05);
+        .streaming-links-small a:hover {
+            transform: scale(1.1);
+            color: var(--accent);
+        }
+        .tracklist ol {
+            list-style-type: decimal;
+            padding-left: 1.25rem;
+            color: var(--text-muted);
+        }
+        .tracklist li {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tracklist li:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
@@ -275,7 +268,7 @@
             </header>
         </div>
 
-        <main class="py-12">
+        <main class="py-8 md:py-12">
             <div id="album-content-wrapper" class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Album content will be injected here -->
                 <div id="album-placeholder" class="text-center py-20">
@@ -297,7 +290,6 @@
             state: {
                 allAlbums: [],
                 artistsData: [],
-                fullGenreColorMap: {},
             },
 
             init() {
@@ -364,10 +356,9 @@
                 Promise.all([
                     fetch('/database.json').then(res => res.json()),
                     fetch('/artists.json').then(res => res.json()),
-                    fetch('/genres.json').then(res => res.json()),
                     fetch('/legacy.json').then(res => res.json())
                 ])
-                .then(([dbData, artistProfiles, genreData, legacyData]) => {
+                .then(([dbData, artistProfiles, legacyData]) => {
                     const legacyAlbums = Object.values(legacyData.paths || {}).flatMap(p => p.albums || []);
                     const normalizedLegacyAlbums = legacyAlbums.map(album => ({
                         ...album,
@@ -458,79 +449,60 @@
                             </div>`;
                 }).join('<hr class="border-stone-700 my-8">');
 
-                const sortedAlbums = this.state.allAlbums
-                    .filter(a => a.pivotalTracks && a.pivotalTracks[0] && a.pivotalTracks[0].recordingDate)
-                    .sort((a,b) => new Date(a.pivotalTracks[0].recordingDate) - new Date(b.pivotalTracks[0].recordingDate));
-                
-                const albumIndex = sortedAlbums.findIndex(a => (a.albumTitle || a.title) === albumTitle && a.artist === album.artist);
-                const prevAlbum = albumIndex > 0 ? sortedAlbums[albumIndex - 1] : null;
-                const nextAlbum = albumIndex < sortedAlbums.length - 1 ? sortedAlbums[albumIndex + 1] : null;
-
-                const prevButtonHtml = prevAlbum ? `<a href="/album/${this.slugify(prevAlbum.artist)}-${this.slugify(prevAlbum.albumTitle || prevAlbum.title)}" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors">Previous Album</a>` : `<button class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold opacity-50 cursor-not-allowed" disabled>Previous Album</button>`;
-                const nextButtonHtml = nextAlbum ? `<a href="/album/${this.slugify(nextAlbum.artist)}-${this.slugify(nextAlbum.albumTitle || nextAlbum.title)}" class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold hover:bg-orange-500 transition-colors">Next Album</a>` : `<button class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-main)] rounded-sm font-bold opacity-50 cursor-not-allowed" disabled>Next Album</button>`;
+                const tracklistHtml = (album.tracklist || []).map((track, index) => `
+                    <li>
+                        <span class="font-bold text-[var(--text-main)]">${track.title}</span>
+                        <span class="float-right">${track.duration || ''}</span>
+                    </li>
+                `).join('');
 
                 const coverPath = `/images/${this.slugify(albumTitle)}.jpg`;
 
                 wrapper.innerHTML = `
-                    <div class="album-page-container rounded-sm shadow-2xl w-full max-w-6xl mx-auto flex flex-col">
-                        <!-- Header -->
-                        <div class="flex justify-between items-start p-4 md:p-6 border-b-2 border-[var(--text-main)] dark:border-[var(--border-color)] flex-shrink-0 bg-[var(--bg-secondary)]">
-                            <div>
-                                <h3 class="text-4xl md:text-5xl text-orange-500">${albumTitle}</h3>
-                                <a href="/artist/${this.slugify(album.artist)}" class="text-xl md:text-2xl text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">${album.artist}</a>
+                    <!-- Album Header -->
+                    <div class="flex flex-col md:flex-row items-start gap-6 md:gap-8 mb-8 md:mb-12">
+                        <img src="${coverPath}" class="w-full md:w-1/3 max-w-sm h-auto rounded-md border-2 border-[var(--text-main)] dark:border-[var(--border-color)] shadow-lg" alt="Cover for ${albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';">
+                        <div class="flex-1">
+                            <h2 class="text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)]">${albumTitle}</h2>
+                            <a href="/artist/${this.slugify(album.artist)}" class="text-2xl sm:text-3xl text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">${album.artist}</a>
+                            <div class="mt-4 flex flex-wrap gap-2">${genreTags || 'N/A'}</div>
+                            <div class="mt-4 grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)] items-center">
+                                <strong class="font-bold">Released:</strong> <span>${album.releaseDate || 'N/A'}</span>
+                                <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span>
+                                <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
                             </div>
-                            <a href="/timeline#year-${album.year}" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500" title="Back to Timeline">×</a>
+                            <div class="mt-4 flex items-center gap-4 streaming-links-small">
+                                <a href="#" target="_blank" rel="noopener noreferrer" title="Listen on Spotify">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.621 14.442a.75.75 0 01-1.06.216c-2.135-1.31-4.84-1.62-8.08-.888a.75.75 0 01-.84-.828c.12-2.332 1.7-4.338 4.91-5.832a.75.75 0 01.88.832c-2.353 1.116-4.044 2.52-4.32 4.032.276-.504 2.95-1.08 6.236.252a.75.75 0 01.216 1.06z"/></svg>
+                                </a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" title="Listen on Apple Music">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 14.168a.75.75 0 01-.75-.75V8.582a.75.75 0 011.5 0v6.836a.75.75 0 01-.75.75zm-3.5-2.668a.75.75 0 01-.75-.75V10.25a.75.75 0 011.5 0v2.5a.75.75 0 01-.75.75zm7 0a.75.75 0 01-.75-.75V10.25a.75.75 0 011.5 0v2.5a.75.75 0 01-.75.75z"/></svg>
+                                </a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" title="Listen on YouTube Music">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M21.582 7.243a2.78 2.78 0 00-1.943-1.943C17.92 4.5 12 4.5 12 4.5s-5.92 0-7.639.8c-.803.34-1.456.992-1.8 1.795C2.5 9.077 2.5 12 2.5 12s0 2.923.061 3.962c.344.803.997 1.455 1.8 1.795C6.08 18.5 12 18.5 12 18.5s5.92 0 7.639-.8c.803-.34 1.456-.992 1.799-1.795C21.5 14.923 21.5 12 21.5 12s0-2.923-.061-3.962c-.09-.23-.19-.45-.357-.695zM9.75 14.85V9.15l5.5 2.85-5.5 2.85z"/></svg>
+                                </a>
+                            </div>
                         </div>
-                        
-                        <!-- Main Content -->
-                        <div class="p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-                            <!-- Left Column: Art + Listen -->
-                            <div class="lg:col-span-1 space-y-6">
-                                <img src="${coverPath}" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" alt="Cover for ${albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';">
-                                
-                                <div>
-                                    <h4 class="text-xl text-[var(--text-main)] mb-3">Where to Listen</h4>
-                                    <div class="flex flex-col space-y-3 streaming-links">
-                                        <a href="#" target="_blank" rel="noopener noreferrer" style="background-color: #1DB954; color: white;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.621 14.442a.75.75 0 01-1.06.216c-2.135-1.31-4.84-1.62-8.08-.888a.75.75 0 01-.84-.828c.12-2.332 1.7-4.338 4.91-5.832a.75.75 0 01.88.832c-2.353 1.116-4.044 2.52-4.32 4.032.276-.504 2.95-1.08 6.236.252a.75.75 0 01.216 1.06z"/></svg>
-                                            <span>Spotify</span>
-                                        </a>
-                                        <a href="#" target="_blank" rel="noopener noreferrer" style="background-color: #FA233B; color: white;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 14.168a.75.75 0 01-.75-.75V8.582a.75.75 0 011.5 0v6.836a.75.75 0 01-.75.75zm-3.5-2.668a.75.75 0 01-.75-.75V10.25a.75.75 0 011.5 0v2.5a.75.75 0 01-.75.75zm7 0a.75.75 0 01-.75-.75V10.25a.75.75 0 011.5 0v2.5a.75.75 0 01-.75.75z"/></svg>
-                                            <span>Apple Music</span>
-                                        </a>
-                                        <a href="#" target="_blank" rel="noopener noreferrer" style="background-color: #FF0000; color: white;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M21.582 7.243a2.78 2.78 0 00-1.943-1.943C17.92 4.5 12 4.5 12 4.5s-5.92 0-7.639.8c-.803.34-1.456.992-1.8 1.795C2.5 9.077 2.5 12 2.5 12s0 2.923.061 3.962c.344.803.997 1.455 1.8 1.795C6.08 18.5 12 18.5 12 18.5s5.92 0 7.639-.8c.803-.34 1.456-.992 1.799-1.795C21.5 14.923 21.5 12 21.5 12s0-2.923-.061-3.962c-.09-.23-.19-.45-.357-.695zM9.75 14.85V9.15l5.5 2.85-5.5 2.85z"/></svg>
-                                            <span>YouTube Music</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Right Column: Details + Lineup + Tracks -->
-                            <div class="lg:col-span-2 space-y-6">
-                                <div>
-                                    <h4 class="text-xl text-[var(--text-main)] mb-3">Album Details</h4>
-                                    <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-3 text-base text-[var(--text-main)] items-center">
-                                        <strong class="font-bold">Genre(s):</strong> <div class="flex flex-wrap gap-2">${genreTags || 'N/A'}</div>
-                                        <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || 'N/A'}</span>
-                                        <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl text-[var(--text-main)] mb-3">Line-Up</h4>
-                                    <div class="artist-lineup-grid">${lineupHtml || 'N/A'}</div>
-                                </div>
-                                <div class="relative">
-                                    <div class="analysis-section">${pivotalTracksHtml || '<p class="liner-notes-text">No key tracks defined for this album.</p>'}</div>
+                    </div>
+                    
+                    <!-- Main Content Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                        <div class="lg:col-span-1 space-y-6">
+                            <div class="p-4 bg-[var(--bg-secondary)] rounded-md">
+                                <h4 class="text-xl text-[var(--text-main)] mb-3">Tracklist</h4>
+                                <div class="tracklist">
+                                    <ol>${tracklistHtml || '<li>Tracklist not available.</li>'}</ol>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Footer/Nav -->
-                        <div class="flex justify-between items-center p-4 border-t-2 border-[var(--text-main)] dark:border-[var(--border-color)] flex-shrink-0 bg-[var(--bg-secondary)]">
-                            ${prevButtonHtml}
-                            ${nextButtonHtml}
+                        <div class="lg:col-span-2 space-y-6">
+                             <div>
+                                <h4 class="text-xl text-[var(--text-main)] mb-3">Line-Up</h4>
+                                <div class="artist-lineup-grid">${lineupHtml || 'N/A'}</div>
+                            </div>
+                            <div class="relative">
+                                <div class="analysis-section">${pivotalTracksHtml || '<p class="liner-notes-text">No key tracks defined for this album.</p>'}</div>
+                            </div>
                         </div>
                     </div>
                 `;
