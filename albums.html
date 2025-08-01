@@ -45,6 +45,7 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.1em;
             font-size: 1.1rem;
+            color: var(--text-muted);
         }
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
@@ -249,7 +250,7 @@
                                     <a href="/legacy">Legacy Paths</a>
                                     <a href="/genres.html">Genres</a>
                                     <a href="/artists.html">Artists</a>
-                                    <a href="/albums.html" class="active">Albums</a>
+                                    <a href="/albums.html" class="nav-link active">Albums</a>
                                 </div>
                             </div>
                             <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
@@ -285,19 +286,31 @@
             
             <!-- Albums Grid Section -->
             <section id="albums" class="py-16 sm:py-20 bg-[var(--bg-secondary)]">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     
                     <!-- Filters Section -->
-                    <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-8 w-full max-w-3xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 w-full max-w-4xl mx-auto">
                         <!-- Search Input -->
-                        <div class="w-full sm:w-1/2">
-                            <label for="search-input" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">SEARCH BY ALBUM OR ARTIST:</label>
-                            <input type="text" id="search-input" placeholder="e.g., Kind of Blue" class="block w-full rounded-sm border-2 py-2 px-3 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold bg-[var(--bg-main)] border-[var(--text-main)] dark:border-[var(--border-color)] text-[var(--text-main)]">
+                        <div class="md:col-span-1">
+                            <label for="search-input" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">SEARCH:</label>
+                            <input type="text" id="search-input" placeholder="Album or Artist..." class="block w-full rounded-sm border-2 py-2 px-3 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold bg-[var(--bg-main)] border-[var(--text-main)] dark:border-[var(--border-color)] text-[var(--text-main)]">
                         </div>
                         <!-- Genre Filter Dropdown -->
-                        <div class="w-full sm:w-1/2 styled-select">
-                            <label for="genre-filter" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">FILTER BY GENRE:</label>
+                        <div class="md:col-span-1 styled-select">
+                            <label for="genre-filter" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">GENRE:</label>
                             <select id="genre-filter" class="block w-full rounded-sm border-2 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
+                            </select>
+                        </div>
+                        <!-- Sort By Filter Dropdown -->
+                        <div class="md:col-span-1 styled-select">
+                            <label for="sort-filter" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">SORT BY:</label>
+                            <select id="sort-filter" class="block w-full rounded-sm border-2 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
+                                <option value="title-asc">Album Title (A-Z)</option>
+                                <option value="title-desc">Album Title (Z-A)</option>
+                                <option value="artist-asc">Artist (A-Z)</option>
+                                <option value="artist-desc">Artist (Z-A)</option>
+                                <option value="year-desc">Year (Newest First)</option>
+                                <option value="year-asc">Year (Oldest First)</option>
                             </select>
                         </div>
                     </div>
@@ -355,6 +368,12 @@
 
             init() {
                 this.cacheDOMElements();
+                // Bind all methods to the instance
+                for (const key in this.methods) {
+                    if (typeof this.methods[key] === 'function') {
+                        this.methods[key] = this.methods[key].bind(this);
+                    }
+                }
                 this.methods.setupTheme();
                 this.methods.fetchData();
             },
@@ -364,6 +383,7 @@
                     loader: document.getElementById('loader'),
                     pageContent: document.getElementById('page-content'),
                     genreFilter: document.getElementById('genre-filter'),
+                    sortFilter: document.getElementById('sort-filter'),
                     searchInput: document.getElementById('search-input'),
                     albumGridContainer: document.getElementById('album-grid-container'),
                     paginationContainer: document.getElementById('pagination-container'),
@@ -378,17 +398,38 @@
 
             methods: {
                 fetchData() {
-                    fetch('/album_database.json')
-                        .then(res => res.json())
-                        .then(data => {
-                            this.state.allAlbums = data.albums.sort((a,b) => (a.albumTitle || a.title).localeCompare(b.albumTitle || b.title));
-                            this.methods.initializeAppUI();
-                        })
-                        .catch(error => {
-                            console.error('Error fetching album data:', error);
-                            this.elements.albumGridContainer.innerHTML = `<p class="text-red-500 col-span-full">Error loading albums.</p>`;
-                            this.methods.showPage();
-                        });
+                    Promise.all([
+                        fetch('/album_database.json').then(res => res.json()),
+                        fetch('/legacy.json').then(res => res.json())
+                    ])
+                    .then(([albumDb, legacyDb]) => {
+                        this.methods.processAndDeduplicateAlbums(albumDb.albums, legacyDb);
+                        this.methods.initializeAppUI();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching album data:', error);
+                        this.elements.albumGridContainer.innerHTML = `<p class="text-red-500 col-span-full">Error loading albums.</p>`;
+                        this.methods.showPage();
+                    });
+                },
+
+                processAndDeduplicateAlbums(dbAlbums, legacyDb) {
+                    const albumMap = new Map();
+                    const legacyAlbums = Object.values(legacyDb.paths || {}).flatMap(p => p.albums || []);
+                    const combined = [...dbAlbums, ...legacyAlbums];
+
+                    combined.forEach(album => {
+                        const title = album.albumTitle || album.title;
+                        const artist = album.artist;
+                        if (!title || !artist) return;
+
+                        const key = `${this.methods.slugify(artist)}-${this.methods.slugify(title)}`;
+                        if (!albumMap.has(key)) {
+                            albumMap.set(key, album);
+                        }
+                    });
+
+                    this.state.allAlbums = Array.from(albumMap.values());
                 },
             
                 showPage() {
@@ -432,22 +473,51 @@
                 },
 
                 renderAlbumGrid() {
-                    const { genreFilter, searchInput, albumGridContainer } = this.elements;
+                    const { genreFilter, sortFilter, searchInput, albumGridContainer } = this.elements;
                     
                     const selectedGenre = genreFilter.value;
+                    const sortOption = sortFilter.value;
                     const searchTerm = searchInput.value.toLowerCase().trim();
 
+                    // 1. Filter
                     let filteredAlbums = this.state.allAlbums.filter(album => {
                         const title = (album.albumTitle || album.title).toLowerCase();
                         const artist = (album.artist || '').toLowerCase();
                         const genres = Array.isArray(album.genres) ? album.genres : (album.genres || '').split(',').map(g => g.trim());
 
                         const nameMatch = title.includes(searchTerm) || artist.includes(searchTerm);
-                        const genreMatch = (selectedGenre === 'all' || genres.includes(selectedGenre));
+                        const genreMatch = (selectedGenre === 'all' || genres.some(g => g === selectedGenre));
                         
                         return nameMatch && genreMatch;
                     });
 
+                    // 2. Sort
+                    const getYear = (dateString) => {
+                        if (!dateString) return 0;
+                        const yearMatch = dateString.match(/\d{4}/);
+                        return yearMatch ? parseInt(yearMatch[0], 10) : 0;
+                    };
+
+                    filteredAlbums.sort((a, b) => {
+                        const titleA = (a.albumTitle || a.title).toLowerCase();
+                        const titleB = (b.albumTitle || b.title).toLowerCase();
+                        const artistA = (a.artist || '').toLowerCase();
+                        const artistB = (b.artist || '').toLowerCase();
+                        const yearA = getYear(a.releaseDate || a.recordingDate);
+                        const yearB = getYear(b.releaseDate || b.recordingDate);
+
+                        switch (sortOption) {
+                            case 'title-asc': return titleA.localeCompare(titleB);
+                            case 'title-desc': return titleB.localeCompare(titleA);
+                            case 'artist-asc': return artistA.localeCompare(artistB);
+                            case 'artist-desc': return artistB.localeCompare(artistA);
+                            case 'year-asc': return yearA - yearB;
+                            case 'year-desc': return yearB - yearA;
+                            default: return 0;
+                        }
+                    });
+
+                    // 3. Paginate
                     const startIndex = (this.state.currentPage - 1) * this.state.albumsPerPage;
                     const endIndex = startIndex + this.state.albumsPerPage;
                     const paginatedAlbums = filteredAlbums.slice(startIndex, endIndex);
@@ -541,6 +611,7 @@
                     };
 
                     this.elements.genreFilter.addEventListener('change', handleFilterChange);
+                    this.elements.sortFilter.addEventListener('change', handleFilterChange);
                     this.elements.searchInput.addEventListener('input', handleFilterChange);
                     
                     this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
@@ -573,15 +644,8 @@
                         genreFilter.appendChild(option);
                     });
                 },
-            },
-        };
-
-        // Bind the context of 'this' for all methods
-        for (const key in AlbumApp.methods) {
-            if (typeof AlbumApp.methods[key] === 'function') {
-                AlbumApp.methods[key] = AlbumApp.methods[key].bind(AlbumApp);
             }
-        }
+        };
 
         document.addEventListener('DOMContentLoaded', () => AlbumApp.init());
     </script>
