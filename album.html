@@ -103,7 +103,6 @@
         .analysis-section h5 { color: #f5f5f4; }
         .liner-notes-text {
             font-family: 'Lora', serif;
-            font-size: 1.1rem;
             line-height: 1.7;
             color: #d4d4d2; 
         }
@@ -206,11 +205,9 @@
         .artist-name {
             font-weight: bold;
             color: var(--text-main);
-            font-size: 0.875rem;
             line-height: 1.2;
         }
         .artist-instrument {
-            font-size: 0.75rem;
             color: var(--text-muted);
         }
         .streaming-links-small a {
@@ -277,7 +274,6 @@
         }
         .nav-arrow .nav-label {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.25rem;
             color: var(--text-muted);
         }
         .nav-arrow:not(.disabled):hover .nav-label {
@@ -285,11 +281,10 @@
         }
         .nav-arrow .nav-album-title {
             font-weight: bold;
-            font-size: 1.1rem;
         }
     </style>
 </head>
-<body class="text-stone-900">
+<body class="text-stone-900 text-base">
 
     <div id="loader" class="loader"><div class="loader-spinner"></div></div>
 
@@ -533,13 +528,13 @@
                             <a href="/artist/${artistSlug}" class="artist-lineup-item">
                                 <img src="/images/${artistSlug}.jpg" alt="${name}" class="artist-photo" onerror="this.onerror=null;this.src='https://placehold.co/80x80/292524/a8a29e?text=${name.charAt(0)}';">
                                 <div>
-                                    <p class="artist-name">${name}</p>
-                                    <p class="artist-instrument">${instrument}</p>
+                                    <p class="artist-name text-sm">${name}</p>
+                                    <p class="artist-instrument text-xs">${instrument}</p>
                                 </div>
                             </a>
                         `;
                     }
-                    return `<div>${personnel}</div>`;
+                    return `<div class="text-sm">${personnel}</div>`;
                 }).join('');
                 
                 const pivotalTracksHtml = (album.pivotalTracks || []).map(track => {
@@ -551,12 +546,12 @@
                                         <audio controls class="styled-player w-full" src="/songs/${songFileName}.mp3" preload="none"></audio>
                                     </div>
                                 </div>
-                                <p class="liner-notes-text mt-3">${track.analysis || 'No analysis available.'}</p>
+                                <p class="liner-notes-text text-lg mt-3">${track.analysis || 'No analysis available.'}</p>
                             </div>`;
                 }).join('<hr class="border-stone-700 my-8">');
 
                 const tracklistHtml = (album.tracklist || []).map((track, index) => `
-                    <li>
+                    <li class="text-sm">
                         <span class="font-bold text-[var(--text-main)]">${track.title}</span>
                         <span class="float-right">${track.duration || ''}</span>
                     </li>
@@ -580,8 +575,8 @@
                     
                     const textHtml = `
                         <div class="nav-text-wrapper">
-                            <span class="nav-label">${label}</span>
-                            <span class="nav-album-title">${title}</span>
+                            <span class="nav-label text-sm uppercase tracking-wider">${label}</span>
+                            <span class="nav-album-title text-lg">${title}</span>
                         </div>`;
                     const arrowHtml = `<div class="arrow-icon">${arrowChar}</div>`;
 
@@ -628,7 +623,7 @@
                                 <div>
                                     <h4 class="text-xl text-[var(--text-main)] mb-3">Album Details</h4>
                                     <div class="mb-4 flex flex-wrap gap-2">${genreTags || 'N/A'}</div>
-                                    <div class="space-y-1 text-base text-[var(--text-main)]">
+                                    <div class="space-y-1 text-base">
                                         <p><strong class="font-semibold">Released:</strong> <span class="text-[var(--text-muted)]">${album.releaseDate || 'N/A'}</span></p>
                                         <p><strong class="font-semibold">Recorded:</strong> <span class="text-[var(--text-muted)]">${album.recordingDate || 'N/A'}</span></p>
                                         <p><strong class="font-semibold">Label:</strong> <span class="text-[var(--text-muted)]">${album.label || 'N/A'}</span></p>
@@ -644,7 +639,7 @@
                              <!-- About Section (Full Width) -->
                             <div class="mt-8 pt-6 border-t border-[var(--border-color)]">
                                 <h3 class="text-3xl text-[var(--text-main)] mb-4">About The Album</h3>
-                                <p class="text-base text-[var(--text-muted)] leading-relaxed font-serif italic">${album.description || 'No description available.'}</p>
+                                <p class="text-lg text-[var(--text-muted)] leading-relaxed font-serif italic">${album.description || 'No description available.'}</p>
                             </div>
                         </div>
                     </div>
@@ -662,7 +657,7 @@
                         <div class="lg:col-span-2 space-y-6">
                             <!-- Key Track Analysis -->
                             <div>
-                                <div class="analysis-section">${pivotalTracksHtml || '<p class="liner-notes-text">No key tracks defined for this album.</p>'}</div>
+                                <div class="analysis-section">${pivotalTracksHtml || '<p class="liner-notes-text text-lg">No key tracks defined for this album.</p>'}</div>
                             </div>
                         </div>
                     </div>
