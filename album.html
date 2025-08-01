@@ -420,7 +420,8 @@
                     return;
                 }
 
-                fetch('/album_database.json')
+                // This line is updated to append a unique timestamp, forcing a fresh fetch.
+                fetch(`/album_database.json?t=${Date.now()}`)
                     .then(res => res.json())
                     .then(dbData => {
                         this.state.allAlbums = dbData.albums;
