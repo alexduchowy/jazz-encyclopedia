@@ -523,8 +523,15 @@
                     } else {
                         paginatedAlbums.forEach(album => {
                             const albumTitle = album.albumTitle || album.title;
-                            const urlSlug = `${this.methods.slugifyForUrl(album.artist)}-${this.methods.slugifyForUrl(albumTitle)}`;
-                            const imageSlug = this.methods.slugifyForImagePath(albumTitle);
+                            const artistName = album.artist;
+
+                            const urlSlug = `${this.methods.slugifyForUrl(artistName)}-${this.methods.slugifyForUrl(albumTitle)}`;
+                            
+                            let imageSlug = this.methods.slugifyForImagePath(albumTitle);
+                            if (albumTitle.toLowerCase() === artistName.toLowerCase()) {
+                                imageSlug += '2';
+                            }
+                            
                             const coverPath = `/images/${imageSlug}.jpg`;
 
                             const card = document.createElement('a');
@@ -537,7 +544,7 @@
                                 </div>
                                 <div class="p-3 text-left">
                                     <h4 class="font-bold text-sm text-[var(--text-main)] truncate">${albumTitle}</h4>
-                                    <p class="text-xs text-[var(--text-muted)] truncate">${album.artist}</p>
+                                    <p class="text-xs text-[var(--text-muted)] truncate">${artistName}</p>
                                 </div>`;
                             albumGridContainer.appendChild(card);
                         });
@@ -625,12 +632,9 @@
 
                 slugifyForImagePath(text) {
                     if (!text) return '';
+                    // This version is permissive to match filenames exactly
                     return text.toString().toLowerCase()
-                        .replace(/\s+/g, '-')
-                        .replace(/[^\w\-,.]+/g, '') // Keep words, hyphens, commas, and periods
-                        .replace(/\-\-+/g, '-')
-                        .replace(/^-+/, '')
-                        .replace(/-+$/, '');
+                        .replace(/\s+/g, '-'); // Just replace spaces with hyphens
                 },
                 
                 populateGenreFilter(albums) {
