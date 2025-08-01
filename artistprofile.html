@@ -12,41 +12,113 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
-    <!-- Custom CSS Styling (copied from artists.html for consistency) -->
+    <!-- Custom CSS Styling -->
     <style>
         :root {
-            --bg-main: #f5f5f4; --bg-secondary: #e7e5e4; --bg-header: rgba(255,255,255,0.8);
-            --text-main: #1c1917; --text-muted: #44403c; --border-color: #e7e5e4;
-            --accent: #f97316; --yellow-accent: #facc15; --legacy-blue: #3b82f6;
+            --bg-main: #f5f5f4;
+            --bg-secondary: #e7e5e4;
+            --bg-header: rgba(255,255,255,0.8);
+            --text-main: #1c1917;
+            --text-muted: #44403c;
+            --border-color: #e7e5e4;
+            --accent: #f97316;
         }
         .dark {
-            --bg-main: #1c1917; --bg-secondary: #292524; --bg-header: rgba(28, 25, 23, 0.8);
-            --text-main: #f5f5f4; --text-muted: #a8a29e; --border-color: #44403c;
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
         }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-main); }
-        h1, h2, h3, h4, h5 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
-        .nav-link { transition: color 0.2s; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 1.1rem; }
-        .nav-link:hover, .nav-link.active { color: var(--accent); }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+        }
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
         .nav-bar-behaviour { display: none; }
         @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
-        #loader { position: fixed; inset: 0; background-color: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 100; }
-        .loader-spinner { border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        
+        #loader {
+            position: fixed; inset: 0;
+            background-color: var(--bg-main);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .content-hidden { display: none; }
-        .clickable-link { cursor: pointer; text-decoration: underline; text-decoration-color: var(--accent); transition: color 0.2s; }
-        .clickable-link:hover { color: var(--accent); }
-        .dark .clickable-link { color: var(--accent); }
-        .dark .clickable-link:hover { color: #fb923c; }
+        
+        /* Mobile Menu Styling */
         #mobile-menu-panel { transition: transform 0.3s ease-in-out; background-color: var(--bg-main); }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
-        .timeline { list-style: none; padding-left: 1rem; border-left: 2px solid var(--bg-secondary); }
-        .dark .timeline { border-left-color: var(--border-color); }
-        .timeline-item { position: relative; padding-bottom: 1.5rem; padding-left: 1.5rem; }
-        .timeline-item::before {
-            content: ''; position: absolute; left: -0.45rem; top: 0.25rem; width: 0.8rem; height: 0.8rem;
-            border-radius: 9999px; background-color: var(--bg-secondary); border: 2px solid var(--text-main);
+
+        /* Dropdown Styling */
+        .dropdown-container { position: relative; }
+        .dropdown-list {
+            position: absolute;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 4px 4px 0px var(--text-main);
+            z-index: 20; width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
         }
-        .dark .timeline-item::before { background-color: var(--bg-secondary); border-color: var(--border-color); }
+        .dropdown-container:hover .dropdown-list {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dark .dropdown-list {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dark .dropdown-list a { color: white; }
+        .dropdown-list a:hover {
+            background-color: var(--accent); color: var(--bg-main);
+            transform: translateX(4px);
+        }
+        
+        /* Artist Profile Specific Styles */
+        .artist-image-container {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+            box-shadow: 6px 6px 0px var(--text-main);
+        }
+        .dark .artist-image-container {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .artist-placeholder {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100%;
+            background-color: var(--text-main);
+        }
+        .artist-placeholder svg { width: 50%; height: 50%; color: var(--text-muted); }
+
         .known-for-box {
             background-color: var(--accent); color: var(--bg-main); padding: 0.75rem 1.25rem;
             border: 2px solid var(--text-main); box-shadow: 3px 3px 0px var(--text-main);
@@ -54,29 +126,23 @@
             font-weight: 600; font-size: 1rem;
         }
         .dark .known-for-box { border-color: var(--border-color); box-shadow: none; color: #FFFFFF; }
-        .dropdown-container { position: relative; }
-        .dropdown-btn {
-            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
-            transition: all 0.2s ease; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
-            color: var(--text-muted);
+
+        .timeline { list-style: none; padding-left: 1rem; border-left: 2px solid var(--border-color); }
+        .timeline-item { position: relative; padding-bottom: 1.5rem; padding-left: 1.5rem; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -0.5rem; top: 0.35rem; width: 0.9rem; height: 0.9rem;
+            border-radius: 9999px; background-color: var(--bg-secondary); border: 2px solid var(--text-main);
         }
-        .dark .dropdown-btn { color: var(--text-main); }
-        .dropdown-btn:hover { color: var(--accent); }
-        .dropdown-list {
-            position: absolute; background-color: var(--bg-main); border: 2px solid var(--text-main);
-            border-radius: 0.25rem; box-shadow: 4px 4px 0px var(--text-main); z-index: 20; width: 200px;
-            opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.2s ease;
+        .dark .timeline-item::before { background-color: var(--bg-secondary); border-color: var(--text-main); }
+        
+        .clickable-link { 
+            cursor: pointer; 
+            text-decoration: underline; 
+            text-decoration-color: var(--accent); 
+            text-underline-offset: 2px;
+            transition: color 0.2s; 
         }
-        .dropdown-container:hover .dropdown-list { opacity: 1; visibility: visible; transform: translateY(0); }
-        .dark .dropdown-list { border-color: var(--border-color); box-shadow: none; }
-        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
-        .dropdown-list a:hover { background-color: var(--accent); color: var(--bg-main); transform: translateX(4px); }
-        .artist-placeholder {
-            display: flex; align-items: center; justify-content: center;
-            width: 100%; height: 100%;
-            background-color: var(--text-main);
-        }
-        .artist-placeholder svg { width: 50%; height: 50%; color: var(--text-muted); }
+        .clickable-link:hover { color: var(--accent); }
     </style>
 </head>
 <body>
@@ -90,11 +156,11 @@
                 <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
                 <div class="flex items-center">
                     <div class="nav-bar-behaviour items-center space-x-8">
-                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
-                        <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
-                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium">Home</a>
+                        <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium">TV</a>
+                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium">Timeline</a>
                         <div class="dropdown-container">
-                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium dropdown-btn">
+                             <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
                                 Legacy
                                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                             </a>
@@ -104,8 +170,8 @@
                                 <a href="/artists.html" class="active">Artists</a>
                             </div>
                         </div>
-                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
-                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium">Blog</a>
+                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                             <span>@controlledjazz</span>
                         </a>
@@ -114,6 +180,7 @@
                         <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
+                    <!-- Hamburger Menu Button -->
                     <div class="lg:hidden ml-2">
                         <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
                             <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -123,22 +190,16 @@
             </nav>
         </header>
 
-        <main>
-            <section id="artist-profile-container" class="py-16 sm:py-20 bg-[var(--bg-secondary)] min-h-screen">
-                <div id="artist-profile-content" class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <!-- Artist profile will be dynamically injected here -->
-                </div>
-            </section>
+        <main class="py-12 md:py-16">
+            <div id="artist-profile-content" class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Artist profile will be dynamically injected here -->
+            </div>
         </main>
 
         <!-- Footer -->
-        <footer class="bg-stone-900 text-stone-200 py-8">
+        <footer class="bg-stone-900 text-stone-200 py-8 mt-12">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
-                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
-                <div class="mt-6 border-t border-stone-700 pt-6">
-                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
-                </div>
+                <p id="footer-copyright" class="text-xs text-stone-400"></p>
             </div>
         </footer>
     </div>
@@ -177,12 +238,14 @@
 
             init() {
                 this.cacheDOMElements();
+                // Bind all methods to the instance
                 for (const key in this.methods) {
                     if (typeof this.methods[key] === 'function') {
                         this.methods[key] = this.methods[key].bind(this);
                     }
                 }
                 this.methods.setupTheme();
+                this.methods.setupMobileMenu(); // Setup menu early
                 this.methods.fetchDataAndRender();
             },
 
@@ -218,7 +281,6 @@
                         
                         this.methods.processAndSortData(legacyData);
                         this.methods.renderProfile();
-                        this.methods.setupMobileMenu();
                         this.methods.setupGeneralEventListeners();
                         this.methods.showPage();
                     })
@@ -276,8 +338,8 @@
                                 </li>`;
                     }).join('');
 
-                    const bornInfo = artistProfile.bornIn ? `<p class="mt-2 text-[var(--text-main)] text-sm"><strong class="font-bold">Born:</strong> ${artistProfile.bornIn}</p>` : '';
-                    const lifespanInfo = artistProfile.lifespan ? `<p class="mt-1 text-[var(--text-muted)] text-xs">${artistProfile.lifespan}</p>` : '';
+                    const bornInfo = artistProfile.bornIn ? `<p><strong class="font-semibold text-[var(--text-main)] dark:text-white">Born:</strong> <span class="text-[var(--text-muted)]">${artistProfile.bornIn}</span></p>` : '';
+                    const lifespanInfo = artistProfile.lifespan ? `<p class="text-lg text-[var(--text-muted)]">${artistProfile.lifespan}</p>` : '';
                     
                     const topCollaborators = this.methods.getTopCollaborators(artist.name);
                     let collaboratorsHtml = '';
@@ -288,47 +350,65 @@
                             const collaboratorSlug = this.methods.slugify(collaborator.name);
                             return `
                                 <a href="/artist/${collaboratorSlug}" class="block text-center transition-transform duration-200 hover:scale-105">
-                                    <div class="w-24 h-24 mx-auto">
-                                        <img src="/images/${collaboratorSlug}.jpg" alt="${collaborator.name}" class="w-full h-full object-cover rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-full rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md flex items-center justify-center bg-stone-300 dark:bg-stone-600\\'><svg class=\\'w-12 h-12 text-stone-500\\' xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                    <div class="w-20 h-20 mx-auto">
+                                        <img src="/images/${collaboratorSlug}.jpg" alt="${collaborator.name}" class="w-full h-full object-cover rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-full rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md flex items-center justify-center bg-stone-300 dark:bg-stone-600\\'><svg class=\\'w-10 h-10 text-stone-500\\' xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
                                     </div>
-                                    <p class="mt-2 text-sm font-bold text-[var(--text-muted)]">${collaborator.name}</p>
+                                    <p class="mt-2 text-xs font-bold text-[var(--text-muted)]">${collaborator.name}</p>
                                 </a>`;
                         }).join('');
 
                         collaboratorsHtml = `
-                            <div class="mt-12 pt-8 border-t-2 border-[var(--border-color)]">
-                                <h3 class="text-3xl text-[var(--text-main)] mb-6 text-center">Top Collaborators</h3>
-                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-6 max-w-lg mx-auto">
+                            <div class="mt-8 pt-6 border-t border-[var(--border-color)]">
+                                <h3 class="text-2xl text-[var(--text-main)] mb-6">Top Collaborators</h3>
+                                <div class="grid grid-cols-3 sm:grid-cols-4 gap-4">
                                     ${collaboratorCards}
                                 </div>
                             </div>`;
                     }
 
                     this.elements.profileContainer.innerHTML = `
-                        <h1 class="text-6xl md:text-7xl text-orange-500 text-center mb-2">${artist.name}</h1>
-                        ${lifespanInfo ? `<p class="text-center text-lg text-[var(--text-muted)] mb-12">${lifespanInfo}</p>` : ''}
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                            <div class="lg:col-span-1">
-                                <img src="/images/${this.methods.slugify(artist.name)}.jpg" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)] shadow-lg mb-6" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-96 artist-placeholder rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)] shadow-lg\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
-                                <p class="text-[var(--text-main)] text-base mb-2"><strong class="font-bold">Instruments:</strong> ${[...artist.instruments].join(', ')}</p>
-                                ${bornInfo}
-                                ${artistProfile.knownFor ? `<div class="mt-8"><h4 class="text-2xl text-[var(--text-main)] mb-3 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
+                        <div class="flex flex-col md:flex-row items-start gap-6 md:gap-8">
+                            <!-- Left Column: Image, Details -->
+                            <div class="w-full md:w-1/3 max-w-sm flex-shrink-0">
+                                <div class="artist-image-container rounded-md">
+                                    <img src="/images/${this.methods.slugify(artist.name)}.jpg" class="w-full h-auto rounded-md" alt="Photo of ${artist.name}" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-96 artist-placeholder rounded-sm\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                </div>
+                                <div class="mt-6 p-4 bg-[var(--bg-secondary)] rounded-md">
+                                    <h4 class="text-xl text-[var(--text-main)] mb-3">Artist Details</h4>
+                                    <div class="space-y-1 text-base">
+                                        <p><strong class="font-semibold text-[var(--text-main)] dark:text-white">Instruments:</strong> <span class="text-[var(--text-muted)]">${[...artist.instruments].join(', ')}</span></p>
+                                        ${bornInfo}
+                                    </div>
+                                    ${artistProfile.knownFor ? `<div class="mt-6 pt-4 border-t border-[var(--border-color)]"><h4 class="text-lg text-[var(--text-main)] mb-3 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
+                                </div>
                             </div>
-                            <div class="lg:col-span-2">
-                                <h3 class="text-4xl text-[var(--text-main)] mb-4 border-b-2 border-[var(--border-color)] pb-2">Profile</h3>
-                                <p class="text-base md:text-lg text-[var(--text-muted)] leading-relaxed mb-8">${artistProfile.profile}</p>
+
+                            <!-- Right Column: Name, Bio, Albums, Collaborators -->
+                            <div class="flex-1">
+                                <h1 class="text-5xl sm:text-6xl lg:text-7xl text-[var(--text-main)]">${artist.name}</h1>
+                                ${lifespanInfo}
                                 
-                                <h3 class="text-4xl text-[var(--text-main)] mb-6">Key Album Appearances</h3>
-                                <ul class="timeline max-h-96 overflow-y-auto pr-4">${albumTimelineHtml || '<li class="text-[var(--text-muted)]">No key appearances found in timeline.</li>'}</ul>
+                                <div class="mt-8 pt-6 border-t border-[var(--border-color)]">
+                                    <h3 class="text-2xl text-[var(--text-main)] mb-4">Profile</h3>
+                                    <p class="text-lg text-[var(--text-muted)] leading-relaxed font-serif italic">${artistProfile.profile}</p>
+                                </div>
+
+                                <div class="mt-8 pt-6 border-t border-[var(--border-color)]">
+                                    <h3 class="text-2xl text-[var(--text-main)] mb-6">Key Album Appearances</h3>
+                                    <ul class="timeline max-h-96 overflow-y-auto pr-4">${albumTimelineHtml || '<li class="text-[var(--text-muted)]">No key appearances found in timeline.</li>'}</ul>
+                                </div>
+                                
+                                ${collaboratorsHtml}
                             </div>
                         </div>
-                        ${collaboratorsHtml}
                     `;
                 },
-
-                // --- Helper methods copied from artists.html script ---
-                showPage() { this.elements.loader.style.display = 'none'; this.elements.pageContent.classList.remove('content-hidden'); },
+                
+                showPage() { 
+                    this.elements.loader.style.display = 'none'; 
+                    this.elements.pageContent.classList.remove('content-hidden'); 
+                },
+                
                 setupTheme() {
                     const applyTheme = (theme) => {
                         if (theme === 'dark') {
@@ -349,18 +429,30 @@
                         applyTheme(newTheme);
                     });
                 },
+
                 setupMobileMenu() {
                     const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
-                    if (!mobileMenuButton) return;
-                    const openMenu = () => mobileMenuOverlay.classList.remove('hidden');
-                    const closeMenu = () => mobileMenuOverlay.classList.add('hidden');
+                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
+
+                    const openMenu = () => {
+                        mobileMenuOverlay.classList.remove('hidden');
+                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                    };
+                    const closeMenu = () => {
+                        mobileMenuPanel.style.transform = 'translateX(100%)';
+                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                    };
+
                     mobileMenuButton.addEventListener('click', openMenu);
                     mobileMenuCloseButton.addEventListener('click', closeMenu);
                     document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+                    document.querySelectorAll('#mobile-nav-links a').forEach(link => link.addEventListener('click', closeMenu));
                 },
+
                 setupGeneralEventListeners() {
                     this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
                 },
+                
                 getCanonicalName(name) {
                      if (!name) return '';
                     const trimmedName = name.trim();
@@ -378,6 +470,7 @@
                     if (trimmedName === 'Phineas Newborn') return 'Phineas Newborn Jr.';
                     return trimmedName;
                 },
+                
                 isLikelyIndividual(name) {
                     if (!name) return false;
                     const groupKeywords = ['Ensemble', 'Quartet', 'Quintet', 'Sextet', 'Septet', 'Trio', '&', ' and ', 'With', ' featuring ', 'Orchestra', 'Arkestra', 'Band', 'Lifetime', 'Messengers'];
@@ -385,6 +478,7 @@
                     if (groupKeywords.some(keyword => name.includes(keyword))) return this.methods.getCanonicalName(name) !== name;
                     return true;
                 },
+                
                 processAndSortData(legacyData) {
                     const artistsMap = new Map();
                     const { slugify, getCanonicalName, isLikelyIndividual } = this.methods;
@@ -427,6 +521,7 @@
                     }
                     this.state.artistsData = Array.from(artistsMap.values()).map(artist => ({...artist, instruments: Array.from(artist.instruments), albums: Array.from(artist.albums)}));
                 },
+                
                 getTopCollaborators(artistName) {
                     const collaborations = new Map();
                     const canonicalArtistName = this.methods.getCanonicalName(artistName);
@@ -446,6 +541,7 @@
                     });
                     return Array.from(collaborations.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3).map(e => e[0]);
                 },
+                
                 slugify(text) {
                     if (!text) return '';
                     return text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
