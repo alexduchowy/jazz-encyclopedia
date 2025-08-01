@@ -626,19 +626,29 @@
                         <div class="flex-1">
                             <h2 class="text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)]">${albumTitle}</h2>
                             <a href="/artist/${this.slugify(album.artist)}" class="text-2xl sm:text-3xl text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">${album.artist}</a>
-                            <div class="mt-4 flex flex-wrap gap-2">${genreTags || 'N/A'}</div>
                             
-                            <!-- REDESIGNED SECTION: Details and Line-up in 2 columns -->
-                            <div class="mt-6 pt-6 border-t border-[var(--border-color)] grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                                <!-- Column 1: Album Details -->
-                                <div>
-                                    <h4 class="text-xl text-[var(--text-main)] mb-3">Album Details</h4>
-                                    <div class="space-y-1 text-base text-[var(--text-main)]">
-                                        <p><strong class="font-semibold">Released:</strong> <span class="text-[var(--text-muted)]">${album.releaseDate || 'N/A'}</span></p>
-                                        <p><strong class="font-semibold">Recorded:</strong> <span class="text-[var(--text-muted)]">${album.recordingDate || 'N/A'}</span></p>
-                                        <p><strong class="font-semibold">Label:</strong> <span class="text-[var(--text-muted)]">${album.label || 'N/A'}</span></p>
+                            <!-- REDESIGNED SECTION -->
+                            <div class="mt-6 pt-6 border-t border-[var(--border-color)] grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
+                                <!-- Column 1: Details, Genre, About -->
+                                <div class="space-y-6">
+                                    <div>
+                                        <h4 class="text-xl text-[var(--text-main)] mb-3">Album Details</h4>
+                                        <div class="space-y-2 text-base text-[var(--text-main)]">
+                                            <p><strong class="font-semibold">Released:</strong> <span class="text-[var(--text-muted)]">${album.releaseDate || 'N/A'}</span></p>
+                                            <p><strong class="font-semibold">Recorded:</strong> <span class="text-[var(--text-muted)]">${album.recordingDate || 'N/A'}</span></p>
+                                            <p><strong class="font-semibold">Label:</strong> <span class="text-[var(--text-muted)]">${album.label || 'N/A'}</span></p>
+                                            <div class="pt-1">
+                                                <strong class="font-semibold">Genre:</strong>
+                                                <div class="mt-1 flex flex-wrap gap-2">${genreTags || 'N/A'}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="pt-6 border-t border-[var(--border-color)]">
+                                        <h4 class="text-xl text-[var(--text-main)] mb-3">About The Album</h4>
+                                        <p class="text-base text-[var(--text-muted)] leading-relaxed font-serif italic">${album.description || 'No description available.'}</p>
                                     </div>
                                 </div>
+
                                 <!-- Column 2: Line-up -->
                                 <div>
                                     <h4 class="text-xl text-[var(--text-main)] mb-3">Line-Up</h4>
@@ -659,11 +669,6 @@
                             </div>
                         </div>
                         <div class="lg:col-span-2 space-y-6">
-                            <!-- Description Section -->
-                            <div class="p-6 bg-[var(--bg-secondary)] rounded-md">
-                                <h3 class="text-3xl text-[var(--text-main)] mb-4">About The Album</h3>
-                                <p class="text-base text-[var(--text-muted)] leading-relaxed font-serif italic">${album.description || 'No description available.'}</p>
-                            </div>
                             <!-- Key Track Analysis -->
                             <div>
                                 <div class="analysis-section">${pivotalTracksHtml || '<p class="liner-notes-text">No key tracks defined for this album.</p>'}</div>
