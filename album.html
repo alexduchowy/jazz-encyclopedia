@@ -100,14 +100,14 @@
         .genre-tag {
             padding: 0.25rem 0.75rem; border-radius: 9999px;
             font-size: 0.875rem; font-weight: 600;
-            color: var(--text-main); /* FIX: Use theme variable for text color */
+            color: var(--text-main);
             border: 2px solid rgba(0,0,0,0.1);
             text-decoration: none; display: inline-block;
             transition: transform 0.2s;
         }
         .dark .genre-tag { 
             border-color: rgba(255,255,255,0.2); 
-            color: #fff; /* Ensure text is white on dark backgrounds in dark mode */
+            color: #fff;
         }
         .genre-tag:hover { transform: translateY(-2px); }
 
@@ -405,7 +405,6 @@
         const AlbumPage = {
             state: {
                 allAlbums: [],
-                artistsData: [],
             },
 
             init() {
@@ -503,8 +502,19 @@
                 fetch(`/album_database.json?t=${Date.now()}`)
                     .then(res => res.json())
                     .then(dbData => {
-                        // Sort albums by recording date for chronological navigation
-                        this.state.allAlbums = dbData.albums.sort((a, b) => new Date(a.recordingDate) - new Date(b.recordingDate));
+                        const albumMap = new Map();
+                        dbData.albums.forEach(album => {
+                            const title = album.albumTitle || album.title;
+                            const artist = album.artist;
+                            if (!title || !artist) return;
+                            const key = `${this.slugifyForUrl(artist)}-${this.slugifyForUrl(title)}`;
+                            if (!albumMap.has(key)) {
+                                albumMap.set(key, album);
+                            }
+                        });
+                        const uniqueAlbums = Array.from(albumMap.values());
+
+                        this.state.allAlbums = uniqueAlbums.sort((a, b) => new Date(a.recordingDate) - new Date(b.recordingDate));
                         
                         const currentIndex = this.state.allAlbums.findIndex(a => {
                             const currentAlbumId = `${this.slugifyForUrl(a.artist)}-${this.slugifyForUrl(a.albumTitle || a.title)}`;
