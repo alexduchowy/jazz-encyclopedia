@@ -467,14 +467,21 @@
                 });
             },
 
-            slugify(text) {
+            slugifyForUrl(text) {
                 if (!text) return '';
                 return text.toString().toLowerCase()
                     .replace(/\s+/g, '-')
-                    .replace(/[^\w\-]+/g, '')
+                    .replace(/[^\w\-]+/g, '') // Remove all non-word chars except hyphens
                     .replace(/\-\-+/g, '-')
                     .replace(/^-+/, '')
                     .replace(/-+$/, '');
+            },
+
+            slugifyForImagePath(text) {
+                if (!text) return '';
+                // This version is permissive to match filenames exactly
+                return text.toString().toLowerCase()
+                    .replace(/\s+/g, '-'); // Just replace spaces with hyphens
             },
 
             getAlbumIdFromUrl() {
@@ -500,7 +507,7 @@
                         this.state.allAlbums = dbData.albums.sort((a, b) => new Date(a.recordingDate) - new Date(b.recordingDate));
                         
                         const currentIndex = this.state.allAlbums.findIndex(a => {
-                            const currentAlbumId = `${this.slugify(a.artist)}-${this.slugify(a.albumTitle || a.title)}`;
+                            const currentAlbumId = `${this.slugifyForUrl(a.artist)}-${this.slugifyForUrl(a.albumTitle || a.title)}`;
                             return currentAlbumId === albumId;
                         });
 
@@ -530,7 +537,8 @@
 
             renderAlbum(album, currentIndex, allAlbums) {
                 const albumTitle = album.albumTitle || album.title;
-                document.title = `${albumTitle} by ${album.artist} - Controlled Freedom`;
+                const artistName = album.artist;
+                document.title = `${albumTitle} by ${artistName} - Controlled Freedom`;
                 const wrapper = document.getElementById('album-content-wrapper');
                 
                 let genreArray = [];
@@ -542,7 +550,7 @@
                 }
 
                 const genreTags = genreArray.map(genre => {
-                    const genreSlug = this.slugify(genre);
+                    const genreSlug = this.slugifyForUrl(genre);
                     return `<a href="/genres.html#${genreSlug}" class="genre-tag genre-${genreSlug}">${genre.trim()}</a>`
                 }).join(' ');
                 
@@ -552,7 +560,7 @@
                     if (match) {
                         const name = match[1].trim();
                         const instrument = match[2].trim();
-                        const artistSlug = this.slugify(name);
+                        const artistSlug = this.slugifyForUrl(name);
                         return `
                             <a href="/artist/${artistSlug}" class="artist-lineup-item">
                                 <img src="/images/${artistSlug}.jpg" alt="${name}" class="artist-photo" onerror="this.onerror=null;this.src='https://placehold.co/80x80/292524/a8a29e?text=${name.charAt(0)}';">
@@ -567,7 +575,7 @@
                 }).join('');
                 
                 const pivotalTracksHtml = (album.pivotalTracks || []).map(track => {
-                    const songFileName = this.slugify(track.title);
+                    const songFileName = this.slugifyForUrl(track.title);
                     return `
                     <div class="analysis-dropdown mb-6 p-4 rounded-md bg-[var(--bg-secondary)]">
                         <div class="flex justify-between items-center gap-4 flex-wrap">
@@ -596,7 +604,11 @@
                     </li>
                 `).join('');
 
-                const coverPath = `/images/${this.slugify(albumTitle)}.jpg`;
+                let imageSlug = this.slugifyForImagePath(albumTitle);
+                if (albumTitle.toLowerCase() === artistName.toLowerCase()) {
+                    imageSlug += '2';
+                }
+                const coverPath = `/images/${imageSlug}.jpg`;
 
                 // Navigation Logic
                 const prevAlbum = allAlbums[currentIndex - 1];
@@ -607,7 +619,7 @@
                         return `<div class="nav-arrow disabled ${direction}"></div>`;
                     }
                     const title = albumData.albumTitle || albumData.title;
-                    const slug = `${this.slugify(albumData.artist)}-${this.slugify(title)}`;
+                    const slug = `${this.slugifyForUrl(albumData.artist)}-${this.slugifyForUrl(title)}`;
                     const isPrev = direction === 'prev';
                     const arrowChar = isPrev ? '←' : '→';
                     const label = isPrev ? 'Previous Album' : 'Next Album';
@@ -665,7 +677,7 @@
                         <!-- Right Column: Title, Details, Lineup, About -->
                         <div class="flex-1">
                             <h2 class="text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)]">${albumTitle}</h2>
-                            <a href="/artist/${this.slugify(album.artist)}" class="text-2xl sm:text-3xl text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">${album.artist}</a>
+                            <a href="/artist/${this.slugifyForUrl(artistName)}" class="text-2xl sm:text-3xl text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">${artistName}</a>
                             
                             <div class="mt-6 pt-6 border-t border-[var(--border-color)] grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
                                 <div>
@@ -704,7 +716,7 @@
                 
                 // Add error handlers for audio players
                 (album.pivotalTracks || []).forEach(track => {
-                    const songFileName = this.slugify(track.title);
+                    const songFileName = this.slugifyForUrl(track.title);
                     const player = wrapper.querySelector(`audio[src="/songs/${songFileName}.mp3"]`);
                     if (player) {
                         player.onerror = () => {
