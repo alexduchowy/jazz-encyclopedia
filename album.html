@@ -285,6 +285,29 @@
         .nav-arrow .nav-album-title {
             font-weight: bold;
         }
+
+        /* Dropdown for Key Track Analysis */
+        .analysis-dropdown-trigger {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+        .analysis-dropdown-content {
+            display: none;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .analysis-dropdown.open .analysis-dropdown-content {
+            display: block;
+        }
+        .analysis-dropdown-arrow {
+            transition: transform 0.3s ease;
+        }
+        .analysis-dropdown.open .analysis-dropdown-arrow {
+            transform: rotate(90deg);
+        }
     </style>
 </head>
 <body class="text-stone-900 text-base">
@@ -542,14 +565,22 @@
                 const pivotalTracksHtml = (album.pivotalTracks || []).map(track => {
                     const songFileName = this.slugify(track.title);
                     return `
-                    <div class="mb-6 p-4 rounded-md bg-[var(--bg-secondary)]">
-                        <div class="flex justify-between items-center gap-4 flex-wrap mb-3">
+                    <div class="analysis-dropdown mb-6 p-4 rounded-md bg-[var(--bg-secondary)]">
+                        <div class="flex justify-between items-center gap-4 flex-wrap">
                             <h5 class="text-2xl font-bold text-[var(--text-main)] flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
                             <div id="player-container-${songFileName}" class="w-full sm:w-52 h-[35px] flex-shrink-0">
                                 <audio controls class="styled-player w-full" src="/songs/${songFileName}.mp3" preload="none"></audio>
                             </div>
                         </div>
-                        <p class="liner-notes-text text-lg">${track.analysis || 'No analysis available.'}</p>
+                        <button class="analysis-dropdown-trigger w-full text-left mt-3 flex items-center text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">
+                            <svg class="analysis-dropdown-arrow h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                            </svg>
+                            <span class="font-bold">Show Analysis</span>
+                        </button>
+                        <div class="analysis-dropdown-content">
+                            <p class="liner-notes-text text-lg">${track.analysis || 'No analysis available.'}</p>
+                        </div>
                     </div>
                     `;
                 }).join('');
@@ -679,6 +710,20 @@
                             }
                         };
                     }
+                });
+
+                // Setup dropdowns for key track analysis
+                wrapper.querySelectorAll('.analysis-dropdown-trigger').forEach(trigger => {
+                    trigger.addEventListener('click', () => {
+                        const dropdownContainer = trigger.closest('.analysis-dropdown');
+                        const buttonText = trigger.querySelector('span');
+                        dropdownContainer.classList.toggle('open');
+                        if (dropdownContainer.classList.contains('open')) {
+                            buttonText.textContent = 'Hide Analysis';
+                        } else {
+                            buttonText.textContent = 'Show Analysis';
+                        }
+                    });
                 });
 
                 document.getElementById('loader').style.display = 'none';
