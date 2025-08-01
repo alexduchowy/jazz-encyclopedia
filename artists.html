@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jazz Artist Profile - Controlled Freedom</title>
+    <title>Jazz Artists - Controlled Freedom</title>
     <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
     
     <!-- External Libraries & Fonts -->
@@ -14,6 +14,7 @@
     
     <!-- Custom CSS Styling -->
     <style>
+        /* Light Theme (Default) */
         :root {
             --bg-main: #f5f5f4;
             --bg-secondary: #e7e5e4;
@@ -22,7 +23,11 @@
             --text-muted: #44403c;
             --border-color: #e7e5e4;
             --accent: #f97316;
+            --yellow-accent: #facc15;
+            --legacy-blue: #3b82f6;
         }
+
+        /* Dark Theme */
         .dark {
             --bg-main: #1c1917;
             --bg-secondary: #292524;
@@ -31,28 +36,118 @@
             --text-muted: #a8a29e;
             --border-color: #44403c;
         }
+
+        /* Base body styling */
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
         }
+        
         h1, h2, h3, h4, h5 {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
         }
+
         .nav-link {
             transition: color 0.2s;
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.1em;
             font-size: 1.1rem;
-            color: var(--text-muted);
         }
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
         }
         .nav-bar-behaviour { display: none; }
         @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
+
+       .section-header {
+            transform: rotate(-1deg);
+            display: inline-block;
+            background-color: var(--accent);
+            color: #FFFFFF;
+            padding: 0.25rem 1rem;
+            margin-bottom: 1rem;
+        }
         
+        .modal { transition: opacity 0.3s ease; }
+        .modal-content {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+        }
+        .dark .modal-content { border-color: var(--border-color); }
+        .modal.opacity-0 .modal-content {
+              opacity: 0;
+              transform: scale(0.95) translateY(10px);
+        }
+        
+        .artist-card {
+            background-color: var(--bg-main);
+            border-radius: 0.25rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 4px 4px 0px var(--text-main);
+            border: 2px solid var(--text-main);
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        .dark .artist-card {
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px #000;
+        }
+        .artist-card:hover {
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 8px 8px 0px var(--accent) !important;
+        }
+        .dark .artist-card:hover {
+            border-color: #000 !important;
+        }
+        .artist-card.bandleader { 
+            box-shadow: 4px 4px 0px var(--accent); 
+        }
+        .artist-card.influential-sideman { 
+            box-shadow: 4px 4px 0px var(--yellow-accent);
+        }
+        .artist-card.legacy-artist {
+            box-shadow: 4px 4px 0px var(--legacy-blue);
+        }
+        
+        .artist-card .artist-photo-container { height: 192px; width: 100%; }
+        .artist-card img {
+              width: 100%; height: 100%;
+              object-fit: cover; object-position: center;
+              filter: grayscale(100%); transition: filter 0.3s ease;
+        }
+         .artist-card:hover img { filter: grayscale(0%); }
+        .artist-placeholder {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100%;
+            background-color: var(--text-main);
+        }
+        .artist-placeholder svg { width: 50%; height: 50%; color: var(--text-muted); }
+        
+        #artist-grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            align-items: start; /* Prevents cards from stretching vertically */
+        }
+        @media (min-width: 640px) { #artist-grid-container { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 768px) { #artist-grid-container { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 1280px) { #artist-grid-container { grid-template-columns: repeat(6, 1fr); } }
+        
+        .styled-select select {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 1.2em;
+            background-color: var(--bg-main);
+            border-color: var(--text-main);
+            color: var(--text-main);
+        }
+        .dark .styled-select select { border-color: var(--border-color); }
+
         #loader {
             position: fixed; inset: 0;
             background-color: var(--bg-main);
@@ -66,14 +161,63 @@
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         .content-hidden { display: none; }
         
-        /* Mobile Menu Styling */
+        .clickable-link {
+            cursor: pointer; text-decoration: underline;
+            text-decoration-color: var(--accent);
+            transition: color 0.2s;
+        }
+        .clickable-link:hover { color: var(--accent); }
+        .dark .clickable-link { color: var(--accent); }
+        .dark .clickable-link:hover { color: #fb923c; }
+
         #mobile-menu-panel { transition: transform 0.3s ease-in-out; background-color: var(--bg-main); }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
-
-        /* Dropdown Styling */
+        
+        .artist-modal-timeline {
+            list-style: none; padding-left: 1rem;
+            border-left: 2px solid var(--bg-secondary);
+        }
+        .dark .artist-modal-timeline { border-left-color: var(--border-color); }
+        .artist-modal-timeline-item { position: relative; padding-bottom: 1rem; padding-left: 1.5rem; }
+        .artist-modal-timeline-item::before {
+            content: ''; position: absolute;
+            left: -0.4rem; top: 0.25rem;
+            width: 0.65rem; height: 0.65rem;
+            border-radius: 9999px;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--text-main);
+        }
+        .dark .artist-modal-timeline-item::before {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+        }
+        
+        .known-for-box {
+            background-color: var(--accent); color: var(--bg-main);
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--text-main);
+            box-shadow: 2px 2px 0px var(--text-main);
+            transform: rotate(-2deg); display: inline-block;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem;
+        }
+        .dark .known-for-box {
+            border-color: var(--border-color);
+            box-shadow: none;
+            color: #FFFFFF;
+        }
+        
         .dropdown-container { position: relative; }
+        .dropdown-btn {
+            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
+            transition: all 0.2s ease; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem;
+            color: var(--text-muted);
+        }
+        .dark .dropdown-btn { color: var(--text-main); }
+        .dropdown-btn:hover { color: var(--accent); }
         .dropdown-list {
             position: absolute;
             background-color: var(--bg-main);
@@ -96,112 +240,274 @@
             box-shadow: none;
         }
         .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
-        .dark .dropdown-list a { color: white; }
         .dropdown-list a:hover {
             background-color: var(--accent); color: var(--bg-main);
             transform: translateX(4px);
         }
-        
-        /* Artist Profile Specific Styles */
-        .artist-image-container {
-            background-color: var(--bg-secondary);
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .pagination-btn {
+            padding: 0.5rem 1rem;
             border: 2px solid var(--text-main);
-            box-shadow: 6px 6px 0px var(--text-main);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 0.25rem;
         }
-        .dark .artist-image-container {
-            border-color: var(--border-color);
-            box-shadow: none;
+        .dark .pagination-btn { border-color: var(--border-color); }
+        .pagination-btn:hover:not(:disabled) {
+            background-color: var(--accent);
+            color: #FFFFFF;
+            border-color: var(--accent);
         }
-        .artist-placeholder {
-            display: flex; align-items: center; justify-content: center;
-            width: 100%; height: 100%;
-            background-color: var(--text-main);
+        .pagination-btn.active {
+            background-color: var(--accent);
+            color: #FFFFFF;
+            border-color: var(--accent);
         }
-        .artist-placeholder svg { width: 50%; height: 50%; color: var(--text-muted); }
+        .pagination-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
 
-        .known-for-box {
-            background-color: var(--accent); color: var(--bg-main); padding: 0.75rem 1.25rem;
-            border: 2px solid var(--text-main); box-shadow: 3px 3px 0px var(--text-main);
-            transform: rotate(-2deg); display: inline-block; font-family: 'Inter', sans-serif;
-            font-weight: 600; font-size: 1rem;
+        .banner-section {
+            position: relative;
+            width: 100%;
+            height: 35vh;
+            max-height: 200px;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            border-bottom: 4px solid var(--text-main);
         }
-        .dark .known-for-box { border-color: var(--border-color); box-shadow: none; color: #FFFFFF; }
-
-        .timeline { list-style: none; padding-left: 1rem; border-left: 2px solid var(--border-color); }
-        .timeline-item { position: relative; padding-bottom: 1.5rem; padding-left: 1.5rem; }
-        .timeline-item::before {
-            content: ''; position: absolute; left: -0.5rem; top: 0.35rem; width: 0.9rem; height: 0.9rem;
-            border-radius: 9999px; background-color: var(--bg-secondary); border: 2px solid var(--text-main);
+        .dark .banner-section { border-bottom-color: var(--border-color); }
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.3;
+            animation: banner-fade-in 2s ease-out forwards;
         }
-        .dark .timeline-item::before { background-color: var(--bg-secondary); border-color: var(--text-main); }
-        
-        .clickable-link { 
-            cursor: pointer; 
-            text-decoration: underline; 
-            text-decoration-color: var(--accent); 
-            text-underline-offset: 2px;
-            transition: color 0.2s; 
+        @keyframes banner-fade-in {
+            from { opacity: 0; transform: scale(1.05); }
+            to { opacity: 0.3; transform: scale(1); }
         }
-        .clickable-link:hover { color: var(--accent); }
+        .banner-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1rem;
+            color: #f5f5f4;
+        }
+        .typewriter h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.75rem;
+            max-width: 90vw;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            overflow: hidden;
+            border-right: .15em solid var(--accent);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .1em;
+            animation:
+                typing 3.5s steps(40, end),
+                blink-caret .75s step-end infinite;
+        }
+        .banner-subtitle {
+            font-size: 0.9rem;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent); }
+        }
+        @media (min-width: 768px) {
+            .banner-section {
+                height: 30vh;
+                max-height: 250px;
+            }
+            .typewriter h2 {
+                font-size: 3rem;
+                max-width: none;
+            }
+            .banner-subtitle {
+                font-size: 1.125rem;
+            }
+        }
+        .collaborator-card {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .collaborator-card:hover {
+            transform: scale(1.05);
+        }
+        /* Style for the new "Read More" button in the modal */
+        .profile-button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            background-color: var(--accent);
+            color: #FFFFFF !important;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s ease;
+            text-align: center;
+        }
+        .profile-button:hover {
+            background-color: #dd6b20; /* A darker orange */
+        }
     </style>
 </head>
-<body>
+<body class="text-stone-900">
 
     <div id="loader" class="loader"><div class="loader-spinner"></div></div>
 
     <div id="page-content" class="content-hidden">
         <!-- Standardized Sticky Header -->
-        <header class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
-            <nav class="container mx-auto flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
-                <div class="flex items-center">
-                    <div class="nav-bar-behaviour items-center space-x-8">
-                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium">Home</a>
-                        <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium">TV</a>
-                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium">Timeline</a>
-                        <div class="dropdown-container">
-                             <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
-                                Legacy
-                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                            </a>
-                            <div class="dropdown-list">
-                                <a href="/legacy">Legacy Paths</a>
-                                <a href="/genres.html">Genres</a>
-                                <a href="/artists.html" class="active">Artists</a>
+        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+            <header class="container mx-auto h-full">
+                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
+                    <div class="flex items-center">
+                        <div class="nav-bar-behaviour items-center space-x-8">
+                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                            <div class="dropdown-container">
+                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium dropdown-btn">
+                                    Legacy
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </a>
+                                <div class="dropdown-list">
+                                    <a href="/legacy">Legacy Paths</a>
+                                    <a href="/genres.html">Genres</a>
+                                    <a href="/artists.html" class="active">Artists</a>
+                                </div>
                             </div>
+                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                                <span>@controlledjazz</span>
+                            </a>
                         </div>
-                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium">Blog</a>
-                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                            <span>@controlledjazz</span>
-                        </a>
-                    </div>
-                    <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
-                        <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                    </button>
-                    <!-- Hamburger Menu Button -->
-                    <div class="lg:hidden ml-2">
-                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
-                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                         </button>
+                        <!-- Hamburger Menu Button -->
+                        <div class="lg:hidden ml-2">
+                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </nav>
-        </header>
+                </nav>
+            </header>
+        </div>
 
-        <main class="py-12 md:py-16">
-            <div id="artist-profile-content" class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Artist profile will be dynamically injected here -->
-            </div>
+
+        <main>
+            <!-- Banner Section -->
+            <section class="banner-section">
+                <img src="images/artists-banner.jpg" alt="Jazz musicians on stage" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop';">
+                <div class="banner-overlay">
+                    <div class="typewriter">
+                        <h2>The Architects</h2>
+                    </div>
+                    <p class="banner-subtitle text-stone-300 max-w-3xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Explore the musicians who defined an era.</p>
+                </div>
+            </section>
+            
+            <!-- Key Artists Grid Section -->
+            <section id="artists" class="py-16 sm:py-20 bg-[var(--bg-secondary)]">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    
+                    <!-- Filters Section -->
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-8 w-full max-w-3xl mx-auto">
+                        <!-- Search Input -->
+                        <div class="w-full sm:w-1/2">
+                            <label for="search-input" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">SEARCH BY NAME:</label>
+                            <input type="text" id="search-input" placeholder="e.g., Miles Davis" class="block w-full rounded-sm border-2 py-2 px-3 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold bg-[var(--bg-main)] border-[var(--text-main)] dark:border-[var(--border-color)] text-[var(--text-main)]">
+                        </div>
+                        <!-- Instrument Filter Dropdown -->
+                        <div class="w-full sm:w-1/2 styled-select">
+                            <label for="instrument-filter" class="block text-sm font-medium text-[var(--text-muted)] mb-2 text-left">FILTER BY INSTRUMENT:</label>
+                            <select id="instrument-filter" class="block w-full rounded-sm border-2 py-2 pl-3 pr-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 font-bold">
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Color Key Guide -->
+                    <div id="color-key-guide" class="flex justify-center items-center gap-4 sm:gap-6 mb-8 flex-wrap text-sm text-[var(--text-muted)]">
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-full" style="background-color: var(--accent);"></span>
+                            <span>Timeline Bandleader</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-full" style="background-color: var(--legacy-blue);"></span>
+                            <span>Legacy Bandleader</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-full" style="background-color: var(--yellow-accent);"></span>
+                            <span>Influential Sideman (4+ Albums)</span>
+                        </div>
+                    </div>
+
+                    <!-- Artist Grid Container -->
+                    <div id="artist-grid-container" class="min-h-[600px]">
+                        <!-- Artist cards will be injected here -->
+                    </div>
+
+                    <!-- Pagination Container -->
+                    <div id="pagination-container" class="pagination-container"></div>
+                </div>
+            </section>
         </main>
 
         <!-- Footer -->
-        <footer class="bg-stone-900 text-stone-200 py-8 mt-12">
+        <footer class="bg-stone-900 text-stone-200 py-8">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <p id="footer-copyright" class="text-xs text-stone-400"></p>
+                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
+                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
+                <div class="mt-6 border-t border-stone-700 pt-6">
+                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
+                    <p class="text-xs text-stone-500 mt-2">Disclaimer: All music and images are the property of their respective copyright holders. This is a non-profit project for educational purposes only.</p>
+                </div>
             </div>
         </footer>
+    </div>
+    
+    <!-- Modals -->
+    <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
+             <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
+                 <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
+                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+             </div>
+             <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
     </div>
 
     <!-- Mobile Menu Overlay -->
@@ -210,7 +516,7 @@
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
             <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                 <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
                 <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
                 <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
                 <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
@@ -225,48 +531,58 @@
         </div>
     </div>
 
+    <!-- Main Application Script -->
     <script>
-        const ProfileApp = {
+        const ArtistApp = {
+            // Application State
             state: {
                 albums: [],
                 artistProfiles: {},
                 artistsData: [],
                 styleMatrix: {},
-                legacyData: {}
+                currentPage: 1,
+                artistsPerPage: 24,
+                legacyData: {} // Store legacy data for modal
             },
+
+            // DOM Elements
             elements: {},
 
+            // Initialization
             init() {
                 this.cacheDOMElements();
-                // Bind all methods to the instance
+                // Bind all methods in the 'methods' object to the ArtistApp instance
                 for (const key in this.methods) {
                     if (typeof this.methods[key] === 'function') {
                         this.methods[key] = this.methods[key].bind(this);
                     }
                 }
                 this.methods.setupTheme();
-                this.methods.setupMobileMenu(); // Setup menu early
-                this.methods.fetchDataAndRender();
+                this.methods.fetchData();
             },
-
+            
             cacheDOMElements() {
                 this.elements = {
                     loader: document.getElementById('loader'),
                     pageContent: document.getElementById('page-content'),
-                    profileContainer: document.getElementById('artist-profile-content'),
-                    footerCopyright: document.getElementById('footer-copyright'),
-                    themeToggle: document.getElementById('theme-toggle'),
-                    themeIconLight: document.getElementById('theme-icon-light'),
-                    themeIconDark: document.getElementById('theme-icon-dark'),
+                    artistModal: document.getElementById('artist-modal'),
+                    instrumentFilter: document.getElementById('instrument-filter'),
+                    searchInput: document.getElementById('search-input'),
+                    artistGridContainer: document.getElementById('artist-grid-container'),
+                    paginationContainer: document.getElementById('pagination-container'),
                     mobileMenuButton: document.getElementById('mobile-menu-button'),
                     mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
+                    footerCopyright: document.getElementById('footer-copyright'),
+                    themeToggle: document.getElementById('theme-toggle'),
+                    themeIconLight: document.getElementById('theme-icon-light'),
+                    themeIconDark: document.getElementById('theme-icon-dark'),
                 };
             },
 
             methods: {
-                fetchDataAndRender() {
+                fetchData() {
                     Promise.all([
                         fetch('/database.json').then(res => res.json()),
                         fetch('/artists.json').then(res => res.json()),
@@ -277,185 +593,71 @@
                         this.state.albums = dbData.albums;
                         this.state.artistProfiles = artistProfileData;
                         this.state.styleMatrix = genreData;
-                        this.state.legacyData = legacyData;
+                        this.state.legacyData = legacyData; // Store for later use
                         
-                        this.methods.processAndSortData(legacyData);
-                        this.methods.renderProfile();
-                        this.methods.setupGeneralEventListeners();
-                        this.methods.showPage();
+                        this.methods.initializeAppUI(legacyData);
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
-                        this.elements.profileContainer.innerHTML = `<div class="text-center p-8">
-                            <h2 class="text-2xl font-bold text-red-600">Failed to Load Artist Data</h2>
-                            <p class="text-[var(--text-muted)] mt-2">Could not fetch required data files. Please try again later.</p>
+                        this.elements.pageContent.innerHTML = `<div class="text-center p-8">
+                            <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
+                            <p class="text-[var(--text-muted)] mt-2">Could not fetch all required database files. Please ensure all .json files are available.</p>
                             <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
                         </div>`;
                         this.methods.showPage();
                     });
                 },
-
-                renderProfile() {
-                    const path = window.location.pathname;
-                    const slug = path.substring(path.lastIndexOf('/') + 1);
-                    
-                    if (!slug) {
-                        this.elements.profileContainer.innerHTML = `<h1 class="text-4xl text-center text-orange-500">No artist specified.</h1>`;
-                        return;
-                    }
-
-                    const artist = this.state.artistsData.find(a => this.methods.slugify(a.name) === slug);
-
-                    if (!artist || !artist.profile || artist.profile.profile === 'No profile available.') {
-                        this.elements.profileContainer.innerHTML = `<h1 class="text-4xl text-center text-orange-500">Artist profile not found for "${slug.replace(/-/g, ' ')}".</h1>`;
-                        document.title = `Profile not found - Controlled Freedom`;
-                        return;
-                    }
-                    
-                    document.title = `${artist.name} - Controlled Freedom`;
-
-                    const artistProfile = artist.profile;
-                    
-                    const allKnownAlbums = [...this.state.albums, ...Object.values(this.state.legacyData?.paths || {}).flatMap(p => p.albums || [])];
-
-                    const artistAlbumsWithYear = Array.from(artist.albums)
-                        .map(albumTitle => {
-                            const foundAlbum = allKnownAlbums.find(a => (a.albumTitle || a.title) === albumTitle);
-                            return foundAlbum ? { year: foundAlbum.year, albumTitle: foundAlbum.albumTitle || foundAlbum.title, artist: foundAlbum.artist } : null;
-                        })
-                        .filter(Boolean)
-                        .sort((a, b) => a.year - b.year);
-                    
-                    const isLandmark = (albumTitle) => Object.values(this.state.styleMatrix.genres).some(genre => genre.landmarkAlbums?.some(title => title.toLowerCase() === albumTitle.toLowerCase()));
-
-                    const albumTimelineHtml = artistAlbumsWithYear.map(album => {
-                        const landmarkIcon = isLandmark(album.albumTitle) ? '<span class="text-yellow-400 ml-2" title="Landmark Album">★</span>' : '';
-                        const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
-                        return `<li class="timeline-item">
-                                    <strong class="text-[var(--text-muted)]">${album.year}:</strong> 
-                                    <a href="/album/${albumId}" target="_blank" rel="noopener noreferrer" class="clickable-link">${album.albumTitle}</a>
-                                    ${landmarkIcon}
-                                </li>`;
-                    }).join('');
-
-                    const bornInfo = artistProfile.bornIn ? `<p><strong class="font-semibold text-[var(--text-main)] dark:text-white">Born:</strong> <span class="text-[var(--text-muted)]">${artistProfile.bornIn}</span></p>` : '';
-                    const lifespanInfo = artistProfile.lifespan ? `<p class="text-lg text-[var(--text-muted)]">${artistProfile.lifespan}</p>` : '';
-                    
-                    const topCollaborators = this.methods.getTopCollaborators(artist.name);
-                    let collaboratorsHtml = '';
-                    if (topCollaborators.length > 0) {
-                        const collaboratorCards = topCollaborators.map(name => {
-                            const collaborator = this.state.artistsData.find(a => a.name === name);
-                            if (!collaborator) return '';
-                            const collaboratorSlug = this.methods.slugify(collaborator.name);
-                            return `
-                                <a href="/artist/${collaboratorSlug}" class="block text-center transition-transform duration-200 hover:scale-105">
-                                    <div class="w-20 h-20 mx-auto">
-                                        <img src="/images/${collaboratorSlug}.jpg" alt="${collaborator.name}" class="w-full h-full object-cover rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-full rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md flex items-center justify-center bg-stone-300 dark:bg-stone-600\\'><svg class=\\'w-10 h-10 text-stone-500\\' xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
-                                    </div>
-                                    <p class="mt-2 text-xs font-bold text-[var(--text-muted)]">${collaborator.name}</p>
-                                </a>`;
-                        }).join('');
-
-                        collaboratorsHtml = `
-                            <div class="mt-8 pt-6 border-t border-[var(--border-color)]">
-                                <h3 class="text-2xl text-[var(--text-main)] mb-6">Top Collaborators</h3>
-                                <div class="grid grid-cols-3 sm:grid-cols-4 gap-4">
-                                    ${collaboratorCards}
-                                </div>
-                            </div>`;
-                    }
-
-                    this.elements.profileContainer.innerHTML = `
-                        <div class="flex flex-col md:flex-row items-start gap-6 md:gap-8">
-                            <!-- Left Column: Image, Details -->
-                            <div class="w-full md:w-1/3 max-w-sm flex-shrink-0">
-                                <div class="artist-image-container rounded-md">
-                                    <img src="/images/${this.methods.slugify(artist.name)}.jpg" class="w-full h-auto rounded-md" alt="Photo of ${artist.name}" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-96 artist-placeholder rounded-sm\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
-                                </div>
-                                <div class="mt-6 p-4 bg-[var(--bg-secondary)] rounded-md">
-                                    <h4 class="text-xl text-[var(--text-main)] mb-3">Artist Details</h4>
-                                    <div class="space-y-1 text-base">
-                                        <p><strong class="font-semibold text-[var(--text-main)] dark:text-white">Instruments:</strong> <span class="text-[var(--text-muted)]">${[...artist.instruments].join(', ')}</span></p>
-                                        ${bornInfo}
-                                    </div>
-                                    ${artistProfile.knownFor ? `<div class="mt-6 pt-4 border-t border-[var(--border-color)]"><h4 class="text-lg text-[var(--text-main)] mb-3 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
-                                </div>
-                            </div>
-
-                            <!-- Right Column: Name, Bio, Albums, Collaborators -->
-                            <div class="flex-1">
-                                <h1 class="text-5xl sm:text-6xl lg:text-7xl text-[var(--text-main)]">${artist.name}</h1>
-                                ${lifespanInfo}
-                                
-                                <div class="mt-8 pt-6 border-t border-[var(--border-color)]">
-                                    <h3 class="text-2xl text-[var(--text-main)] mb-4">Profile</h3>
-                                    <p class="text-lg text-[var(--text-muted)] leading-relaxed font-serif italic">${artistProfile.profile}</p>
-                                </div>
-
-                                <div class="mt-8 pt-6 border-t border-[var(--border-color)]">
-                                    <h3 class="text-2xl text-[var(--text-main)] mb-6">Key Album Appearances</h3>
-                                    <ul class="timeline max-h-96 overflow-y-auto pr-4">${albumTimelineHtml || '<li class="text-[var(--text-muted)]">No key appearances found in timeline.</li>'}</ul>
-                                </div>
-                                
-                                ${collaboratorsHtml}
-                            </div>
-                        </div>
-                    `;
+            
+                showPage() {
+                    this.elements.loader.style.display = 'none';
+                    this.elements.pageContent.classList.remove('content-hidden');
                 },
-                
-                showPage() { 
-                    this.elements.loader.style.display = 'none'; 
-                    this.elements.pageContent.classList.remove('content-hidden'); 
+
+                initializeAppUI(legacyData) {
+                    this.methods.processAndSortData(legacyData);
+                    this.methods.setupModals();
+                    this.methods.populateInstrumentFilter(this.state.artistsData);
+                    this.methods.renderArtistGrid();
+                    this.methods.setupMobileMenu();
+                    this.methods.setupGeneralEventListeners();
+                    this.methods.showPage();
                 },
                 
                 setupTheme() {
+                    const themeToggle = this.elements.themeToggle;
+                    const lightIcon = this.elements.themeIconLight;
+                    const darkIcon = this.elements.themeIconDark;
+
                     const applyTheme = (theme) => {
                         if (theme === 'dark') {
                             document.documentElement.classList.add('dark');
-                            this.elements.themeIconLight.classList.add('hidden');
-                            this.elements.themeIconDark.classList.remove('hidden');
+                            lightIcon.classList.add('hidden');
+                            darkIcon.classList.remove('hidden');
                         } else {
                             document.documentElement.classList.remove('dark');
-                            this.elements.themeIconLight.classList.remove('hidden');
-                            this.elements.themeIconDark.classList.add('hidden');
+                            lightIcon.classList.remove('hidden');
+                            darkIcon.classList.add('hidden');
                         }
                     };
-                    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-                    applyTheme(savedTheme);
-                    this.elements.themeToggle.addEventListener('click', () => {
+
+                    const savedTheme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                    
+                    applyTheme(currentTheme);
+
+                    themeToggle.addEventListener('click', () => {
                         const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
                         localStorage.setItem('theme', newTheme);
                         applyTheme(newTheme);
                     });
                 },
 
-                setupMobileMenu() {
-                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
-                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
-
-                    const openMenu = () => {
-                        mobileMenuOverlay.classList.remove('hidden');
-                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
-                    };
-                    const closeMenu = () => {
-                        mobileMenuPanel.style.transform = 'translateX(100%)';
-                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
-                    };
-
-                    mobileMenuButton.addEventListener('click', openMenu);
-                    mobileMenuCloseButton.addEventListener('click', closeMenu);
-                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
-                    document.querySelectorAll('#mobile-nav-links a').forEach(link => link.addEventListener('click', closeMenu));
-                },
-
-                setupGeneralEventListeners() {
-                    this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
-                },
-                
                 getCanonicalName(name) {
-                     if (!name) return '';
+                    if (!name) return '';
                     const trimmedName = name.trim();
+
+                    // --- Moniker Normalization ---
                     if (trimmedName.startsWith('Art Blakey')) return 'Art Blakey';
                     if (trimmedName.startsWith('Sun Ra')) return 'Sun Ra';
                     if (trimmedName.startsWith('Thelonious Monk')) return 'Thelonious Monk';
@@ -463,26 +665,34 @@
                     if (trimmedName.startsWith('Dave Brubeck') || trimmedName.startsWith('The Dave Brubeck')) return 'Dave Brubeck';
                     if (trimmedName.startsWith('Bill Dixon') || trimmedName.startsWith('The Bill Dixon')) return 'Bill Dixon';
                     if (trimmedName.startsWith('Oscar Peterson') || trimmedName.startsWith('The Oscar Peterson')) return 'Oscar Peterson';
+                    
+                    // --- Individual Name Normalization ---
                     if (trimmedName === 'Roland Kirk') return 'Rahsaan Roland Kirk';
                     if (trimmedName === 'Anthony Williams') return 'Tony Williams';
                     if (trimmedName === 'Albert Heath' || trimmedName === 'Albert Tootie Heath') return "Albert 'Tootie' Heath";
                     if (trimmedName === 'Lonnie Liston Smith Jr.') return 'Lonnie Liston Smith';
                     if (trimmedName === 'Phineas Newborn') return 'Phineas Newborn Jr.';
+                    
                     return trimmedName;
                 },
-                
+
                 isLikelyIndividual(name) {
                     if (!name) return false;
                     const groupKeywords = ['Ensemble', 'Quartet', 'Quintet', 'Sextet', 'Septet', 'Trio', '&', ' and ', 'With', ' featuring ', 'Orchestra', 'Arkestra', 'Band', 'Lifetime', 'Messengers'];
+                    
                     if (name.includes(',') || name.includes('/')) return false;
-                    if (groupKeywords.some(keyword => name.includes(keyword))) return this.methods.getCanonicalName(name) !== name;
+
+                    if (groupKeywords.some(keyword => name.includes(keyword))) {
+                        return this.methods.getCanonicalName(name) !== name;
+                    }
                     return true;
                 },
-                
+
                 processAndSortData(legacyData) {
                     const artistsMap = new Map();
                     const { slugify, getCanonicalName, isLikelyIndividual } = this.methods;
                     const profiles = this.state.artistProfiles;
+
                     const getOrCreateArtist = (name) => {
                         const canonicalName = getCanonicalName(name);
                         if (!artistsMap.has(canonicalName)) {
@@ -491,65 +701,454 @@
                                 instruments: new Set(),
                                 albums: new Set(),
                                 photo: `/images/${slugify(canonicalName)}.jpg`,
-                                profile: profiles[canonicalName] || { name: canonicalName, profile: 'No profile available.' }
+                                profile: profiles[canonicalName] || { name: canonicalName, profile: 'No profile available.' },
+                                isDatabaseBandleader: false,
+                                isLegacyBandleader: false,
                             });
                         }
                         return artistsMap.get(canonicalName);
                     };
+
                     const processLineup = (lineup, albumTitle) => {
                         if (!lineup) return;
                         lineup.split(/,(?![^()]*\))/).forEach(part => {
                             const match = part.trim().match(/(.+?)\s\((.+)\)/);
-                            if (match && isLikelyIndividual(match[1].trim())) {
-                                const artist = getOrCreateArtist(match[1].trim());
-                                match[2].split(/, | \/ /).forEach(inst => {
-                                    const trimmedInst = inst.trim();
-                                    if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) artist.instruments.add(trimmedInst);
-                                });
-                                if(albumTitle) artist.albums.add(albumTitle);
+                            if (match) {
+                                const artistName = match[1].trim();
+                                if (isLikelyIndividual(artistName)) {
+                                    const artist = getOrCreateArtist(artistName);
+                                    const instrumentsString = match[2];
+                                    instrumentsString.split(/, | \/ /).forEach(inst => {
+                                        const trimmedInst = inst.trim();
+                                        if (trimmedInst && !/vocals|arranger|reeds/i.test(trimmedInst)) {
+                                            artist.instruments.add(trimmedInst);
+                                        }
+                                    });
+                                    if(albumTitle) artist.albums.add(albumTitle);
+                                }
                             }
                         });
                     };
-                    const processAlbum = (album) => {
+                    
+                    const processAlbum = (album, isLegacy) => {
                         const albumTitle = album.albumTitle || album.title;
                         const lineup = (album.pivotalTracks && album.pivotalTracks[0]?.lineup) || album.lineup;
+
                         processLineup(lineup, albumTitle);
+
+                        if (album.artist) {
+                            const bandleaderNames = album.artist.split(/[,/&]/).map(name => name.trim().replace(/ and /g, '').trim());
+                            
+                            if(bandleaderNames.length > 1 && !album.artist.includes('Quintet') && !album.artist.includes('Quartet') && !album.artist.includes('Trio') && !album.artist.includes('Sextet') && !album.artist.includes('Septet')) {
+                                bandleaderNames.forEach(name => {
+                                    if (isLikelyIndividual(name)) {
+                                        const bandleader = getOrCreateArtist(name);
+                                        if (isLegacy) bandleader.isLegacyBandleader = true;
+                                        else bandleader.isDatabaseBandleader = true;
+                                    }
+                                });
+                            } else if (lineup) {
+                                const firstInLineupMatch = lineup.match(/(.+?)\s\((.+)\)/);
+                                if (firstInLineupMatch) {
+                                    const firstArtistName = firstInLineupMatch[1].trim();
+                                    if (album.artist.includes(firstArtistName)) {
+                                        const bandleader = getOrCreateArtist(firstArtistName);
+                                        if (isLegacy) bandleader.isLegacyBandleader = true;
+                                        else bandleader.isDatabaseBandleader = true;
+                                    }
+                                }
+                            }
+                        }
                     };
-                    this.state.albums.forEach(album => processAlbum(album));
+
+                    // Step 1: Process database.json
+                    this.state.albums.forEach(album => processAlbum(album, false));
+
+                    // Step 2: Process legacy.json
                     if (legacyData && legacyData.paths) {
-                        Object.values(legacyData.paths).forEach(path => (path.albums || []).forEach(album => processAlbum(album)));
+                        Object.values(legacyData.paths).forEach(path => {
+                            (path.albums || []).forEach(album => processAlbum(album, true));
+                        });
                     }
-                    this.state.artistsData = Array.from(artistsMap.values()).map(artist => ({...artist, instruments: Array.from(artist.instruments), albums: Array.from(artist.albums)}));
+                    
+                    const artistsArray = Array.from(artistsMap.values());
+
+                    // Step 3: Finalize artist data and assign tiers
+                    artistsArray.forEach(artist => {
+                        artist.instruments = Array.from(artist.instruments);
+                        artist.albums = Array.from(artist.albums);
+
+                        if (artist.isDatabaseBandleader) {
+                            artist.tier = 1; // Orange
+                        } else if (artist.isLegacyBandleader) {
+                            artist.tier = 2; // Blue
+                        } else if (artist.albums.size >= 4) {
+                            artist.tier = 3; // Yellow
+                        } else {
+                            artist.tier = 4; // Default
+                        }
+                    });
+
+                    this.state.artistsData = artistsArray;
                 },
                 
-                getTopCollaborators(artistName) {
-                    const collaborations = new Map();
-                    const canonicalArtistName = this.methods.getCanonicalName(artistName);
-                    const allKnownAlbums = [...this.state.albums, ...Object.values(this.state.legacyData?.paths || {}).flatMap(p => p.albums || [])];
-                    allKnownAlbums.forEach(album => {
-                        const lineups = (album.pivotalTracks || []).map(t => t.lineup).filter(Boolean);
-                        if(album.lineup) lineups.push(album.lineup);
-                        lineups.forEach(lineup => {
-                            const trackArtists = lineup.split(/,(?![^()]*\))/).map(part => {
-                                const match = part.trim().match(/(.+?)\s\((.+)\)/);
-                                return match ? this.methods.getCanonicalName(match[1].trim()) : null;
-                            }).filter(Boolean);
-                            if (trackArtists.includes(canonicalArtistName)) {
-                                trackArtists.forEach(cName => { if (cName !== canonicalArtistName) collaborations.set(cName, (collaborations.get(cName) || 0) + 1); });
+                setupModals() {
+                    const { artistModal } = this.elements;
+                    
+                    artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
+                    artistModal.addEventListener('click', e => { 
+                        if (e.target.id === 'artist-modal') {
+                            this.methods.closeArtistModal(); 
+                            return;
+                        }
+                        
+                        const collaboratorCard = e.target.closest('.collaborator-card');
+                        if (collaboratorCard && collaboratorCard.dataset.artistName) {
+                            const collaboratorName = collaboratorCard.dataset.artistName;
+                            const collaborator = this.state.artistsData.find(a => a.name === collaboratorName);
+                            if (collaborator) {
+                                this.methods.closeArtistModal(() => this.methods.openArtistModal(collaborator));
                             }
-                        });
+                        }
                     });
-                    return Array.from(collaborations.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3).map(e => e[0]);
+                    
+                    document.addEventListener('keydown', e => { if (e.key === "Escape") { this.methods.closeArtistModal(); } });
+                },
+
+                renderArtistGrid() {
+                    const { instrumentFilter, searchInput, artistGridContainer } = this.elements;
+                    
+                    const selectedInstrument = instrumentFilter.value;
+                    const searchTerm = searchInput.value.toLowerCase().trim();
+
+                    let filteredArtists = this.state.artistsData.filter(artist => {
+                        const nameMatch = artist.name.toLowerCase().includes(searchTerm);
+                        const instrumentMatch = (selectedInstrument === 'all' || artist.instruments.includes(selectedInstrument));
+                        return nameMatch && instrumentMatch;
+                    });
+
+                    // Sort alphabetically by name
+                    filteredArtists.sort((a, b) => a.name.localeCompare(b.name));
+
+                    const startIndex = (this.state.currentPage - 1) * this.state.artistsPerPage;
+                    const endIndex = startIndex + this.state.artistsPerPage;
+                    const paginatedArtists = filteredArtists.slice(startIndex, endIndex);
+
+                    artistGridContainer.innerHTML = '';
+                    if (paginatedArtists.length === 0) {
+                        artistGridContainer.innerHTML = `<p class="text-[var(--text-muted)] col-span-full text-center py-10">No artists found matching your criteria.</p>`;
+                    } else {
+                        paginatedArtists.forEach(artist => {
+                            const card = document.createElement('div');
+                            card.className = 'artist-card';
+                            
+                            // Assign class based on the final tier
+                            switch (artist.tier) {
+                                case 1:
+                                    card.classList.add('bandleader'); // Orange
+                                    break;
+                                case 2:
+                                    card.classList.add('legacy-artist'); // Blue
+                                    break;
+                                case 3:
+                                    card.classList.add('influential-sideman'); // Yellow
+                                    break;
+                            }
+
+                            card.dataset.artistName = artist.name;
+                            card.innerHTML = `
+                                <div class="artist-photo-container">
+                                    <img src="${artist.photo || ''}" loading="lazy" alt="Photo of ${artist.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                </div>
+                                <div class="p-3">
+                                    <h4 class="font-bold text-sm text-[var(--text-main)] truncate">${artist.name}</h4>
+                                </div>`;
+                            artistGridContainer.appendChild(card);
+                        });
+                    }
+                    
+                    this.methods.renderPagination(filteredArtists.length);
+                },
+
+                renderPagination(totalArtists) {
+                    const { paginationContainer } = this.elements;
+                    const { currentPage, artistsPerPage } = this.state;
+                    paginationContainer.innerHTML = '';
+
+                    const totalPages = Math.ceil(totalArtists / artistsPerPage);
+                    if (totalPages <= 1) return;
+
+                    // First Page Button
+                    const firstButton = document.createElement('button');
+                    firstButton.innerHTML = '&laquo;&laquo;';
+                    firstButton.className = 'pagination-btn';
+                    firstButton.title = 'First Page';
+                    firstButton.disabled = currentPage === 1;
+                    firstButton.addEventListener('click', () => {
+                        this.state.currentPage = 1;
+                        this.methods.renderArtistGrid();
+                        window.scrollTo(0, this.elements.artistGridContainer.offsetTop - 100);
+                    });
+                    paginationContainer.appendChild(firstButton);
+
+                    // Previous Button
+                    const prevButton = document.createElement('button');
+                    prevButton.textContent = '«';
+                    prevButton.className = 'pagination-btn';
+                    prevButton.title = 'Previous Page';
+                    prevButton.disabled = currentPage === 1;
+                    prevButton.addEventListener('click', () => {
+                        this.state.currentPage--;
+                        this.methods.renderArtistGrid();
+                        window.scrollTo(0, this.elements.artistGridContainer.offsetTop - 100);
+                    });
+                    paginationContainer.appendChild(prevButton);
+
+                    // Page Info
+                    const pageInfo = document.createElement('span');
+                    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                    pageInfo.className = 'p-2 text-sm font-semibold text-[var(--text-muted)]';
+                    paginationContainer.appendChild(pageInfo);
+
+                    // Next Button
+                    const nextButton = document.createElement('button');
+                    nextButton.textContent = '»';
+                    nextButton.className = 'pagination-btn';
+                    nextButton.title = 'Next Page';
+                    nextButton.disabled = currentPage === totalPages;
+                    nextButton.addEventListener('click', () => {
+                        this.state.currentPage++;
+                        this.methods.renderArtistGrid();
+                        window.scrollTo(0, this.elements.artistGridContainer.offsetTop - 100);
+                    });
+                    paginationContainer.appendChild(nextButton);
+
+                    // Last Page Button
+                    const lastButton = document.createElement('button');
+                    lastButton.innerHTML = '&raquo;&raquo;';
+                    lastButton.className = 'pagination-btn';
+                    lastButton.title = 'Last Page';
+                    lastButton.disabled = currentPage === totalPages;
+                    lastButton.addEventListener('click', () => {
+                        this.state.currentPage = totalPages;
+                        this.methods.renderArtistGrid();
+                        window.scrollTo(0, this.elements.artistGridContainer.offsetTop - 100);
+                    });
+                    paginationContainer.appendChild(lastButton);
+                },
+                
+                setupMobileMenu() {
+                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
+                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
+                    const openMenu = () => {
+                        mobileMenuOverlay.classList.remove('hidden');
+                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                    };
+                    const closeMenu = () => {
+                        mobileMenuPanel.style.transform = 'translateX(100%)';
+                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                    };
+                    mobileMenuButton.addEventListener('click', openMenu);
+                    mobileMenuCloseButton.addEventListener('click', closeMenu);
+                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
+                    
+                    document.querySelectorAll('#mobile-nav-links a').forEach(link => {
+                        link.addEventListener('click', closeMenu);
+                    });
+                },
+
+                setupGeneralEventListeners() {
+                    const handleFilterChange = () => {
+                        this.state.currentPage = 1;
+                        this.methods.renderArtistGrid();
+                    };
+
+                    this.elements.instrumentFilter.addEventListener('change', handleFilterChange);
+                    this.elements.searchInput.addEventListener('input', handleFilterChange);
+                    
+                    this.elements.artistGridContainer.addEventListener('click', (e) => {
+                        const card = e.target.closest('.artist-card');
+                        if (card && card.dataset.artistName) {
+                            const artist = this.state.artistsData.find(a => a.name === card.dataset.artistName);
+                            if (artist) this.methods.openArtistModal(artist);
+                        }
+                    });
+                    
+                    this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
                 },
                 
                 slugify(text) {
                     if (!text) return '';
-                    return text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
-                }
+                    return text.toString().toLowerCase()
+                        .replace(/\s+/g, '-')
+                        .replace(/[^\w\-]+/g, '')
+                        .replace(/\-\-+/g, '-')
+                        .replace(/^-+/, '')
+                        .replace(/-+$/, '');
+                },
+                
+                openArtistModal(artist) {
+                    const { artistModal } = this.elements;
+                    const artistProfile = artist.profile || {};
+                    artistModal.querySelector('#artist-modal-title').textContent = artist.name;
+                    const body = artistModal.querySelector('#artist-modal-body');
+
+                    const allKnownAlbums = [...this.state.albums, ...Object.values(this.state.legacyData?.paths || {}).flatMap(p => p.albums || [])];
+
+                    const artistAlbumsWithYear = Array.from(artist.albums)
+                        .map(albumTitle => {
+                            const foundAlbum = allKnownAlbums.find(a => (a.albumTitle || a.title) === albumTitle);
+                            if (!foundAlbum) return null;
+                            return {
+                                year: foundAlbum.year,
+                                albumTitle: foundAlbum.albumTitle || foundAlbum.title,
+                                artist: foundAlbum.artist
+                            };
+                        })
+                        .filter(Boolean)
+                        .sort((a, b) => a.year - b.year);
+                    
+                    const isLandmark = (albumTitle) => {
+                        for (const genreName in this.state.styleMatrix.genres) {
+                            const genreData = this.state.styleMatrix.genres[genreName];
+                            if (genreData.landmarkAlbums && genreData.landmarkAlbums.some(title => title.toLowerCase() === albumTitle.toLowerCase())) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    };
+
+                    const albumTimelineHtml = artistAlbumsWithYear.map(album => {
+                        const landmarkIcon = isLandmark(album.albumTitle) ? '<span class="landmark-star text-yellow-400 ml-2">★</span>' : '';
+                        const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
+                        return `<li class="artist-modal-timeline-item">
+                                    <strong class="text-[var(--text-muted)]">${album.year}:</strong> 
+                                    <a href="/album/${albumId}" target="_blank" rel="noopener noreferrer" class="clickable-link">
+                                        ${album.albumTitle}
+                                    </a>
+                                    ${landmarkIcon}
+                                </li>`;
+                    }).join('');
+                    
+                    const bornInModalInfo = artist.profile && artist.profile.bornIn ? `<p class="mt-2 text-[var(--text-main)] text-sm"><strong class="font-bold">Born:</strong> ${artist.profile.bornIn}</p>` : '';
+
+                    const topCollaborators = this.methods.getTopCollaborators(artist.name);
+                    let collaboratorsHtml = '';
+                    if (topCollaborators.length > 0) {
+                        const collaboratorCards = topCollaborators.map(name => {
+                            const collaborator = this.state.artistsData.find(a => a.name === name);
+                            if (!collaborator) return '';
+                            return `
+                                <div class="collaborator-card text-center" data-artist-name="${collaborator.name}">
+                                    <div class="w-24 h-24 mx-auto">
+                                        <img src="${collaborator.photo || ''}" alt="${collaborator.name}" class="w-full h-full object-cover rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'w-full h-full rounded-full border-4 border-stone-200 dark:border-stone-700 shadow-md flex items-center justify-center bg-stone-300 dark:bg-stone-600\\'><svg class=\\'w-12 h-12 text-stone-500\\' xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                    </div>
+                                    <p class="mt-2 text-sm font-bold text-[var(--text-muted)]">${collaborator.name}</p>
+                                </div>
+                            `;
+                        }).join('');
+
+                        collaboratorsHtml = `
+                            <div class="mt-6 pt-4 border-t-2 border-[var(--border-color)]">
+                                <h4 class="text-2xl text-[var(--text-main)] mb-4 text-center">Top Collaborators</h4>
+                                <div class="grid grid-cols-3 gap-4">
+                                    ${collaboratorCards}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    let profileButtonHtml = '';
+                    if (artistProfile.profile && artistProfile.profile !== 'No profile available.') {
+                        profileButtonHtml = `<div class="mt-6 text-center">
+                            <a href="/artist/${this.methods.slugify(artist.name)}" target="_blank" class="profile-button">
+                                View Full Profile
+                            </a>
+                        </div>`;
+                    }
+
+                    body.innerHTML = `
+                        <div class="flex flex-col sm:flex-row gap-6">
+                            <div class="w-full sm:w-1/3 flex-shrink-0">
+                                <div class="artist-photo-container">
+                                    <img src="${artist.photo || ''}" loading="lazy" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)] dark:border-[var(--border-color)]" onerror="this.onerror=null;this.parentElement.innerHTML = '<div class=\\'artist-placeholder\\'><svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'currentColor\\'><path d=\\'M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 2c-3.39 0-9 1.6-9 4.82V22h18v-5.18C21 13.6 15.39 12 12 12z\\'/></svg></div>';">
+                                </div>
+                                <p class="mt-4 text-[var(--text-main)] text-sm"><strong class="font-bold">Instruments:</strong> ${[...artist.instruments].join(', ')}</p>
+                                ${bornInModalInfo}
+                                ${artistProfile.knownFor ? `<div class="mt-6"><h4 class="text-xl text-[var(--text-main)] mb-2 transform -rotate-1">Known For...</h4><div class="known-for-box">${artistProfile.knownFor}</div></div>` : ''}
+                            </div>
+                            <div class="w-full sm:w-2/3">
+                                ${artistProfile.profile && artistProfile.profile !== 'No profile available.' ? `<h4 class="text-2xl text-[var(--text-main)] mb-2">Profile</h4><p class="text-base text-[var(--text-muted)] leading-relaxed mb-4">${artistProfile.profile}</p>` : ''}
+                                <h4 class="text-2xl text-[var(--text-main)] mb-3">Key Album Appearances</h4>
+                                <ul class="artist-modal-timeline h-48 overflow-y-auto pr-2">${albumTimelineHtml || '<li class="text-[var(--text-muted)]">No key appearances found in timeline.</li>'}</ul>
+                            </div>
+                        </div>
+                        ${collaboratorsHtml}
+                        ${profileButtonHtml} 
+                    `;
+                    
+                    artistModal.classList.remove('opacity-0', 'pointer-events-none');
+                    artistModal.querySelector('.modal-content').classList.remove('scale-95');
+                },
+
+                getTopCollaborators(artistName) {
+                    const collaborations = new Map();
+                    const getCanonicalName = this.methods.getCanonicalName;
+                    const canonicalArtistName = getCanonicalName(artistName);
+                    
+                    const allKnownAlbums = [...this.state.albums, ...Object.values(this.state.legacyData?.paths || {}).flatMap(p => p.albums || [])];
+
+                    allKnownAlbums.forEach(album => {
+                        const lineups = (album.pivotalTracks || []).map(t => t.lineup).filter(Boolean);
+                        if(album.lineup) lineups.push(album.lineup);
+
+                        lineups.forEach(lineup => {
+                            const lineupParts = lineup.split(/,(?![^()]*\))/);
+                            const trackArtists = lineupParts.map(part => {
+                                const match = part.trim().match(/(.+?)\s\((.+)\)/);
+                                return match ? getCanonicalName(match[1].trim()) : null;
+                            }).filter(Boolean);
+
+                            if (trackArtists.includes(canonicalArtistName)) {
+                                trackArtists.forEach(collaboratorName => {
+                                    if (collaboratorName !== canonicalArtistName) {
+                                        collaborations.set(collaboratorName, (collaborations.get(collaboratorName) || 0) + 1);
+                                    }
+                                });
+                            }
+                        });
+                    });
+
+                    return Array.from(collaborations.entries())
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 3)
+                        .map(entry => entry[0]);
+                },
+
+                closeArtistModal(callback) {
+                    const { artistModal } = this.elements;
+                    artistModal.classList.add('opacity-0', 'pointer-events-none');
+                    artistModal.querySelector('.modal-content').classList.add('scale-95');
+                    if (typeof callback === 'function') setTimeout(callback, 300);
+                },
+                
+                populateInstrumentFilter(artists) {
+                    const { instrumentFilter } = this.elements;
+                    const relevantInstruments = new Set(['alto saxophone', 'baritone saxophone', 'bass', 'bass clarinet', 'cornet', 'drums', 'flugelhorn', 'flute', 'guitar', 'organ', 'piano', 'soprano saxophone', 'tenor saxophone', 'trombone', 'trumpet', 'tuba', 'vibraphone', 'congas']);
+                    const instrumentsInDataset = new Set();
+                    artists.forEach(artist => artist.instruments.forEach(inst => { if (relevantInstruments.has(inst)) instrumentsInDataset.add(inst); }));
+                    instrumentFilter.innerHTML = '<option value=\"all\">All Instruments</option>';
+                    Array.from(instrumentsInDataset).sort().forEach(instrument => {
+                        const option = document.createElement('option');
+                        option.value = instrument;
+                        option.textContent = instrument.charAt(0).toUpperCase() + instrument.slice(1);
+                        instrumentFilter.appendChild(option);
+                    });
+                },
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => ProfileApp.init());
+        document.addEventListener('DOMContentLoaded', () => ArtistApp.init());
     </script>
 </body>
 </html>
