@@ -278,7 +278,6 @@
         /* Dropdown for Key Track */
         .analysis-dropdown-trigger {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             width: 100%;
             background: none;
@@ -568,10 +567,10 @@
                     return `
                     <div class="analysis-section analysis-dropdown mb-4 rounded-md">
                         <button class="analysis-dropdown-trigger">
-                            <h5 class="text-2xl font-bold text-white flex-1 min-w-0 pr-4">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
-                            <svg class="analysis-dropdown-arrow h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                             <svg class="analysis-dropdown-arrow h-6 w-6 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
                             </svg>
+                            <h5 class="text-2xl font-bold text-white flex-1 min-w-0">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
                         </button>
                         <div class="analysis-dropdown-content">
                             <div class="flex justify-between items-center gap-4 flex-wrap mb-4">
@@ -682,14 +681,14 @@
                                 <h3 class="text-xl text-[var(--text-main)] mb-4">About The Album</h3>
                                 <p class="text-lg text-[var(--text-muted)] leading-relaxed font-serif italic">${album.description || 'No description available.'}</p>
                             </div>
+
+                            <!-- Key Track Section -->
+                            <div class="mt-8 pt-6 border-t border-[var(--border-color)]">
+                                ${pivotalTracksHtml || ''}
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Key Track Section -->
-                    <div class="mt-8 md:mt-12">
-                        ${pivotalTracksHtml || ''}
-                    </div>
-
                     <!-- Navigation -->
                     ${navigationHtml}
                 `;
