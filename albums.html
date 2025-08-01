@@ -649,9 +649,14 @@
 
                 slugifyForImagePath(text) {
                     if (!text) return '';
-                    // This version is permissive to match filenames exactly
+                    // This is now more permissive to handle special characters in filenames
                     return text.toString().toLowerCase()
-                        .replace(/\s+/g, '-'); // Just replace spaces with hyphens
+                        .replace(/[\s/:]+/g, '-')      // Replace spaces, slashes, colons with a hyphen
+                        .replace(/&/g, '-and-')       // Replace & with '-and-'
+                        .replace(/[^\w\-.,'!’()]+/g, '') // Remove any remaining invalid characters.
+                        .replace(/\-\-+/g, '-')        // Replace multiple hyphens
+                        .replace(/^-+/, '')           // Trim hyphens from start
+                        .replace(/-+$/, '');          // Trim hyphens from end
                 },
                 
                 populateGenreFilter(albums) {
