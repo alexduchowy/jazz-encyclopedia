@@ -77,7 +77,7 @@
             width: 100%;
             background-color: var(--bg-secondary);
         }
-        .album-cover-container img {
+        .album-cover-container img, .album-cover-container svg {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -538,9 +538,26 @@
                             card.href = `/album/${urlSlug}`;
                             card.className = 'album-card';
                             
+                            const vinylPlaceholder = `
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full">
+                                    <style>
+                                        .vinyl-bg { fill: var(--bg-secondary); }
+                                        .vinyl-disc { fill: var(--text-main); }
+                                        .vinyl-label { fill: var(--accent); }
+                                        .vinyl-hole { fill: var(--bg-secondary); }
+                                    </style>
+                                    <rect class="vinyl-bg" width="200" height="200"/>
+                                    <circle class="vinyl-disc" cx="100" cy="100" r="90"/>
+                                    <circle class="vinyl-label" cx="100" cy="100" r="40"/>
+                                    <circle class="vinyl-hole" cx="100" cy="100" r="10"/>
+                                </svg>
+                            `;
+                            
+                            const encodedPlaceholder = `data:image/svg+xml;base64,${btoa(vinylPlaceholder)}`;
+
                             card.innerHTML = `
                                 <div class="album-cover-container">
-                                    <img src="${coverPath}" loading="lazy" alt="Cover for ${albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image';">
+                                    <img src="${coverPath}" loading="lazy" alt="Cover for ${albumTitle}" onerror="this.onerror=null;this.src='${encodedPlaceholder}';">
                                 </div>
                                 <div class="p-3 text-left">
                                     <h4 class="font-bold text-sm text-[var(--text-main)] truncate">${albumTitle}</h4>
