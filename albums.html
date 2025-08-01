@@ -621,7 +621,7 @@
                     if (!text) return '';
                     return text.toString().toLowerCase()
                         .replace(/\s+/g, '-')
-                        .replace(/[^\w\-]+/g, '')
+                        .replace(/[^\w\-]+/g, '') // This was the line removing commas
                         .replace(/\-\-+/g, '-')
                         .replace(/^-+/, '')
                         .replace(/-+$/, '');
