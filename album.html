@@ -240,7 +240,6 @@
             border-bottom: none;
         }
         
-        /* New Styles for Navigation */
         .album-navigation {
             display: flex;
             justify-content: space-between;
@@ -642,12 +641,6 @@
                         </div>
                     </div>
                     
-                    <!-- Description Section -->
-                    <div class="my-8 md:my-12 p-6 bg-[var(--bg-secondary)] rounded-md">
-                        <h3 class="text-3xl text-[var(--text-main)] mb-4">About The Album</h3>
-                        <p class="text-base text-[var(--text-muted)] leading-relaxed font-serif italic">${album.description || 'No description available.'}</p>
-                    </div>
-
                     <!-- Main Content Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
                         <div class="lg:col-span-1 space-y-6">
@@ -659,7 +652,13 @@
                             </div>
                         </div>
                         <div class="lg:col-span-2 space-y-6">
-                            <div class="relative">
+                            <!-- Description Section -->
+                            <div class="p-6 bg-[var(--bg-secondary)] rounded-md">
+                                <h3 class="text-3xl text-[var(--text-main)] mb-4">About The Album</h3>
+                                <p class="text-base text-[var(--text-muted)] leading-relaxed font-serif italic">${album.description || 'No description available.'}</p>
+                            </div>
+                            <!-- Key Track Analysis -->
+                            <div>
                                 <div class="analysis-section">${pivotalTracksHtml || '<p class="liner-notes-text">No key tracks defined for this album.</p>'}</div>
                             </div>
                         </div>
