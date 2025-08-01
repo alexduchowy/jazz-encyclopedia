@@ -418,7 +418,7 @@
                         const artist = album.artist;
                         if (!title || !artist) return;
 
-                        const key = `${this.methods.slugify(artist)}-${this.methods.slugify(title)}`;
+                        const key = `${this.methods.slugifyForUrl(artist)}-${this.methods.slugifyForUrl(title)}`;
                         if (!albumMap.has(key)) {
                             albumMap.set(key, album);
                         }
@@ -523,11 +523,12 @@
                     } else {
                         paginatedAlbums.forEach(album => {
                             const albumTitle = album.albumTitle || album.title;
-                            const slug = `${this.methods.slugify(album.artist)}-${this.methods.slugify(albumTitle)}`;
-                            const coverPath = `/images/${this.methods.slugify(albumTitle)}.jpg`;
+                            const urlSlug = `${this.methods.slugifyForUrl(album.artist)}-${this.methods.slugifyForUrl(albumTitle)}`;
+                            const imageSlug = this.methods.slugifyForImagePath(albumTitle);
+                            const coverPath = `/images/${imageSlug}.jpg`;
 
                             const card = document.createElement('a');
-                            card.href = `/album/${slug}`;
+                            card.href = `/album/${urlSlug}`;
                             card.className = 'album-card';
                             
                             card.innerHTML = `
@@ -612,14 +613,24 @@
                     this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
                 },
                 
-                slugify(text) {
+                slugifyForUrl(text) {
                     if (!text) return '';
                     return text.toString().toLowerCase()
-                        .replace(/\s+/g, '-') // Replace spaces with -
+                        .replace(/\s+/g, '-')
+                        .replace(/[^\w\-]+/g, '') // Remove all non-word chars except hyphens
+                        .replace(/\-\-+/g, '-')
+                        .replace(/^-+/, '')
+                        .replace(/-+$/, '');
+                },
+
+                slugifyForImagePath(text) {
+                    if (!text) return '';
+                    return text.toString().toLowerCase()
+                        .replace(/\s+/g, '-')
                         .replace(/[^\w\-,.]+/g, '') // Keep words, hyphens, commas, and periods
-                        .replace(/\-\-+/g, '-') // Replace multiple - with single -
-                        .replace(/^-+/, '') // Trim - from start of text
-                        .replace(/-+$/, ''); // Trim - from end of text
+                        .replace(/\-\-+/g, '-')
+                        .replace(/^-+/, '')
+                        .replace(/-+$/, '');
                 },
                 
                 populateGenreFilter(albums) {
