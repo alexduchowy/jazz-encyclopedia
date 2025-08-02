@@ -536,10 +536,6 @@
                             <p>This application provides an interactive journey through this interconnected history, ordered by recording date—not release date—to understand the influence exercised between all these musicians and <strong>reveal the authentic path of jazz evolution as it happened.</strong></p>
                         </div>
                         <div class="md:col-span-2 mt-8 md:mt-0">
-                             <!-- "ON THIS DAY" FEATURE -->
-                            <div id="on-this-day" class="mb-8">
-                                <!-- Content will be injected by JavaScript -->
-                            </div>
                             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         </div>
                     </div>
@@ -779,7 +775,6 @@
                     mobileMenuPanel: document.getElementById('mobile-menu-panel'),
                     mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
                     footerCopyright: document.getElementById('footer-copyright'),
-                    onThisDayContainer: document.getElementById('on-this-day'),
                     genreFilterDropdownBtn: document.getElementById('genre-filter-dropdown-btn'),
                     genreFilterList: document.getElementById('genre-filter-list'),
                     themeToggle: document.getElementById('theme-toggle'),
@@ -845,7 +840,6 @@
                     this.methods.setupMobileMenu();
                     this.methods.setupGeneralEventListeners();
                     this.methods.renderScrollbarMarkers();
-                    this.methods.setupOnThisDayFeature();
                     this.methods.showPage();
                     setTimeout(() => { if(this.elements.timelineContainer) this.elements.timelineContainer.scrollLeft = 0; }, 0);
                 },
@@ -1629,57 +1623,7 @@
                             customScrollbarMarkers.appendChild(marker);
                         }
                     });
-                },
-
-                setupOnThisDayFeature() {
-                    const { onThisDayContainer } = this.elements;
-                    if (!onThisDayContainer) return;
-
-                    const today = new Date();
-                    const currentMonth = today.toLocaleString('en-US', { month: 'long' });
-                    const currentDay = today.getDate();
-
-                    const matchingTracks = [];
-                    this.state.albums.forEach(album => {
-                        (album.pivotalTracks || []).forEach(track => {
-                            const dateParts = track.recordingDate.replace(/,/g, '').split(' ');
-                            if (dateParts.length >= 2) {
-                                const recordMonth = dateParts[0];
-                                const recordDay = parseInt(dateParts[1]);
-                                if (recordMonth === currentMonth && recordDay === currentDay) {
-                                    matchingTracks.push({ ...track, parentAlbum: album });
-                                }
-                            }
-                        });
-                    });
-
-                    if (matchingTracks.length > 0) {
-                        const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
-                        const album = featured.parentAlbum;
-                        const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
-
-                        onThisDayContainer.innerHTML = `
-                            <div class="block p-4 bg-[var(--bg-secondary)] border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--text-main)] dark:shadow-none">
-                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
-                                <div class="flex items-center gap-4 mt-2">
-                                    <img src="/${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
-                                    <div>
-                                        <p class="text-sm text-[var(--text-muted)]">On <strong>${currentMonth} ${currentDay}</strong>, ${album.year}, the track...</p>
-                                        <p class="text-lg font-bold text-[var(--text-main)]">"${featured.title}"</p>
-                                        <p class="text-sm text-[var(--text-muted)]">from the album <strong>${album.albumTitle}</strong> by <strong>${album.artist}</strong> was recorded.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        onThisDayContainer.innerHTML = `
-                             <div class="p-4 bg-[var(--bg-secondary)] border-2 border-[var(--text-main)] dark:border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--text-main)] dark:shadow-none">
-                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
-                                <p class="text-center text-[var(--text-muted)] mt-4">No landmark tracks were recorded on this day in our database. Check back tomorrow!</p>
-                            </div>
-                        `;
-                    }
-                },
+                }
             }
         };
 
