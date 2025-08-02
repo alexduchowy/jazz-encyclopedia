@@ -771,14 +771,11 @@
 
                 const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
                 
-                // *** FIXED an issue with date parsing for sorting ***
                 const parseDate = (dateString) => {
                     if (!dateString || typeof dateString !== 'string') return null;
-                    // Robustly split by whitespace and remove commas.
                     const parts = dateString.replace(/,/g, '').trim().split(/\s+/);
                     if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
                     if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 1);
-                    // For consistency, year-only dates can be treated as the end of that year for sorting.
                     if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 11, 31);
                     return null;
                 };
@@ -828,6 +825,16 @@
 
                     processedAlbumIds.add(album.uniqueId);
                 });
+
+                // *** FIXED: Explicitly sort the albums within each year's chronological group. ***
+                // This ensures that even with data source inconsistencies, the final display is correct.
+                for (const yearAlbums of this.state.groupedDataChronological.values()) {
+                    yearAlbums.sort((a, b) => {
+                        const dateA = a.sortingDateObject || new Date(0);
+                        const dateB = b.sortingDateObject || new Date(0);
+                        return dateA - dateB;
+                    });
+                }
                 
                 this.state.albumMap = new Map(this.state.albums.map(a => [a.uniqueId, a]));
             },
@@ -1259,12 +1266,10 @@
                 yearContainers.forEach(container => this.state.intersectionObserver.observe(container));
             },
 
-            // *** FIXED an issue with the Era display updating too early ***
             handleEraIntersection(entries) {
                 const visibleEntries = entries.filter(entry => entry.isIntersecting);
 
                 if (visibleEntries.length > 0) {
-                    // Find the entry whose left edge is closest to the container's left edge.
                     let bestCandidate = null;
                     let minDistance = Infinity;
                     const containerLeft = this.elements.timelineContainer.getBoundingClientRect().left;
