@@ -23,16 +23,14 @@
             --accent: #f97316;
             --sticky-top-offset: 112px;
 
-            /* Genre Colors */
-            --genre-bebop: #a0522d;
-            --genre-hard-bop: #8b5cf6;
-            --genre-cool-jazz: #3b82f6;
-            --genre-modal-jazz: #10b981;
-            --genre-post-bop: #f59e0b;
-            --genre-free-jazz: #ef4444;
-            --genre-avant-garde: #ec4899;
-            --genre-jazz-fusion: #06b6d4;
-            --genre-default: #d4d4d8;
+            /* Path Colors */
+            --path-electric-path: #06b6d4;
+            --path-spiritual-path: #22c55e;
+            --path-avant-garde-path: #ec4899;
+            --path-afro-jazz-path: #ca8a04;
+            --path-melodic-path: #3b82f6;
+            --path-neo-bop-path: #8b5cf6;
+            --path-default: #d4d4d8;
         }
 
         html.dark {
@@ -42,14 +40,6 @@
             --text-main: #f5f5f4;
             --text-muted: #a8a29e;
             --border-color: #44403c;
-            --genre-bebop: #b97245; 
-            --genre-hard-bop: #6d28d9;
-            --genre-cool-jazz: #2563eb;
-            --genre-modal-jazz: #059669;
-            --genre-post-bop: #d97706;
-            --genre-free-jazz: #dc2626;
-            --genre-avant-garde: #db2777;
-            --genre-jazz-fusion: #0891b2;
         }
 
         html, body {
@@ -65,15 +55,6 @@
             letter-spacing: 0.05em;
         }
         
-        .header-title-styled {
-            transform: rotate(-2deg);
-            display: inline-block;
-            background-color: var(--accent);
-            color: #FFFFFF;
-            padding: 0.4rem 1.25rem;
-            font-size: 1.25rem;
-        }
-
         .nav-link {
             transition: color 0.2s;
             font-family: 'Bebas Neue', sans-serif;
@@ -110,16 +91,20 @@
             align-items: flex-start;
         }
         
-        .path-container {
+        .year-container {
             display: flex;
             flex-direction: column;
             padding: 0 1.5rem 1.5rem 1.5rem;
-            border-left: 4px solid var(--border-color);
+            border-left: 2px solid var(--border-color);
             flex-shrink: 0;
+            width: 460px;
             margin: 0 1rem;
+            transition: opacity 0.3s, transform 0.3s;
         }
+        .year-container.filtered { display: none; }
+        .year-container:first-child { border-left: none; }
 
-        .path-header-wrapper {
+        .year-header-wrapper {
             width: 100%;
             text-align: center;
             position: sticky;
@@ -128,7 +113,7 @@
             margin-bottom: 2rem;
         }
 
-        .path-header {
+        .year-header {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2rem;
             color: var(--accent);
@@ -139,6 +124,29 @@
             display: inline-block;
             border: 1px solid var(--border-color);
         }
+        
+        .path-block {
+            width: 100%;
+            margin-bottom: 2rem;
+            transition: opacity 0.3s, max-height 0.5s, margin 0.5s;
+            max-height: 2000px; 
+            overflow: hidden;
+        }
+        .path-block.filtered { opacity: 0; max-height: 0; margin-bottom: 0; }
+
+        .path-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            padding: 0.25rem 0.75rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #FFFFFF;
+            border: 2px solid rgba(0,0,0,0.1);
+            text-align: center;
+            border-radius: 9999px;
+            transition: all 0.2s;
+        }
+        html.dark .path-label { border-color: rgba(255,255,255,0.2); }
         
         .album-grid {
             display: flex;
@@ -153,7 +161,7 @@
             border-radius: 0.25rem;
             border: 2px solid var(--text-main);
             border-top-width: 6px;
-            border-top-color: var(--album-genre-color, var(--text-main));
+            border-top-color: var(--album-path-color, var(--text-main));
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -161,7 +169,7 @@
         }
         html.dark .album-card {
             border-color: var(--border-color);
-            border-top-color: var(--album-genre-color, var(--border-color));
+            border-top-color: var(--album-path-color, var(--border-color));
         }
         .album-card:hover {
             transform: translateY(-5px);
@@ -193,7 +201,7 @@
 
         #controls-header {
             position: fixed;
-            top: 64px;
+            top: 96px; /* Adjusted for main nav */
             left: 0;
             width: 100%;
             padding: 0.5rem 1rem;
@@ -207,24 +215,30 @@
             gap: 1rem;
         }
         
-        #path-controls {
+        #path-legend {
             display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-shrink: 0;
-        }
-
-        #current-path-display {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-            text-align: left;
+            gap: 0.5rem;
+            overflow-x: auto;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: opacity 0.3s, color 0.3s;
-            max-width: 280px;
+            padding: 0.25rem;
+            flex-grow: 1;
+            min-width: 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
+        #path-legend::-webkit-scrollbar { display: none; }
+
+        .legend-item {
+            display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;
+            font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+            padding: 0.25rem 0.75rem; border-radius: 9999px;
+            border: 1px solid var(--text-muted); background-color: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+        .legend-item:hover { border-color: var(--accent); }
+        .legend-item.active { background-color: var(--accent); color: white; border-color: var(--accent); }
+        .legend-item.inactive { opacity: 0.5; }
+        .legend-color-swatch { width: 0.75rem; height: 0.75rem; border-radius: 0.125rem; border: 1px solid var(--text-main); flex-shrink: 0; }
         
         #loader {
             position: fixed; inset: 0; background-color: var(--bg-main);
@@ -244,7 +258,7 @@
         .modal-content {
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
             background-color: var(--bg-main);
-            border-color: var(--text-main);
+            border: 2px solid var(--text-main);
         }
         html.dark .modal-content { border-color: var(--border-color); }
         .modal.opacity-0 .modal-content { opacity: 0; transform: scale(0.95) translateY(10px); }
@@ -264,62 +278,6 @@
             text-decoration: none; display: inline-block;
         }
         html.dark .genre-tag { border-color: rgba(255,255,255,0.2); }
-
-        .clickable-link {
-            cursor: pointer; text-decoration: underline; text-decoration-color: var(--accent);
-            transition: color 0.2s;
-        }
-        .clickable-link:hover { color: var(--accent); }
-
-        /* Dropdown */
-        .dropdown-container { position: relative; flex-shrink: 0; }
-        .dropdown-btn {
-            background: var(--bg-secondary); border: 1px solid var(--text-muted); color: var(--text-muted);
-            font-size: 0.8rem; font-weight: bold; border-radius: 99px; padding: 0.5rem 1rem;
-            cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: space-between; gap: 0.25rem;
-            width: 100%;
-        }
-        .dropdown-btn:hover { background-color: var(--accent); color: white; border-color: var(--accent); }
-        .dropdown-list {
-            position: absolute;
-            top: calc(100% + 0.5rem);
-            left: 0;
-            right: 0;
-            background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 50;
-            max-height: 250px;
-            overflow-y: auto;
-            opacity: 0;
-            transform: translateY(-10px);
-            pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-        html.dark .dropdown-list { border-color: var(--border-color); }
-        .dropdown-container.open .dropdown-list {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-        .dropdown-list a, .dropdown-list button {
-            display: block;
-            padding: 0.75rem 1rem;
-            font-size: 0.9rem;
-            transition: background-color 0.2s;
-            width: 100%;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .dropdown-list a:last-child, .dropdown-list button:last-child {
-            border-bottom: none;
-        }
-        .dropdown-list a:hover, .dropdown-list button:hover {
-            background-color: var(--accent);
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -330,28 +288,41 @@
     </div>
 
     <!-- Main Navigation Header -->
-    <div class="sticky top-0 z-50 h-16 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+    <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
         <header class="container mx-auto h-full">
             <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center gap-4 flex-shrink-0">
-                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-12 sm:h-14" onerror="this.onerror=null;this.src='https://placehold.co/160x56/1c1917/f5f5f4?text=Logo';"></a>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="hidden md:flex items-center space-x-8">
-                        <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                            Back to Main Site
-                        </a>
+                <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                <div class="flex items-center">
+                    <div class="hidden lg:flex items-center space-x-8">
+                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                        <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                        <div class="dropdown-container">
+                            <a href="#" class="nav-link active px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
+                                Timeline
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </a>
+                            <div class="dropdown-list">
+                                <a href="/timeline.html">Bop Era: 50s-60s</a>
+                                <a href="/legacy.html" class="nav-link active">Legacy: 70s-Now</a>
+                            </div>
+                        </div>
+                        <div class="dropdown-container">
+                            <a href="#" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
+                                Archive
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </a>
+                            <div class="dropdown-list">
+                                <a href="/genres.html">Genres</a>
+                                <a href="/artists.html">Artists</a>
+                                <a href="/albums.html">Albums</a>
+                            </div>
+                        </div>
+                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
                     </div>
-                    <button id="theme-toggle" class="p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                    <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
                         <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
-                    <div class="md:hidden ml-2">
-                         <a href="legacy.html" class="nav-link p-2 rounded-md font-medium text-sm flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        </a>
-                    </div>
                 </div>
             </nav>
         </header>
@@ -361,16 +332,7 @@
     <div id="main-container">
         <!-- Controls Header -->
         <header id="controls-header">
-            <div id="path-controls" class="flex items-center gap-4 w-full">
-                <div id="current-path-display"></div>
-                <div id="path-jump-container" class="dropdown-container">
-                    <button class="dropdown-btn">
-                        Jump to Path
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                    </button>
-                    <div id="path-jump-list" class="dropdown-list"></div>
-                </div>
-            </div>
+            <div id="path-legend" class="flex-grow"></div>
         </header>
 
         <div id="timeline-container">
@@ -407,11 +369,10 @@
                 paths: {},
                 genres: {},
                 albumMap: new Map(),
+                activePaths: new Set(),
                 isDragging: false,
                 startX: 0,
                 scrollLeft: 0,
-                intersectionObserver: null,
-                currentStickyPath: null,
             },
 
             elements: {},
@@ -426,7 +387,7 @@
                     this.calculateHeaderHeight(); 
                     await this.fetchData();
                     this.processData();
-                    this.renderPathJumpList();
+                    this.renderPathLegend();
                     this.renderTimeline();
                 } catch (error) {
                     console.error("Initialization failed:", error);
@@ -446,6 +407,7 @@
                     timelineContainer: document.getElementById('timeline-container'),
                     timelineWrapper: document.getElementById('timeline-wrapper'),
                     controlsHeader: document.getElementById('controls-header'),
+                    pathLegend: document.getElementById('path-legend'),
                     themeToggle: document.getElementById('theme-toggle'),
                     themeIconLight: document.getElementById('theme-icon-light'),
                     themeIconDark: document.getElementById('theme-icon-dark'),
@@ -457,9 +419,6 @@
                     albumModalAlbumDetails: document.getElementById('album-modal-album-details'),
                     analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
                     closeAlbumModalBtn: document.getElementById('close-album-modal'),
-                    pathJumpContainer: document.getElementById('path-jump-container'),
-                    pathJumpList: document.getElementById('path-jump-list'),
-                    currentPathDisplay: document.getElementById('current-path-display'),
                 };
             },
 
@@ -478,7 +437,7 @@
                     requestAnimationFrame(() => {
                         const totalHeight = mainNav.offsetHeight + controlsHeader.offsetHeight;
                         this.elements.timelineContainer.style.paddingTop = `${totalHeight}px`;
-                        document.documentElement.style.setProperty('--sticky-top-offset', `0px`);
+                        document.documentElement.style.setProperty('--sticky-top-offset', `${controlsHeader.offsetHeight}px`);
                     });
                 }
             },
@@ -502,7 +461,7 @@
             
             buildGenreColorMap(genreData) {
                 const colorMap = {};
-                if (genreData && genreData.genres) {
+                 if (genreData && genreData.genres) {
                      Object.entries(genreData.genres).forEach(([name, data]) => {
                         colorMap[name] = data.color;
                         if(name === "Avant-Garde") {
@@ -510,7 +469,6 @@
                         }
                     });
                 }
-                // Add legacy genres
                 const legacyGenres = ["Jazz Fusion", "Spiritual Jazz", "Avant-Garde Jazz", "Afro-Jazz", "ECM Style Jazz", "Neo-Bop"];
                 legacyGenres.forEach(genre => {
                     if (!colorMap[genre]) {
@@ -535,12 +493,11 @@
                     .replace(/[^\w\-]+/g, '')
                     .replace(/\-\-+/g, '-')
                     .replace(/^-+/, '')
-                    .replace(/-+$/, '');
+                    .replace(/-+$/, '')
             },
 
             slugifyForImagePath(text) {
-                if (!text) return '';
-                return this.slugifyForUrl(text); // Use the same robust slugify function
+                return this.slugifyForUrl(text);
             },
             
             processData() {
@@ -581,62 +538,110 @@
                 this.state.albums = legacyAlbums;
                 this.state.albumMap = new Map(this.state.albums.map(a => [a.uniqueId, a]));
 
-                // Group by Legacy Path
                 const paths = {};
                 this.state.albums.forEach(album => {
                     const path = album.legacyPath || "Uncategorized";
                     if (!paths[path]) {
-                        paths[path] = { title: path, albums: [] };
+                        paths[path] = { title: path, albums: new Map() };
                     }
-                    paths[path].albums.push(album);
+                    const year = album.year;
+                    if (!paths[path].albums.has(year)) {
+                        paths[path].albums.set(year, []);
+                    }
+                    paths[path].albums.get(year).push(album);
                 });
                 this.state.paths = paths;
+                this.state.activePaths = new Set(Object.keys(paths));
             },
 
-            renderPathJumpList() {
-                const pathHtml = Object.keys(this.state.paths).sort().map(pathKey => 
-                    `<a href="#" data-path="${pathKey}">${pathKey}</a>`
-                ).join('');
-                this.elements.pathJumpList.innerHTML = pathHtml;
+            renderPathLegend() {
+                const legendFragment = document.createDocumentFragment();
+                
+                const showAllBtn = document.createElement('button');
+                showAllBtn.id = 'show-all-btn';
+                showAllBtn.className = 'legend-item active';
+                showAllBtn.textContent = 'ALL PATHS';
+                legendFragment.appendChild(showAllBtn);
+
+                const sortedPaths = Object.keys(this.state.paths).sort();
+                for (const pathKey of sortedPaths) {
+                    const item = document.createElement('button');
+                    item.className = 'legend-item';
+                    item.dataset.path = pathKey;
+                    
+                    const colorSwatch = document.createElement('div');
+                    colorSwatch.className = 'legend-color-swatch';
+                    const colorVar = `--path-${this.slugifyForUrl(pathKey)}`;
+                    colorSwatch.style.backgroundColor = `var(${colorVar}, var(--path-default))`;
+                    item.appendChild(colorSwatch);
+
+                    const textSpan = document.createElement('span');
+                    textSpan.textContent = pathKey;
+                    item.appendChild(textSpan);
+                    
+                    legendFragment.appendChild(item);
+                }
+                this.elements.pathLegend.innerHTML = '';
+                this.elements.pathLegend.appendChild(legendFragment);
             },
             
             renderTimeline() {
-                if (this.state.intersectionObserver) {
-                    this.state.intersectionObserver.disconnect();
-                }
-
                 const fragment = document.createDocumentFragment();
-                const sortedPaths = Object.keys(this.state.paths).sort();
+                const allYears = new Set();
+                Object.values(this.state.paths).forEach(path => {
+                    path.albums.forEach((albums, year) => allYears.add(year));
+                });
+                const sortedYears = [...allYears].sort((a, b) => a - b);
 
-                for (const pathKey of sortedPaths) {
-                    const pathData = this.state.paths[pathKey];
-                    const pathContainer = document.createElement('div');
-                    pathContainer.className = 'path-container';
-                    pathContainer.dataset.path = pathKey;
-                    pathContainer.id = `path-${this.slugifyForUrl(pathKey)}`;
+                for (const year of sortedYears) {
+                    const yearContainer = document.createElement('div');
+                    yearContainer.className = 'year-container';
+                    yearContainer.dataset.year = year;
+                    yearContainer.id = `year-${year}`;
                     
-                    const pathHeaderWrapper = document.createElement('div');
-                    pathHeaderWrapper.className = 'path-header-wrapper';
+                    const yearHeaderWrapper = document.createElement('div');
+                    yearHeaderWrapper.className = 'year-header-wrapper';
+                    const yearHeader = document.createElement('div');
+                    yearHeader.className = 'year-header';
+                    yearHeader.textContent = year;
+                    yearHeaderWrapper.appendChild(yearHeader);
+                    yearContainer.appendChild(yearHeaderWrapper);
 
-                    const pathHeader = document.createElement('div');
-                    pathHeader.className = 'path-header';
-                    pathHeader.textContent = pathData.title;
-                    
-                    pathHeaderWrapper.appendChild(pathHeader);
-                    pathContainer.appendChild(pathHeaderWrapper);
-
-                    const albumGrid = document.createElement('div');
-                    albumGrid.className = 'album-grid';
-                    pathData.albums.forEach(album => {
-                        const card = this.createAlbumCard(album);
-                        albumGrid.appendChild(card);
-                    });
-                    pathContainer.appendChild(albumGrid);
-                    fragment.appendChild(pathContainer);
+                    const sortedPaths = Object.keys(this.state.paths).sort();
+                    for (const pathKey of sortedPaths) {
+                        const pathData = this.state.paths[pathKey];
+                        if (pathData.albums.has(year)) {
+                            const pathBlock = this.createPathBlock(pathKey, pathData.albums.get(year));
+                            yearContainer.appendChild(pathBlock);
+                        }
+                    }
+                    fragment.appendChild(yearContainer);
                 }
                 this.elements.timelineWrapper.innerHTML = '';
                 this.elements.timelineWrapper.appendChild(fragment);
-                this.setupStickyPathObserver();
+                this.filterTimeline();
+            },
+
+            createPathBlock(pathKey, albums) {
+                const pathBlock = document.createElement('div');
+                pathBlock.className = 'path-block';
+                pathBlock.dataset.path = pathKey;
+                
+                const pathLabel = document.createElement('div');
+                pathLabel.className = 'path-label';
+                pathLabel.textContent = pathKey;
+                const colorVar = `--path-${this.slugifyForUrl(pathKey)}`;
+                pathLabel.style.backgroundColor = `var(${colorVar}, var(--path-default))`;
+                pathBlock.appendChild(pathLabel);
+
+                const albumGrid = document.createElement('div');
+                albumGrid.className = 'album-grid';
+                albums.forEach(album => {
+                   const card = this.createAlbumCard(album);
+                   albumGrid.appendChild(card);
+                });
+                pathBlock.appendChild(albumGrid);
+                return pathBlock;
             },
 
             createAlbumCard(album) {
@@ -644,9 +649,9 @@
                 card.className = 'album-card';
                 card.dataset.uniqueId = album.uniqueId;
 
-                const primaryGenre = album.genres[0];
-                const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
-                card.style.setProperty('--album-genre-color', genreColor);
+                const pathKey = album.legacyPath || "Uncategorized";
+                const colorVar = `--path-${this.slugifyForUrl(pathKey)}`;
+                card.style.setProperty('--album-path-color', `var(${colorVar}, var(--path-default))`);
                 
                 const imageSlug = this.slugifyForImagePath(album.albumTitle);
                 const coverPath = `/images/${imageSlug}.jpg`;
@@ -680,7 +685,6 @@
                         this.elements.themeIconLight.classList.remove('hidden');
                         this.elements.themeIconDark.classList.add('hidden');
                     }
-                    this.updateStickyPathDisplay(this.state.currentStickyPath);
                 };
                 
                 const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -696,44 +700,12 @@
             bindEvents() {
                 this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
                 this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
-                this.elements.pathJumpContainer.querySelector('.dropdown-btn').addEventListener('click', this.onPathDropdownToggle.bind(this));
-                this.elements.pathJumpList.addEventListener('click', this.onPathJump.bind(this));
-                window.addEventListener('click', this.closeAllDropdowns.bind(this));
+                this.elements.pathLegend.addEventListener('click', this.onFilterClick.bind(this));
                 window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
             },
             
-            onPathDropdownToggle(e) {
-                e.stopPropagation();
-                this.elements.pathJumpContainer.classList.toggle('open');
-            },
-
-            closeAllDropdowns(e) {
-                if (!this.elements.pathJumpContainer.contains(e.target)) {
-                    this.elements.pathJumpContainer.classList.remove('open');
-                }
-            },
-
-            onPathJump(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const target = e.target.closest('a[data-path]');
-                if (!target) return;
-
-                const pathKey = target.dataset.path;
-                const pathContainer = document.getElementById(`path-${this.slugifyForUrl(pathKey)}`);
-                
-                if (pathContainer) {
-                    const offsetPosition = pathContainer.offsetLeft;
-                    this.elements.timelineContainer.scrollTo({
-                        left: offsetPosition,
-                        behavior: 'smooth'
-                    });
-                }
-                this.elements.pathJumpContainer.classList.remove('open');
-            },
-
             onDragStart(e) {
-                if (e.target.closest('.album-card, .dropdown-container')) return;
+                if (e.target.closest('.album-card, .legend-item')) return;
                 this.state.isDragging = true;
                 this.elements.timelineContainer.style.cursor = 'grabbing';
                 document.body.style.cursor = 'grabbing';
@@ -771,41 +743,57 @@
                 }
             },
             
-            setupStickyPathObserver() {
-                const observerOptions = {
-                    root: this.elements.timelineContainer,
-                    rootMargin: '0px', 
-                    threshold: 0.01 
-                };
+            onFilterClick(e) {
+                const target = e.target.closest('button');
+                if (!target) return;
 
-                this.state.intersectionObserver = new IntersectionObserver(this.handlePathIntersection.bind(this), observerOptions);
-                const pathContainers = this.elements.timelineWrapper.querySelectorAll('.path-container');
-                pathContainers.forEach(container => this.state.intersectionObserver.observe(container));
+                const path = target.dataset.path;
+                if (!path) return;
+
+                const allPaths = Object.keys(this.state.paths);
+
+                if (path === 'all' || target.id === 'show-all-btn') {
+                    this.state.activePaths = new Set(allPaths);
+                } else {
+                    if (!e.shiftKey) {
+                        this.state.activePaths.clear();
+                    }
+                    if (this.state.activePaths.has(path)) {
+                        this.state.activePaths.delete(path);
+                    } else {
+                        this.state.activePaths.add(path);
+                    }
+                }
+                if (this.state.activePaths.size === 0) {
+                    this.state.activePaths = new Set(allPaths);
+                }
+                
+                this.filterTimeline();
             },
 
-            handlePathIntersection(entries) {
-                const visibleEntries = entries.filter(entry => entry.isIntersecting);
+            filterTimeline() {
+                const isAllActive = this.state.activePaths.size === Object.keys(this.state.paths).length;
+                this.elements.pathLegend.querySelector('#show-all-btn').classList.toggle('active', isAllActive);
+                
+                this.elements.pathLegend.querySelectorAll('.legend-item[data-path]').forEach(item => {
+                    const path = item.dataset.path;
+                    if (isAllActive) {
+                        item.classList.remove('active', 'inactive');
+                    } else {
+                        item.classList.toggle('active', this.state.activePaths.has(path));
+                        item.classList.toggle('inactive', !this.state.activePaths.has(path));
+                    }
+                });
 
-                if (visibleEntries.length > 0) {
-                    const rightmostEntry = visibleEntries.reduce((latest, current) => {
-                        return current.boundingClientRect.right > latest.boundingClientRect.right ? current : latest;
-                    });
-
-                    const pathKey = rightmostEntry.target.dataset.path;
-                    this.updateStickyPathDisplay(pathKey);
-                }
-            },
-            
-            updateStickyPathDisplay(pathKey) {
-                this.state.currentStickyPath = pathKey;
-                const displayElement = this.elements.currentPathDisplay;
-
-                if (pathKey) {
-                    displayElement.textContent = pathKey;
-                    displayElement.style.opacity = '1';
-                } else if (!this.state.currentStickyPath) {
-                    displayElement.style.opacity = '0';
-                }
+                this.elements.timelineWrapper.querySelectorAll('.path-block').forEach(block => {
+                    const path = block.dataset.path;
+                    block.classList.toggle('filtered', !this.state.activePaths.has(path));
+                });
+                
+                this.elements.timelineWrapper.querySelectorAll('.year-container').forEach(year => {
+                    const visibleBlocks = year.querySelectorAll('.path-block:not(.filtered)');
+                    year.classList.toggle('filtered', visibleBlocks.length === 0);
+                });
             },
             
             setupModals() {
@@ -838,7 +826,6 @@
                 }
                 
                 albumModalAlbumArt.src = coverPath;
-                albumModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
                 albumModalAlbumArt.setAttribute('onerror', onErrorLogic);
 
                 const pivotalTrack = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks[0] : {};
