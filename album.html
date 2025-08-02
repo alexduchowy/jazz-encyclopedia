@@ -643,9 +643,7 @@
                 `).join('');
 
                 let imageSlug = this.slugifyForImagePath(albumTitle);
-                if (albumTitle.toLowerCase() === artistName.toLowerCase()) {
-                    imageSlug += '2';
-                }
+                
                 const coverPath = `/images/${imageSlug}.jpg`;
 
                 // Navigation Logic
