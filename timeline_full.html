@@ -784,29 +784,13 @@
                     }
                     album.uniqueId = `${this.slugifyForUrl(album.artist)}-${this.slugifyForUrl(album.albumTitle)}`;
                     
-                    let earliestDate = null;
-                    if (album.pivotalTracks && album.pivotalTracks.length > 0) {
-                        const dates = album.pivotalTracks
-                            .map(track => parseDate(track.recordingDate))
-                            .filter(date => date !== null);
-                        
-                        if (dates.length > 0) {
-                            earliestDate = new Date(Math.min.apply(null, dates));
-                        }
-                    }
-
-                    if (!earliestDate) {
-                        const albumRecordingDate = parseDate(album.recordingDate);
-                        if (albumRecordingDate) {
-                            earliestDate = albumRecordingDate;
-                        }
+                    let sortDate = parseDate(album.recordingDate);
+                    
+                    if (!sortDate) {
+                        sortDate = parseDate(String(album.year));
                     }
                     
-                    if (!earliestDate) {
-                        earliestDate = parseDate(String(album.year));
-                    }
-                    
-                    album.sortingDateObject = earliestDate;
+                    album.sortingDateObject = sortDate;
                 });
                 
                 this.state.albums.sort((a, b) => {
