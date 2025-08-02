@@ -478,14 +478,14 @@
 
             slugifyForImagePath(text) {
                 if (!text) return '';
-                // This version is permissive to match filenames exactly
                 return text.toString().toLowerCase()
-                    .replace(/[\s/:]+/g, '-')      // Replace spaces, slashes, colons with a hyphen
-                    .replace(/&/g, '-and-')       // Replace & with '-and-'
-                    .replace(/[^\w\-.,'!’()]+/g, '') // Remove any remaining invalid characters.
-                    .replace(/\-\-+/g, '-')        // Replace multiple hyphens
-                    .replace(/^-+/, '')           // Trim hyphens from start
-                    .replace(/-+$/, '');          // Trim hyphens from end
+                    .replace(/\s+/g, '-')
+                    .replace(/[,'".]/g, '') // Remove commas, apostrophes, dots
+                    .replace(/&/g, '&') // Keep ampersand
+                    .replace(/!/g, '!') // Keep exclamation
+                    .replace(/\-\-+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '');
             },
 
             getAlbumIdFromUrl() {
