@@ -14,7 +14,6 @@
     
     <!-- Custom CSS Styling -->
     <style>
-        /* Light Theme (Default) */
         :root {
             --bg-main: #f5f5f4;
             --bg-secondary: #e7e5e4;
@@ -23,31 +22,7 @@
             --text-muted: #44403c;
             --border-color: #e7e5e4;
             --accent: #f97316;
-            --yellow-accent: #facc15;
-
-            /* Genre Colors */
-            --genre-bebop: #C19A6B;
-            --genre-hard-bop: #d8b4fe;
-            --genre-cool-jazz: #93c5fd;
-            --genre-modal-jazz: #a7f3d0;
-            --genre-post-bop: #fed7aa;
-            --genre-free-jazz: #fca5a5;
-            --genre-avant-garde: #fecdd3;
-            --genre-jazz-fusion: #a5f3fc;
-            --genre-default: #e7e5e4;
-
-            /* Era Colors */
-            --era-cool-light: #dbeafe;
-            --era-hard-bop-light: #f3e8ff;
-            --era-bebop-light: #EADDCA;
-            --era-modal-light: #d1fae5;
-            --era-post-bop-light: #ffedd5;
-            --era-free-jazz-light: #fee2e2;
-            --era-roots-light: #fef9c3;
-            --era-fusion-light: #cffafe;
         }
-
-        /* Dark Theme */
         .dark {
             --bg-main: #1c1917;
             --bg-secondary: #292524;
@@ -55,45 +30,22 @@
             --text-main: #f5f5f4;
             --text-muted: #a8a29e;
             --border-color: #44403c;
-
-            /* Genre Colors - More subtle, shaded versions */
-            --genre-bebop: #855b32;
-            --genre-hard-bop: #5c3c92;
-            --genre-cool-jazz: #2c599d;
-            --genre-modal-jazz: #1a7451;
-            --genre-post-bop: #9a642a;
-            --genre-free-jazz: #992828;
-            --genre-avant-garde: #9d3363;
-            --genre-jazz-fusion: #2c7a84;
-
-            /* Era Colors - More subtle, shaded versions */
-            --era-cool-light: #2c599d;
-            --era-hard-bop-light: #5c3c92;
-            --era-bebop-light: #855b32;
-            --era-modal-light: #1a7451;
-            --era-post-bop-light: #9a642a;
-            --era-free-jazz-light: #992828;
-            --era-roots-light: #8c6d0e;
-            --era-fusion-light: #2c7a84;
         }
-
-        /* Base body styling */
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
         }
-        
         h1, h2, h3, h4, h5 {
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.05em;
         }
-
         .nav-link {
             transition: color 0.2s;
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.1em;
             font-size: 1.1rem;
+            color: var(--text-muted);
         }
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
@@ -101,263 +53,10 @@
         .nav-bar-behaviour { display: none; }
         @media (min-width: 1024px) { .nav-bar-behaviour { display: flex; } }
 
-       .section-header {
-            transform: rotate(-1deg);
-            display: inline-block;
-            background-color: var(--accent);
-            color: #FFFFFF;
-            padding: 0.25rem 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .modal { transition: opacity 0.3s ease; }
-        .modal-content {
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-            background-color: var(--bg-main);
-            border: 2px solid var(--text-main);
-        }
-        .dark .modal-content { border-color: var(--border-color); }
-        .modal.opacity-0 .modal-content {
-              opacity: 0;
-              transform: scale(0.95) translateY(10px);
-        }
-        
-        #horizontal-timeline-container {
-            position: relative;
-            width: 100%;
-            overflow-x: auto;
-            cursor: grab;
-            border: none;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        #horizontal-timeline-container:active { cursor: grabbing; }
-        #horizontal-timeline-container::-webkit-scrollbar { display: none; }
-
-        #timeline-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        #timeline-wrapper {
-            position: relative;
-            display: inline-flex;
-            align-items: stretch;
-            padding: 2rem 1rem;
-            padding-top: 5rem;
-            z-index: 2;
-        }
-        
-        .era-section {
-            padding-top: 1.5rem;
-            padding-bottom: 2rem;
-            border-left: 4px solid var(--text-main);
-            display: flex;
-            flex-direction: row;
-        }
-        .dark .era-section {
-            border-left-color: var(--border-color);
-        }
-        .era-title {
-            display: none;
-        }
-        .era-content {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-        }
-        
-        .timeline-year-section {
-            display: flex;
-            flex-shrink: 0;
-            flex-direction: column;
-            align-items: center;
-            border-left: 4px dotted var(--text-muted);
-            padding: 0 2rem;
-        }
-        .timeline-year-section:first-child { border-left: none; }
-        .timeline-year-header { display: none; }
-        .timeline-album-list {
-            display: grid;
-            grid-template-rows: repeat(2, 1fr);
-            grid-auto-flow: column;
-            gap: 1.5rem;
-            min-height: 520px;
-        }
-        .timeline-album-card, .legacy-album-card {
-            width: 200px;
-            flex-shrink: 0;
-            background-color: var(--bg-main);
-            border-radius: 0.25rem;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-            box-shadow: 4px 4px 0px var(--text-main);
-            border: 2px solid var(--text-main);
-            overflow: hidden;
-            opacity: 1;
-        }
-        .dark .timeline-album-card, .dark .legacy-album-card {
-            border-color: var(--border-color);
-            box-shadow: none;
-        }
-        .timeline-album-card:hover, .legacy-album-card:hover {
-            transform: translateY(-5px) rotate(2deg);
-        }
-        .dark .timeline-album-card:hover, .dark .legacy-album-card:hover {
-            border-color: var(--accent);
-        }
-        .timeline-album-card.dimmed { opacity: 0.5; }
-        .timeline-album-card.highlighted {
-            opacity: 1;
-            box-shadow: 8px 8px 0px var(--highlight-color, var(--accent));
-        }
-        .dark .timeline-album-card.highlighted { box-shadow: none; border-color: var(--highlight-color, var(--accent)); }
-        .timeline-album-card.clicked, .legacy-album-card.clicked {
-            transform: translateY(-5px) rotate(2deg) scale(1.05);
-            box-shadow: 8px 8px 0px var(--accent) !important;
-            opacity: 1 !important;
-            z-index: 10;
-        }
-        .dark .timeline-album-card.clicked, .dark .legacy-album-card.clicked {
-            box-shadow: none !important;
-            border-color: var(--accent) !important;
-        }
-        .timeline-album-card.landmark-album {
-            border-width: 4px;
-            border-color: var(--landmark-color, var(--accent));
-            box-shadow: 0 0 15px 0px var(--landmark-color, var(--accent));
-        }
-        .dark .timeline-album-card.landmark-album { box-shadow: 0 0 15px 0px var(--landmark-color, var(--accent)); }
-
-        .timeline-album-card img, .legacy-album-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            filter: grayscale(100%);
-            transition: filter 0.3s ease;
-        }
-        .timeline-album-card:hover img, .timeline-album-card.highlighted img, .timeline-album-card.clicked img,
-        .legacy-album-card:hover img, .legacy-album-card.clicked img {
-            filter: grayscale(0%);
-        }
-        .timeline-album-card-info, .legacy-album-card-info { padding: 0.75rem; }
-        .timeline-album-card-info h5, .legacy-album-card-info h5 {
-            color: var(--text-main);
-            font-size: 1.25rem;
-        }
-        .timeline-album-card-info p, .legacy-album-card-info p {
-            color: var(--text-muted);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-        }
-        
-        .genre-button {
-            cursor: pointer;
-            font-size: 0.875rem; font-weight: 600;
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--text-main);
-            border-radius: 9999px;
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-        .dark .genre-button {
-            border-color: var(--border-color);
-            background-color: var(--bg-secondary);
-            color: var(--text-main);
-        }
-        .genre-button.active {
-            background-color: var(--genre-color, var(--accent));
-            color: var(--text-main);
-        }
-        .dark .genre-button.active {
-            color: var(--bg-main);
-            border-color: var(--genre-color, var(--accent));
-            background-color: var(--genre-color, var(--accent));
-        }
-        .genre-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .dark .genre-button:hover {
-            box-shadow: none;
-            filter: brightness(1.1);
-        }
-
-        .scrollbar-marker {
-            position: absolute; width: 2px; height: 100%;
-            background-color: var(--accent);
-            transform: translateX(-50%);
-        }
-        .scrollbar-marker::after {
-            content: attr(data-year); position: absolute;
-            top: 10px; left: 50%;
-            transform: translateX(-50%);
-            font-size: 9px; font-weight: bold;
-            color: var(--text-muted);
-        }
-
-        #loader {
-            position: fixed; inset: 0;
-            background-color: var(--bg-main);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 100;
-        }
-        .loader-spinner {
-            border: 4px solid var(--bg-secondary);
-            border-top: 4px solid var(--accent);
-            border-radius: 50%; width: 50px; height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .content-hidden { display: none; }
-        
-        .genre-tag {
-            padding: 0.25rem 0.75rem; border-radius: 9999px;
-            font-size: 0.875rem; font-weight: 600;
-            color: var(--text-main);
-            border: 2px solid var(--text-main);
-        }
-        .dark .genre-tag { border-color: var(--border-color); }
-
-        .clickable-link {
-            cursor: pointer; text-decoration: underline;
-            text-decoration-color: var(--accent);
-            transition: color 0.2s;
-        }
-        .clickable-link:hover { color: var(--accent); }
-        .dark .clickable-link { color: var(--accent); }
-        .dark .clickable-link:hover { color: #fb923c; }
-
-        .fade-in-element {
-            opacity: 0; transform: translateY(20px);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-        }
-        .fade-in-element.is-visible { opacity: 1; transform: translateY(0); }
-        
-        @keyframes nudge-right { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
-        .nudge-animation { animation: nudge-right 1.5s ease-in-out 3; }
-
         #mobile-menu-panel { transition: transform 0.3s ease-in-out; background-color: var(--bg-main); }
         #mobile-menu-overlay.hidden #mobile-menu-panel { transform: translateX(100%); }
         
         .dropdown-container { position: relative; }
-        .dropdown-btn {
-            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
-            padding: 0.5rem 1.5rem;
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            background-color: var(--bg-main);
-            transition: all 0.2s ease; cursor: pointer;
-            display: flex; align-items: center; gap: 0.5rem;
-            color: var(--text-muted);
-        }
-        .dark .dropdown-btn { border-color: var(--border-color); }
-        .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
         .dropdown-list {
             position: absolute;
             background-color: var(--bg-main);
@@ -379,33 +78,22 @@
             border-color: var(--border-color);
             box-shadow: none;
         }
-        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
         .dropdown-list a:hover {
             background-color: var(--accent); color: var(--bg-main);
             transform: translateX(4px);
         }
-        .dropdown-list a .era-year {
-            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em;
-            color: var(--text-muted); font-size: 0.9rem;
+        #mobile-nav-links .mobile-nav-link {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
         }
-        .dropdown-list a:hover .era-year { color: var(--bg-main); }
-
-        .era-button {
-            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 0.9rem;
-            padding: 0.5rem 0.75rem;
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            transition: all 0.2s ease; cursor: pointer;
-            color: var(--text-main); font-weight: 600;
-            width: 180px; height: 50px;
-            display: flex; align-items: center; justify-content: center; text-align: center;
-        }
-      .dark .era-button { 
-          border-color: var(--border-color); 
-          color: var(--bg-main); /* Change text to white/light in dark mode */
-      }
-        .era-button:hover { filter: brightness(95%); transform: translateY(-2px); }
-        .dark .era-button:hover { filter: brightness(120%); }
 
         .banner-section {
             position: relative; width: 100%;
@@ -415,277 +103,159 @@
         .banner-img {
             width: 100%; height: 100%;
             object-fit: cover; opacity: 0.3;
-            animation: banner-fade-in 2s ease-out forwards;
         }
-        @keyframes banner-fade-in { from { opacity: 0; transform: scale(1.05); } to { opacity: 0.3; transform: scale(1); } }
         .banner-overlay {
             position: absolute; inset: 0;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 1rem; color: #f5f5f4;
         }
-        .typewriter h2 {
-            font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem;
-            max-width: 90vw; font-weight: bold; color: #fff;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            overflow: hidden; border-right: .15em solid var(--accent);
-            white-space: nowrap; margin: 0 auto; letter-spacing: .1em;
-            animation: typing 3.5s steps(35, end), blink-caret .75s step-end infinite;
-        }
-        .banner-subtitle { font-size: 0.9rem; }
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent); } }
+         .banner-overlay h1 { font-size: 3rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); }
         @media (min-width: 768px) {
             .banner-section { height: 30vh; max-height: 250px; }
-            .typewriter h2 { font-size: 3rem; max-width: none; }
-            .banner-subtitle { font-size: 1.125rem; }
+            .banner-overlay h1 { font-size: 4rem; }
         }
-
-        #modal-analysis-section {
-            background-color: #1a1a1a; padding: 1.5rem; margin-top: 2rem;
-            border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main);
+        
+        #timeline-iframe-container {
+            border: 4px solid var(--text-main);
+            box-shadow: 8px 8px 0px var(--text-main);
+            background-color: var(--text-main);
+            border-radius: 0.25rem;
+            overflow: hidden; /* To clip the iframe's corners */
         }
-        .dark #modal-analysis-section { border-color: var(--border-color); box-shadow: none; }
-        #modal-analysis-section h5 { color: #f5f5f4; }
-
-        .liner-notes-text { font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; color: #d4d4d2; }
-
-        .modal-genre-tag {
-            padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem;
-            font-weight: 600; color: #FFFFFF;
-            border: 2px solid rgba(0,0,0,0.1);
-            text-decoration: none; display: inline-block;
+        .dark #timeline-iframe-container {
+            border-color: var(--border-color);
+            box-shadow: none;
         }
-        .dark .modal-genre-tag { border-color: rgba(255,255,255,0.2); }
-   
+        #timeline-iframe {
+            width: 100%;
+            height: 70vh;
+            border: none;
+        }
+        .section-header {
+            transform: rotate(-1deg);
+            display: inline-block;
+            background-color: var(--accent);
+            color: #FFFFFF;
+            padding: 0.25rem 1rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
-<body class="text-stone-900">
+<body>
 
-    <div id="loader" class="loader"><div class="loader-spinner"></div></div>
-
-    <div id="page-content" class="content-hidden">
-        <!-- Standardized Sticky Header -->
-        <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
-            <header class="container mx-auto h-full">
-                <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
-                    <div class="flex items-center">
-                        <div class="nav-bar-behaviour items-center space-x-8">
-                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
-                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
-                            <a href="/timeline.html" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
-                            <div class="dropdown-container">
-                                 <a href="#" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
-                                    Archive
-                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                                </a>
-                                <div class="dropdown-list">
-                                    <a href="/legacy.html">Legacy Paths</a>
-                                    <a href="/genres.html">Genres</a>
-                                    <a href="/artists.html">Artists</a>
-                                    <a href="/albums.html">Albums</a>
-                                </div>
-                            </div>
-                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
-                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                                <span>@controlledjazz</span>
-                            </a>
-                        </div>
-                        <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
-                            <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                        </button>
-                        <!-- Hamburger Menu Button -->
-                        <div class="lg:hidden ml-2">
-                            <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
-                                <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-        </div>
-
-
-        <main>
-            <!-- Hero Banner Section -->
-            <section class="banner-section">
-                <img src="/images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
-                <div class="banner-overlay">
-                    <div class="typewriter">
-                        <h2>A Jazz Evolution Encyclopedia</h2>
-                    </div>
-                    <p class="banner-subtitle text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Follow the development of modern jazz through the 50s and 60s.</p>
-                </div>
-            </section>
-
-            <!-- Overview Section -->
-            <section id="overview" class="py-16 sm:py-20 bg-[var(--bg-main)]">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-                    <div class="grid md:grid-cols-5 gap-12 items-start">
-                        <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-[var(--text-main)] text-left">
-                            <div class="mb-8">
-                                <h2 class="section-header text-5xl">The Golden Age of Jazz</h2>
-                                <p class="text-lg text-[var(--text-muted)] mt-4 italic">How two decades of explosive creativity redefined the future of music.</p>
-                            </div>
-                            <p>The period between 1950 and 1969 represents the most accelerated and dynamic evolution in jazz history. From the virtuosic fire of <strong>Bebop</strong>, the music branched into myriad new forms. Some musicians pursued the soulful, blues-drenched energy of <strong>Hard Bop</strong>, while others explored the harmonically rich, restrained arrangements of <strong>Cool Jazz</strong>.</p>
-                            <p>At the heart of this era lies the central theme of <strong style="color: var(--accent);">"controlled freedom."</strong> The philosophy of <strong>Post-Bop</strong> sought a middle ground between dense structures and the radical abandon of the burgeoning <strong>Free Jazz</strong> and <strong>Avant-Garde</strong> scenes, introducing new harmonic and rhythmic complexity while still retaining elements of form and melody.</p>
-                            <p>This application provides an interactive journey through this interconnected history, ordered by recording date—not release date—to understand the influence exercised between all these musicians and <strong>reveal the authentic path of jazz evolution as it happened.</strong></p>
-                        </div>
-                        <div class="md:col-span-2 mt-8 md:mt-0">
-                            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Interactive Timeline Section -->
-            <section id="timeline" class="py-16 sm:py-20 bg-[var(--bg-secondary)] border-y-4 border-[var(--text-main)] dark:border-[var(--border-color)]">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 class="section-header text-5xl">Timeline Explorer</h2>
-                    <p class="text-center text-lg text-[var(--text-muted)] mb-8 max-w-3xl mx-auto italic">Use the filters to explore a year-by-year breakdown of landmark albums.</p>
-                    
-                    <!-- Timeline Filter Controls -->
-                    <div id="timeline-controls" class="space-y-6 mb-8">
-                        <div class="lg:hidden flex justify-center items-center gap-4">
-                            <!-- Mobile Genre Dropdown -->
-                            <div id="genre-filter-container-mobile" class="relative">
-                                <button id="genre-filter-dropdown-btn" class="dropdown-btn">
-                                    Filter by Genre
-                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                                </button>
-                                <div id="genre-filter-list" class="dropdown-list absolute left-0 top-full mt-2 hidden text-left">
-                                    <!-- Genre filter links will be injected here -->
-                                </div>
-                            </div>
-                            <!-- Mobile Era Dropdown -->
-                            <div id="era-glossary-container-mobile" class="relative">
-                                <button id="era-glossary-dropdown-btn" class="dropdown-btn">
-                                    Jump to Era
-                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                                </button>
-                                <div id="era-glossary-list" class="dropdown-list absolute right-0 top-full mt-2 hidden text-left">
-                                    <!-- Era glossary links will be injected here -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Web Bubbles -->
-                        <div id="genre-filter-container" class="hidden lg:flex flex-wrap justify-center gap-x-4 gap-y-3">
-                           <!-- Buttons will be injected here by JavaScript -->
-                        </div>
+    <!-- Standardized Sticky Header -->
+    <div class="sticky top-0 z-50 h-24 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+        <header class="container mx-auto h-full">
+            <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
+                <div class="flex items-center">
+                    <div class="nav-bar-behaviour items-center space-x-8">
+                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                        <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
                         
-                        <!-- Web Era Buttons -->
-                        <div id="era-glossary-container-web" class="hidden lg:block w-full">
-                             <!-- Content will be injected by JavaScript -->
+                        <!-- Timeline Dropdown -->
+                        <div class="dropdown-container">
+                            <a href="#" class="nav-link active px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
+                                Timeline
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </a>
+                            <div class="dropdown-list">
+                                <a href="/timeline.html" class="nav-link active">Bop Era: 50s-60s</a>
+                                <a href="/legacy.html">Legacy: 70s-Now</a>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="relative group">
-                        <!-- Sticky Year and Era Title Display -->
-                        <div id="sticky-header-display" class="absolute top-4 left-1 sm:left-4 flex items-end gap-x-3 pointer-events-none z-10">
-                            <div id="sticky-year-display" class="font-black text-orange-500 text-5xl leading-none transition-opacity duration-150"></div>
-                            <h3 id="sticky-era-title" class="font-black text-[var(--text-muted)] text-3xl leading-tight pb-1 transition-opacity duration-300"></h3>
+                        <!-- Archive Dropdown -->
+                        <div class="dropdown-container">
+                            <a href="#" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
+                                Archive
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </a>
+                            <div class="dropdown-list">
+                                <a href="/genres.html">Genres</a>
+                                <a href="/artists.html">Artists</a>
+                                <a href="/albums.html">Albums</a>
+                            </div>
                         </div>
 
-                        <div id="horizontal-timeline-container" class="min-h-[600px] flex items-center">
-                            <canvas id="timeline-canvas"></canvas>
-                            <div id="timeline-wrapper"></div>
-                        </div>
-                        <button id="scroll-left-btn" class="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                        </button>
-                        <button id="scroll-right-btn" class="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-[var(--text-main)] text-[var(--bg-main)] hover:bg-orange-500 transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                        </button>
-                    </div>
-                    <!-- Custom Scrollbar with Markers -->
-                    <div class="mt-6">
-                        <div id="custom-scrollbar" class="w-full h-2 bg-stone-300 dark:bg-stone-700 rounded-full cursor-pointer relative">
-                            <div id="custom-scrollbar-markers"></div>
-                            <div id="custom-scrollbar-thumb" class="h-full bg-[var(--text-main)] rounded-full absolute top-0 cursor-grab"></div>
-                        </div>
-                    </div>
-
-                    <!-- Full Timeline Button -->
-                    <div class="mt-12">
-                        <a href="https://controlledfreedom.com/timeline_full" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                            View Full Interactive Timeline &rarr;
+                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                            <span>@controlledjazz</span>
                         </a>
-                        <p class="text-sm text-[var(--text-muted)] mt-3">Explore a different view with all albums from 1950-1969 displayed vertically.</p>
                     </div>
-
+                    <button id="theme-toggle" class="ml-4 p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                        <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <!-- Hamburger Menu Button -->
+                    <div class="lg:hidden ml-2">
+                        <button id="mobile-menu-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                            <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        </button>
+                    </div>
                 </div>
-            </section>
-        </main>
+            </nav>
+        </header>
+    </div>
 
-        <!-- Footer -->
-        <footer class="bg-stone-900 text-stone-200 py-8">
+    <main>
+        <!-- Hero Banner Section -->
+        <section class="banner-section">
+            <img src="/images/banner.jpg" alt="Post-bop musicians in a rehearsal space" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511192336575-5a79af67d629?q=80&w=2074&auto=format&fit=crop';">
+            <div class="banner-overlay">
+                <h1>The Bop Era: 50s-60s</h1>
+                <p class="text-stone-300 max-w-2xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Follow the development of modern jazz through its most explosive decades.</p>
+            </div>
+        </section>
+
+        <!-- Overview Section -->
+        <section id="overview" class="py-16 sm:py-20 bg-[var(--bg-main)]">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+                <div class="grid md:grid-cols-5 gap-12 items-start">
+                    <div class="md:col-span-3 space-y-6 text-base md:text-lg leading-relaxed text-[var(--text-main)] text-left">
+                        <div class="mb-8">
+                            <h2 class="section-header text-5xl">The Golden Age of Jazz</h2>
+                            <p class="text-lg text-[var(--text-muted)] mt-4 italic">How two decades of explosive creativity redefined the future of music.</p>
+                        </div>
+                        <p>The period between 1950 and 1969 represents the most accelerated and dynamic evolution in jazz history. From the virtuosic fire of <strong>Bebop</strong>, the music branched into myriad new forms. Some musicians pursued the soulful, blues-drenched energy of <strong>Hard Bop</strong>, while others explored the harmonically rich, restrained arrangements of <strong>Cool Jazz</strong>.</p>
+                        <p>At the heart of this era lies the central theme of <strong style="color: var(--accent);">"controlled freedom."</strong> The philosophy of <strong>Post-Bop</strong> sought a middle ground between dense structures and the radical abandon of the burgeoning <strong>Free Jazz</strong> and <strong>Avant-Garde</strong> scenes, introducing new harmonic and rhythmic complexity while still retaining elements of form and melody.</p>
+                        <p>This application provides an interactive journey through this interconnected history, ordered by recording date—not release date—to understand the influence exercised between all these musicians and <strong>reveal the authentic path of jazz evolution as it happened.</strong></p>
+                    </div>
+                    <div class="md:col-span-2 mt-8 md:mt-0">
+                        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6nFqx9JIZD29Qxccp6mh4N?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Timeline Section -->
+        <section id="timeline" class="py-16 sm:py-20 bg-[var(--bg-secondary)]">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
-                <p class="text-sm text-stone-400 mt-2">Designed to bring music history to life through interactive data visualization.</p>
-                <div class="mt-6 border-t border-stone-700 pt-6">
-                    <p id="footer-copyright" class="text-xs text-stone-400"></p>
-                    <p class="text-xs text-stone-500 mt-2">Disclaimer: All music and images are the property of their respective copyright holders. This is a non-profit project for educational purposes only.</p>
+                <h2 class="text-5xl text-[var(--text-main)]">Timeline Explorer</h2>
+                <p class="text-center text-lg text-[var(--text-muted)] mb-12 max-w-3xl mx-auto italic">A preview of the full interactive timeline. Click the button below to explore the complete experience.</p>
+                
+                <div id="timeline-iframe-container">
+                    <iframe id="timeline-iframe" src="timeline_full.html" title="Interactive Jazz Timeline Preview"></iframe>
+                </div>
+
+                <!-- Full Timeline Button -->
+                <div class="mt-12">
+                    <a href="timeline_full.html" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        Open Full Interactive Timeline &rarr;
+                    </a>
                 </div>
             </div>
-        </footer>
-    </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-200 py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p id="footer-copyright" class="text-xs text-stone-400"></p>
+        </div>
+    </footer>
     
-    <!-- Modals -->
-    <div id="artist-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
-                 <h3 id="artist-modal-title" class="text-4xl text-orange-500"></h3>
-                 <button id="close-artist-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
-             </div>
-             <div id="artist-modal-body" class="p-6 overflow-y-auto"></div>
-        </div>
-    </div>
-    <div id="genre-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
-                 <h3 id="genre-modal-title" class="text-4xl"></h3>
-                 <button id="close-genre-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
-             </div>
-             <div id="genre-modal-body" class="p-6 overflow-y-auto"></div>
-        </div>
-    </div>
-    <div id="path-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content rounded-sm shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col transform scale-95">
-             <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
-                 <h3 id="path-modal-title" class="text-4xl"></h3>
-                 <button id="close-path-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
-             </div>
-             <div id="path-modal-body" class="p-6 overflow-y-auto"></div>
-        </div>
-    </div>
-
-    <!-- Universal Album Modal -->
-    <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div id="modal-content-album" class="modal-content rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
-            <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
-                <div>
-                    <h3 id="album-modal-title" class="text-4xl text-orange-500"></h3>
-                    <p id="album-modal-artist" class="text-xl text-[var(--text-muted)]"></p>
-                </div>
-                <button id="close-album-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
-            </div>
-            <div id="album-modal-body" class="p-6 overflow-y-auto">
-                <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
-                    <div class="w-full md:w-1/3 flex-shrink-0">
-                        <img id="album-modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)]" alt="Album Art" loading="lazy">
-                    </div>
-                    <div id="album-modal-album-details" class="w-full md:w-2/3"></div>
-                </div>
-                <div id="analysis-wrapper" class="relative mt-4"></div>
-            </div>
-        </div>
-    </div>
-
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50">
         <div id="mobile-menu-bg" class="fixed inset-0 bg-black opacity-50"></div>
@@ -694,11 +264,16 @@
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
                 <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
                 <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
-                <a href="/timeline.html" class="mobile-nav-link block text-lg font-bold text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                
+                <span class="mobile-nav-link block text-lg font-bold text-orange-500 p-2 rounded-md">Timeline</span>
+                <a href="/timeline.html" class="mobile-nav-link block text-lg font-bold text-orange-500 p-2 rounded-md ml-4">- Bop Era: 50s-60s</a>
+                <a href="/legacy.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Legacy: 70s-Now</a>
+
+                <span class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] p-2 rounded-md">Archive</span>
                 <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Genres</a>
                 <a href="/artists.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
-                 <a href="/albums.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Albums</a>
+                <a href="/albums.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Albums</a>
+                
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
                  <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
@@ -708,926 +283,66 @@
         </div>
     </div>
 
-    <!-- Main Application Script -->
+    <!-- Simplified Script for Menu and Theme -->
     <script>
-        const JazzApp = {
-            // Application State
-            state: {
-                albums: [],
-                artistProfiles: {},
-                styleMatrix: {},
-                visibleAlbums: [],
-                eras: [
-                    { title: "Cool & Bebop Foundations", startYear: 1950, endYear: 1953, color: 'var(--era-cool-light)' },
-                    { title: "Hard Bop Explosion", startYear: 1954, endYear: 1956, color: 'var(--era-hard-bop-light)' },
-                    { title: "Hard Bop At Its Peak", startYear: 1957, endYear: 1958, color: 'var(--era-bebop-light)' },
-                    { title: "Modal and Structural Expansion", startYear: 1959, endYear: 1961, color: 'var(--era-modal-light)' },
-                    { title: "Post-Bop Evolution", startYear: 1962, endYear: 1963, color: 'var(--era-post-bop-light)' },
-                    { title: "Spiritual Awakening", startYear: 1964, endYear: 1966, color: 'var(--era-free-jazz-light)' },
-                    { title: "Search for the Roots", startYear: 1967, endYear: 1968, color: 'var(--era-roots-light)' },
-                    { title: "Fusion Breakthrough", startYear: 1969, endYear: 1969, color: 'var(--era-fusion-light)' }
-                ],
-                lastKnownYear: '',
-                lastKnownEraTitle: '',
-                lastHoveredGenre: null,
-                activeGenres: new Set(),
-                isAllGenresActive: true,
-            },
-
-            // DOM Elements
-            elements: {},
-
-            // Initialization
+        const PageApp = {
             init() {
-                this.cacheDOMElements();
-                for (const key in this.methods) {
-                    if (typeof this.methods[key] === 'function') {
-                        this.methods[key] = this.methods[key].bind(this);
-                    }
-                }
-                this.methods.setupTheme();
-                this.methods.fetchData();
+                this.setupTheme();
+                this.setupMobileMenu();
+                document.getElementById('footer-copyright').textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
             },
-            
-            cacheDOMElements() {
-                this.elements = {
-                    loader: document.getElementById('loader'),
-                    pageContent: document.getElementById('page-content'),
-                    timelineContainer: document.getElementById('horizontal-timeline-container'),
-                    timelineWrapper: document.getElementById('timeline-wrapper'),
-                    timelineCanvas: document.getElementById('timeline-canvas'),
-                    scrollLeftBtn: document.getElementById('scroll-left-btn'),
-                    scrollRightBtn: document.getElementById('scroll-right-btn'),
-                    genreFilterContainer: document.getElementById('genre-filter-container'),
-                    eraGlossaryContainerMobile: document.getElementById('era-glossary-container-mobile'),
-                    eraGlossaryContainerWeb: document.getElementById('era-glossary-container-web'),
-                    eraGlossaryList: document.getElementById('era-glossary-list'),
-                    stickyYearDisplay: document.getElementById('sticky-year-display'),
-                    stickyEraTitle: document.getElementById('sticky-era-title'),
-                    artistModal: document.getElementById('artist-modal'),
-                    genreModal: document.getElementById('genre-modal'),
-                    pathModal: document.getElementById('path-modal'),
-                    customScrollbar: document.getElementById('custom-scrollbar'),
-                    customScrollbarThumb: document.getElementById('custom-scrollbar-thumb'),
-                    customScrollbarMarkers: document.getElementById('custom-scrollbar-markers'),
-                    mobileMenuButton: document.getElementById('mobile-menu-button'),
-                    mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
-                    mobileMenuPanel: document.getElementById('mobile-menu-panel'),
-                    mobileMenuCloseButton: document.getElementById('mobile-menu-close-button'),
-                    footerCopyright: document.getElementById('footer-copyright'),
-                    genreFilterDropdownBtn: document.getElementById('genre-filter-dropdown-btn'),
-                    genreFilterList: document.getElementById('genre-filter-list'),
-                    themeToggle: document.getElementById('theme-toggle'),
-                    themeIconLight: document.getElementById('theme-icon-light'),
-                    themeIconDark: document.getElementById('theme-icon-dark'),
-                    albumModal: document.getElementById('album-modal'),
-                    albumModalTitle: document.getElementById('album-modal-title'),
-                    albumModalArtist: document.getElementById('album-modal-artist'),
-                    albumModalBody: document.getElementById('album-modal-body'),
-                    albumModalAlbumArt: document.getElementById('album-modal-album-art'),
-                    albumModalAlbumDetails: document.getElementById('album-modal-album-details'),
-                    analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
-                    closeAlbumModalBtn: document.getElementById('close-album-modal'),
+            setupTheme() {
+                const themeToggle = document.getElementById('theme-toggle');
+                const lightIcon = document.getElementById('theme-icon-light');
+                const darkIcon = document.getElementById('theme-icon-dark');
+
+                const applyTheme = (theme) => {
+                    if (theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                        lightIcon.classList.add('hidden');
+                        darkIcon.classList.remove('hidden');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        lightIcon.classList.remove('hidden');
+                        darkIcon.classList.add('hidden');
+                    }
                 };
+
+                const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                applyTheme(savedTheme);
+
+                themeToggle.addEventListener('click', () => {
+                    const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                    localStorage.setItem('theme', newTheme);
+                    applyTheme(newTheme);
+                });
             },
-
-            methods: {
-                fetchData() {
-                    Promise.all([
-                        fetch('/album_database.json').then(res => res.json()),
-                        fetch('/artists.json').then(res => res.json()),
-                        fetch('/genres.json').then(res => res.json())
-                    ])
-                    .then(([dbData, artistProfileData, genreData]) => {
-                        this.state.albums = dbData.albums;
-                        this.state.artistProfiles = artistProfileData;
-                        this.state.styleMatrix = genreData;
-                        
-                        this.state.albums.forEach(album => {
-                            if (typeof album.genres === 'string') {
-                                album.genres = album.genres.split(',').map(g => g.trim());
-                            } else if (!Array.isArray(album.genres)) {
-                                album.genres = [];
-                            }
-                        });
-
-                        this.methods.initializeAppUI();
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                        this.elements.pageContent.innerHTML = `<div class="text-center p-8">
-                            <h2 class="text-2xl font-bold text-red-600">Failed to Load Data</h2>
-                            <p class="text-[var(--text-muted)] mt-2">Could not fetch all required database files. Please ensure all .json files are available.</p>
-                            <p class="text-sm text-stone-500 mt-4">Error: ${error.message}</p>
-                        </div>`;
-                        this.methods.showPage();
-                    });
-                },
-            
-                showPage() {
-                    this.elements.loader.style.display = 'none';
-                    this.elements.pageContent.classList.remove('content-hidden');
-                },
-
-                initializeAppUI() {
-                    this.methods.processAndSortData();
-                    this.methods.buildGenreColorMap();
-                    this.methods.setupFilters();
-                    this.methods.renderEraGlossary();
-                    this.methods.renderTimeline();
-                    this.methods.setupTimelineInteraction();
-                    this.methods.setupModals();
-                    this.methods.setupMobileMenu();
-                    this.methods.setupGeneralEventListeners();
-                    this.methods.renderScrollbarMarkers();
-                    this.methods.showPage();
-                    setTimeout(() => { if(this.elements.timelineContainer) this.elements.timelineContainer.scrollLeft = 0; }, 0);
-                },
+            setupMobileMenu() {
+                const mobileMenuButton = document.getElementById('mobile-menu-button');
+                const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+                const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+                const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
+                if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
                 
-                setupTheme() {
-                    const themeToggle = this.elements.themeToggle;
-                    const lightIcon = this.elements.themeIconLight;
-                    const darkIcon = this.elements.themeIconDark;
+                const openMenu = () => {
+                    mobileMenuOverlay.classList.remove('hidden');
+                    setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
+                };
+                const closeMenu = () => {
+                    mobileMenuPanel.style.transform = 'translateX(100%)';
+                    setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
+                };
 
-                    const applyTheme = (theme) => {
-                        if (theme === 'dark') {
-                            document.documentElement.classList.add('dark');
-                            lightIcon.classList.add('hidden');
-                            darkIcon.classList.remove('hidden');
-                        } else {
-                            document.documentElement.classList.remove('dark');
-                            lightIcon.classList.remove('hidden');
-                            darkIcon.classList.add('hidden');
-                        }
-                    };
-
-                    const savedTheme = localStorage.getItem('theme');
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-                    
-                    applyTheme(currentTheme);
-
-                    themeToggle.addEventListener('click', () => {
-                        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-                        localStorage.setItem('theme', newTheme);
-                        applyTheme(newTheme);
-                    });
-                },
-
-                processAndSortData() {
-                    const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
-                    
-                    const parseDate = (dateString) => {
-                        if (typeof dateString !== 'string') return null;
-                        if (dateString.toLowerCase().startsWith('c.')) {
-                            const yearMatch = dateString.match(/\d{4}/);
-                            if (yearMatch) return new Date(parseInt(yearMatch[0]), 11, 31);
-                        }
-                        const parts = dateString.replace(/,/g, '').split(' ');
-                        if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
-                        if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 1);
-                        if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 0, 1);
-                        return null;
-                    };
-
-                    this.state.albums.forEach(album => {
-                        if (album.pivotalTracks && album.pivotalTracks.length > 0) {
-                            album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
-                            album.sortingDate = album.pivotalTracks[0].recordingDate;
-                        }
-                        album.uniqueId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
-                    });
-                    
-                    const timelineAlbums = this.state.albums.filter(a => a.year <= 1969);
-                    timelineAlbums.sort((a,b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
-                    this.state.albums = timelineAlbums;
-                },
-
-                buildGenreColorMap() {
-                    const baseGenreColors = this.state.styleMatrix.genres ? Object.keys(this.state.styleMatrix.genres).reduce((acc, genre) => {
-                        acc[genre] = this.state.styleMatrix.genres[genre].color;
-                        return acc;
-                    }, {}) : {};
-                    this.state.fullGenreColorMap = { ...baseGenreColors };
-                    this.state.fullGenreColorMap['Free Jazz'] = 'var(--genre-free-jazz)';
-                    this.state.fullGenreColorMap['Avant-Garde Jazz'] = 'var(--genre-avant-garde)'; 
-                    this.state.fullGenreColorMap['Jazz Fusion'] = 'var(--genre-jazz-fusion)';
-                    this.state.albums.forEach(album => {
-                        if(album.genres) {
-                            album.genres.forEach(genre => {
-                                if (!this.state.fullGenreColorMap[genre]) this.state.fullGenreColorMap[genre] = 'var(--genre-default)';
-                            });
-                        }
-                    });
-                },
-
-                setupFilters() {
-                    const { genreFilterContainer, genreFilterList } = this.elements;
-                    const allGenresInDB = new Set();
-                    this.state.albums.forEach(album => {
-                        if (album.genres) album.genres.forEach(genre => allGenresInDB.add(genre.trim()));
-                    });
-                    const excludedGenres = ['Afro-Cuban Jazz', 'Bossa Nova', 'Chamber Jazz', 'Latin Jazz', 'Soul Jazz', 'Spiritual Jazz', 'Afro-Jazz', 'Ambient Jazz', 'Jazz-Funk', 'Third Stream', 'World Jazz', 'Soundtrack', 'Jazz-Rock', 'Progressive Rock', 'ECM Style Jazz', 'Neo-Bop', 'Cape Jazz', 'Vocal Jazz', 'Swing', 'Orchestral Jazz', 'Blues', 'Mainstream Jazz'];
-                    const filterableGenres = Array.from(allGenresInDB).filter(genre => !excludedGenres.includes(genre)).sort();
-                    
-                    this.state.activeGenres = new Set(filterableGenres);
-
-                    genreFilterContainer.innerHTML = '';
-                    const allButton = document.createElement('button');
-                    allButton.className = 'genre-button active';
-                    allButton.textContent = 'All Genres';
-                    allButton.dataset.genre = 'all';
-                    allButton.style.setProperty('--genre-color', 'var(--text-muted)');
-                    genreFilterContainer.appendChild(allButton);
-                    
-                    filterableGenres.forEach(genre => {
-                        const button = document.createElement('button');
-                        button.className = 'genre-button active';
-                        button.dataset.genre = genre;
-                        button.textContent = genre;
-                        button.style.setProperty('--genre-color', this.state.fullGenreColorMap[genre] || 'var(--genre-default)');
-                        genreFilterContainer.appendChild(button);
-                    });
-                    
-                    genreFilterList.innerHTML = `<a href="#" class="genre-filter-link" data-genre="all">All Genres</a>`;
-                    filterableGenres.forEach(genre => {
-                        genreFilterList.innerHTML += `<a href="#" class="genre-filter-link" data-genre="${genre}">${genre}</a>`;
-                    });
-
-                    genreFilterContainer.addEventListener('click', (e) => {
-                        const button = e.target.closest('.genre-button');
-                        if (!button) return;
-
-                        const genre = button.dataset.genre;
-
-                        if (genre === 'all') {
-                            this.state.isAllGenresActive = true;
-                            this.state.activeGenres = new Set(filterableGenres);
-                        } else {
-                            if (this.state.isAllGenresActive || !e.shiftKey) {
-                                this.state.isAllGenresActive = false;
-                                if (this.state.activeGenres.size === 1 && this.state.activeGenres.has(genre)) {
-                                    this.state.isAllGenresActive = true;
-                                    this.state.activeGenres = new Set(filterableGenres);
-                                } else {
-                                    this.state.activeGenres.clear();
-                                    this.state.activeGenres.add(genre);
-                                }
-                            } else { 
-                                this.state.isAllGenresActive = false;
-                                if (this.state.activeGenres.has(genre)) {
-                                    this.state.activeGenres.delete(genre);
-                                } else {
-                                    this.state.activeGenres.add(genre);
-                                }
-                            }
-                        }
-                        
-                        if (this.state.activeGenres.size === 0) {
-                            this.state.isAllGenresActive = true;
-                            this.state.activeGenres = new Set(filterableGenres);
-                        }
-
-                        this.methods.filterTimeline();
-                    });
-
-                    genreFilterList.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const link = e.target.closest('.genre-filter-link');
-                        if (link) {
-                            const selectedGenre = link.dataset.genre;
-                           
-                            if (selectedGenre === 'all') {
-                                this.state.isAllGenresActive = true;
-                                this.state.activeGenres = new Set(filterableGenres);
-                            } else {
-                                this.state.isAllGenresActive = false;
-                                this.state.activeGenres.clear();
-                                this.state.activeGenres.add(selectedGenre);
-                            }
-                            
-                            this.methods.filterTimeline();
-                            this.elements.genreFilterList.classList.add('hidden');
-                        }
-                    });
-                },
-
-                renderEraGlossary() {
-                    const { eraGlossaryList, eraGlossaryContainerWeb } = this.elements;
-                    if (!eraGlossaryList || !eraGlossaryContainerWeb) return;
-                    
-                    eraGlossaryList.innerHTML = this.state.eras.map(era => `
-                        <a href="#" class="era-glossary-link" data-start-year="${era.startYear}">
-                            <span class="font-bold">${era.title}</span>
-                            <span class="era-year block">(${era.startYear} - ${era.endYear})</span>
-                        </a>
-                    `).join('');
-                    const webButtonsHtml = this.state.eras.map(era => `
-                        <button class="era-button" data-start-year="${era.startYear}" style="background-color: ${era.color};">
-                            ${era.title}
-                        </button>
-                    `).join('');
-                    eraGlossaryContainerWeb.innerHTML = `
-                        <div class="flex flex-col items-center w-full">
-                            <span class="font-bold text-sm text-[var(--text-muted)] mb-2">JUMP TO ERA:</span>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-2" style="width: auto; max-width: 740px;">
-                                ${webButtonsHtml}
-                            </div>
-                        </div>
-                    `;
-                },
-
-                renderTimeline() {
-                    const { timelineWrapper } = this.elements;
-                    const eras = this.state.eras;
-
-                    timelineWrapper.innerHTML = '';
-                    const spacer = document.createElement('div');
-                    spacer.style.width = '1px'; 
-                    spacer.style.flexShrink = '0';
-                    timelineWrapper.appendChild(spacer);
-
-                    eras.forEach(era => {
-                        const eraAlbums = this.state.albums.filter(album => album.year >= era.startYear && album.year <= era.endYear);
-                        if (eraAlbums.length === 0) return;
-
-                        const eraSection = document.createElement('div');
-                        eraSection.className = 'era-section';
-                        eraSection.style.backgroundColor = era.color;
-
-                        const eraTitle = document.createElement('h3');
-                        eraTitle.className = 'era-title';
-                        eraTitle.textContent = era.title;
-                        eraSection.appendChild(eraTitle);
-
-                        const eraContent = document.createElement('div');
-                        eraContent.className = 'era-content';
-
-                        const yearsInEra = [...new Set(eraAlbums.map(album => album.year))].sort();
-                        const groupedByYear = yearsInEra.reduce((acc, year) => {
-                            acc[year] = eraAlbums.filter(d => d.year === year);
-                            return acc;
-                        }, {});
-
-                        yearsInEra.forEach(year => {
-                            const yearSection = document.createElement('div');
-                            yearSection.className = 'timeline-year-section';
-                            yearSection.id = `year-${year}`;
-                            const yearHeader = document.createElement('div');
-                            yearHeader.className = 'timeline-year-header';
-                            yearHeader.textContent = year;
-                            yearSection.appendChild(yearHeader);
-                            const albumList = document.createElement('div');
-                            albumList.className = 'timeline-album-list';
-                            albumList.id = `album-list-${year}`;
-                            groupedByYear[year].forEach(album => {
-                                const card = document.createElement('div');
-                                card.className = 'timeline-album-card fade-in-element';
-                                card.dataset.albumId = album.uniqueId;
-                                card.dataset.albumTitle = album.albumTitle;
-                                card.dataset.artist = album.artist;
-                                card.dataset.genres = Array.isArray(album.genres) ? album.genres.join(', ') : album.genres;
-
-                                const albumGenres = Array.isArray(album.genres) ? album.genres : (album.genres || '').split(', ');
-                                let isLandmark = false;
-                                let landmarkColor = null;
-
-                                for (const genreName of albumGenres) {
-                                    const normalizedGenre = this.methods.normalizeGenreName(genreName);
-                                    const genreData = this.state.styleMatrix.genres[normalizedGenre];
-                                    if (genreData && genreData.landmarkAlbums && genreData.landmarkAlbums.some(title => title.toLowerCase() === album.albumTitle.toLowerCase())) {
-                                        isLandmark = true;
-                                        landmarkColor = genreData.color;
-                                        break; 
-                                    }
-                                }
-
-                                if (isLandmark) {
-                                    card.classList.add('landmark-album');
-                                    card.style.setProperty('--landmark-color', landmarkColor);
-                                }
-
-                                card.innerHTML = `<img src="/${album.cover || ''}" alt="Cover for ${album.albumTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="timeline-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
-                                albumList.appendChild(card);
-                            });
-                            yearSection.appendChild(albumList);
-                            eraContent.appendChild(yearSection);
-                        });
-                        eraSection.appendChild(eraContent);
-                        timelineWrapper.appendChild(eraSection);
-                    });
-
-                    this.methods.filterTimeline();
-                },
+                mobileMenuButton.addEventListener('click', openMenu);
+                mobileMenuCloseButton.addEventListener('click', closeMenu);
+                document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
                 
-                setupTimelineInteraction() {
-                    const { timelineContainer, timelineWrapper, scrollLeftBtn, scrollRightBtn, stickyYearDisplay, stickyEraTitle } = this.elements;
-                    const scrollAmount = 400;
-                    scrollLeftBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
-                    scrollRightBtn.addEventListener('click', () => timelineContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
-
-                    timelineWrapper.addEventListener('mouseover', (e) => {
-                        if (window.innerWidth < 768) return; // Desktop only
-                        const card = e.target.closest('.timeline-album-card');
-
-                        if (card && !card.classList.contains('hidden')) {
-                            const primaryGenre = (card.dataset.genres || '').split(', ')[0];
-                            if (primaryGenre === this.state.lastHoveredGenre) {
-                                return; // Same genre, do nothing
-                            }
-                            this.state.lastHoveredGenre = primaryGenre;
-                            this.methods.applyHighlights(card);
-                        }
-                    });
-                    
-                    timelineContainer.addEventListener('scroll', () => {
-                        let currentYear = '';
-                        const yearSections = timelineWrapper.querySelectorAll('.timeline-year-section');
-                        for (const section of yearSections) {
-                            if (section.style.display !== 'none' && section.offsetLeft <= timelineContainer.scrollLeft + 60) {
-                                currentYear = section.id.replace('year-', '');
-                            }
-                        }
-
-                        if (currentYear && currentYear !== this.state.lastKnownYear) {
-                            this.state.lastKnownYear = currentYear;
-                            stickyYearDisplay.style.opacity = '0';
-                            setTimeout(() => {
-                                stickyYearDisplay.textContent = currentYear;
-                                stickyYearDisplay.style.opacity = '1';
-                            }, 150);
-
-                            const currentEra = this.state.eras.find(era => currentYear >= era.startYear && currentYear <= era.endYear);
-                            if (currentEra && currentEra.title !== this.state.lastKnownEraTitle) {
-                                this.state.lastKnownEraTitle = currentEra.title;
-                                stickyEraTitle.style.opacity = '0';
-                                setTimeout(() => {
-                                    stickyEraTitle.textContent = `— ${currentEra.title}`;
-                                    stickyEraTitle.style.opacity = '1';
-                                }, 150);
-                            }
-                        }
-                        this.methods.updateCustomScrollbar();
-                    });
-
-                    // Set initial state
-                    const firstYearSection = timelineWrapper.querySelector('.timeline-year-section:not([style*="display: none"])');
-                    if (firstYearSection) {
-                        const firstYear = firstYearSection.id.replace('year-', '');
-                        stickyYearDisplay.textContent = firstYear;
-                        this.state.lastKnownYear = firstYear;
-                        const firstEra = this.state.eras.find(era => firstYear >= era.startYear && firstYear <= era.endYear);
-                        if (firstEra) {
-                            stickyEraTitle.textContent = `— ${firstEra.title}`;
-                            this.state.lastKnownEraTitle = firstEra.title;
-                        }
-                    }
-                },
-                
-                setupModals() {
-                    const { artistModal, genreModal, pathModal, albumModal, closeAlbumModalBtn } = this.elements;
-                    
-                    artistModal.querySelector('#close-artist-modal').addEventListener('click', () => this.methods.closeArtistModal());
-                    artistModal.addEventListener('click', e => { 
-                        if (e.target.id === 'artist-modal') this.methods.closeArtistModal(); 
-                    });
-                    
-                    genreModal.querySelector('#close-genre-modal').addEventListener('click', () => this.methods.closeGenreModal());
-                    genreModal.addEventListener('click', e => { if (e.target.id === 'genre-modal') this.methods.closeGenreModal(); });
-
-                    pathModal.querySelector('#close-path-modal').addEventListener('click', () => this.methods.closePathModal());
-                    pathModal.addEventListener('click', e => { if (e.target.id === 'path-modal') this.methods.closePathModal(); });
-
-                    closeAlbumModalBtn.addEventListener('click', () => this.methods.closeAlbumModal());
-                    albumModal.addEventListener('click', e => {
-                        if (e.target.id === 'album-modal') this.methods.closeAlbumModal();
-                    });
-                     this.elements.timelineWrapper.addEventListener('click', e => {
-                        const card = e.target.closest('.timeline-album-card');
-                        if (card && card.dataset.albumId) {
-                            const album = this.state.albums.find(a => a.uniqueId === card.dataset.albumId);
-                            if (album) {
-                                this.methods.openAlbumModal(album);
-                            }
-                        }
-                    });
-                    
-                    document.addEventListener('keydown', e => { 
-                        if (e.key === "Escape") { 
-                            this.methods.closeArtistModal(); 
-                            this.methods.closeGenreModal(); 
-                            this.methods.closePathModal(); 
-                            this.methods.closeAlbumModal();
-                        } 
-                    });
-                },
-                
-                setupMobileMenu() {
-                    const { mobileMenuButton, mobileMenuOverlay, mobileMenuPanel, mobileMenuCloseButton } = this.elements;
-                    if (!mobileMenuButton || !mobileMenuOverlay || !mobileMenuPanel || !mobileMenuCloseButton) return;
-                    const openMenu = () => {
-                        mobileMenuOverlay.classList.remove('hidden');
-                        setTimeout(() => { mobileMenuPanel.style.transform = 'translateX(0)'; }, 10);
-                    };
-                    const closeMenu = () => {
-                        mobileMenuPanel.style.transform = 'translateX(100%)';
-                        setTimeout(() => { mobileMenuOverlay.classList.add('hidden'); }, 300);
-                    };
-                    mobileMenuButton.addEventListener('click', openMenu);
-                    mobileMenuCloseButton.addEventListener('click', closeMenu);
-                    document.getElementById('mobile-menu-bg').addEventListener('click', closeMenu);
-                    
-                    document.querySelectorAll('#mobile-nav-links a').forEach(link => {
-                        link.addEventListener('click', closeMenu);
-                    });
-                },
-
-                setupGeneralEventListeners() {
-                    let resizeTimeout;
-                    window.addEventListener('resize', () => {
-                        clearTimeout(resizeTimeout);
-                        resizeTimeout = setTimeout(() => {
-                            this.methods.resizeCanvas();
-                            this.methods.updateCustomScrollbar();
-                            this.methods.renderScrollbarMarkers();
-                        }, 200);
-                    });
-                    
-                    this.elements.footerCopyright.textContent = `© ${new Date().getFullYear()} Controlled Freedom. All Rights Reserved.`;
-                    if (this.elements.scrollRightBtn) this.elements.scrollRightBtn.classList.add('nudge-animation');
-                    
-                    this.methods.setupDraggable(this.elements.timelineContainer);
-                    this.methods.setupCustomScrollbarInteraction();
-                    this.methods.setupGlossaryInteraction();
-
-                    document.body.addEventListener('click', e => {
-                        const target = e.target;
-                        if (this.elements.eraGlossaryContainerMobile && !this.elements.eraGlossaryContainerMobile.contains(e.target)) {
-                            this.elements.eraGlossaryList.classList.add('hidden');
-                        }
-                        if (this.elements.genreFilterDropdownBtn && !this.elements.genreFilterDropdownBtn.parentElement.contains(e.target)) {
-                            this.elements.genreFilterList.classList.add('hidden');
-                        }
-                    });
-                },
-
-                setupGlossaryInteraction() {
-                    const { timelineContainer, timelineWrapper, eraGlossaryList, eraGlossaryContainerWeb, genreFilterDropdownBtn, genreFilterList } = this.elements;
-                    const dropdownBtn = document.getElementById('era-glossary-dropdown-btn');
-
-                    const handleEraClick = (year) => {
-                        const yearSection = timelineWrapper.querySelector(`#year-${year}`);
-                        if (yearSection) {
-                            const scrollPosition = yearSection.offsetLeft - 30;
-                            timelineContainer.scrollTo({
-                                left: scrollPosition,
-                                behavior: 'smooth'
-                            });
-                        }
-                    };
-
-                    dropdownBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        eraGlossaryList.classList.toggle('hidden');
-                    });
-
-                    eraGlossaryList.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const link = e.target.closest('.era-glossary-link');
-                        if (link && link.dataset.startYear) {
-                            handleEraClick(link.dataset.startYear);
-                            eraGlossaryList.classList.add('hidden');
-                        }
-                    });
-
-                    eraGlossaryContainerWeb.addEventListener('click', (e) => {
-                        const button = e.target.closest('.era-button');
-                        if (button && button.dataset.startYear) {
-                            handleEraClick(button.dataset.startYear);
-                        }
-                    });
-
-                    genreFilterDropdownBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        genreFilterList.classList.toggle('hidden');
-                    });
-                },
-                
-                slugify(text) {
-                    if (!text) return '';
-                    return text.toString().toLowerCase()
-                        .replace(/\s+/g, '-')
-                        .replace(/[^\w\-]+/g, '')
-                        .replace(/\-\-+/g, '-')
-                        .replace(/^-+/, '')
-                        .replace(/-+$/, '');
-                },
-                
-                normalizeGenreName(genreName) {
-                    if (genreName === "Avant-Garde Jazz") return "Avant-Garde";
-                    return genreName;
-                },
-
-                filterTimeline() {
-                    // 1. Update button styles based on state
-                    const allButtons = this.elements.genreFilterContainer.querySelectorAll('.genre-button');
-                    allButtons.forEach(btn => {
-                        const genre = btn.dataset.genre;
-                        if (genre === 'all') {
-                            btn.classList.toggle('active', this.state.isAllGenresActive);
-                        } else {
-                            btn.classList.toggle('active', this.state.activeGenres.has(genre));
-                        }
-                    });
-
-                    // 2. Filter albums based on state
-                    const selectedGenres = this.state.activeGenres;
-                    this.state.visibleAlbums = this.state.albums.filter(album => 
-                        album.genres.some(genre => selectedGenres.has(genre))
-                    );
-                    
-                    // 3. Update DOM visibility
-                    document.querySelectorAll('.timeline-album-card').forEach(card => {
-                        const isVisible = this.state.visibleAlbums.some(a => a.uniqueId === card.dataset.albumId);
-                        card.classList.toggle('hidden', !isVisible);
-                    });
-
-                    document.querySelectorAll('.timeline-year-section').forEach(yearSection => {
-                        const visibleCards = yearSection.querySelectorAll('.timeline-album-card:not(.hidden)');
-                        yearSection.style.display = visibleCards.length > 0 ? 'flex' : 'none';
-                    });
-                    document.querySelectorAll('.era-section').forEach(eraSection => {
-                        const visibleYears = eraSection.querySelectorAll('.era-content > .timeline-year-section:not([style*="display: none"])');
-                        eraSection.style.display = visibleYears.length > 0 ? 'flex' : 'none';
-                    });
-                    
-                    setTimeout(() => {
-                        this.methods.resizeCanvas();
-                        this.methods.renderScrollbarMarkers();
-                        this.methods.updateCustomScrollbar();
-                    }, 50);
-                },
-
-                applyHighlights(selectedCard) {
-                    document.querySelectorAll('.timeline-album-card').forEach(c => {
-                        c.classList.remove('dimmed', 'highlighted');
-                        c.style.removeProperty('--highlight-color');
-                    });
-                    if (!selectedCard) return;
-                    document.querySelectorAll('.timeline-album-card').forEach(c => c.classList.add('dimmed'));
-                    const selectedGenres = (selectedCard.dataset.genres || '').split(', ');
-                    const primaryGenre = selectedGenres[0];
-                    const highlightColor = this.state.fullGenreColorMap[primaryGenre] || 'var(--accent)';
-                    const allCards = Array.from(document.querySelectorAll('.timeline-album-card:not(.hidden)'));
-                    allCards.forEach(card => {
-                        const cardGenres = (card.dataset.genres || '').split(', ');
-                        if (cardGenres.includes(primaryGenre)) {
-                            card.classList.remove('dimmed');
-                            card.classList.add('highlighted');
-                            card.style.setProperty('--highlight-color', highlightColor);
-                        }
-                    });
-                },
-
-                openArtistModal(artist) {
-                    // This modal is not on this page, but the function is kept for potential future use
-                },
-
-                closeArtistModal() {
-                    // This modal is not on this page
-                },
-                
-                openGenreModal(genreName) {
-                    const { genreModal } = this.elements;
-                    const genreData = this.state.styleMatrix.genres[genreName];
-                    if (!genreData) return;
-
-                    const titleEl = genreModal.querySelector('#genre-modal-title');
-                    titleEl.textContent = genreName;
-                    titleEl.style.color = genreData.color.startsWith('var') ? `var(--accent)` : genreData.color;
-
-                    const bodyEl = genreModal.querySelector('#genre-modal-body');
-                    
-                    const landmarkAlbums = (genreData.landmarkAlbums || []).map(title => {
-                        return this.state.albums.find(a => a.albumTitle.toLowerCase() === title.toLowerCase());
-                    }).filter(Boolean);
-                    
-                    const initialArtists = new Set(genreData.artists.split(', ').map(name => name.trim()));
-                    landmarkAlbums.forEach(album => initialArtists.add(album.artist.trim()));
-                    
-                    const keyArtistsHtml = Array.from(initialArtists).sort()
-                        .map(name => `<span class="clickable-link" data-artist-name="${name}">${name}</span>`)
-                        .join(', ');
-
-                    const landmarkAlbumsHtml = landmarkAlbums.map(album => {
-                        const albumId = `${this.methods.slugify(album.artist)}-${this.methods.slugify(album.albumTitle)}`;
-                        return `<li><a href="/album/${albumId}" target="_blank" rel="noopener noreferrer" class="clickable-link" data-album-title="${album.albumTitle}" data-artist="${album.artist}">${album.albumTitle}</a></li>`
-                    }).join('');
-
-                    let bodyHtml = `<div class="space-y-6">
-                        <div>
-                            <h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Overview</h4>
-                            <p class="text-base text-[var(--text-muted)] leading-relaxed">${genreData.profile || 'No profile available.'}</p>
-                        </div>
-                        <div>
-                            <h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Key Characteristics</h4>
-                            <ul class="list-disc list-inside space-y-1 text-[var(--text-muted)]">
-                                <li><strong>Harmony:</strong> ${genreData.data[0]}</li>
-                                <li><strong>Rhythm:</strong> ${genreData.data[1]}</li>
-                                <li><strong>Form:</strong> ${genreData.data[2]}</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Key Artists</h4>
-                            <p class="text-base text-[var(--text-muted)] leading-relaxed">${keyArtistsHtml}</p>
-                        </div>
-                        ${landmarkAlbums.length > 0 ? `
-                        <div>
-                            <h4 class="text-2xl font-bold text-[var(--text-main)] mb-2">Landmark Albums</h4>
-                            <ul class="list-disc list-inside space-y-1 landmark-album-list">${landmarkAlbumsHtml}</ul>
-                        </div>` : ''}
-                    </div>`;
-                    
-                    bodyEl.innerHTML = bodyHtml;
-
-                    genreModal.classList.remove('opacity-0', 'pointer-events-none');
-                    genreModal.querySelector('.modal-content').classList.remove('scale-95');
-                },
-
-                closeGenreModal(callback) {
-                    const { genreModal } = this.elements;
-                    genreModal.classList.add('opacity-0', 'pointer-events-none');
-                    genreModal.querySelector('.modal-content').classList.add('scale-95');
-                    if (typeof callback === 'function') setTimeout(callback, 300);
-                },
-
-                openPathModal(pathKey) {
-                    // This modal is not on this page
-                },
-
-                closePathModal() {
-                    // This modal is not on this page
-                },
-
-                openAlbumModal(album) {
-                    if (!album) return;
-
-                    const { 
-                        albumModal, albumModalTitle, albumModalArtist, 
-                        albumModalAlbumArt, albumModalAlbumDetails, analysisWrapper 
-                    } = this.elements;
-
-                    albumModalTitle.textContent = album.albumTitle;
-                    albumModalArtist.textContent = album.artist;
-                    
-                    albumModalAlbumArt.src = `/${album.cover}` || '';
-                    albumModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
-                    albumModalAlbumArt.onerror = function() { this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
-
-                    const pivotalTrack = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks[0] : {};
-                    
-                    const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A');
-
-                    const genres = album.genres || [];
-                    const genreTags = genres.map(g => 
-                        `<span class="modal-genre-tag" style="background-color: ${this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`
-                    ).join(' ');
-
-                    albumModalAlbumDetails.innerHTML = `
-                        <h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4>
-                        <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]">
-                            <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
-                            <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span>
-                            <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
-                            <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
-                        </div>
-                        <div class="mt-6 flex justify-end">
-                            <a href="/album/${album.uniqueId}" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-md transition-colors duration-300 no-underline">
-                                Read More &rarr;
-                            </a>
-                        </div>`;
-
-                    const analysisHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) 
-                        ? album.pivotalTracks.map(track => `
-                            <div class="mb-8 last:mb-0">
-                                <h5 class="text-2xl font-bold text-white">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
-                                <p class="liner-notes-text">${track.analysis}</p>
-                            </div>`).join('<hr class="border-stone-700 my-8">')
-                        : `<p class="liner-notes-text">${album.analysis || 'Analysis not available.'}</p>`;
-                    
-                    analysisWrapper.innerHTML = `<div id="modal-analysis-section">${analysisHtml}</div>`;
-
-                    albumModal.classList.remove('opacity-0', 'pointer-events-none');
-                    albumModal.querySelector('.modal-content').classList.remove('scale-95');
-                    this.elements.albumModalBody.scrollTop = 0;
-                },
-
-                closeAlbumModal() {
-                    const { albumModal } = this.elements;
-                    albumModal.classList.add('opacity-0', 'pointer-events-none');
-                    albumModal.querySelector('.modal-content').classList.add('scale-95');
-                },
-                
-                resizeCanvas() {
-                    const { timelineCanvas, timelineWrapper } = this.elements;
-                    timelineCanvas.width = timelineWrapper.scrollWidth;
-                    timelineCanvas.height = timelineWrapper.offsetHeight;
-                },
-                
-                setupDraggable(container) {
-                    if (!container) return;
-                    let isDown = false, startX, scrollLeft;
-                    container.addEventListener('mousedown', (e) => { isDown = true; container.style.cursor = 'grabbing'; startX = e.pageX - container.offsetLeft; scrollLeft = container.scrollLeft; });
-                    container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
-                    container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
-                    container.addEventListener('mousemove', (e) => {
-                        if(!isDown) return;
-                        e.preventDefault();
-                        const x = e.pageX - container.offsetLeft;
-                        const walk = (x - startX) * 2;
-                        container.scrollLeft = scrollLeft - walk;
-                    });
-                },
-                
-                updateCustomScrollbar() {
-                    const { timelineContainer, customScrollbar, customScrollbarThumb } = this.elements;
-                    if (!timelineContainer || !customScrollbar || !customScrollbarThumb) return;
-                    const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
-                    if (scrollableWidth <= 0) {
-                        customScrollbar.style.display = 'none';
-                        return;
-                    }
-                    customScrollbar.style.display = 'block';
-                    const scrollPercentage = timelineContainer.scrollLeft / scrollableWidth;
-                    const thumbWidthPercentage = timelineContainer.clientWidth / timelineContainer.scrollWidth;
-                    customScrollbarThumb.style.width = `${thumbWidthPercentage * 100}%`;
-                    customScrollbarThumb.style.left = `${scrollPercentage * (100 - thumbWidthPercentage * 100)}%`;
-                },
-                
-                setupCustomScrollbarInteraction() {
-                    const { customScrollbar, customScrollbarThumb, timelineContainer } = this.elements;
-                    let isDraggingThumb = false, thumbStartX, thumbStartScrollLeft;
-                    customScrollbarThumb.addEventListener('mousedown', (e) => {
-                        isDraggingThumb = true;
-                        thumbStartX = e.clientX;
-                        thumbStartScrollLeft = timelineContainer.scrollLeft;
-                        customScrollbarThumb.style.cursor = 'grabbing';
-                        document.body.style.cursor = 'grabbing';
-                        document.body.style.userSelect = 'none';
-                    });
-                    document.addEventListener('mousemove', (e) => {
-                        if (!isDraggingThumb) return;
-                        e.preventDefault();
-                        const dx = e.clientX - thumbStartX;
-                        const scrollbarWidth = customScrollbar.clientWidth;
-                        const thumbWidth = customScrollbarThumb.clientWidth;
-                        const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
-                        timelineContainer.scrollLeft = thumbStartScrollLeft + (dx / (scrollbarWidth - thumbWidth)) * scrollableWidth;
-                    });
-                    document.addEventListener('mouseup', () => {
-                        isDraggingThumb = false;
-                        if (customScrollbarThumb) customScrollbarThumb.style.cursor = 'grab';
-                        document.body.style.cursor = '';
-                        document.body.style.userSelect = '';
-                    });
-                    customScrollbar.addEventListener('click', (e) => {
-                        if (e.target === customScrollbar) {
-                            const scrollbarRect = customScrollbar.getBoundingClientRect();
-                            const clickPosition = (e.clientX - scrollbarRect.left) / scrollbarRect.width;
-                            const scrollableWidth = timelineContainer.scrollWidth - timelineContainer.clientWidth;
-                            timelineContainer.scrollTo({ left: clickPosition * scrollableWidth, behavior: 'smooth' });
-                        }
-                    });
-                    setTimeout(() => this.methods.updateCustomScrollbar(), 200);
-                },
-
-                renderScrollbarMarkers() {
-                    const { timelineContainer, timelineWrapper, customScrollbarMarkers } = this.elements;
-                    const years = [...new Set(this.state.albums.map(album => album.year))].sort();
-                    customScrollbarMarkers.innerHTML = ''; // Clear existing markers
-
-                    if (timelineWrapper.scrollWidth <= timelineContainer.clientWidth) {
-                        return; // Don't render if not scrollable
-                    }
-
-                    years.forEach(year => {
-                        const yearSection = document.getElementById(`year-${year}`);
-                        if (yearSection && yearSection.style.display !== 'none') {
-                            const position = yearSection.offsetLeft + (yearSection.offsetWidth / 2);
-                            const percentage = (position / timelineWrapper.scrollWidth) * 100;
-                            
-                            const marker = document.createElement('div');
-                            marker.className = 'scrollbar-marker';
-                            marker.style.left = `${percentage}%`;
-                            marker.dataset.year = `'${String(year).slice(2)}`;
-                            customScrollbarMarkers.appendChild(marker);
-                        }
-                    });
-                }
+                document.querySelectorAll('#mobile-nav-links a').forEach(link => {
+                    link.addEventListener('click', closeMenu);
+                });
             }
         };
-
-        document.addEventListener('DOMContentLoaded', () => JazzApp.init());
+        document.addEventListener('DOMContentLoaded', () => PageApp.init());
     </script>
 </body>
 </html>
