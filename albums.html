@@ -277,7 +277,7 @@
         <main>
             <!-- Banner Section -->
             <section class="banner-section">
-                <img src="images/albums-banner.jpg" alt="Collection of vinyl records" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1588704494417-4246b8595b18?q=80&w=2070&auto=format&fit=crop';">
+                <img src="images/banner-albums.jpg" alt="Collection of vinyl records" class="banner-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1588704494417-4246b8595b18?q=80&w=2070&auto=format&fit=crop';">
                 <div class="banner-overlay">
                     <h1>The Discography</h1>
                     <p class="text-stone-300 max-w-3xl mx-auto mt-4 italic" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Browse a curated collection of landmark jazz albums.</p>
@@ -523,6 +523,13 @@
                         albumGridContainer.innerHTML = `<p class="text-[var(--text-muted)] col-span-full text-center py-10">No albums found matching your criteria.</p>`;
                     } else {
                         const cacheBuster = `?t=${new Date().getTime()}`;
+                        const isDarkMode = document.documentElement.classList.contains('dark');
+                        const themeColors = {
+                            bg: isDarkMode ? '#292524' : '#e7e5e4',       // --bg-secondary from CSS
+                            text: isDarkMode ? '#f5f5f4' : '#1c1917',     // --text-main from CSS
+                            accent: '#f97316'                             // --accent from CSS
+                        };
+
                         paginatedAlbums.forEach(album => {
                             const albumTitle = album.albumTitle || album.title;
                             const artistName = album.artist;
@@ -543,16 +550,10 @@
                             
                             const vinylPlaceholder = `
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full">
-                                    <style>
-                                        .vinyl-bg { fill: var(--bg-secondary); }
-                                        .vinyl-disc { fill: var(--text-main); }
-                                        .vinyl-label { fill: var(--accent); }
-                                        .vinyl-hole { fill: var(--bg-secondary); }
-                                    </style>
-                                    <rect class="vinyl-bg" width="200" height="200"/>
-                                    <circle class="vinyl-disc" cx="100" cy="100" r="90"/>
-                                    <circle class="vinyl-label" cx="100" cy="100" r="40"/>
-                                    <circle class="vinyl-hole" cx="100" cy="100" r="10"/>
+                                    <rect style="fill:${themeColors.bg};" width="200" height="200"/>
+                                    <circle style="fill:${themeColors.text};" cx="100" cy="100" r="90"/>
+                                    <circle style="fill:${themeColors.accent};" cx="100" cy="100" r="40"/>
+                                    <circle style="fill:${themeColors.bg};" cx="100" cy="100" r="10"/>
                                 </svg>
                             `;
                             
