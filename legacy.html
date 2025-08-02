@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Legacy Timeline - Controlled Freedom</title>
+    <title>Legacy - Controlled Freedom</title>
     <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
     <style>
+        /* Light Theme (Default) */
         :root {
             --bg-main: #f5f5f4;
             --bg-secondary: #e7e5e4;
@@ -21,15 +22,41 @@
             --border-color: #1c1917;
             --accent: #f97316;
             --yellow-accent: #facc15;
+
+            /* Pastel Genre Colors */
+            --genre-bebop: #C19A6B;
+            --genre-hard-bop: #d8b4fe;
+            --genre-cool-jazz: #93c5fd;
+            --genre-modal-jazz: #a7f3d0;
+            --genre-post-bop: #fed7aa;
+            --genre-free-jazz: #fca5a5;
+            --genre-avant-garde: #fecdd3;
             --genre-jazz-fusion: #a5f3fc;
+            --genre-latin-jazz: #fde047;
+            --genre-big-band: #fecaca;
+            --genre-jazz-rap: #fed7aa;
+            --genre-nu-jazz: #a7f3d0;
+            --genre-smooth-jazz: #93c5fd;
+            --genre-modern-creative: #fecdd3;
+            --genre-third-stream: #bae6fd;
+            --genre-experimental-big-band: #e9d5ff;
             --genre-spiritual-jazz: #dcfce7;
-            --genre-avant-garde-jazz: #fecdd3;
             --genre-afro-jazz: #fef08a;
+            --genre-soul-jazz: #fed7aa;
+            --genre-progressive-big-band: #fecaca;
+            --genre-jazz-rock: #a5f3fc;
+            --genre-jazz-funk: #c4b5fd;
+            --genre-indo-jazz: #fde047;
+            --genre-ambient-jazz: #a7f3d0;
             --genre-ecm-style-jazz: #93c5fd;
+            --genre-cape-jazz: #fef08a;
+            --genre-chamber-jazz: #bae6fd;
+            --genre-post-minimalism: #e9d5ff;
             --genre-neo-bop: #d8b4fe;
             --genre-default: #e7e5e4;
         }
 
+        /* Dark Theme Overrides */
         .dark {
             --bg-main: #1c1917;
             --bg-secondary: #292524;
@@ -37,11 +64,36 @@
             --text-main: #f5f5f4;
             --text-muted: #a8a29e;
             --border-color: #44403c;
+
+            /* Darker Genre Colors */
+            --genre-bebop: #A17A4B;
+            --genre-hard-bop: #8b5cf6;
+            --genre-cool-jazz: #3b82f6;
+            --genre-modal-jazz: #10b981;
+            --genre-post-bop: #f59e0b;
+            --genre-free-jazz: #ef4444;
+            --genre-avant-garde: #ec4899;
             --genre-jazz-fusion: #06b6d4;
+            --genre-latin-jazz: #eab308;
+            --genre-big-band: #ef4444;
+            --genre-jazz-rap: #f59e0b;
+            --genre-nu-jazz: #10b981;
+            --genre-smooth-jazz: #3b82f6;
+            --genre-modern-creative: #ec4899;
+            --genre-third-stream: #0284c7;
+            --genre-experimental-big-band: #a855f7;
             --genre-spiritual-jazz: #22c55e;
-            --genre-avant-garde-jazz: #ec4899;
             --genre-afro-jazz: #ca8a04;
+            --genre-soul-jazz: #f59e0b;
+            --genre-progressive-big-band: #dc2626;
+            --genre-jazz-rock: #0891b2;
+            --genre-jazz-funk: #7c3aed;
+            --genre-indo-jazz: #eab308;
+            --genre-ambient-jazz: #10b981;
             --genre-ecm-style-jazz: #3b82f6;
+            --genre-cape-jazz: #ca8a04;
+            --genre-chamber-jazz: #0284c7;
+            --genre-post-minimalism: #a855f7;
             --genre-neo-bop: #8b5cf6;
         }
 
@@ -269,7 +321,14 @@
             border-color: var(--border-color);
             box-shadow: none;
         }
-        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a { 
+            display: block; 
+            padding: 0.75rem 1.5rem; 
+            transition: all 0.2s ease;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
         .dropdown-list a:hover {
             background-color: var(--accent); color: var(--bg-main);
             transform: translateX(4px);
@@ -290,8 +349,6 @@
                         <div class="nav-bar-behaviour items-center space-x-8">
                             <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
                             <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
-                            
-                            <!-- Timeline Dropdown -->
                             <div class="dropdown-container">
                                 <a href="#" class="nav-link active px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
                                     Timeline
@@ -302,8 +359,6 @@
                                     <a href="/legacy.html" class="nav-link active">Legacy: 70s-Now</a>
                                 </div>
                             </div>
-
-                            <!-- Archive Dropdown -->
                             <div class="dropdown-container">
                                 <a href="#" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
                                     Archive
@@ -315,7 +370,6 @@
                                     <a href="/albums.html">Albums</a>
                                 </div>
                             </div>
-
                             <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
                             <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
                                 <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
@@ -597,12 +651,12 @@
                 processLegacyPaths() {
                     const paths = {};
                     this.state.allLegacyAlbums.forEach(album => {
+                        album.uniqueId = `${this.methods.slugifyForUrl(album.artist)}-${this.methods.slugifyForUrl(album.albumTitle)}`;
                         const pathName = album.legacyPath || "Uncategorized";
                         if (!paths[pathName]) {
                             paths[pathName] = {
                                 title: pathName,
                                 albums: [],
-                                // Determine genreAffinity from the first album in the path
                                 genreAffinity: album.genres ? album.genres.join(', ') : ''
                             };
                         }
@@ -628,7 +682,7 @@
                     const legacyGenres = ["Jazz Fusion", "Spiritual Jazz", "Avant-Garde Jazz", "Afro-Jazz", "ECM Style Jazz", "Neo-Bop"];
                     legacyGenres.forEach(genre => {
                         if (!colorMap[genre]) {
-                            const slug = this.slugifyForUrl(genre).replace('-jazz','');
+                            const slug = this.methods.slugifyForUrl(genre).replace('-jazz','');
                             colorMap[genre] = `var(--genre-${slug})`;
                         }
                     });
@@ -654,7 +708,8 @@
                 },
                 getPathColor(pathData) {
                     const affinity = (pathData.genreAffinity || '').split(', ')[0].trim();
-                    return this.state.fullGenreColorMap[affinity] || 'var(--genre-default)';
+                    const slug = this.methods.slugifyForUrl(affinity).replace('-jazz','');
+                    return `var(--genre-${slug}, var(--genre-default))`;
                 },
                 renderPathSelector() {
                     const { pathSelectorGrid } = this.elements;
@@ -893,7 +948,7 @@
 
                     const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A');
 
-                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span><strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span></div>`;
+                    albumModal.querySelector('#modal-album-details').innerHTML = `<h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4><div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]"><strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div><strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span><strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span><strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span></div><div class="mt-6 flex justify-end"><a href="/album/${album.uniqueId}" target="_blank" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-md transition-colors duration-300 no-underline">Read More &rarr;</a></div>`;
                     
                     const analysisWrapper = albumModal.querySelector('#analysis-wrapper');
                     const pivotalTracksHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks.map(track => {
