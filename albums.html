@@ -650,13 +650,13 @@
                 slugifyForImagePath(text) {
                     if (!text) return '';
                     return text.toString().toLowerCase()
-                        .replace(/\s+/g, '-')
-                        .replace(/[,'".]/g, '') // Remove commas, apostrophes, dots
-                        .replace(/&/g, '&') // Keep ampersand
-                        .replace(/!/g, '!') // Keep exclamation
-                        .replace(/\-\-+/g, '-')
-                        .replace(/^-+/, '')
-                        .replace(/-+$/, '');
+                        .replace(/'/g, '')             // FIX: Remove apostrophes
+                        .replace(/[\s/:]+/g, '-')      // Replace spaces, slashes, colons with a hyphen
+                        .replace(/&/g, '-and-')       // Replace & with '-and-'
+                        .replace(/[^\w\-.,!()]+/g, '') // Remove invalid chars (apostrophe is not in the allowed set)
+                        .replace(/\-\-+/g, '-')        // Replace multiple hyphens
+                        .replace(/^-+/, '')           // Trim hyphens from start
+                        .replace(/-+$/, '');          // Trim hyphens from end
                 },
                 
                 populateGenreFilter(albums) {
