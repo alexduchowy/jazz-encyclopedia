@@ -650,21 +650,52 @@
                    return this.methods.slugifyForUrl(text);
                 },
                 processLegacyPaths() {
+                    const definedPaths = {
+                        "The Electric Path": ["Jazz Fusion", "Jazz-Rock", "Jazz-Funk"],
+                        "The Spiritual Path": ["Spiritual Jazz"],
+                        "The Avant-Garde Path": ["Avant-Garde Jazz", "Free Jazz"],
+                        "The Melodic Path": ["ECM Style Jazz"],
+                        "The Afro-Jazz Path": ["Afro-Jazz"],
+                        "The Neo-Bop Path": ["Neo-Bop", "Post-Bop"]
+                    };
+
                     const paths = {};
+
+                    // Initialize all defined paths
+                    Object.keys(definedPaths).forEach(pathName => {
+                        paths[pathName] = {
+                            title: pathName,
+                            albums: [],
+                            genreAffinity: definedPaths[pathName].join(', ')
+                        };
+                    });
+                    
+                    paths["Uncategorized"] = {
+                        title: "Uncategorized",
+                        albums: [],
+                        genreAffinity: ''
+                    };
+
                     this.state.allLegacyAlbums.forEach(album => {
                         album.uniqueId = `${this.methods.slugifyForUrl(album.artist)}-${this.methods.slugifyForUrl(album.albumTitle)}`;
-                        const pathName = album.legacyPath || "Uncategorized";
-                        if (!paths[pathName]) {
-                            paths[pathName] = {
-                                title: pathName,
-                                albums: [],
-                                genreAffinity: album.genres ? album.genres.join(', ') : ''
-                            };
+                        
+                        let assignedPath = "Uncategorized";
+                        for (const pathName in definedPaths) {
+                            const pathGenres = definedPaths[pathName];
+                            if (album.genres.some(g => pathGenres.includes(g))) {
+                                assignedPath = pathName;
+                                break;
+                            }
                         }
-                        paths[pathName].albums.push(album);
+                        paths[assignedPath].albums.push(album);
                     });
+
                      // Sort albums within each path chronologically
                     for (const pathKey in paths) {
+                        if (paths[pathKey].albums.length === 0) {
+                            delete paths[pathKey];
+                            continue;
+                        }
                         paths[pathKey].albums.sort((a, b) => a.year - b.year);
                     }
                     this.state.legacyPaths = paths;
