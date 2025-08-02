@@ -478,14 +478,18 @@
 
             slugifyForImagePath(text) {
                 if (!text) return '';
+                const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+                const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrssssssttuuuuuuuuuwxyyzzz------'
+                const p = new RegExp(a.split('').join('|'), 'g')
+
                 return text.toString().toLowerCase()
-                    .replace(/\s+/g, '-')
-                    .replace(/[,'".]/g, '') // Remove commas, apostrophes, dots
-                    .replace(/&/g, '&') // Keep ampersand
-                    .replace(/!/g, '!') // Keep exclamation
-                    .replace(/\-\-+/g, '-')
-                    .replace(/^-+/, '')
-                    .replace(/-+$/, '');
+                    .replace(/\s+/g, '-') // replace spaces with -
+                    .replace(p, c => b.charAt(a.indexOf(c))) // replace special characters
+                    .replace(/&/g, '-and-') // replace & with 'and'
+                    .replace(/[^\w\-]+/g, '') // remove all non-word chars
+                    .replace(/\-\-+/g, '-') // replace multiple - with single -
+                    .replace(/^-+/, '') // trim - from start of text
+                    .replace(/-+$/, '') // trim - from end of text
             },
 
             getAlbumIdFromUrl() {
