@@ -216,11 +216,18 @@
             padding: 0.75rem 1.5rem; 
             transition: all 0.2s ease;
             color: var(--text-main);
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
         }
         .dropdown-list a:hover {
             background-color: var(--accent); 
             color: var(--bg-main);
             transform: translateX(4px);
+        }
+        #mobile-nav-links .mobile-nav-link {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
         }
 
     </style>
@@ -234,22 +241,36 @@
                 <a href="/"><img src="images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/control-d-freedom/jazz-timeline/main/images/logo.svg';"></a>
                 <div class="flex items-center">
                     <div class="nav-bar-behaviour items-center space-x-8">
-                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium">Home</a>
-                        <a href="/tv.html" class="nav-link active px-3 py-2 rounded-md font-medium">TV</a>
-                        <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium">Timeline</a>
+                        <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                        <a href="/tv.html" class="nav-link active px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                        
+                        <!-- Timeline Dropdown -->
                         <div class="dropdown-container">
-                            <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium dropdown-btn">
-                                Legacy
+                            <a href="#" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
+                                Timeline
                                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                             </a>
                             <div class="dropdown-list">
-                                <a href="/legacy">Legacy Paths</a>
-                                <a href="/genres.html">Genres</a>
-                                <a href="https://controlledfreedom.com/artists">Artists</a>
+                                <a href="/timeline.html">Bop Era: 50s-60s</a>
+                                <a href="/legacy.html">Legacy: 70s-Now</a>
                             </div>
                         </div>
-                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium">Blog</a>
-                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
+
+                        <!-- Archive Dropdown -->
+                        <div class="dropdown-container">
+                            <a href="#" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
+                                Archive
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </a>
+                            <div class="dropdown-list">
+                                <a href="/genres.html">Genres</a>
+                                <a href="/artists.html">Artists</a>
+                                <a href="/albums.html">Albums</a>
+                            </div>
+                        </div>
+
+                        <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                        <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                             <span>@controlledjazz</span>
                         </a>
@@ -339,10 +360,16 @@
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
                 <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
                 <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-orange-500 p-2 rounded-md">TV</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                
+                <span class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] p-2 rounded-md">Timeline</span>
+                <a href="/timeline.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Bop Era: 50s-60s</a>
+                <a href="/legacy.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Legacy: 70s-Now</a>
+
+                <span class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] p-2 rounded-md">Archive</span>
                 <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Genres</a>
-                <a href="https://controlledfreedom.com/artists" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
+                <a href="/artists.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
+                <a href="/albums.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Albums</a>
+                
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
                  <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
