@@ -335,8 +335,8 @@
                                 <option value="title-desc">Album Title (Z-A)</option>
                                 <option value="artist-asc">Artist (A-Z)</option>
                                 <option value="artist-desc">Artist (Z-A)</option>
-                                <option value="year-desc">Year (Newest First)</option>
-                                <option value="year-asc">Year (Oldest First)</option>
+                                <option value="chrono-desc">Chronological (Newest First)</option>
+                                <option value="chrono-asc">Chronological (Oldest First)</option>
                             </select>
                         </div>
                     </div>
@@ -443,8 +443,20 @@
                         });
                 },
 
+                // *** MODIFIED: Added date parsing and sorting object creation ***
                 processAndDeduplicateAlbums(dbAlbums) {
                     const albumMap = new Map();
+                    const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
+
+                    const parseDate = (dateString) => {
+                        if (!dateString || typeof dateString !== 'string') return null;
+                        const parts = dateString.replace(/,/g, '').trim().split(/\s+/);
+                        if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
+                        if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 1);
+                        if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 11, 31);
+                        return null;
+                    };
+
                     dbAlbums.forEach(album => {
                         const title = album.albumTitle || album.title;
                         const artist = album.artist;
@@ -452,6 +464,12 @@
 
                         const key = `${this.methods.slugifyForUrl(artist)}-${this.methods.slugifyForUrl(title)}`;
                         if (!albumMap.has(key)) {
+                            // Add the sorting date object during initial processing
+                            let sortDate = parseDate(album.recordingDate);
+                            if (!sortDate) {
+                                sortDate = parseDate(String(album.year));
+                            }
+                            album.sortingDateObject = sortDate;
                             albumMap.set(key, album);
                         }
                     });
@@ -519,28 +537,22 @@
                         return nameMatch && genreMatch;
                     });
 
-                    // 2. Sort
-                    const getYear = (dateString) => {
-                        if (!dateString) return 0;
-                        const yearMatch = dateString.match(/\d{4}/);
-                        return yearMatch ? parseInt(yearMatch[0], 10) : 0;
-                    };
-
+                    // 2. Sort (*** MODIFIED to use the new sortingDateObject ***)
                     filteredAlbums.sort((a, b) => {
                         const titleA = (a.albumTitle || a.title).toLowerCase();
                         const titleB = (b.albumTitle || b.title).toLowerCase();
                         const artistA = (a.artist || '').toLowerCase();
                         const artistB = (b.artist || '').toLowerCase();
-                        const yearA = getYear(a.releaseDate || a.recordingDate);
-                        const yearB = getYear(b.releaseDate || b.recordingDate);
+                        const dateA = a.sortingDateObject || new Date(0);
+                        const dateB = b.sortingDateObject || new Date(0);
 
                         switch (sortOption) {
                             case 'title-asc': return titleA.localeCompare(titleB);
                             case 'title-desc': return titleB.localeCompare(titleA);
                             case 'artist-asc': return artistA.localeCompare(artistB);
                             case 'artist-desc': return artistB.localeCompare(artistA);
-                            case 'year-asc': return yearA - yearB;
-                            case 'year-desc': return yearB - yearA;
+                            case 'chrono-asc': return dateA - dateB;
+                            case 'chrono-desc': return dateB - dateA;
                             default: return 0;
                         }
                     });
