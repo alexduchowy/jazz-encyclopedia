@@ -763,19 +763,9 @@
             },
             
             processData() {
-                // 1. Filter albums to the 1950-1969 range first.
                 this.state.albums = this.state.albums.filter(album => {
                     const year = parseInt(album.year, 10);
                     return year >= 1950 && year <= 1969;
-                });
-
-                // 2. Process and sort the filtered albums.
-                this.state.albums.forEach(album => {
-                     if (typeof album.genres === 'string') {
-                        album.genres = album.genres.split(',').map(g => g.trim());
-                    }
-                     const albumSlug = this.slugifyForUrl(album.artist) + '-' + this.slugifyForUrl(album.albumTitle);
-                     album.uniqueId = albumSlug;
                 });
 
                 const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
@@ -789,12 +779,26 @@
                 };
                 
                 this.state.albums.forEach(album => {
-                     if (album.pivotalTracks && album.pivotalTracks.length > 0) {
-                        album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
-                        album.sortingDate = album.pivotalTracks[0].recordingDate;
-                    } else {
-                        album.sortingDate = `${album.year}-01-01`;
+                    if (typeof album.genres === 'string') {
+                        album.genres = album.genres.split(',').map(g => g.trim());
                     }
+                    album.uniqueId = `${this.slugifyForUrl(album.artist)}-${this.slugifyForUrl(album.albumTitle)}`;
+                    
+                    let sortDate = null;
+                    if (album.pivotalTracks && album.pivotalTracks.length > 0) {
+                        album.pivotalTracks.sort((a, b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
+                        sortDate = album.pivotalTracks[0].recordingDate;
+                    }
+
+                    if (!sortDate) {
+                        sortDate = album.recordingDate;
+                    }
+
+                    if (!sortDate) {
+                        sortDate = `${album.year}-01-01`;
+                    }
+                    
+                    album.sortingDate = sortDate;
                 });
                 
                 this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
@@ -981,7 +985,6 @@
                 let primarySrc = generatedPath;
                 let secondarySrc = coverUrl;
 
-                // If album title and artist name are the same, prioritize the coverUrl from the database.
                 if (album.albumTitle && album.artist && album.albumTitle.toLowerCase() === album.artist.toLowerCase() && coverUrl) {
                     primarySrc = coverUrl;
                     secondarySrc = generatedPath;
@@ -989,9 +992,7 @@
                 
                 const vinylPlaceholder = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCBmaWxsPSIjZDRkNGQ4IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIvPjxjaXJjbGUgZmlsbD0iIzUyNTI1YiIgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTAiLz48Y2lyY2xlIGZpbGw9IiNhOGEyOWUiIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjQwIi8+PGNpcmNsZSBmaWxsPSIjZDRkNGQ4IiBjeD0iMTAwIiBjeT0iMTAwIiByPSIxMCIvPjwvc3ZnPg==`;
                 
-                let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`; // Final fallback
-                
-                // If a secondary source exists, make it the first fallback.
+                let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`;
                 if (secondarySrc) {
                     onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${vinylPlaceholder}'; }; this.src='${secondarySrc}';`;
                 }
@@ -1320,7 +1321,6 @@
                 let primarySrc = generatedPath;
                 let secondarySrc = coverUrl;
 
-                // If album title and artist name are the same, prioritize the coverUrl from the database.
                 if (album.albumTitle && album.artist && album.albumTitle.toLowerCase() === album.artist.toLowerCase() && coverUrl) {
                     primarySrc = coverUrl;
                     secondarySrc = generatedPath;
@@ -1328,9 +1328,7 @@
                 
                 const vinylPlaceholder = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCBmaWxsPSIjZDRkNGQ4IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIvPjxjaXJjbGUgZmlsbD0iIzUyNTI1YiIgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTAiLz48Y2lyY2xlIGZpbGw9IiNhOGEyOWUiIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjQwIi8+PGNpcmNsZSBmaWxsPSIjZDRkNGQ4IiBjeD0iMTAwIiBjeT0iMTAwIiByPSIxMCIvPjwvc3ZnPg==`;
                 
-                let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`; // Final fallback
-                
-                // If a secondary source exists, make it the first fallback.
+                let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`;
                 if (secondarySrc) {
                     onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${vinylPlaceholder}'; }; this.src='${secondarySrc}';`;
                 }
