@@ -654,6 +654,7 @@
                     const p = new RegExp(a.split('').join('|'), 'g')
 
                     return text.toString().toLowerCase()
+                        .trim() // <-- ADD THIS LINE
                         .replace(/\s+/g, '-') // replace spaces with -
                         .replace(p, c => b.charAt(a.indexOf(c))) // replace special characters
                         .replace(/&/g, '-and-') // replace & with 'and'
