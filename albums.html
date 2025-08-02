@@ -554,7 +554,6 @@
                     if (paginatedAlbums.length === 0) {
                         albumGridContainer.innerHTML = `<p class="text-[var(--text-muted)] col-span-full text-center py-10">No albums found matching your criteria.</p>`;
                     } else {
-                        const cacheBuster = `?t=${new Date().getTime()}`;
                         const isDarkMode = document.documentElement.classList.contains('dark');
                         
                         const placeholderColors = {
@@ -566,16 +565,20 @@
                         paginatedAlbums.forEach(album => {
                             const albumTitle = album.albumTitle || album.title;
                             const artistName = album.artist;
-                            const coverUrl = album.cover; // Get cover URL from JSON
+                            const coverUrl = album.cover;
 
                             const urlSlug = `${this.methods.slugifyForUrl(artistName)}-${this.methods.slugifyForUrl(albumTitle)}`;
                             
-                            let imageSlug = this.methods.slugifyForImagePath(albumTitle);
-                            if (albumTitle.toLowerCase() === artistName.toLowerCase()) {
-                                imageSlug += '2';
-                            }
+                            const imageSlug = this.methods.slugifyForImagePath(albumTitle);
+                            const generatedPath = `/images/${imageSlug}.jpg`;
                             
-                            const coverPath = `/images/${imageSlug}.jpg`;
+                            let primarySrc = generatedPath;
+                            let secondarySrc = coverUrl;
+
+                            if (albumTitle && artistName && albumTitle.toLowerCase() === artistName.toLowerCase() && coverUrl) {
+                                primarySrc = coverUrl;
+                                secondarySrc = generatedPath;
+                            }
 
                             const card = document.createElement('a');
                             card.href = `/album/${urlSlug}`;
@@ -592,17 +595,14 @@
                             
                             const encodedPlaceholder = `data:image/svg+xml;base64,${btoa(vinylPlaceholder)}`;
                             
-                            // Define the multi-step fallback logic for the image
-                            let onErrorLogic = `this.onerror=null; this.src='${encodedPlaceholder}';`; // Final fallback
-                            if (coverUrl) {
-                                // If a cover URL from the database exists, try it as the first fallback
-                                const finalCoverUrl = `${coverUrl}${coverUrl.includes('?') ? '&' : '?'}${cacheBuster.substring(1)}`;
-                                onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${encodedPlaceholder}'; }; this.src='${finalCoverUrl}';`;
+                            let onErrorLogic = `this.onerror=null; this.src='${encodedPlaceholder}';`;
+                            if (secondarySrc) {
+                                onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${encodedPlaceholder}'; }; this.src='${secondarySrc}';`;
                             }
 
                             card.innerHTML = `
                                 <div class="album-cover-container">
-                                    <img src="${coverPath}${cacheBuster}" loading="lazy" alt="Cover for ${albumTitle}" onerror="${onErrorLogic}">
+                                    <img src="${primarySrc}" loading="lazy" alt="Cover for ${albumTitle}" onerror="${onErrorLogic}">
                                 </div>
                                 <div class="p-3 text-left">
                                     <h4 class="font-bold text-sm text-[var(--text-main)] truncate">${albumTitle}</h4>
