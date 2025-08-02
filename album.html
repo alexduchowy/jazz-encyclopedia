@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Album Details - Controlled Freedom</title>
-    <link rel="icon" type="image/svg+xml" href="/images/minilogo.svg">
+    <link rel="icon" type="image/svg+xml" href="/images/minilogosvg">
     
     <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -434,10 +434,11 @@
                 allAlbums: [],
             },
 
-            init() {
+            async init() {
                 this.setupTheme();
-                this.fetchDataAndRender();
                 this.setupMobileMenu();
+                await this.fetchAllAlbums();
+                this.displayCurrentAlbum();
             },
 
             setupMobileMenu() {
@@ -542,37 +543,38 @@
                     "Charles Mingus", "Bill Evans", "Duke Ellington", "Dizzy Gillespie",
                     "Sonny Rollins", "Herbie Hancock", "Wayne Shorter", "Cannonball Adderley"
                 ];
-
-                // Use a regex that finds whole words to avoid incorrect partial matches.
                 const regex = new RegExp(`\\b(${linkableArtists.join('|')})\\b`, 'gi');
-
                 if (!regex.test(fullArtistString)) {
-                    // If no special artists are found, link the entire string as one.
                     const artistSlug = this.slugifyForUrl(fullArtistString);
                     return `<a href="/artist/${artistSlug}" class="hover:text-[var(--accent)] transition-colors">${fullArtistString}</a>`;
                 }
-
-                // Otherwise, replace only the names of the linkable artists with anchor tags.
                 return fullArtistString.replace(regex, (matchedArtist) => {
                     const artistSlug = this.slugifyForUrl(matchedArtist);
                     return `<a href="/artist/${artistSlug}" class="hover:text-[var(--accent)] transition-colors underline decoration-dotted">${matchedArtist}</a>`;
                 });
             },
 
-            fetchDataAndRender() {
-                const albumId = this.getAlbumIdFromUrl();
-                if (!albumId) {
-                    this.renderError("No album specified in URL.");
-                    return;
-                }
-
-                Promise.all([
-                    fetch('/album_database.json').then(res => res.json()),
-                    fetch('/legacy.json').then(res => res.json())
-                ])
-                .then(([albumDb, legacyDb]) => {
+            // *** NEW: Fetches, processes, and sorts all albums for navigation ***
+            async fetchAllAlbums() {
+                try {
+                    const [albumDb, legacyDb] = await Promise.all([
+                        fetch('/album_database.json').then(res => res.json()),
+                        fetch('/legacy.json').then(res => res.json())
+                    ]);
+                    
                     const albumMap = new Map();
                     const allRawAlbums = [...albumDb.albums, ...Object.values(legacyDb.paths || {}).flatMap(p => p.albums || [])];
+
+                    const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
+
+                    const parseDate = (dateString) => {
+                        if (!dateString || typeof dateString !== 'string') return null;
+                        const parts = dateString.replace(/,/g, '').trim().split(/\s+/);
+                        if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
+                        if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 1);
+                        if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 11, 31);
+                        return null;
+                    };
 
                     allRawAlbums.forEach(album => {
                         const title = album.albumTitle || album.title;
@@ -580,44 +582,45 @@
                         if (!title || !artist) return;
                         const key = `${this.slugifyForUrl(artist)}-${this.slugifyForUrl(title)}`;
                         if (!albumMap.has(key)) {
+                            let sortDate = parseDate(album.recordingDate);
+                            if (!sortDate) sortDate = parseDate(album.releaseDate);
+                            if (!sortDate) sortDate = parseDate(String(album.year));
+                            album.sortingDateObject = sortDate;
                             albumMap.set(key, album);
                         }
                     });
+
                     const uniqueAlbums = Array.from(albumMap.values());
-
-                    const getSortDate = (album) => {
-                        const recordingDate = album.recordingDate ? new Date(album.recordingDate) : null;
-                        const releaseDate = album.releaseDate ? new Date(album.releaseDate) : null;
-                        
-                        const recordingYear = recordingDate ? recordingDate.getFullYear() : 0;
-
-                        if (recordingYear && recordingYear <= 1969) {
-                            return recordingDate;
-                        }
-                        if (releaseDate) {
-                            return releaseDate;
-                        }
-                        return recordingDate || new Date('1900-01-01'); // Fallback
-                    };
-
-                    this.state.allAlbums = uniqueAlbums.sort((a, b) => getSortDate(a) - getSortDate(b));
-                    
-                    const currentIndex = this.state.allAlbums.findIndex(a => {
-                        const currentAlbumId = `${this.slugifyForUrl(a.artist)}-${this.slugifyForUrl(a.albumTitle || a.title)}`;
-                        return currentAlbumId === albumId;
+                    this.state.allAlbums = uniqueAlbums.sort((a, b) => {
+                        const dateA = a.sortingDateObject || new Date(0);
+                        const dateB = b.sortingDateObject || new Date(0);
+                        return dateA - dateB;
                     });
 
-                    if (currentIndex > -1) {
-                        const album = this.state.allAlbums[currentIndex];
-                        this.renderAlbum(album, currentIndex, this.state.allAlbums);
-                    } else {
-                        this.renderError(`Album with ID "${albumId}" not found.`);
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching data:", error);
-                    this.renderError("Could not load album data.");
+                } catch (error) {
+                    console.error("Error processing album database for navigation:", error);
+                    this.state.allAlbums = []; // Ensure it's an empty array on error
+                }
+            },
+
+            displayCurrentAlbum() {
+                const albumId = this.getAlbumIdFromUrl();
+                if (!albumId) {
+                    this.renderError("No album specified in URL.");
+                    return;
+                }
+
+                const currentIndex = this.state.allAlbums.findIndex(a => {
+                    const currentAlbumId = `${this.slugifyForUrl(a.artist)}-${this.slugifyForUrl(a.albumTitle || a.title)}`;
+                    return currentAlbumId === albumId;
                 });
+
+                if (currentIndex > -1) {
+                    const album = this.state.allAlbums[currentIndex];
+                    this.renderAlbum(album, currentIndex, this.state.allAlbums);
+                } else {
+                    this.renderError(`Album with ID "${albumId}" not found.`);
+                }
             },
             
             renderError(message) {
@@ -625,7 +628,7 @@
                 wrapper.innerHTML = `<div class="text-center py-20">
                     <h2 class="text-4xl text-orange-500">Error</h2>
                     <p class="text-xl text-[var(--text-muted)] mt-4">${message}</p>
-                    <a href="/timeline" class="mt-8 inline-block px-6 py-3 bg-[var(--accent)] text-white font-bold rounded-sm hover:opacity-90">Back to Timeline</a>
+                    <a href="/albums.html" class="mt-8 inline-block px-6 py-3 bg-[var(--accent)] text-white font-bold rounded-sm hover:opacity-90">Back to Albums</a>
                 </div>`;
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('page-content').classList.remove('content-hidden');
@@ -700,6 +703,7 @@
                     </li>
                 `).join('');
 
+                // *** MODIFIED: Implemented corrected image path logic ***
                 const imageSlug = this.slugifyForImagePath(albumTitle);
                 const generatedPath = `/images/${imageSlug}.jpg`;
                 const coverUrl = album.cover;
@@ -707,17 +711,14 @@
                 let primarySrc = generatedPath;
                 let secondarySrc = coverUrl;
 
-                // If album title and artist name are the same, prioritize the coverUrl from the database.
-                if (album.albumTitle && album.artist && album.albumTitle.toLowerCase() === album.artist.toLowerCase() && coverUrl) {
+                if (albumTitle && artistName && albumTitle.toLowerCase() === artistName.toLowerCase() && coverUrl) {
                     primarySrc = coverUrl;
                     secondarySrc = generatedPath;
                 }
                 
                 const vinylPlaceholder = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCBmaWxsPSIjZDRkNGQ4IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIvPjxjaXJjbGUgZmlsbD0iIzUyNTI1YiIgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTAiLz48Y2lyY2xlIGZpbGw9IiNhOGEyOWUiIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjQwIi8+PGNpcmNsZSBmaWxsPSIjZDRkNGQ4IiBjeD0iMTAwIiBjeT0iMTAwIiByPSIxMCIvPjwvc3ZnPg==`;
                 
-                let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`; // Final fallback
-                
-                // If a secondary source exists, make it the first fallback.
+                let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`;
                 if (secondarySrc) {
                     onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${vinylPlaceholder}'; }; this.src='${secondarySrc}';`;
                 }
