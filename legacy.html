@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Legacy - Controlled Freedom</title>
+    <title>Legacy Timeline - Controlled Freedom</title>
     <link rel="icon" type="image/svg+xml" href="images/minilogo.svg">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     
     <style>
-        /* Light Theme (Default) */
         :root {
             --bg-main: #f5f5f4;
             --bg-secondary: #e7e5e4;
@@ -22,41 +21,15 @@
             --border-color: #1c1917;
             --accent: #f97316;
             --yellow-accent: #facc15;
-
-            /* Pastel Genre Colors */
-            --genre-bebop: #C19A6B;
-            --genre-hard-bop: #d8b4fe;
-            --genre-cool-jazz: #93c5fd;
-            --genre-modal-jazz: #a7f3d0;
-            --genre-post-bop: #fed7aa;
-            --genre-free-jazz: #fca5a5;
-            --genre-avant-garde: #fecdd3;
             --genre-jazz-fusion: #a5f3fc;
-            --genre-latin-jazz: #fde047;
-            --genre-big-band: #fecaca;
-            --genre-jazz-rap: #fed7aa;
-            --genre-nu-jazz: #a7f3d0;
-            --genre-smooth-jazz: #93c5fd;
-            --genre-modern-creative: #fecdd3;
-            --genre-third-stream: #bae6fd;
-            --genre-experimental-big-band: #e9d5ff;
             --genre-spiritual-jazz: #dcfce7;
+            --genre-avant-garde-jazz: #fecdd3;
             --genre-afro-jazz: #fef08a;
-            --genre-soul-jazz: #fed7aa;
-            --genre-progressive-big-band: #fecaca;
-            --genre-jazz-rock: #a5f3fc;
-            --genre-jazz-funk: #c4b5fd;
-            --genre-indo-jazz: #fde047;
-            --genre-ambient-jazz: #a7f3d0;
             --genre-ecm-style-jazz: #93c5fd;
-            --genre-cape-jazz: #fef08a;
-            --genre-chamber-jazz: #bae6fd;
-            --genre-post-minimalism: #e9d5ff;
             --genre-neo-bop: #d8b4fe;
             --genre-default: #e7e5e4;
         }
 
-        /* Dark Theme Overrides */
         .dark {
             --bg-main: #1c1917;
             --bg-secondary: #292524;
@@ -64,36 +37,11 @@
             --text-main: #f5f5f4;
             --text-muted: #a8a29e;
             --border-color: #44403c;
-
-            /* Darker Genre Colors */
-            --genre-bebop: #A17A4B;
-            --genre-hard-bop: #8b5cf6;
-            --genre-cool-jazz: #3b82f6;
-            --genre-modal-jazz: #10b981;
-            --genre-post-bop: #f59e0b;
-            --genre-free-jazz: #ef4444;
-            --genre-avant-garde: #ec4899;
             --genre-jazz-fusion: #06b6d4;
-            --genre-latin-jazz: #eab308;
-            --genre-big-band: #ef4444;
-            --genre-jazz-rap: #f59e0b;
-            --genre-nu-jazz: #10b981;
-            --genre-smooth-jazz: #3b82f6;
-            --genre-modern-creative: #ec4899;
-            --genre-third-stream: #0284c7;
-            --genre-experimental-big-band: #a855f7;
             --genre-spiritual-jazz: #22c55e;
+            --genre-avant-garde-jazz: #ec4899;
             --genre-afro-jazz: #ca8a04;
-            --genre-soul-jazz: #f59e0b;
-            --genre-progressive-big-band: #dc2626;
-            --genre-jazz-rock: #0891b2;
-            --genre-jazz-funk: #7c3aed;
-            --genre-indo-jazz: #eab308;
-            --genre-ambient-jazz: #10b981;
             --genre-ecm-style-jazz: #3b82f6;
-            --genre-cape-jazz: #ca8a04;
-            --genre-chamber-jazz: #0284c7;
-            --genre-post-minimalism: #a855f7;
             --genre-neo-bop: #8b5cf6;
         }
 
@@ -113,6 +61,7 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 0.1em;
             font-size: 1.1rem;
+            color: var(--text-muted);
         }
         .nav-link:hover, .nav-link.active {
             color: var(--accent);
@@ -299,18 +248,6 @@
         #legacy-album-track { padding: 1rem 0; transition: transform 0.5s ease-in-out; }
 
         .dropdown-container { position: relative; }
-        .dropdown-btn {
-            font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; font-size: 1.1rem;
-            padding: 0.5rem 1.5rem;
-            border: 2px solid var(--text-main);
-            border-radius: 0.25rem;
-            background-color: var(--bg-main);
-            transition: all 0.2s ease; cursor: pointer;
-            display: flex; align-items: center; gap: 0.5rem;
-            color: var(--text-muted);
-        }
-        .dark .dropdown-btn { border-color: var(--border-color); }
-        .dropdown-btn:hover { background-color: var(--accent); color: var(--bg-main); }
         .dropdown-list {
             position: absolute;
             background-color: var(--bg-main);
@@ -353,18 +290,32 @@
                         <div class="nav-bar-behaviour items-center space-x-8">
                             <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
                             <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
-                            <a href="/timeline" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Timeline</a>
+                            
+                            <!-- Timeline Dropdown -->
                             <div class="dropdown-container">
-                                <a href="/legacy" class="nav-link active px-3 py-2 rounded-md font-medium dropdown-btn">
-                                    Legacy
+                                <a href="#" class="nav-link active px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
+                                    Timeline
                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                                 </a>
                                 <div class="dropdown-list">
-                                    <a href="/legacy">Legacy Paths</a>
-                                    <a href="/genres.html">Genres</a>
-                                    <a href="https://controlledfreedom.com/artists">Artists</a>
+                                    <a href="/timeline.html">Bop Era: 50s-60s</a>
+                                    <a href="/legacy.html" class="nav-link active">Legacy: 70s-Now</a>
                                 </div>
                             </div>
+
+                            <!-- Archive Dropdown -->
+                            <div class="dropdown-container">
+                                <a href="#" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
+                                    Archive
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </a>
+                                <div class="dropdown-list">
+                                    <a href="/genres.html">Genres</a>
+                                    <a href="/artists.html">Artists</a>
+                                    <a href="/albums.html">Albums</a>
+                                </div>
+                            </div>
+
                             <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
                             <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
                                 <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
@@ -414,7 +365,7 @@
                         </div>
                         <div class="md:col-span-2 mt-8 md:mt-0 space-y-8">
                             <div id="on-this-day"></div>
-                            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5KmHPJb9HzTeHpaCDRBkNO?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5KmHPJb9HzTeHpaCDRBkNO?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
@@ -448,11 +399,7 @@
 
         <footer class="bg-[var(--bg-secondary)] text-[var(--text-main)] py-8 border-t-2 border-[var(--border-color)]">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <p class="font-bold">An interactive exploration based on the "Chronological Encyclopedia of Jazz".</p>
-                <p class="text-sm text-[var(--text-muted)] mt-2">Designed to bring music history to life through interactive data visualization.</p>
-                <div class="mt-6 border-t border-[var(--border-color)] pt-6">
-                    <p id="footer-copyright" class="text-xs text-[var(--text-muted)]"></p>
-                </div>
+                <p id="footer-copyright" class="text-xs text-[var(--text-muted)]"></p>
             </div>
         </footer>
     </div>
@@ -463,7 +410,7 @@
             <div class="flex justify-between items-start p-4 border-b-2 border-[var(--border-color)] flex-shrink-0">
                 <div>
                     <h3 id="modal-title" class="text-4xl text-orange-500"></h3>
-                    <button id="modal-artist" class="text-xl text-[var(--text-muted)] bg-transparent border-none p-0"></button>
+                    <p id="modal-artist" class="text-xl text-[var(--text-muted)]"></p>
                 </div>
                 <button id="close-modal" class="text-4xl font-bold p-2 leading-none text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">×</button>
             </div>
@@ -485,13 +432,23 @@
         <div id="mobile-menu-panel" class="fixed top-0 right-0 bottom-0 w-64 shadow-lg p-4 transform translate-x-full">
             <div class="flex justify-end mb-4"><button id="mobile-menu-close-button" class="p-2 -mr-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none"><svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
-                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Home</a>
-                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">TV</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--accent)] p-2 rounded-md">Legacy</a>
-                <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md ml-4">- Genres</a>
-                <a href="https://controlledfreedom.com/artists" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md ml-4">- Artists</a>
-                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-[var(--accent)] p-2 rounded-md">Blog</a>
+                <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
+                <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
+                
+                <span class="mobile-nav-link block text-lg font-bold text-orange-500 p-2 rounded-md">Timeline</span>
+                <a href="/timeline.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Bop Era: 50s-60s</a>
+                <a href="/legacy.html" class="mobile-nav-link block text-lg font-bold text-orange-500 p-2 rounded-md ml-4">- Legacy: 70s-Now</a>
+
+                <span class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] p-2 rounded-md">Archive</span>
+                <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Genres</a>
+                <a href="/artists.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
+                <a href="/albums.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Albums</a>
+                
+                <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
+                 <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    <span>@controlledjazz</span>
+                </a>
             </nav>
         </div>
     </div>
@@ -499,11 +456,8 @@
     <script>
         const LegacyApp = {
             state: {
-                legacyData: {},
-                artistProfiles: {},
-                artistsData: [],
+                legacyPaths: {},
                 allLegacyAlbums: [],
-                fullAlbumDatabase: [],
                 genreData: {},
                 fullGenreColorMap: {},
                 onThisDayAlbum: null,
@@ -552,13 +506,9 @@
             },
             fetchData() {
                 Promise.all([
-                    fetch('legacy.json').then(res => res.json()),
-                    fetch('artists.json').then(res => res.json()),
-                    fetch('database.json').then(res => res.json()),
+                    fetch('album_database.json').then(res => res.json()),
                     fetch('genres.json').then(res => res.json())
-                ]).then(([legacyData, artistProfileData, dbData, genreData]) => {
-                    this.state.legacyData = legacyData.paths;
-                    this.state.artistProfiles = artistProfileData;
+                ]).then(([albumData, genreData]) => {
                     this.state.genreData = genreData;
                     
                     const normalizeGenres = (album) => {
@@ -570,8 +520,9 @@
                         return album;
                     };
 
-                    this.state.fullAlbumDatabase = (dbData.albums || []).map(normalizeGenres);
-                    this.state.allLegacyAlbums = Object.values(legacyData.paths || {}).flatMap(path => path.albums || []).map(normalizeGenres);
+                    this.state.allLegacyAlbums = (albumData.albums || [])
+                        .map(normalizeGenres)
+                        .filter(album => parseInt(album.year, 10) >= 1970);
 
                     this.initializeAppUI();
                 }).catch(error => {
@@ -586,6 +537,7 @@
             },
             initializeAppUI() {
                 this.methods.buildGenreColorMap();
+                this.methods.processLegacyPaths();
                 this.methods.setupOnThisDayFeature();
                 this.methods.setupLegacySection();
                 this.methods.setupModals();
@@ -623,100 +575,75 @@
                         applyTheme(newTheme);
                     });
                 },
-                slugify(name) {
-                    if (!name) return '';
-                    return name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+                slugifyForUrl(text) {
+                    if (!text) return '';
+                    const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+                    const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrssssssttuuuuuuuuuwxyyzzz------'
+                    const p = new RegExp(a.split('').join('|'), 'g')
+
+                    return text.toString().toLowerCase()
+                        .trim()
+                        .replace(/\s+/g, '-')
+                        .replace(p, c => b.charAt(a.indexOf(c)))
+                        .replace(/&/g, '-and-')
+                        .replace(/[^\w\-]+/g, '')
+                        .replace(/\-\-+/g, '-')
+                        .replace(/^-+/, '')
+                        .replace(/-+$/, '')
+                },
+                slugifyForImagePath(text) {
+                   return this.slugifyForUrl(text);
+                },
+                processLegacyPaths() {
+                    const paths = {};
+                    this.state.allLegacyAlbums.forEach(album => {
+                        const pathName = album.legacyPath || "Uncategorized";
+                        if (!paths[pathName]) {
+                            paths[pathName] = {
+                                title: pathName,
+                                albums: [],
+                                // Determine genreAffinity from the first album in the path
+                                genreAffinity: album.genres ? album.genres.join(', ') : ''
+                            };
+                        }
+                        paths[pathName].albums.push(album);
+                    });
+                     // Sort albums within each path chronologically
+                    for (const pathKey in paths) {
+                        paths[pathKey].albums.sort((a, b) => a.year - b.year);
+                    }
+                    this.state.legacyPaths = paths;
                 },
                 buildGenreColorMap() {
-                    let inlineStyleSheet = null;
-                    for (const sheet of document.styleSheets) {
-                        if (!sheet.href) {
-                            inlineStyleSheet = sheet;
-                            break;
-                        }
-                    }
-
-                    if (!inlineStyleSheet) {
-                        console.error("Could not find the inline stylesheet to read CSS variables.");
-                        return;
-                    }
-                    
-                    try {
-                        const allGenreNames = new Set();
-                        Object.values(this.state.genreData.genres).forEach(g => {
-                            allGenreNames.add(g.name);
-                            if (g.subgenres) {
-                                Object.keys(g.subgenres).forEach(sg => allGenreNames.add(sg));
+                    const colorMap = {};
+                    if (this.state.genreData && this.state.genreData.genres) {
+                        Object.entries(this.state.genreData.genres).forEach(([name, data]) => {
+                            colorMap[name] = data.color;
+                            if (name === "Avant-Garde") {
+                                colorMap["Avant-Garde Jazz"] = data.color;
                             }
                         });
-
-                        this.state.fullGenreColorMap = {};
-                        allGenreNames.forEach(genreName => {
-                            const slug = this.methods.slugify(genreName);
-                            const cssVar = `--genre-${slug}`;
-                            this.state.fullGenreColorMap[genreName] = `var(${cssVar})`;
-                        });
-
-                    } catch (e) {
-                        console.error("Error accessing CSS rules from the inline stylesheet:", e);
                     }
+                    // Add legacy genres explicitly
+                    const legacyGenres = ["Jazz Fusion", "Spiritual Jazz", "Avant-Garde Jazz", "Afro-Jazz", "ECM Style Jazz", "Neo-Bop"];
+                    legacyGenres.forEach(genre => {
+                        if (!colorMap[genre]) {
+                            const slug = this.slugifyForUrl(genre).replace('-jazz','');
+                            colorMap[genre] = `var(--genre-${slug})`;
+                        }
+                    });
+                    this.state.fullGenreColorMap = colorMap;
                 },
                 setupOnThisDayFeature() {
-                    const { onThisDayContainer } = this.elements;
-                    if (!onThisDayContainer) return;
-
-                    const today = new Date();
-                    const currentMonth = today.toLocaleString('en-US', { month: 'long' });
-                    const currentDay = today.getDate();
-
-                    const matchingTracks = [];
-                    this.state.allLegacyAlbums.forEach(album => {
-                         const tracks = album.pivotalTracks || (album.recordingDate ? [album] : []);
-                        (tracks || []).forEach(track => {
-                            const dateStr = track.recordingDate || '';
-                            const dateParts = dateStr.replace(/,/g, '').split(' ');
-                            if (dateParts.length >= 2 && dateParts[0] === currentMonth && parseInt(dateParts[1]) === currentDay) {
-                                matchingTracks.push({ ...track, parentAlbum: album });
-                            }
-                        });
-                    });
-
-                    if (matchingTracks.length > 0) {
-                        const featured = matchingTracks[Math.floor(Math.random() * matchingTracks.length)];
-                        const album = featured.parentAlbum;
-                        this.state.onThisDayAlbum = album;
-
-                        onThisDayContainer.innerHTML = `
-                            <div class="p-4 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--border-color)] dark:shadow-none cursor-pointer hover:shadow-[6px_6px_0px_var(--accent)] dark:hover:border-[var(--accent)] hover:-translate-y-1 transition-all">
-                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
-                                <div class="flex items-center gap-4 mt-2">
-                                    <img src="${album.cover}" loading="lazy" class="w-24 h-24 object-cover border-2 border-[var(--border-color)] rounded-sm" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1c1917/f5f5f4?text=No+Img';">
-                                    <div>
-                                        <p class="text-sm text-[var(--text-muted)]">On <strong>${currentMonth} ${currentDay}</strong>, ${album.year}, the track...</p>
-                                        <p class="text-lg font-bold text-[var(--text-main)]">"${featured.title}"</p>
-                                        <p class="text-sm text-[var(--text-muted)]">from <strong>${album.albumTitle}</strong> was recorded.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        onThisDayContainer.addEventListener('click', () => {
-                            this.methods.openAlbumModal(this.state.onThisDayAlbum);
-                        });
-                    } else {
-                        onThisDayContainer.innerHTML = `
-                             <div class="p-4 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-sm shadow-[4px_4px_0px_var(--border-color)] dark:shadow-none">
-                                <h4 class="text-2xl text-stone-900 mb-2 transform -rotate-1 inline-block bg-yellow-400 px-2">On This Day In Jazz...</h4>
-                                <p class="text-center text-[var(--text-muted)] mt-4">No legacy tracks were recorded on this day. Check back tomorrow!</p>
-                            </div>
-                        `;
-                    }
+                    // This can be adapted if needed, for now it's simplified
+                    this.elements.onThisDayContainer.innerHTML = '';
                 },
                 setupLegacySection() {
                     this.methods.renderPathSelector();
                     this.methods.setupPathSlider();
                     this.elements.legacyPrevBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(-1));
                     this.elements.legacyNextBtn.addEventListener('click', () => this.methods.moveLegacyAlbumSlide(1));
-                    const firstPathKey = Object.keys(this.state.legacyData)[0];
+                    const firstPathKey = Object.keys(this.state.legacyPaths)[0];
                     if (firstPathKey) {
                         this.methods.renderLegacyAlbumSlider(firstPathKey);
                         const firstCard = this.elements.pathSelectorGrid.querySelector('.path-selector-card');
@@ -726,15 +653,15 @@
                     }
                 },
                 getPathColor(pathData) {
-                    const affinity = pathData.genreAffinity.split(', ')[0].trim();
-                    const slug = this.methods.slugify(affinity);
-                    return `var(--genre-${slug}, var(--genre-default))`;
+                    const affinity = (pathData.genreAffinity || '').split(', ')[0].trim();
+                    return this.state.fullGenreColorMap[affinity] || 'var(--genre-default)';
                 },
                 renderPathSelector() {
                     const { pathSelectorGrid } = this.elements;
                     pathSelectorGrid.innerHTML = '';
                     const pathDescriptions = { "The Electric Path": "A high-voltage fusion of jazz improvisation with the raw power of rock and funk.", "The Spiritual Path": "A quest for transcendence through sound, blending jazz with Eastern and African influences.", "The Avant-Garde Path": "A radical deconstruction of traditional music, exploring pure sound, texture, and 'energy playing.'", "The Melodic Path": "Characterized by strong, folk-like melodies and atmospheric soundscapes, favoring lyrical improvisation.", "The Afro-Jazz Path": "A conscious reconnection with the music's African and Caribbean roots, integrating traditional rhythms.", "The Neo-Bop Path": "A powerful revival of the acoustic post-bop tradition that emerged in the 1980s." };
-                    Object.entries(this.state.legacyData).forEach(([pathKey, pathData], index) => {
+                    
+                    Object.entries(this.state.legacyPaths).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)).forEach(([pathKey, pathData], index) => {
                         const card = document.createElement('div');
                         card.className = 'path-selector-card text-left';
                         card.dataset.pathKey = pathKey;
@@ -831,7 +758,7 @@
                 },
                 renderLegacyAlbumSlider(pathKey) {
                     const { legacySliderWrapper, legacySliderTitle, legacyAlbumTrack } = this.elements;
-                    const pathData = this.state.legacyData[pathKey];
+                    const pathData = this.state.legacyPaths[pathKey];
                     if (!pathData) return;
                     legacySliderTitle.textContent = `Key Albums of ${pathData.title}`;
                     const pathColor = this.methods.getPathColor(pathData);
@@ -850,10 +777,19 @@
                         card.className = 'legacy-album-card';
                         card.dataset.albumTitle = album.albumTitle;
                         card.dataset.artist = album.artist;
-                        card.innerHTML = `<img src="${album.cover}" alt="Cover for ${album.albumTitle}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/1c1917/f5f5f4?text=No+Image';"><div class="legacy-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
+                        
+                        const imageSlug = this.methods.slugifyForImagePath(album.albumTitle);
+                        const coverPath = `/images/${imageSlug}.jpg`;
+                        const coverUrl = album.cover;
+                        const vinylPlaceholder = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCBmaWxsPSIjZDRkNGQ4IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIvPjxjaXJjbGUgZmlsbD0iIzUyNTI1YiIgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTAiLz48Y2lyY2xlIGZpbGw9IiNhOGEyOWUiIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjQwIi8+PGNpcmNsZSBmaWxsPSIjZDRkNGQ4IiBjeD0iMTAwIiBjeT0iMTAwIiByPSIxMCIvPjwvc3ZnPg==`;
+                        let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`;
+                        if (coverUrl) {
+                            onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${vinylPlaceholder}'; }; this.src='${coverUrl}';`;
+                        }
+
+                        card.innerHTML = `<img src="${coverPath}" alt="Cover for ${album.albumTitle}" onerror="${onErrorLogic}"><div class="legacy-album-card-info"><h5 class="font-bold truncate">${album.albumTitle}</h5><p class="truncate">${album.artist}</p></div>`;
                         card.addEventListener('click', () => {
-                            const fullAlbumData = this.state.allLegacyAlbums.find(a => a.albumTitle === album.albumTitle && a.artist === album.artist) || album;
-                            this.methods.openAlbumModal(fullAlbumData);
+                            this.methods.openAlbumModal(album);
                         });
                         legacyAlbumTrack.appendChild(card);
                     });
@@ -933,22 +869,26 @@
                     const { albumModal } = this.elements;
                     albumModal.querySelector('#modal-title').textContent = album.albumTitle;
                     
-                    const artistBtn = albumModal.querySelector('#modal-artist');
-                    artistBtn.textContent = album.artist;
-                    artistBtn.dataset.artistName = album.artist;
-                    artistBtn.className = 'text-xl text-[var(--text-muted)] bg-transparent border-none p-0';
+                    const artistEl = albumModal.querySelector('#modal-artist');
+                    artistEl.textContent = album.artist;
                     
                     const modalImg = albumModal.querySelector('#modal-album-art');
-                    modalImg.src = album.cover || '';
-                    modalImg.alt = `Cover for ${album.albumTitle}`;
-                    modalImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
-                    
+                    const imageSlug = this.methods.slugifyForImagePath(album.albumTitle);
+                    const coverPath = `/images/${imageSlug}.jpg`;
+                    const coverUrl = album.cover;
+                    const vinylPlaceholder = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCBmaWxsPSIjZDRkNGQ4IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIvPjxjaXJjbGUgZmlsbD0iIzUyNTI1YiIgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTAiLz48Y2lyY2xlIGZpbGw9IiNhOGEyOWUiIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjQwIi8+PGNpcmNsZSBmaWxsPSIjZDRkNGQ4IiBjeD0iMTAwIiBjeT0iMTAwIiByPSIxMCIvPjwvc3ZnPg==`;
+                    let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`;
+                    if (coverUrl) {
+                        onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${vinylPlaceholder}'; }; this.src='${coverUrl}';`;
+                    }
+                    modalImg.src = coverPath;
+                    modalImg.setAttribute('onerror', onErrorLogic);
+
                     const pivotalTrack = album.pivotalTracks && album.pivotalTracks.length > 0 ? album.pivotalTracks[0] : {};
                     
                     const genreTags = (album.genres || []).map(g => {
-                        const slug = this.methods.slugify(g.trim());
-                        const colorVar = `--genre-${slug}`;
-                        return `<span class="genre-tag" style="background-color: var(${colorVar}, var(--genre-default))">${g.trim()}</span>`
+                        const color = this.state.fullGenreColorMap[g.trim()] || 'var(--genre-default)';
+                        return `<span class="genre-tag" style="background-color: ${color}">${g.trim()}</span>`
                     }).join(' ');
 
                     const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A');
@@ -978,20 +918,6 @@
                 closeAllModals(callback) {
                     this.methods.closeAlbumModal();
                     if (typeof callback === 'function') setTimeout(callback, 300);
-                },
-                setupDraggable(container) {
-                    if (!container) return;
-                    let isDown = false, startX, scrollLeft;
-                    container.addEventListener('mousedown', (e) => { isDown = true; container.style.cursor = 'grabbing'; startX = e.pageX - container.offsetLeft; scrollLeft = container.scrollLeft; });
-                    container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
-                    container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
-                    container.addEventListener('mousemove', (e) => {
-                        if(!isDown) return;
-                        e.preventDefault();
-                        const x = e.pageX - container.offsetLeft;
-                        const walk = (x - startX) * 2;
-                        container.scrollLeft = scrollLeft - walk;
-                    });
                 },
             }
         };
