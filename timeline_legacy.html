@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Interactive Legacy Timeline</title>
+    
+    <!-- External Libraries & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS Styling -->
+    <style>
+        :root {
+            --bg-main: #e4e4e7; /* zinc-200 */
+            --bg-secondary: #d4d4d8; /* zinc-300 */
+            --bg-header: rgba(228, 228, 231, 0.8);
+            --text-main: #18181b; /* zinc-900 */
+            --text-muted: #52525b; /* zinc-600 */
+            --border-color: #d4d4d8; /* zinc-300 */
+            --accent: #f97316;
+            --sticky-top-offset: 112px;
+
+            /* Genre Colors */
+            --genre-bebop: #a0522d;
+            --genre-hard-bop: #8b5cf6;
+            --genre-cool-jazz: #3b82f6;
+            --genre-modal-jazz: #10b981;
+            --genre-post-bop: #f59e0b;
+            --genre-free-jazz: #ef4444;
+            --genre-avant-garde: #ec4899;
+            --genre-jazz-fusion: #06b6d4;
+            --genre-default: #d4d4d8;
+        }
+
+        html.dark {
+            --bg-main: #1c1917;
+            --bg-secondary: #292524;
+            --bg-header: rgba(28, 25, 23, 0.8);
+            --text-main: #f5f5f4;
+            --text-muted: #a8a29e;
+            --border-color: #44403c;
+            --genre-bebop: #b97245; 
+            --genre-hard-bop: #6d28d9;
+            --genre-cool-jazz: #2563eb;
+            --genre-modal-jazz: #059669;
+            --genre-post-bop: #d97706;
+            --genre-free-jazz: #dc2626;
+            --genre-avant-garde: #db2777;
+            --genre-jazz-fusion: #0891b2;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        
+        .header-title-styled {
+            transform: rotate(-2deg);
+            display: inline-block;
+            background-color: var(--accent);
+            color: #FFFFFF;
+            padding: 0.4rem 1.25rem;
+            font-size: 1.25rem;
+        }
+
+        .nav-link {
+            transition: color 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+
+        #main-container {
+            width: 100vw;
+            height: 100%;
+            position: relative;
+        }
+
+        #timeline-container {
+            position: absolute;
+            inset: 0;
+            overflow: auto;
+            cursor: grab;
+            background-color: var(--bg-main);
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #timeline-container::-webkit-scrollbar { display: none; }
+        #timeline-container:active { cursor: grabbing; }
+
+        #timeline-wrapper {
+            display: inline-flex;
+            padding: 0 1rem 6rem 1rem;
+            min-height: 100%;
+            align-items: flex-start;
+        }
+        
+        .path-container {
+            display: flex;
+            flex-direction: column;
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-left: 4px solid var(--border-color);
+            flex-shrink: 0;
+            margin: 0 1rem;
+        }
+
+        .path-header-wrapper {
+            width: 100%;
+            text-align: center;
+            position: sticky;
+            top: var(--sticky-top-offset);
+            z-index: 30;
+            margin-bottom: 2rem;
+        }
+
+        .path-header {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--accent);
+            font-weight: 900;
+            background-color: var(--bg-secondary);
+            padding: 0.25rem 1rem;
+            border-radius: 9999px;
+            display: inline-block;
+            border: 1px solid var(--border-color);
+        }
+        
+        .album-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: flex-start;
+        }
+
+        .album-card {
+            width: 120px;
+            background-color: var(--bg-main);
+            border-radius: 0.25rem;
+            border: 2px solid var(--text-main);
+            border-top-width: 6px;
+            border-top-color: var(--album-genre-color, var(--text-main));
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+        }
+        html.dark .album-card {
+            border-color: var(--border-color);
+            border-top-color: var(--album-genre-color, var(--border-color));
+        }
+        .album-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        }
+        .album-card .cover-art {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .album-card-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.75);
+            color: white;
+            padding: 0.5rem;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+        .album-card:hover .album-card-info { opacity: 1; transform: translateY(0); }
+        .album-card-info h5 { font-size: 0.8rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .album-card-info p { font-size: 0.7rem; color: #ccc; }
+
+        #controls-header {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            background-color: var(--bg-header);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        
+        #path-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
+        #current-path-display {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: opacity 0.3s, color 0.3s;
+            max-width: 280px;
+        }
+        
+        #loader {
+            position: fixed; inset: 0; background-color: var(--bg-main);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.5s ease;
+        }
+        .loader-spinner {
+            border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent);
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        #loader p { margin-top: 1rem; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; color: var(--text-muted); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* MODAL STYLES */
+        .modal { transition: opacity 0.3s ease; }
+        .modal-content {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            background-color: var(--bg-main);
+            border-color: var(--text-main);
+        }
+        html.dark .modal-content { border-color: var(--border-color); }
+        .modal.opacity-0 .modal-content { opacity: 0; transform: scale(0.95) translateY(10px); }
+        
+        #modal-analysis-section {
+            background-color: #1a1a1a; padding: 1.5rem; margin-top: 2rem;
+            border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main);
+        }
+        html.dark #modal-analysis-section { border-color: var(--border-color); box-shadow: none; }
+        #modal-analysis-section h5 { color: #f5f5f4; }
+        
+        .liner-notes-text { font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; color: #d4d4d2; }
+
+        .genre-tag {
+            padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem;
+            font-weight: 600; color: white; border: 2px solid rgba(0,0,0,0.1);
+            text-decoration: none; display: inline-block;
+        }
+        html.dark .genre-tag { border-color: rgba(255,255,255,0.2); }
+
+        .clickable-link {
+            cursor: pointer; text-decoration: underline; text-decoration-color: var(--accent);
+            transition: color 0.2s;
+        }
+        .clickable-link:hover { color: var(--accent); }
+
+        /* Dropdown */
+        .dropdown-container { position: relative; flex-shrink: 0; }
+        .dropdown-btn {
+            background: var(--bg-secondary); border: 1px solid var(--text-muted); color: var(--text-muted);
+            font-size: 0.8rem; font-weight: bold; border-radius: 99px; padding: 0.5rem 1rem;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: space-between; gap: 0.25rem;
+            width: 100%;
+        }
+        .dropdown-btn:hover { background-color: var(--accent); color: white; border-color: var(--accent); }
+        .dropdown-list {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            left: 0;
+            right: 0;
+            background-color: var(--bg-main);
+            border: 2px solid var(--text-main);
+            border-radius: 0.25rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 50;
+            max-height: 250px;
+            overflow-y: auto;
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        html.dark .dropdown-list { border-color: var(--border-color); }
+        .dropdown-container.open .dropdown-list {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .dropdown-list a, .dropdown-list button {
+            display: block;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+            width: 100%;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .dropdown-list a:last-child, .dropdown-list button:last-child {
+            border-bottom: none;
+        }
+        .dropdown-list a:hover, .dropdown-list button:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-spinner"></div>
+        <p>Loading Musical History...</p>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <div class="sticky top-0 z-50 h-16 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-color)]">
+        <header class="container mx-auto h-full">
+            <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-4 flex-shrink-0">
+                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-12 sm:h-14" onerror="this.onerror=null;this.src='https://placehold.co/160x56/1c1917/f5f5f4?text=Logo';"></a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="legacy.html" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                            Back to Main Site
+                        </a>
+                    </div>
+                    <button id="theme-toggle" class="p-2 rounded-md text-[var(--text-main)] hover:bg-[var(--bg-secondary)] focus:outline-none">
+                        <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <div class="md:hidden ml-2">
+                         <a href="legacy.html" class="nav-link p-2 rounded-md font-medium text-sm flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+
+    <div id="main-container">
+        <!-- Controls Header -->
+        <header id="controls-header">
+            <div id="path-controls" class="flex items-center gap-4 w-full">
+                <div id="current-path-display"></div>
+                <div id="path-jump-container" class="dropdown-container">
+                    <button class="dropdown-btn">
+                        Jump to Path
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <div id="path-jump-list" class="dropdown-list"></div>
+                </div>
+            </div>
+        </header>
+
+        <div id="timeline-container">
+            <div id="timeline-wrapper"></div>
+        </div>
+    </div>
+
+    <!-- Universal Album Modal -->
+    <div id="album-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-content-album" class="modal-content rounded-sm shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95">
+            <div class="flex justify-between items-start p-4 border-b-2 flex-shrink-0">
+                <div>
+                    <h3 id="album-modal-title" class="text-4xl text-orange-500"></h3>
+                    <p id="album-modal-artist" class="text-xl text-[var(--text-muted)]"></p>
+                </div>
+                <button id="close-album-modal" class="text-4xl font-bold p-2 leading-none text-stone-500 hover:text-orange-500">×</button>
+            </div>
+            <div id="album-modal-body" class="p-6 overflow-y-auto">
+                <div id="modal-album-main-details" class="flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/3 flex-shrink-0">
+                        <img id="album-modal-album-art" src="" class="w-full h-auto rounded-sm border-2 border-[var(--text-main)]" alt="Album Art" loading="lazy">
+                    </div>
+                    <div id="album-modal-album-details" class="w-full md:w-2/3"></div>
+                </div>
+                <div id="analysis-wrapper" class="relative mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LegacyTimeline = {
+            state: {
+                albums: [],
+                paths: {},
+                genres: {},
+                albumMap: new Map(),
+                isDragging: false,
+                startX: 0,
+                scrollLeft: 0,
+                intersectionObserver: null,
+                currentStickyPath: null,
+            },
+
+            elements: {},
+
+            async init() {
+                this.cacheDOMElements();
+                this.bindMethods();
+                this.setupTheme();
+                this.bindEvents();
+                this.setupModals();
+                try {
+                    this.calculateHeaderHeight(); 
+                    await this.fetchData();
+                    this.processData();
+                    this.renderPathJumpList();
+                    this.renderTimeline();
+                } catch (error) {
+                    console.error("Initialization failed:", error);
+                    this.elements.loader.innerHTML = "<p>Failed to load timeline data.</p>";
+                } finally {
+                    this.elements.loader.style.opacity = '0';
+                    setTimeout(() => {
+                        this.elements.loader.style.display = 'none';
+                    }, 500);
+                }
+            },
+            
+            cacheDOMElements() {
+                this.elements = {
+                    loader: document.getElementById('loader'),
+                    mainContainer: document.getElementById('main-container'),
+                    timelineContainer: document.getElementById('timeline-container'),
+                    timelineWrapper: document.getElementById('timeline-wrapper'),
+                    controlsHeader: document.getElementById('controls-header'),
+                    themeToggle: document.getElementById('theme-toggle'),
+                    themeIconLight: document.getElementById('theme-icon-light'),
+                    themeIconDark: document.getElementById('theme-icon-dark'),
+                    albumModal: document.getElementById('album-modal'),
+                    albumModalTitle: document.getElementById('album-modal-title'),
+                    albumModalArtist: document.getElementById('album-modal-artist'),
+                    albumModalBody: document.getElementById('album-modal-body'),
+                    albumModalAlbumArt: document.getElementById('album-modal-album-art'),
+                    albumModalAlbumDetails: document.getElementById('album-modal-album-details'),
+                    analysisWrapper: document.querySelector('#album-modal #analysis-wrapper'),
+                    closeAlbumModalBtn: document.getElementById('close-album-modal'),
+                    pathJumpContainer: document.getElementById('path-jump-container'),
+                    pathJumpList: document.getElementById('path-jump-list'),
+                    currentPathDisplay: document.getElementById('current-path-display'),
+                };
+            },
+
+            bindMethods() {
+                for (const key in this) {
+                    if (typeof this[key] === 'function') {
+                        this[key] = this[key].bind(this);
+                    }
+                }
+            },
+            
+            calculateHeaderHeight() {
+                const mainNav = document.querySelector('.sticky.top-0.z-50');
+                const controlsHeader = this.elements.controlsHeader;
+                if (mainNav && controlsHeader) {
+                    requestAnimationFrame(() => {
+                        const totalHeight = mainNav.offsetHeight + controlsHeader.offsetHeight;
+                        this.elements.timelineContainer.style.paddingTop = `${totalHeight}px`;
+                        document.documentElement.style.setProperty('--sticky-top-offset', `0px`);
+                    });
+                }
+            },
+
+            async fetchData() {
+                const [albumRes, genreRes] = await Promise.all([
+                    fetch('/album_database.json'),
+                    fetch('/genres.json'),
+                ]);
+                if (!albumRes.ok || !genreRes.ok) {
+                    throw new Error('Network response was not ok.');
+                }
+                const [albumData, genreData] = await Promise.all([
+                    albumRes.json(),
+                    genreRes.json()
+                ]);
+                
+                this.state.albums = albumData.albums;
+                this.state.genres = this.buildGenreColorMap(genreData);
+            },
+            
+            buildGenreColorMap(genreData) {
+                const colorMap = {};
+                if (genreData && genreData.genres) {
+                     Object.entries(genreData.genres).forEach(([name, data]) => {
+                        colorMap[name] = data.color;
+                        if(name === "Avant-Garde") {
+                           colorMap["Avant-Garde Jazz"] = data.color;
+                        }
+                    });
+                }
+                // Add legacy genres
+                const legacyGenres = ["Jazz Fusion", "Spiritual Jazz", "Avant-Garde Jazz", "Afro-Jazz", "ECM Style Jazz", "Neo-Bop"];
+                legacyGenres.forEach(genre => {
+                    if (!colorMap[genre]) {
+                        const slug = this.slugifyForUrl(genre).replace('-jazz','');
+                        colorMap[genre] = `var(--genre-${slug})`;
+                    }
+                });
+                return colorMap;
+            },
+
+            slugifyForUrl(text) {
+                if (!text) return '';
+                const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+                const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrssssssttuuuuuuuuuwxyyzzz------'
+                const p = new RegExp(a.split('').join('|'), 'g')
+
+                return text.toString().toLowerCase()
+                    .trim()
+                    .replace(/\s+/g, '-')
+                    .replace(p, c => b.charAt(a.indexOf(c)))
+                    .replace(/&/g, '-and-')
+                    .replace(/[^\w\-]+/g, '')
+                    .replace(/\-\-+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '');
+            },
+
+            slugifyForImagePath(text) {
+                if (!text) return '';
+                return this.slugifyForUrl(text); // Use the same robust slugify function
+            },
+            
+            processData() {
+                const legacyAlbums = this.state.albums.filter(album => {
+                    const year = parseInt(album.year, 10);
+                    return year >= 1970;
+                });
+
+                legacyAlbums.forEach(album => {
+                     if (typeof album.genres === 'string') {
+                        album.genres = album.genres.split(',').map(g => g.trim());
+                    }
+                     const albumSlug = this.slugifyForUrl(album.artist) + '-' + this.slugifyForUrl(album.albumTitle);
+                     album.uniqueId = albumSlug;
+                });
+
+                const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
+                const parseDate = (dateString) => {
+                    if (!dateString || typeof dateString !== 'string') return new Date(0);
+                    const parts = dateString.replace(/,/g, '').split(' ');
+                    if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
+                    if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 1);
+                    if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 0, 1);
+                    return new Date(0);
+                };
+                
+                legacyAlbums.forEach(album => {
+                     if (album.pivotalTracks && album.pivotalTracks.length > 0) {
+                        album.pivotalTracks.sort((a,b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
+                        album.sortingDate = album.pivotalTracks[0].recordingDate;
+                    } else {
+                        album.sortingDate = `${album.year}-01-01`;
+                    }
+                });
+                
+                legacyAlbums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
+
+                this.state.albums = legacyAlbums;
+                this.state.albumMap = new Map(this.state.albums.map(a => [a.uniqueId, a]));
+
+                // Group by Legacy Path
+                const paths = {};
+                this.state.albums.forEach(album => {
+                    const path = album.legacyPath || "Uncategorized";
+                    if (!paths[path]) {
+                        paths[path] = { title: path, albums: [] };
+                    }
+                    paths[path].albums.push(album);
+                });
+                this.state.paths = paths;
+            },
+
+            renderPathJumpList() {
+                const pathHtml = Object.keys(this.state.paths).sort().map(pathKey => 
+                    `<a href="#" data-path="${pathKey}">${pathKey}</a>`
+                ).join('');
+                this.elements.pathJumpList.innerHTML = pathHtml;
+            },
+            
+            renderTimeline() {
+                if (this.state.intersectionObserver) {
+                    this.state.intersectionObserver.disconnect();
+                }
+
+                const fragment = document.createDocumentFragment();
+                const sortedPaths = Object.keys(this.state.paths).sort();
+
+                for (const pathKey of sortedPaths) {
+                    const pathData = this.state.paths[pathKey];
+                    const pathContainer = document.createElement('div');
+                    pathContainer.className = 'path-container';
+                    pathContainer.dataset.path = pathKey;
+                    pathContainer.id = `path-${this.slugifyForUrl(pathKey)}`;
+                    
+                    const pathHeaderWrapper = document.createElement('div');
+                    pathHeaderWrapper.className = 'path-header-wrapper';
+
+                    const pathHeader = document.createElement('div');
+                    pathHeader.className = 'path-header';
+                    pathHeader.textContent = pathData.title;
+                    
+                    pathHeaderWrapper.appendChild(pathHeader);
+                    pathContainer.appendChild(pathHeaderWrapper);
+
+                    const albumGrid = document.createElement('div');
+                    albumGrid.className = 'album-grid';
+                    pathData.albums.forEach(album => {
+                        const card = this.createAlbumCard(album);
+                        albumGrid.appendChild(card);
+                    });
+                    pathContainer.appendChild(albumGrid);
+                    fragment.appendChild(pathContainer);
+                }
+                this.elements.timelineWrapper.innerHTML = '';
+                this.elements.timelineWrapper.appendChild(fragment);
+                this.setupStickyPathObserver();
+            },
+
+            createAlbumCard(album) {
+                const card = document.createElement('button');
+                card.className = 'album-card';
+                card.dataset.uniqueId = album.uniqueId;
+
+                const primaryGenre = album.genres[0];
+                const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
+                card.style.setProperty('--album-genre-color', genreColor);
+                
+                const imageSlug = this.slugifyForImagePath(album.albumTitle);
+                const coverPath = `/images/${imageSlug}.jpg`;
+                const coverUrl = album.cover;
+                
+                const vinylPlaceholder = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCBmaWxsPSIjZDRkNGQ4IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIvPjxjaXJjbGUgZmlsbD0iIzUyNTI1YiIgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTAiLz48Y2lyY2xlIGZpbGw9IiNhOGEyOWUiIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjQwIi8+PGNpcmNsZSBmaWxsPSIjZDRkNGQ4IiBjeD0iMTAwIiBjeT0iMTAwIiByPSIxMCIvPjwvc3ZnPg==`;
+                
+                let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`;
+                if (coverUrl) {
+                    onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${vinylPlaceholder}'; }; this.src='${coverUrl}';`;
+                }
+
+                card.innerHTML = `
+                    <img src="${coverPath}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="${onErrorLogic}">
+                    <div class="album-card-info">
+                        <h5>${album.albumTitle || 'Unknown Title'}</h5>
+                        <p>${album.artist || 'Unknown Artist'}</p>
+                    </div>
+                `;
+                return card;
+            },
+
+            setupTheme() {
+                const applyTheme = (theme) => {
+                    if (theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                        this.elements.themeIconLight.classList.add('hidden');
+                        this.elements.themeIconDark.classList.remove('hidden');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        this.elements.themeIconLight.classList.remove('hidden');
+                        this.elements.themeIconDark.classList.add('hidden');
+                    }
+                    this.updateStickyPathDisplay(this.state.currentStickyPath);
+                };
+                
+                const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                applyTheme(savedTheme);
+
+                this.elements.themeToggle.addEventListener('click', () => {
+                    const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                    applyTheme(newTheme);
+                    localStorage.setItem('theme', newTheme);
+                });
+            },
+
+            bindEvents() {
+                this.elements.timelineContainer.addEventListener('mousedown', this.onDragStart.bind(this));
+                this.elements.timelineWrapper.addEventListener('click', this.onCardClick.bind(this));
+                this.elements.pathJumpContainer.querySelector('.dropdown-btn').addEventListener('click', this.onPathDropdownToggle.bind(this));
+                this.elements.pathJumpList.addEventListener('click', this.onPathJump.bind(this));
+                window.addEventListener('click', this.closeAllDropdowns.bind(this));
+                window.addEventListener('resize', this.calculateHeaderHeight.bind(this));
+            },
+            
+            onPathDropdownToggle(e) {
+                e.stopPropagation();
+                this.elements.pathJumpContainer.classList.toggle('open');
+            },
+
+            closeAllDropdowns(e) {
+                if (!this.elements.pathJumpContainer.contains(e.target)) {
+                    this.elements.pathJumpContainer.classList.remove('open');
+                }
+            },
+
+            onPathJump(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const target = e.target.closest('a[data-path]');
+                if (!target) return;
+
+                const pathKey = target.dataset.path;
+                const pathContainer = document.getElementById(`path-${this.slugifyForUrl(pathKey)}`);
+                
+                if (pathContainer) {
+                    const offsetPosition = pathContainer.offsetLeft;
+                    this.elements.timelineContainer.scrollTo({
+                        left: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+                this.elements.pathJumpContainer.classList.remove('open');
+            },
+
+            onDragStart(e) {
+                if (e.target.closest('.album-card, .dropdown-container')) return;
+                this.state.isDragging = true;
+                this.elements.timelineContainer.style.cursor = 'grabbing';
+                document.body.style.cursor = 'grabbing';
+                this.state.startX = e.pageX - this.elements.timelineContainer.offsetLeft;
+                this.state.scrollLeft = this.elements.timelineContainer.scrollLeft;
+                document.addEventListener('mousemove', this.onDragMove);
+                document.addEventListener('mouseup', this.onDragEnd);
+            },
+
+            onDragEnd() {
+                if (!this.state.isDragging) return;
+                this.state.isDragging = false;
+                this.elements.timelineContainer.style.cursor = 'grab';
+                document.body.style.cursor = 'default';
+                document.removeEventListener('mousemove', this.onDragMove);
+                document.removeEventListener('mouseup', this.onDragEnd);
+            },
+
+            onDragMove(e) {
+                if (!this.state.isDragging) return;
+                e.preventDefault();
+                const x = e.pageX - this.elements.timelineContainer.offsetLeft;
+                const walk = (x - this.state.startX) * 2;
+                this.elements.timelineContainer.scrollLeft = this.state.scrollLeft - walk;
+            },
+
+            onCardClick(e) {
+                const card = e.target.closest('.album-card');
+                if (!card) return;
+                
+                const albumId = card.dataset.uniqueId;
+                const album = this.state.albumMap.get(albumId);
+                if (album) {
+                    this.openAlbumModal(album);
+                }
+            },
+            
+            setupStickyPathObserver() {
+                const observerOptions = {
+                    root: this.elements.timelineContainer,
+                    rootMargin: '0px', 
+                    threshold: 0.01 
+                };
+
+                this.state.intersectionObserver = new IntersectionObserver(this.handlePathIntersection.bind(this), observerOptions);
+                const pathContainers = this.elements.timelineWrapper.querySelectorAll('.path-container');
+                pathContainers.forEach(container => this.state.intersectionObserver.observe(container));
+            },
+
+            handlePathIntersection(entries) {
+                const visibleEntries = entries.filter(entry => entry.isIntersecting);
+
+                if (visibleEntries.length > 0) {
+                    const rightmostEntry = visibleEntries.reduce((latest, current) => {
+                        return current.boundingClientRect.right > latest.boundingClientRect.right ? current : latest;
+                    });
+
+                    const pathKey = rightmostEntry.target.dataset.path;
+                    this.updateStickyPathDisplay(pathKey);
+                }
+            },
+            
+            updateStickyPathDisplay(pathKey) {
+                this.state.currentStickyPath = pathKey;
+                const displayElement = this.elements.currentPathDisplay;
+
+                if (pathKey) {
+                    displayElement.textContent = pathKey;
+                    displayElement.style.opacity = '1';
+                } else if (!this.state.currentStickyPath) {
+                    displayElement.style.opacity = '0';
+                }
+            },
+            
+            setupModals() {
+                this.elements.closeAlbumModalBtn.addEventListener('click', this.closeAlbumModal.bind(this));
+                this.elements.albumModal.addEventListener('click', (e) => {
+                    if (e.target.id === 'album-modal') this.closeAlbumModal();
+                });
+            },
+
+            openAlbumModal(album) {
+                if (!album) return;
+
+                const { 
+                    albumModal, albumModalTitle, albumModalArtist, 
+                    albumModalAlbumArt, albumModalAlbumDetails, analysisWrapper 
+                } = this.elements;
+
+                albumModalTitle.textContent = album.albumTitle;
+                albumModalArtist.textContent = album.artist;
+                
+                const imageSlug = this.slugifyForImagePath(album.albumTitle);
+                const coverPath = `/images/${imageSlug}.jpg`;
+                const coverUrl = album.cover;
+                
+                const vinylPlaceholder = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCBmaWxsPSIjZDRkNGQ4IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIvPjxjaXJjbGUgZmlsbD0iIzUyNTI1YiIgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTAiLz48Y2lyY2xlIGZpbGw9IiNhOGEyOWUiIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjQwIi8+PGNpcmNsZSBmaWxsPSIjZDRkNGQ4IiBjeD0iMTAwIiBjeT0iMTAwIiByPSIxMCIvPjwvc3ZnPg==`;
+                
+                let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`;
+                if (coverUrl) {
+                    onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${vinylPlaceholder}'; }; this.src='${coverUrl}';`;
+                }
+                
+                albumModalAlbumArt.src = coverPath;
+                albumModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
+                albumModalAlbumArt.setAttribute('onerror', onErrorLogic);
+
+                const pivotalTrack = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks[0] : {};
+                
+                const lineupHtml = (pivotalTrack.lineup || album.lineup || 'N/A');
+
+                const genres = album.genres || [];
+                const genreTags = genres.map(g => 
+                    `<span class="genre-tag" style="background-color: ${this.state.genres[g.trim()] || 'var(--genre-default)'}">${g.trim()}</span>`
+                ).join(' ');
+
+                albumModalAlbumDetails.innerHTML = `
+                    <h4 class="text-3xl text-[var(--text-main)] mb-4">Album Details</h4>
+                    <div class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-base text-[var(--text-main)]">
+                        <strong class="font-bold">Genre:</strong> <div class="flex flex-wrap gap-2">${genreTags}</div>
+                        <strong class="font-bold">Recorded:</strong> <span>${pivotalTrack.recordingDate || album.year || 'N/A'}</span>
+                        <strong class="font-bold">Label:</strong> <span>${pivotalTrack.label || 'N/A'}</span>
+                        <strong class="font-bold align-top">Line-Up:</strong> <span>${lineupHtml}</span>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <a href="/album/${album.uniqueId}" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-md transition-colors duration-300 no-underline">
+                            Read More &rarr;
+                        </a>
+                    </div>`;
+
+                const analysisHtml = (album.pivotalTracks && album.pivotalTracks.length > 0) 
+                    ? album.pivotalTracks.map(track => `
+                        <div class="mb-8 last:mb-0">
+                            <h5 class="text-2xl font-bold text-white">Key Track: "<span class="underline decoration-orange-500 decoration-2 underline-offset-4">${track.title}</span>"</h5>
+                            <p class="liner-notes-text">${track.analysis}</p>
+                        </div>`).join('<hr class="border-stone-700 my-8">')
+                    : `<p class="liner-notes-text">${album.analysis || 'Analysis not available.'}</p>`;
+                
+                analysisWrapper.innerHTML = `<div id="modal-analysis-section">${analysisHtml}</div>`;
+
+                albumModal.classList.remove('opacity-0', 'pointer-events-none');
+                albumModal.querySelector('.modal-content').classList.remove('scale-95');
+                this.elements.albumModalBody.scrollTop = 0;
+            },
+
+            closeAlbumModal() {
+                this.elements.albumModal.classList.add('opacity-0', 'pointer-events-none');
+                this.elements.albumModal.querySelector('.modal-content').classList.add('scale-95');
+            }
+        };
+
+        LegacyTimeline.onDragMove = LegacyTimeline.onDragMove.bind(LegacyTimeline);
+        LegacyTimeline.onDragEnd = LegacyTimeline.onDragEnd.bind(LegacyTimeline);
+
+        document.addEventListener('DOMContentLoaded', () => LegacyTimeline.init());
+    </script>
+
+</body>
+</html>
