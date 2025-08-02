@@ -649,14 +649,18 @@
 
                 slugifyForImagePath(text) {
                     if (!text) return '';
+                    const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+                    const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrssssssttuuuuuuuuuwxyyzzz------'
+                    const p = new RegExp(a.split('').join('|'), 'g')
+
                     return text.toString().toLowerCase()
-                        .replace(/'/g, '')             // FIX: Remove apostrophes
-                        .replace(/[\s/:]+/g, '-')      // Replace spaces, slashes, colons with a hyphen
-                        .replace(/&/g, '-and-')       // Replace & with '-and-'
-                        .replace(/[^\w\-.,!()]+/g, '') // Remove invalid chars (apostrophe is not in the allowed set)
-                        .replace(/\-\-+/g, '-')        // Replace multiple hyphens
-                        .replace(/^-+/, '')           // Trim hyphens from start
-                        .replace(/-+$/, '');          // Trim hyphens from end
+                        .replace(/\s+/g, '-') // replace spaces with -
+                        .replace(p, c => b.charAt(a.indexOf(c))) // replace special characters
+                        .replace(/&/g, '-and-') // replace & with 'and'
+                        .replace(/[^\w\-]+/g, '') // remove all non-word chars
+                        .replace(/\-\-+/g, '-') // replace multiple - with single -
+                        .replace(/^-+/, '') // trim - from start of text
+                        .replace(/-+$/, '') // trim - from end of text
                 },
                 
                 populateGenreFilter(albums) {
