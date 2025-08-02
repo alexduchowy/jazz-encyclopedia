@@ -1,9 +1,10 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Full Interactive Jazz Timeline</title>
+    <link rel="icon" href="images/minilogo.svg" type="image/svg+xml">
     
     <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -769,12 +770,16 @@
                 });
 
                 const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
+                
+                // *** FIXED an issue with date parsing for sorting ***
                 const parseDate = (dateString) => {
                     if (!dateString || typeof dateString !== 'string') return null;
-                    const parts = dateString.replace(/,/g, '').split(' ');
+                    // Robustly split by whitespace and remove commas.
+                    const parts = dateString.replace(/,/g, '').trim().split(/\s+/);
                     if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
                     if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 1);
-                    if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 11, 31); // FIX: Year only dates go to end of year
+                    // For consistency, year-only dates can be treated as the end of that year for sorting.
+                    if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 11, 31);
                     return null;
                 };
                 
@@ -1254,18 +1259,30 @@
                 yearContainers.forEach(container => this.state.intersectionObserver.observe(container));
             },
 
+            // *** FIXED an issue with the Era display updating too early ***
             handleEraIntersection(entries) {
                 const visibleEntries = entries.filter(entry => entry.isIntersecting);
 
                 if (visibleEntries.length > 0) {
-                    const rightmostEntry = visibleEntries.reduce((latest, current) => {
-                        return current.boundingClientRect.right > latest.boundingClientRect.right ? current : latest;
-                    });
+                    // Find the entry whose left edge is closest to the container's left edge.
+                    let bestCandidate = null;
+                    let minDistance = Infinity;
+                    const containerLeft = this.elements.timelineContainer.getBoundingClientRect().left;
 
-                    const year = rightmostEntry.target.dataset.year;
-                    const currentEra = this.state.eras.find(e => year >= e.startYear && year <= e.endYear);
+                    visibleEntries.forEach(entry => {
+                        const distance = Math.abs(entry.boundingClientRect.left - containerLeft);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            bestCandidate = entry;
+                        }
+                    });
                     
-                    this.updateStickyEraDisplay(currentEra);
+                    if (bestCandidate) {
+                        const year = bestCandidate.target.dataset.year;
+                        const currentEra = this.state.eras.find(e => year >= e.startYear && year <= e.endYear);
+                        
+                        this.updateStickyEraDisplay(currentEra);
+                    }
                 }
             },
             
