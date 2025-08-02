@@ -447,7 +447,6 @@
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                transition: opacity 0.3s, color 0.3s;
                 flex-grow: 1;
             }
 
@@ -479,14 +478,13 @@
         <header class="container mx-auto h-full">
             <nav class="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-4 flex-shrink-0">
-                    <a href="timeline.html"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-12 sm:h-14" onerror="this.onerror=null;this.src='https://placehold.co/160x56/1c1917/f5f5f4?text=Logo';"></a>
-                    <h1 class="hidden md:block header-title-styled">Interactive Jazz Timeline</h1>
+                    <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-12 sm:h-14" onerror="this.onerror=null;this.src='https://placehold.co/160x56/1c1917/f5f5f4?text=Logo';"></a>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="hidden md:flex items-center space-x-8">
                         <a href="timeline.html" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                            Back to Main Timeline
+                            Back to Main Site
                         </a>
                     </div>
                     <label for="view-toggle" class="toggle-switch hidden lg:inline-block">
@@ -689,7 +687,7 @@
             // --- DATA FETCHING ---
             async fetchData() {
                 const [albumRes, genreRes, artistRes] = await Promise.all([
-                    fetch('/database.json'),
+                    fetch('/album_database.json'),
                     fetch('/genres.json'),
                     fetch('/artists.json')
                 ]);
@@ -730,21 +728,53 @@
             },
 
             // --- DATA PROCESSING ---
-            slugify(text = '') {
+            slugifyForUrl(text) {
+                if (!text) return '';
+                const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+                const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrssssssttuuuuuuuuuwxyyzzz------'
+                const p = new RegExp(a.split('').join('|'), 'g')
+
                 return text.toString().toLowerCase()
-                    .replace(/\s+/g, '-')
-                    .replace(/[^\w-]+/g, '')
-                    .replace(/--+/g, '-')
-                    .replace(/^-+/, '')
-                    .replace(/-+$/, '');
+                    .trim()
+                    .replace(/\s+/g, '-') // replace spaces with -
+                    .replace(p, c => b.charAt(a.indexOf(c))) // replace special characters
+                    .replace(/&/g, '-and-') // replace & with 'and'
+                    .replace(/[^\w\-]+/g, '') // remove all non-word chars
+                    .replace(/\-\-+/g, '-') // replace multiple - with single -
+                    .replace(/^-+/, '') // trim - from start of text
+                    .replace(/-+$/, '') // trim - from end of text
             },
 
+            slugifyForImagePath(text) {
+                if (!text) return '';
+                const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+                const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrssssssttuuuuuuuuuwxyyzzz------'
+                const p = new RegExp(a.split('').join('|'), 'g')
+
+                return text.toString().toLowerCase()
+                    .trim()
+                    .replace(/\s+/g, '-') // replace spaces with -
+                    .replace(p, c => b.charAt(a.indexOf(c))) // replace special characters
+                    .replace(/&/g, '-and-') // replace & with 'and'
+                    .replace(/[^\w\-]+/g, '') // remove all non-word chars
+                    .replace(/\-\-+/g, '-') // replace multiple - with single -
+                    .replace(/^-+/, '') // trim - from start of text
+                    .replace(/-+$/, '') // trim - from end of text
+            },
+            
             processData() {
+                // 1. Filter albums to the 1950-1969 range first.
+                this.state.albums = this.state.albums.filter(album => {
+                    const year = parseInt(album.year, 10);
+                    return year >= 1950 && year <= 1969;
+                });
+
+                // 2. Process and sort the filtered albums.
                 this.state.albums.forEach(album => {
                      if (typeof album.genres === 'string') {
                         album.genres = album.genres.split(',').map(g => g.trim());
                     }
-                     const albumSlug = this.slugify(album.artist) + '-' + this.slugify(album.albumTitle);
+                     const albumSlug = this.slugifyForUrl(album.artist) + '-' + this.slugifyForUrl(album.albumTitle);
                      album.uniqueId = albumSlug;
                 });
 
@@ -943,9 +973,20 @@
                 const primaryGenre = album.genres[0];
                 const genreColor = this.state.genres[primaryGenre] || 'var(--genre-default)';
                 card.style.setProperty('--album-genre-color', genreColor);
+                
+                const imageSlug = this.slugifyForImagePath(album.albumTitle);
+                const coverPath = `/images/${imageSlug}.jpg`;
+                const coverUrl = album.cover;
+                
+                const vinylPlaceholder = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCBmaWxsPSIjZDRkNGQ4IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIvPjxjaXJjbGUgZmlsbD0iIzUyNTI1YiIgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTAiLz48Y2lyY2xlIGZpbGw9IiNhOGEyOWUiIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjQwIi8+PGNpcmNsZSBmaWxsPSIjZDRkNGQ4IiBjeD0iMTAwIiBjeT0iMTAwIiByPSIxMCIvPjwvc3ZnPg==`;
+                
+                let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`;
+                if (coverUrl) {
+                    onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${vinylPlaceholder}'; }; this.src='${coverUrl}';`;
+                }
 
                 card.innerHTML = `
-                    <img src="${album.cover || ''}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="this.onerror=null;this.src='https://placehold.co/120x120/1c1917/f5f5f4?text=No+Img';">
+                    <img src="${coverPath}" alt="Cover for ${album.albumTitle || 'album'}" class="cover-art" onerror="${onErrorLogic}">
                     <div class="album-card-info">
                         <h5>${album.albumTitle || 'Unknown Title'}</h5>
                         <p>${album.artist || 'Unknown Artist'}</p>
@@ -1261,9 +1302,21 @@
                 albumModalTitle.textContent = album.albumTitle;
                 albumModalArtist.textContent = album.artist;
                 
-                albumModalAlbumArt.src = album.cover || '';
+                const imageSlug = this.slugifyForImagePath(album.albumTitle);
+                const coverPath = `/images/${imageSlug}.jpg`;
+                const coverUrl = album.cover;
+                
+                const vinylPlaceholder = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCBmaWxsPSIjZDRkNGQ4IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIvPjxjaXJjbGUgZmlsbD0iIzUyNTI1YiIgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTAiLz48Y2lyY2xlIGZpbGw9IiNhOGEyOWUiIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjQwIi8+PGNpcmNsZSBmaWxsPSIjZDRkNGQ4IiBjeD0iMTAwIiBjeT0iMTAwIiByPSIxMCIvPjwvc3ZnPg==`;
+                
+                let onErrorLogic = `this.onerror=null; this.src='${vinylPlaceholder}';`;
+                if (coverUrl) {
+                    onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${vinylPlaceholder}'; }; this.src='${coverUrl}';`;
+                }
+                
+                albumModalAlbumArt.src = coverPath;
                 albumModalAlbumArt.alt = `Cover for ${album.albumTitle}`;
-                albumModalAlbumArt.onerror = function() { this.onerror=null;this.src='https://placehold.co/400x400/1c1917/f5f5f4?text=No+Image'; };
+                albumModalAlbumArt.setAttribute('onerror', onErrorLogic);
+
 
                 const pivotalTrack = (album.pivotalTracks && album.pivotalTracks.length > 0) ? album.pivotalTracks[0] : {};
                 
