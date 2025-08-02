@@ -646,7 +646,8 @@
                         .replace(/-+$/, '')
                 },
                 slugifyForImagePath(text) {
-                   return this.slugifyForUrl(text);
+                   // FIX: Correctly call the slugifyForUrl method from the methods object.
+                   return this.methods.slugifyForUrl(text);
                 },
                 processLegacyPaths() {
                     const paths = {};
