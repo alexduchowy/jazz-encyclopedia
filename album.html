@@ -480,7 +480,12 @@
                 if (!text) return '';
                 // This version is permissive to match filenames exactly
                 return text.toString().toLowerCase()
-                    .replace(/\s+/g, '-'); // Just replace spaces with hyphens
+                    .replace(/[\s/:]+/g, '-')      // Replace spaces, slashes, colons with a hyphen
+                    .replace(/&/g, '-and-')       // Replace & with '-and-'
+                    .replace(/[^\w\-.,'!’()]+/g, '') // Remove any remaining invalid characters.
+                    .replace(/\-\-+/g, '-')        // Replace multiple hyphens
+                    .replace(/^-+/, '')           // Trim hyphens from start
+                    .replace(/-+$/, '');          // Trim hyphens from end
             },
 
             getAlbumIdFromUrl() {
@@ -499,39 +504,58 @@
                     return;
                 }
 
-                fetch(`/album_database.json?t=${Date.now()}`)
-                    .then(res => res.json())
-                    .then(dbData => {
-                        const albumMap = new Map();
-                        dbData.albums.forEach(album => {
-                            const title = album.albumTitle || album.title;
-                            const artist = album.artist;
-                            if (!title || !artist) return;
-                            const key = `${this.slugifyForUrl(artist)}-${this.slugifyForUrl(title)}`;
-                            if (!albumMap.has(key)) {
-                                albumMap.set(key, album);
-                            }
-                        });
-                        const uniqueAlbums = Array.from(albumMap.values());
+                Promise.all([
+                    fetch('/album_database.json').then(res => res.json()),
+                    fetch('/legacy.json').then(res => res.json())
+                ])
+                .then(([albumDb, legacyDb]) => {
+                    const albumMap = new Map();
+                    const allRawAlbums = [...albumDb.albums, ...Object.values(legacyDb.paths || {}).flatMap(p => p.albums || [])];
 
-                        this.state.allAlbums = uniqueAlbums.sort((a, b) => new Date(a.recordingDate) - new Date(b.recordingDate));
-                        
-                        const currentIndex = this.state.allAlbums.findIndex(a => {
-                            const currentAlbumId = `${this.slugifyForUrl(a.artist)}-${this.slugifyForUrl(a.albumTitle || a.title)}`;
-                            return currentAlbumId === albumId;
-                        });
-
-                        if (currentIndex > -1) {
-                            const album = this.state.allAlbums[currentIndex];
-                            this.renderAlbum(album, currentIndex, this.state.allAlbums);
-                        } else {
-                            this.renderError(`Album with ID "${albumId}" not found.`);
+                    allRawAlbums.forEach(album => {
+                        const title = album.albumTitle || album.title;
+                        const artist = album.artist;
+                        if (!title || !artist) return;
+                        const key = `${this.slugifyForUrl(artist)}-${this.slugifyForUrl(title)}`;
+                        if (!albumMap.has(key)) {
+                            albumMap.set(key, album);
                         }
-                    })
-                    .catch(error => {
-                        console.error("Error fetching data:", error);
-                        this.renderError("Could not load album data.");
                     });
+                    const uniqueAlbums = Array.from(albumMap.values());
+
+                    const getSortDate = (album) => {
+                        const recordingDate = album.recordingDate ? new Date(album.recordingDate) : null;
+                        const releaseDate = album.releaseDate ? new Date(album.releaseDate) : null;
+                        
+                        const recordingYear = recordingDate ? recordingDate.getFullYear() : 0;
+
+                        if (recordingYear && recordingYear <= 1969) {
+                            return recordingDate;
+                        }
+                        if (releaseDate) {
+                            return releaseDate;
+                        }
+                        return recordingDate || new Date('1900-01-01'); // Fallback
+                    };
+
+                    this.state.allAlbums = uniqueAlbums.sort((a, b) => getSortDate(a) - getSortDate(b));
+                    
+                    const currentIndex = this.state.allAlbums.findIndex(a => {
+                        const currentAlbumId = `${this.slugifyForUrl(a.artist)}-${this.slugifyForUrl(a.albumTitle || a.title)}`;
+                        return currentAlbumId === albumId;
+                    });
+
+                    if (currentIndex > -1) {
+                        const album = this.state.allAlbums[currentIndex];
+                        this.renderAlbum(album, currentIndex, this.state.allAlbums);
+                    } else {
+                        this.renderError(`Album with ID "${albumId}" not found.`);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    this.renderError("Could not load album data.");
+                });
             },
             
             renderError(message) {
