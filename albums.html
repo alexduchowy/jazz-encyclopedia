@@ -398,7 +398,8 @@
 
             methods: {
                 fetchData() {
-                    fetch('/album_database.json')
+                    const cacheBuster = `?t=${new Date().getTime()}`;
+                    fetch(`/album_database.json${cacheBuster}`)
                         .then(res => res.json())
                         .then(albumDb => {
                             this.methods.processAndDeduplicateAlbums(albumDb.albums);
@@ -521,6 +522,7 @@
                     if (paginatedAlbums.length === 0) {
                         albumGridContainer.innerHTML = `<p class="text-[var(--text-muted)] col-span-full text-center py-10">No albums found matching your criteria.</p>`;
                     } else {
+                        const cacheBuster = `?t=${new Date().getTime()}`;
                         paginatedAlbums.forEach(album => {
                             const albumTitle = album.albumTitle || album.title;
                             const artistName = album.artist;
@@ -560,12 +562,13 @@
                             let onErrorLogic = `this.onerror=null; this.src='${encodedPlaceholder}';`; // Final fallback
                             if (coverUrl) {
                                 // If a cover URL from the database exists, try it as the first fallback
-                                onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${encodedPlaceholder}'; }; this.src='${coverUrl}';`;
+                                const finalCoverUrl = `${coverUrl}${coverUrl.includes('?') ? '&' : '?'}${cacheBuster.substring(1)}`;
+                                onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${encodedPlaceholder}'; }; this.src='${finalCoverUrl}';`;
                             }
 
                             card.innerHTML = `
                                 <div class="album-cover-container">
-                                    <img src="${coverPath}" loading="lazy" alt="Cover for ${albumTitle}" onerror="${onErrorLogic}">
+                                    <img src="${coverPath}${cacheBuster}" loading="lazy" alt="Cover for ${albumTitle}" onerror="${onErrorLogic}">
                                 </div>
                                 <div class="p-3 text-left">
                                     <h4 class="font-bold text-sm text-[var(--text-main)] truncate">${albumTitle}</h4>
@@ -647,12 +650,19 @@
                 
                 slugifyForUrl(text) {
                     if (!text) return '';
+                    const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+                    const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrssssssttuuuuuuuuuwxyyzzz------'
+                    const p = new RegExp(a.split('').join('|'), 'g')
+
                     return text.toString().toLowerCase()
-                        .replace(/\s+/g, '-')
-                        .replace(/[^\w\-]+/g, '') // Remove all non-word chars except hyphens
-                        .replace(/\-\-+/g, '-')
-                        .replace(/^-+/, '')
-                        .replace(/-+$/, '');
+                        .trim()
+                        .replace(/\s+/g, '-') // replace spaces with -
+                        .replace(p, c => b.charAt(a.indexOf(c))) // replace special characters
+                        .replace(/&/g, '-and-') // replace & with 'and'
+                        .replace(/[^\w\-]+/g, '') // remove all non-word chars
+                        .replace(/\-\-+/g, '-') // replace multiple - with single -
+                        .replace(/^-+/, '') // trim - from start of text
+                        .replace(/-+$/, '') // trim - from end of text
                 },
 
                 slugifyForImagePath(text) {
@@ -662,7 +672,7 @@
                     const p = new RegExp(a.split('').join('|'), 'g')
 
                     return text.toString().toLowerCase()
-                        .trim() // <-- ADD THIS LINE
+                        .trim()
                         .replace(/\s+/g, '-') // replace spaces with -
                         .replace(p, c => b.charAt(a.indexOf(c))) // replace special characters
                         .replace(/&/g, '-and-') // replace & with 'and'
