@@ -770,12 +770,12 @@
 
                 const monthMap = { "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5, "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11 };
                 const parseDate = (dateString) => {
-                    if (!dateString || typeof dateString !== 'string') return new Date(0);
+                    if (!dateString || typeof dateString !== 'string') return null;
                     const parts = dateString.replace(/,/g, '').split(' ');
                     if (parts.length === 3 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[2], monthMap[parts[0]], parts[1]);
                     if (parts.length === 2 && monthMap.hasOwnProperty(parts[0])) return new Date(parts[1], monthMap[parts[0]], 1);
                     if (parts.length === 1 && !isNaN(parts[0])) return new Date(parts[0], 0, 1);
-                    return new Date(0);
+                    return null;
                 };
                 
                 this.state.albums.forEach(album => {
@@ -784,24 +784,36 @@
                     }
                     album.uniqueId = `${this.slugifyForUrl(album.artist)}-${this.slugifyForUrl(album.albumTitle)}`;
                     
-                    let sortDate = null;
+                    let earliestDate = null;
                     if (album.pivotalTracks && album.pivotalTracks.length > 0) {
-                        album.pivotalTracks.sort((a, b) => parseDate(a.recordingDate) - parseDate(b.recordingDate));
-                        sortDate = album.pivotalTracks[0].recordingDate;
+                        const dates = album.pivotalTracks
+                            .map(track => parseDate(track.recordingDate))
+                            .filter(date => date !== null);
+                        
+                        if (dates.length > 0) {
+                            earliestDate = new Date(Math.min.apply(null, dates));
+                        }
                     }
 
-                    if (!sortDate) {
-                        sortDate = album.recordingDate;
-                    }
-
-                    if (!sortDate) {
-                        sortDate = `${album.year}-01-01`;
+                    if (!earliestDate) {
+                        const albumRecordingDate = parseDate(album.recordingDate);
+                        if (albumRecordingDate) {
+                            earliestDate = albumRecordingDate;
+                        }
                     }
                     
-                    album.sortingDate = sortDate;
+                    if (!earliestDate) {
+                        earliestDate = parseDate(String(album.year));
+                    }
+                    
+                    album.sortingDateObject = earliestDate;
                 });
                 
-                this.state.albums.sort((a, b) => parseDate(a.sortingDate) - parseDate(b.sortingDate));
+                this.state.albums.sort((a, b) => {
+                    const dateA = a.sortingDateObject || new Date(0);
+                    const dateB = b.sortingDateObject || new Date(0);
+                    return dateA - dateB;
+                });
 
                 const processedAlbumIds = new Set();
                 this.state.groupedDataByGenre.clear();
