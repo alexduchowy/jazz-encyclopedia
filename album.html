@@ -143,7 +143,14 @@
             border-color: var(--border-color);
             box-shadow: none;
         }
-        .dropdown-list a { display: block; padding: 0.75rem 1.5rem; transition: all 0.2s ease; }
+        .dropdown-list a { 
+            display: block; 
+            padding: 0.75rem 1.5rem; 
+            transition: all 0.2s ease; 
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+        }
         .dark .dropdown-list a {
             color: white;
         }
@@ -326,22 +333,36 @@
                     <a href="/"><img src="/images/logo.svg" alt="Controlled Freedom Logo" class="h-16 sm:h-20"></a>
                     <div class="flex items-center">
                         <div class="nav-bar-behaviour items-center space-x-8">
-                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium">Home</a>
-                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium">TV</a>
-                            <a href="/timeline" class="nav-link active px-3 py-2 rounded-md font-medium">Timeline</a>
+                            <a href="/" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Home</a>
+                            <a href="/tv.html" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">TV</a>
+                            
+                            <!-- Timeline Dropdown -->
                             <div class="dropdown-container">
-                                <a href="/legacy" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
-                                    Legacy
+                                <a href="#" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
+                                    Timeline
                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                                 </a>
                                 <div class="dropdown-list">
-                                    <a href="/legacy">Legacy Paths</a>
-                                    <a href="/genres.html">Genres</a>
-                                    <a href="https://controlledfreedom.com/artists">Artists</a>
+                                    <a href="/timeline.html">Bop Era: 50s-60s</a>
+                                    <a href="/legacy.html">Legacy: 70s-Now</a>
                                 </div>
                             </div>
-                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium">Blog</a>
-                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2">
+
+                            <!-- Archive Dropdown -->
+                            <div class="dropdown-container">
+                                <a href="#" class="nav-link px-3 py-2 rounded-md font-medium flex items-center gap-2 text-[var(--text-muted)]">
+                                    Archive
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </a>
+                                <div class="dropdown-list">
+                                    <a href="/genres.html">Genres</a>
+                                    <a href="/artists.html">Artists</a>
+                                    <a href="/albums.html">Albums</a>
+                                </div>
+                            </div>
+
+                            <a href="/blog" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)]">Blog</a>
+                            <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="nav-link px-3 py-2 rounded-md font-medium text-[var(--text-muted)] flex items-center gap-2">
                                 <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                                 <span>@controlledjazz</span>
                             </a>
@@ -388,10 +409,16 @@
             <nav id="mobile-nav-links" class="flex flex-col space-y-2">
                 <a href="/" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Home</a>
                 <a href="/tv.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">TV</a>
-                <a href="/timeline" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Timeline</a>
-                <a href="/legacy" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Legacy</a>
+                
+                <span class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] p-2 rounded-md">Timeline</span>
+                <a href="/timeline.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Bop Era: 50s-60s</a>
+                <a href="/legacy.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Legacy: 70s-Now</a>
+
+                <span class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] p-2 rounded-md">Archive</span>
                 <a href="/genres.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Genres</a>
-                <a href="https://controlledfreedom.com/artists" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
+                <a href="/artists.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Artists</a>
+                <a href="/albums.html" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md ml-4">- Albums</a>
+                
                 <a href="/blog" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md">Blog</a>
                  <a href="https://x.com/controlledjazz" target="_blank" rel="noopener noreferrer" class="mobile-nav-link block text-lg font-bold text-[var(--text-main)] hover:text-orange-500 p-2 rounded-md flex items-center gap-2">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
@@ -468,12 +495,19 @@
 
             slugifyForUrl(text) {
                 if (!text) return '';
+                const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+                const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrssssssttuuuuuuuuuwxyyzzz------'
+                const p = new RegExp(a.split('').join('|'), 'g')
+
                 return text.toString().toLowerCase()
-                    .replace(/\s+/g, '-')
-                    .replace(/[^\w\-]+/g, '') // Remove all non-word chars except hyphens
-                    .replace(/\-\-+/g, '-')
-                    .replace(/^-+/, '')
-                    .replace(/-+$/, '');
+                    .trim()
+                    .replace(/\s+/g, '-') // replace spaces with -
+                    .replace(p, c => b.charAt(a.indexOf(c))) // replace special characters
+                    .replace(/&/g, '-and-') // replace & with 'and'
+                    .replace(/[^\w\-]+/g, '') // remove all non-word chars
+                    .replace(/\-\-+/g, '-') // replace multiple - with single -
+                    .replace(/^-+/, '') // trim - from start of text
+                    .replace(/-+$/, '') // trim - from end of text
             },
 
             slugifyForImagePath(text) {
@@ -483,6 +517,7 @@
                 const p = new RegExp(a.split('').join('|'), 'g')
 
                 return text.toString().toLowerCase()
+                    .trim()
                     .replace(/\s+/g, '-') // replace spaces with -
                     .replace(p, c => b.charAt(a.indexOf(c))) // replace special characters
                     .replace(/&/g, '-and-') // replace & with 'and'
@@ -501,6 +536,29 @@
                 return null;
             },
             
+            linkifyArtistString(fullArtistString) {
+                const linkableArtists = [
+                    "Art Blakey", "Thelonious Monk", "Miles Davis", "John Coltrane", 
+                    "Charles Mingus", "Bill Evans", "Duke Ellington", "Dizzy Gillespie",
+                    "Sonny Rollins", "Herbie Hancock", "Wayne Shorter", "Cannonball Adderley"
+                ];
+
+                // Use a regex that finds whole words to avoid incorrect partial matches.
+                const regex = new RegExp(`\\b(${linkableArtists.join('|')})\\b`, 'gi');
+
+                if (!regex.test(fullArtistString)) {
+                    // If no special artists are found, link the entire string as one.
+                    const artistSlug = this.slugifyForUrl(fullArtistString);
+                    return `<a href="/artist/${artistSlug}" class="hover:text-[var(--accent)] transition-colors">${fullArtistString}</a>`;
+                }
+
+                // Otherwise, replace only the names of the linkable artists with anchor tags.
+                return fullArtistString.replace(regex, (matchedArtist) => {
+                    const artistSlug = this.slugifyForUrl(matchedArtist);
+                    return `<a href="/artist/${artistSlug}" class="hover:text-[var(--accent)] transition-colors underline decoration-dotted">${matchedArtist}</a>`;
+                });
+            },
+
             fetchDataAndRender() {
                 const albumId = this.getAlbumIdFromUrl();
                 if (!albumId) {
@@ -713,7 +771,9 @@
                         <!-- Right Column: Title, Details, Lineup, About -->
                         <div class="flex-1">
                             <h2 class="text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)]">${albumTitle}</h2>
-                            <a href="/artist/${this.slugifyForUrl(artistName)}" class="text-2xl sm:text-3xl text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">${artistName}</a>
+                            <div class="text-2xl sm:text-3xl text-[var(--text-muted)]">
+                                ${this.linkifyArtistString(artistName)}
+                            </div>
                             
                             <div class="mt-6 pt-6 border-t border-[var(--border-color)] grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
                                 <div>
