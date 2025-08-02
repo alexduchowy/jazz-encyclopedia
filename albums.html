@@ -524,6 +524,7 @@
                         paginatedAlbums.forEach(album => {
                             const albumTitle = album.albumTitle || album.title;
                             const artistName = album.artist;
+                            const coverUrl = album.cover; // Get cover URL from JSON
 
                             const urlSlug = `${this.methods.slugifyForUrl(artistName)}-${this.methods.slugifyForUrl(albumTitle)}`;
                             
@@ -554,10 +555,17 @@
                             `;
                             
                             const encodedPlaceholder = `data:image/svg+xml;base64,${btoa(vinylPlaceholder)}`;
+                            
+                            // Define the multi-step fallback logic for the image
+                            let onErrorLogic = `this.onerror=null; this.src='${encodedPlaceholder}';`; // Final fallback
+                            if (coverUrl) {
+                                // If a cover URL from the database exists, try it as the first fallback
+                                onErrorLogic = `this.onerror=function() { this.onerror=null; this.src='${encodedPlaceholder}'; }; this.src='${coverUrl}';`;
+                            }
 
                             card.innerHTML = `
                                 <div class="album-cover-container">
-                                    <img src="${coverPath}" loading="lazy" alt="Cover for ${albumTitle}" onerror="this.onerror=null;this.src='${encodedPlaceholder}';">
+                                    <img src="${coverPath}" loading="lazy" alt="Cover for ${albumTitle}" onerror="${onErrorLogic}">
                                 </div>
                                 <div class="p-3 text-left">
                                     <h4 class="font-bold text-sm text-[var(--text-main)] truncate">${albumTitle}</h4>
